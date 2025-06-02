@@ -8,8 +8,8 @@ import { useTheme } from "next-themes";
 export default function Footer() {
     const { theme } = useTheme();
     return (
-        <footer className="bg-muted">
-            <div className="container mx-auto grid grid-cols-12 py-10">
+        <footer className="">
+            <div className="container mx-auto grid grid-cols-12 py-10 border-t border-gray-200">
 
                 <div className="col-span-3 flex flex-col gap-4 mr-8">
                 <div className="flex flex-row gap-2 items-center">
@@ -43,7 +43,7 @@ export default function Footer() {
                 </div>
                 <div className="col-span-3 flex flex-col gap-3 ml-8">
                     <h1 className="text-2xl font-bold text-foreground">Q U I C K L I N K S</h1>
-                    <Link href="/" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all">Home</Link>
+                    <Link href="/faqs" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all">FAQ's</Link>
                     <Link href="/about" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all">About Us</Link>
                     <Link href="/contact-us" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all">Contact Us</Link>
                     <Link href="/privacy-policy" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all">Privacy Policy</Link>
