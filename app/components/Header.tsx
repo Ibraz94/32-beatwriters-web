@@ -2,36 +2,42 @@
 import Link from "next/link";
 import Form from "next/form";
 import Image from "next/image";
-import { Search, ChevronDown, CircleUserRound, ShoppingCart, PackageOpen, ChevronsDown } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
+import { useTheme } from "next-themes";
 
 function Header() {
+
+    const { theme } = useTheme();
+
     return (
-        <header className="h-28 flex flex-wrap justify-center items-center px-24 sticky top-0 z-10 borde bg-white opacity-90">
+        <header className="h-28 flex flex-wrap justify-center items-center px-24 sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border transition-colors">
             <div className="flex w-full flex-wrap justify-between items-center">
                 <div className="flex items-center gap-24">
                     <Link href="/"
-                        className="text-3xl text-black font-extrabold hover:opacity-90 cursor-pointer mx-auto sm:mx-0">
-                        <Image src="/logo-small.webp" alt="logo" width={60} height={60} />
+                        className="hover:opacity-90 cursor-pointer mx-auto sm:mx-0 flex items-center gap-2">
+                        <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={35} height={35} />
+                        <h1 className="text-xl font-extralight">32 Beat Writers</h1>
                     </Link>
                     <div className="hidden md:flex gap-10">
                         <Link
                             href="/"
-                            className="flex gap-1 text-sm md:text-base hover:underline">Home</Link>
+                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Home</Link>
                         <Link
                             href="/subscribe"
-                            className="flex gap-1 text-sm md:text-base hover:underline">Subscribe</Link>
+                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Subscribe</Link>
                         <Link
                             href="/articles"
-                            className="flex gap-1 text-sm md:text-base hover:underline">Articles</Link>
+                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Articles</Link>
                         <Link
                             href="/podcast"
-                            className="flex gap-1 text-sm md:text-base hover:underline">Podcast</Link>
+                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Podcast</Link>
                         <Link
                             href="/premium"
-                            className="text-sm md:text-base hover:underline">Premium</Link>
+                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Premium</Link>
                         <Link
                             href="/tools"
-                            className="text-sm md:text-base hover:underline">Tools</Link>
+                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Tools</Link>
                     </div>
 
                 </div>
@@ -39,21 +45,24 @@ function Header() {
 
                 <div className="flex items-center gap-6 mt-4 sm:mt-0 flex-1 sm:flex-none ">
                     <Link href="/beat-writers"
-                        className="flex items-center space-x-2 text-sm md:text-base hover:underline">
+                        className="flex items-center space-x-2 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">
                         Beat Writers
                     </Link>
 
                     <Form action='/search'
-                        className="w-full flex items-center bg-gray-100 rounded-full focus:ring-2 sm:w-auto sm:flex-1 sm:mx-4 mt-2 sm:mt-0">
+                        className="w-full flex items-center bg-muted rounded-full focus:ring-0 sm:w-auto sm:flex-1 sm:mx-4 mt-2 sm:mt-0">
                         <search className="ml-2" />
                         <input type="text"
                             name="news-search"
                             placeholder="News Search"
-                            className="bg-gray-100 text-gray-800 px-2 py-2 rounded-full focus:outline-black focus:ring-black w-[300px] max-w-2xl"
+                            className="bg-muted text-foreground placeholder:text-muted-foreground px-2 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-ring w-[300px] max-w-2xl transition-colors"
                         />
                     </Form>
+                    
+                    <ThemeToggle />
+                    
                     <Link href="/login"
-                        className="flex items-center space-x-2">
+                        className="flex items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
                         <CircleUserRound />
                         <span>Login</span>
                     </Link>
