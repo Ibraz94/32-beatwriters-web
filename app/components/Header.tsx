@@ -11,7 +11,7 @@ function Header() {
     const { theme } = useTheme();
 
     return (
-        <header className="h-28 flex flex-wrap justify-center items-center px-24 sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border transition-colors">
+        <header className="container mx-auto h-20 flex flex-wrap justify-center items-center sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border transition-colors">
             <div className="flex w-full flex-wrap justify-between items-center">
                 <div className="flex items-center gap-24">
                     <Link href="/"
@@ -55,7 +55,7 @@ function Header() {
                         <input type="text"
                             name="news-search"
                             placeholder="News Search"
-                            className="bg-muted text-foreground placeholder:text-muted-foreground px-2 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-ring w-[300px] max-w-2xl transition-colors"
+                            className="text-foreground placeholder:text-muted-foreground px-2 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-ring w-[300px] max-w-2xl transition-colors"
                         />
                     </Form>
                     
