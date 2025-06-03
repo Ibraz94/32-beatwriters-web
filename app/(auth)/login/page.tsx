@@ -168,17 +168,17 @@ export default function Login() {
                         </div>
 
                         {/* Remember Me & Forgot Password */}
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center">
+                        <div className="flex items-center justify-between ">
+                            <div className="flex items-center hover:cursor-pointer">
                                 <input
                                     id="rememberMe"
                                     name="rememberMe"
                                     type="checkbox"
                                     checked={formData.rememberMe}
                                     onChange={handleInputChange}
-                                    className="h-4 w-4 text-primary focus:ring-ring border-input rounded"
+                                    className="h-3 w-3 text-primary focus:ring-ring border-input rounded "
                                 />
-                                <label htmlFor="rememberMe" className="ml-1 block text-sm text-muted-foreground">
+                                <label htmlFor="rememberMe" className="ml-1 block text-sm text-muted-foreground hover:cursor-pointer">
                                     Remember me
                                 </label>
                             </div>
