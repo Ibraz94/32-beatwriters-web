@@ -13,7 +13,7 @@ export default function HeroSection() {
                         The industry's most trusted source for complete NFL offseason coverage,<br className="hidden sm:block" /> now with premium insights & tools.
                     </p>
                 </div>
-                <button className="bg-red-800 text-white px-6 sm:px-6 py-3 sm:py-3 text-base sm:text-lg rounded-md hover:scale-102 hover:bg-red-700 hover:cursor-pointer transition-all duration-300 font-medium shadow-lg hover:shadow-xl">
+                <button className="bg-red-800 text-white px-6 sm:px-6 py-3 sm:py-3 text-base sm:text-lg rounded-md hover:scale-102 hover:cursor-pointer transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
                     Get Insider Access
                 </button>
             </div>
