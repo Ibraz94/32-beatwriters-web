@@ -2,24 +2,42 @@
 import Link from "next/link";
 import Form from "next/form";
 import Image from "next/image";
-import { CircleUserRound } from "lucide-react";
+import { CircleUserRound, Search } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
+import MobileNav from "./MobileNav";
+import { useState } from "react";
 
 function Header() {
 
     const { theme } = useTheme();
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     return (
-        <header className="container mx-auto h-20 flex flex-wrap justify-center items-center sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border transition-colors">
+        <header className="container mx-auto h-20 flex flex-wrap items-center sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border transition-colors px-4">
             <div className="flex w-full flex-wrap justify-between items-center">
-                <div className="flex items-center gap-24">
+
+                {/* Mobile Layout: Menu and Search on Left */}
+                <div className="flex items-center gap-4 sm:hidden">
+
+                    {/* Mobile Layout: Logo on Right */}
+                    <div className="sm:hidden">
+                        <Link href="/"
+                            className="hover:opacity-90 cursor-pointer flex items-center gap-2">
+                            <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={35} height={35} />
+                            <h1 className="text-xl font-extralight">32 Beat Writers</h1>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Desktop Layout: Logo and Navigation on Left */}
+                <div className="hidden sm:flex items-center gap-24">
                     <Link href="/"
-                        className="hover:opacity-90 cursor-pointer mx-auto sm:mx-0 flex items-center gap-2">
+                        className="hover:opacity-90 cursor-pointer flex items-center gap-2">
                         <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={35} height={35} />
                         <h1 className="text-xl font-extralight">32 Beat Writers</h1>
                     </Link>
-                    <div className="hidden md:flex gap-10">
+                    <div className="hidden lg:flex gap-10">
                         <Link
                             href="/"
                             className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Home</Link>
@@ -39,33 +57,69 @@ function Header() {
                             href="/tools"
                             className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Tools</Link>
                     </div>
-
                 </div>
 
 
-                <div className="flex items-center gap-6 mt-4 sm:mt-0 flex-1 sm:flex-none ">
+                {/* Desktop Layout: Right Side Items */}
+                <div className="hidden sm:flex items-center gap-6 flex-1 sm:flex-none">
                     <Link href="/beat-writers"
-                        className="flex items-center space-x-2 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">
+                        className="lg:flex hidden items-center space-x-2 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">
                         Beat Writers
                     </Link>
 
+                    {/* Regular search bar for medium and larger devices */}
                     <Form action='/search'
-                        className="w-full flex items-center bg-muted rounded-full focus:ring-0 sm:w-auto sm:flex-1 sm:mx-4 mt-2 sm:mt-0">
-                        <search className="ml-2" />
+                        className="flex w-[250px] sm:w-auto items-center bg-muted rounded-full focus:ring-0 sm:flex-1 sm:mx-4">
+                        <Search className="ml-2" size={16} />
                         <input type="text"
                             name="news-search"
                             placeholder="News Search"
                             className="text-foreground placeholder:text-muted-foreground px-2 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-ring w-[300px] max-w-2xl transition-colors"
                         />
                     </Form>
-                    
+
                     <ThemeToggle />
-                    
+
+
                     <Link href="/login"
-                        className="flex items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
+                        className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
                         <CircleUserRound />
                         <span>Login</span>
                     </Link>
+                </div>
+
+                {/* Mobile Layout: Theme Toggle on Right */}
+                <div className="sm:hidden flex">
+                    {/* Search dropdown for small devices */}
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsSearchOpen(!isSearchOpen)}
+                            className="p-2 text-foreground hover:text-red-900 transition-colors"
+                        >
+                            <Search size={20} />
+                        </button>
+                        {isSearchOpen && (
+                            <div className="absolute -right-2 top-16 mt-2 w-80 bg-background border border-border rounded-lg shadow-lg p-4 z-50">
+                                <Form action='/search' className="w-full">
+                                    <input
+                                        type="text"
+                                        name="news-search"
+                                        placeholder="Search news..."
+                                        className="w-full text-foreground placeholder:text-muted-foreground px-3 py-2 rounded-full border border-border bg-muted focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
+                                        autoFocus
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="w-full mt-2 px-2 py-2 bg-red-900 text-white rounded-full transition-colors"
+                                    >
+                                        Search
+                                    </button>
+                                </Form>
+                            </div>
+                        )}
+                    </div>
+                    <ThemeToggle />
+                    <MobileNav />
                 </div>
             </div>
         </header>
