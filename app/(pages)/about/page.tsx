@@ -1,3 +1,6 @@
+
+
+
 export default function About() {
     return (
         <div className="container mx-auto max-w-4xl flex flex-col items-start justify-center mt-6 mb-28">

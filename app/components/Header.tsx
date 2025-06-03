@@ -51,8 +51,8 @@ function Header() {
                             href="/podcast"
                             className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Podcast</Link>
                         <Link
-                            href="/premium"
-                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Premium</Link>
+                            href="/teams"
+                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Teams</Link>
                         <Link
                             href="/tools"
                             className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Tools</Link>
@@ -69,17 +69,16 @@ function Header() {
 
                     {/* Regular search bar for medium and larger devices */}
                     <Form action='/search'
-                        className="flex w-[250px] sm:w-auto items-center bg-muted rounded-full focus:ring-0 sm:flex-1 sm:mx-4">
+                        className="flex w-[250px] sm:w-auto items-center bg-gray-100 rounded-full focus:ring-0 sm:flex-1 sm:mx-4">
                         <Search className="ml-2" size={16} />
                         <input type="text"
                             name="news-search"
                             placeholder="News Search"
-                            className="text-foreground placeholder:text-muted-foreground px-2 py-2 rounded-full focus:outline-none focus:ring-1 focus:ring-ring w-[300px] max-w-2xl transition-colors"
+                            className="text-foreground placeholder:text-muted-foreground px-2 py-2 rounded-full focus:outline-none w-[300px] max-w-2xl transition-colors"
                         />
                     </Form>
 
                     <ThemeToggle />
-
 
                     <Link href="/login"
                         className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
