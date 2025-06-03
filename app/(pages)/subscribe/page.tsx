@@ -1,6 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { Check } from 'lucide-react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 export default function Subscribe() {
     const [email, setEmail] = useState('')
@@ -12,7 +15,7 @@ export default function Subscribe() {
         if (!email) return
 
         setIsSubmitting(true)
-        
+
         // Simulate API call
         setTimeout(() => {
             setIsSubscribed(true)
@@ -20,6 +23,8 @@ export default function Subscribe() {
             setEmail('')
         }, 1000)
     }
+
+    const router = useRouter()
 
     if (isSubscribed) {
         return (
@@ -34,9 +39,9 @@ export default function Subscribe() {
                     <p className="text-gray-600 mb-6">
                         Thank you for subscribing. You'll receive our latest updates and exclusive content in your inbox.
                     </p>
-                    <button 
+                    <button
                         onClick={() => setIsSubscribed(false)}
-                        className="text-indigo-600 hover:text-indigo-700 font-medium"
+                        className="text-red-600 hover:text-red-700 font-medium"
                     >
                         Subscribe another email →
                     </button>
@@ -46,101 +51,82 @@ export default function Subscribe() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="container mx-auto max-w-7xl flex items-center justify-center px-4 mt-16 mb-24">
             <div className="max-w-4xl w-full">
+
+                
                 <div className="text-center mb-12">
-                    <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-                        Stay in the <span className="text-red-800">Loop</span>
+                    <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                    Gain Your Competitive  <span className="text-red-800">Edge</span>
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Get exclusive content, early access to new features, and insider updates delivered straight to your inbox.
+                    <p className="text-xl max-w-3xl mx-auto">
+                    Tools and insights specifically designed to give you an advantage over your league-mates
                     </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                     {/* Subscription Form */}
-                    <div className="bg-white rounded-2xl shadow-xl p-8">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Join our newsletter</h2>
-                        <p className="text-gray-600 mb-6">No spam, unsubscribe at any time.</p>
-                        
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Email address
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Enter your email"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-red-800 focus:border-red-800 transition-colors"
-                                    required
-                                />
-                            </div>
-                            
-                            <button
-                                type="submit"
-                                disabled={isSubmitting || !email}
-                                className="w-full bg-red-800 text-white py-3 px-6 rounded-lg font-semibold focus:scale-102 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isSubmitting ? (
-                                    <span className="flex items-center justify-center">
-                                        Subscribing...
-                                    </span>
-                                ) : (
-                                    'Subscribe Now'
-                                )}
-                            </button>
-                        </form>
+                    <div className="rounded-2xl shadow-xl p-8">
+                        <h2 className="text-2xl text-center font-bold mb-2">Sign up for our Premium Content</h2>
+                        <p className="text-2xl text-center font-bold mb-6">used by industry leaders</p>
 
-                        <p className="text-xs text-gray-500 mt-4">
-                            By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.
+               
+                            <button
+                                onClick={() => router.push('/premium')}
+                                type="submit"
+                                className="w-full bg-red-800 text-white py-3 px-6 rounded-lg font-semibold hover:cursor-pointer hover:scale-102 transition-all"
+                            >
+                                Sign Up Now
+                            </button>
+                
+
+                        <p className="text-xs text-gray-400 mt-4">
+                            By sign up, you agree to our Privacy Policy and consent to receive updates from our company.
                         </p>
                     </div>
 
                     {/* Benefits */}
                     <div className="space-y-6">
-                        <h3 className="text-2xl font-bold text-gray-900">What you'll get:</h3>
-                        
+                        <h3 className="text-2xl font-bold">What you'll get:</h3>
+
                         <div className="space-y-4">
                             <div className="flex items-start space-x-3">
-                                <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                                 
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <Check className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-900">Exclusive Content</h4>
-                                    <p className="text-gray-600">Access to premium articles, guides, and resources not available elsewhere.</p>
+                                    <h4 className="font-semibold">Exclusive Content</h4>
+                                    <p className="text-gray-500">Summaries All Offseason – The Best, Complete Reports in the Industry That's Used By Industry Leaders.</p>
                                 </div>
                             </div>
 
                             <div className="flex items-start space-x-3">
-                                <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                                    
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <Check className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-900">Early Access</h4>
-                                    <p className="text-gray-600">Be the first to know about new features, products, and announcements.</p>
+                                    <h4 className="font-semibold">Early Access</h4>
+                                    <p className="text-gray-500">Ability to search insight and updates. Access to all our Premium articles.</p>
                                 </div>
                             </div>
 
                             <div className="flex items-start space-x-3">
-                                <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <Check className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-900">Special Offers</h4>
-                                    <p className="text-gray-600">Subscriber-only deals, discounts, and promotional offers.</p>
+                                    <h4 className="font-semibold">Special</h4>
+                                    <p className="text-gray-500">Exclusive podcast episodes. Playing in our Fantasy Football Leagues. Our Undying Love and Appreciation </p>
                                 </div>
                             </div>
 
                             <div className="flex items-start space-x-3">
-                                <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <Check className="w-5 h-5" />   
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-gray-900">Community Access</h4>
-                                    <p className="text-gray-600">Join our exclusive community of subscribers and connect with like-minded people.</p>
+                                    <h4 className="font-semibold">Community Access</h4>
+                                    <p className="text-gray-500">Join our exclusive community of subscribers and connect with like-minded people.</p>
                                 </div>
                             </div>
                         </div>
@@ -149,12 +135,13 @@ export default function Subscribe() {
 
                 {/* Social Proof */}
                 <div className="mt-12 text-center">
-                    <p className="text-gray-600 mb-4">Trusted by NFL Analysts at</p>
-                    <div className="flex justify-center items-center space-x-8 opacity-60">
-                        <div className="text-2xl font-bold text-gray-400">COMPANY 1</div>
-                        <div className="text-2xl font-bold text-gray-400">COMPANY 2</div>
-                        <div className="text-2xl font-bold text-gray-400">COMPANY 3</div>
-                        <div className="text-2xl font-bold text-gray-400">COMPANY 4</div>
+                    <p className="mb-4">Trusted by NFL Analysts at</p>
+                    <div className="flex justify-center items-center space-x-10 opacity-80">
+                        <Image src="/the-athletic.png" alt="NFL" width={120} height={100} />
+                        <Image src="/espn-logo.png" alt="NFL" width={120} height={100} />
+                        <Image src="/nbc-sports.png" alt="NFL" width={80} height={100} />
+                        <Image src="/draftkings.png" alt="NFL" width={100} height={100} />
+                      
                     </div>
                 </div>
             </div>
