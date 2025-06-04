@@ -2,210 +2,199 @@
 
 import Link from "next/link"
 import Image from "next/image"
-
-
-const nfcTeams = [
-    {
-        name: "Arizona Cardinals",
-        region: "NFC West",
-        logo: "/ARI.webp",
-        link: "/teams/arizona-cardinals"
-    },
-    {
-        name: "Atlanta Falcons",
-        region: "NFC South",
-        logo: "/ATL.webp",
-        link: "/teams/atlanta-falcons"
-    },
-    {
-        name: "Carolina Panthers",
-        region: "NFC South",
-        logo: "/ARI.webp"
-    },
-    {
-        name: "Chicago Bears",
-        region: "NFC North",
-        logo: "/ATL.webp"
-    },
-    {
-        name: "Dallas Cowboys",
-        region: "NFC East",
-        logo: "/teams/dallas-cowboys.png"
-    },
-    {
-        name: "Detroit Lions",
-        region: "NFC North",
-        logo: "/teams/detroit-lions.png"
-    },
-    {
-        name: "Green Bay Packers",
-        region: "NFC North",
-        logo: "/teams/green-bay-packers.png"
-    },
-    {
-        name: "Los Angeles Rams",
-        region: "NFC West",
-        logo: "/teams/los-angeles-rams.png"
-    },
-    {
-        name: "Minnesota Vikings",
-        region: "NFC North",
-        logo: "/teams/minnesota-vikings.png"
-    },
-    {
-        name: "New Orleans Saints",
-        region: "NFC South",
-        logo: "/teams/new-orleans-saints.png"
-    },
-    {
-        name: "Philadelphia Eagles",
-        region: "NFC East",
-        logo: "/teams/philadelphia-eagles.png"
-    },
-    {
-        name: "San Francisco 49ers",
-        region: "NFC West",
-        logo: "/teams/san-francisco-49ers.png"
-    },
-    {
-        name: "Seattle Seahawks",
-        region: "NFC West",
-        logo: "/teams/seattle-seahawks.png"
-    },
-    {
-        name: "Tampa Bay Buccaneers",
-        region: "NFC South",
-        logo: "/teams/tampa-bay-buccaneers.png"
-    },
-    {
-        name: "Washington Commanders",
-        region: "NFC East",
-        logo: "/teams/washington-commanders.png"
-    }   
-]
-
-const afcTeams = [
-    {
-        name: "Baltimore Ravens",
-        region: "AFC North",
-        logo: "/BAL.webp"
-    },
-    {
-        name: "Buffalo Bills",
-        region: "AFC East",
-        logo: "/BUF.webp"
-    },
-    {
-        name: "Cincinnati Bengals",
-        region: "AFC North",
-        logo: "/BAL.webp"
-    },
-    {
-        name: "Cleveland Browns",
-        region: "AFC North",
-        logo: "/BUF.webp"
-    },
-    {
-        name: "Denver Broncos",
-        region: "AFC West",
-        logo: "/teams/denver-broncos.png"
-    },
-    {
-        name: "Houston Texans",
-        region: "AFC South",
-        logo: "/teams/houston-texans.png"
-    },
-    {
-        name: "Indianapolis Colts",
-        region: "AFC South",
-        logo: "/teams/indianapolis-colts.png"
-    },
-    {
-        name: "Jacksonville Jaguars",
-        region: "AFC South",
-        logo: "/teams/jacksonville-jaguars.png"
-    },
-    {
-        name: "Kansas City Chiefs",
-        region: "AFC West",
-        logo: "/teams/kansas-city-chiefs.png"
-    },
-    {
-        name: "Las Vegas Raiders",
-        region: "AFC West",
-        logo: "/teams/las-vegas-raiders.png"
-    },
-    {
-        name: "Los Angeles Chargers",
-        region: "AFC West",
-        logo: "/teams/los-angeles-chargers.png"
-    },
-    {
-        name: "Miami Dolphins",
-        region: "AFC East",
-        logo: "/teams/miami-dolphins.png"
-    },
-    {
-        name: "New England Patriots",
-        region: "AFC East",
-        logo: "/teams/new-england-patriots.png"
-    },
-    {
-        name: "New York Jets",
-        region: "AFC East",
-        logo: "/teams/new-york-jets.png"
-    },
-    {
-        name: "Pittsburgh Steelers",
-        region: "AFC North",
-        logo: "/teams/pittsburgh-steelers.png"
-    },
-    {
-        name: "Tennessee Titans",
-        region: "AFC South",
-        logo: "/teams/tennessee-titans.png"
-    },
-]
-
+import { Shield, Trophy, MapPin, Users } from "lucide-react"
+import { nflTeams, getTeamsByConference } from './data/nfl-teams'
 
 export default function Teams() {
+    const nfcTeams = getTeamsByConference('NFC')
+    const afcTeams = getTeamsByConference('AFC')
+
     return (
-        <section className="container mx-auto max-w-7xl mt-12 mb-12">
-            <h1 className="text-4xl font-bold">All <span className="text-red-800">Teams</span></h1>
-            <p className="text-muted-foreground text-lg mt-4">In this section you’ll find all the teams in the NFL.  You can click on each to get the full news report for each team as well as for individual players.  Additonally you can use the search bar below for any player or team.</p>
+        <section className="container mx-auto max-w-7xl px-4 py-8">
+            {/* Header */}
+            <div className="text-center mb-12">
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                    NFL <span className="text-red-800">Teams</span>
+                </h1>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Comprehensive coverage of all 32 NFL teams with in-depth analysis, roster breakdowns, and exclusive insights. 
+                    Premium teams feature advanced analytics and insider reports.
+                </p>
+            </div>
 
+            {/* Premium Notice */}
+            <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-lg p-4 mb-8">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                        <Shield className="w-5 h-5 text-red-800 mr-2" />
+                        <span className="text-red-800 font-semibold">Premium Team Analysis Available</span>
+                    </div>
+                    <Link 
+                        href="/premium" 
+                        className="bg-red-800 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-900 transition-colors"
+                    >
+                        Upgrade Now
+                    </Link>
+                </div>
+                <p className="text-red-700 text-sm mt-2">
+                    Access exclusive salary cap analysis, trade rumors, injury reports, and advanced team metrics
+                </p>
+            </div>
 
-            <div className="flex justify-around mt-12">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-4">
-            <h1 className="text-3xl font-extrabold">National Football Conference <span className="text-red-800">(NFC)</span></h1>
-            
-                {nfcTeams.map((team) => (
-                     
-                    <Link href={`/teams/${team.name}`} key={team.name} className="flex items-center gap-4 hover:scale-105 transition-all duration-300">
-                       
-                        <Image src={team.logo} alt={team.name} width={140} height={120} />
+            {/* Conferences */}
+            <div className="grid lg:grid-cols-2 gap-12">
+                {/* NFC Conference */}
+                <div>
+                    <div className="flex items-center mb-8">
+                        <Trophy className="w-8 h-8 text-red-800 mr-3" />
+                        <h2 className="text-3xl font-bold">
+                            National Football Conference <span className="text-red-800">(NFC)</span>
+                        </h2>
+                    </div>
                     
-                        <div className="flex flex-col gap-1 mt-6">
-                            <h2 className="text-3xl font-bold">{team.name}</h2>
-                            <p className="text-muted-foreground">{team.region}</p>
-                        </div>
-                        </Link>
-                    ))}
+                    <div className="space-y-4">
+                        {nfcTeams.map((team) => (
+                            <Link 
+                                href={`/teams/${team.id}`} 
+                                key={team.id} 
+                                className="flex items-center gap-6 p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-gray-200"
+                            >
+                                <div className="relative">
+                                    <Image 
+                                        src={team.logo} 
+                                        alt={team.name} 
+                                        width={80} 
+                                        height={80} 
+                                        className="rounded-lg"
+                                    />
+                                    {team.isPremium && (
+                                        <div className="absolute -top-2 -right-2 bg-red-800 text-white rounded-full p-1">
+                                            <Shield className="w-3 h-3" />
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <div className="flex-1">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-xl font-bold text-gray-900 hover:text-red-800 transition-colors">
+                                            {team.name}
+                                        </h3>
+                                        {team.isPremium && (
+                                            <span className="bg-red-800 text-white px-2 py-1 rounded text-xs font-semibold">
+                                                Premium
+                                            </span>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="flex items-center text-gray-600 text-sm mb-2">
+                                        <MapPin className="w-4 h-4 mr-1" />
+                                        <span>{team.division}</span>
+                                        <span className="mx-2">•</span>
+                                        <span>{team.record2023}</span>
+                                        <span className="mx-2">•</span>
+                                        <span>{team.stadium}</span>
+                                    </div>
+                                    
+                                    <p className="text-gray-700 text-sm line-clamp-2">
+                                        {team.description}
+                                    </p>
+                                </div>
+                                
+                                <div className="flex items-center text-gray-400">
+                                    <Users className="w-5 h-5" />
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
                 </div>
 
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-1 gap-4">
-                <h1 className="text-3xl font-extrabold">American Football Conference <span className="text-red-800">(AFC)</span></h1>
-                {afcTeams.map((team) => (
-                    <Link href={`/teams/${team.name}`} key={team.name} className="flex items-center gap-4 hover:scale-105 transition-all duration-300">
-                        <Image src={team.logo} alt={team.name} width={140} height={120} />
-                        <div className="flex flex-col gap-1 mt-6">
-                            <h2 className="text-3xl font-bold">{team.name}</h2>
-                            <p className="text-muted-foreground">{team.region}</p>
-                        </div>
-                    </Link>
-                ))}
+                {/* AFC Conference */}
+                <div>
+                    <div className="flex items-center mb-8">
+                        <Trophy className="w-8 h-8 text-red-800 mr-3" />
+                        <h2 className="text-3xl font-bold">
+                            American Football Conference <span className="text-red-800">(AFC)</span>
+                        </h2>
+                    </div>
+                    
+                    <div className="space-y-4">
+                        {afcTeams.map((team) => (
+                            <Link 
+                                href={`/teams/${team.id}`} 
+                                key={team.id} 
+                                className="flex items-center gap-6 p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-gray-200"
+                            >
+                                <div className="relative">
+                                    <Image 
+                                        src={team.logo} 
+                                        alt={team.name} 
+                                        width={80} 
+                                        height={80} 
+                                        className="rounded-lg"
+                                    />
+                                    {team.isPremium && (
+                                        <div className="absolute -top-2 -right-2 bg-red-800 text-white rounded-full p-1">
+                                            <Shield className="w-3 h-3" />
+                                        </div>
+                                    )}
+                                </div>
+                                
+                                <div className="flex-1">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-xl font-bold text-gray-900 hover:text-red-800 transition-colors">
+                                            {team.name}
+                                        </h3>
+                                        {team.isPremium && (
+                                            <span className="bg-red-800 text-white px-2 py-1 rounded text-xs font-semibold">
+                                                Premium
+                                            </span>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="flex items-center text-gray-600 text-sm mb-2">
+                                        <MapPin className="w-4 h-4 mr-1" />
+                                        <span>{team.division}</span>
+                                        <span className="mx-2">•</span>
+                                        <span>{team.record2023}</span>
+                                        <span className="mx-2">•</span>
+                                        <span>{team.stadium}</span>
+                                    </div>
+                                    
+                                    <p className="text-gray-700 text-sm line-clamp-2">
+                                        {team.description}
+                                    </p>
+                                </div>
+                                
+                                <div className="flex items-center text-gray-400">
+                                    <Users className="w-5 h-5" />
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
             </div>
+
+            {/* Statistics Section */}
+            <div className="mt-16 bg-gray-50 rounded-xl p-8">
+                <h3 className="text-2xl font-bold text-center mb-8">League Overview</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-red-800">32</div>
+                        <div className="text-gray-600">Total Teams</div>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-red-800">{nflTeams.filter(t => t.isPremium).length}</div>
+                        <div className="text-gray-600">Premium Teams</div>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-red-800">16</div>
+                        <div className="text-gray-600">NFC Teams</div>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-red-800">16</div>
+                        <div className="text-gray-600">AFC Teams</div>
+                    </div>
+                </div>
             </div>
         </section>
     )
