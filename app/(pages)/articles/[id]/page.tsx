@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Clock, User, Shield, Lock, Calendar, Eye } from 'lucide-react'
-import { nflArticles, getArticleById, NFLArticle } from '../data/nfl-articles'
+import { articles, getArticleById, Article } from '../data/articles'
 import { useAuth } from '../hooks/useAuth'
 
 // Premium access component
-const PremiumAccessRequired = ({ article }: { article: NFLArticle }) => {
+const PremiumAccessRequired = ({ article }: { article: Article }) => {
   return (
     <div className="bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-200 rounded-xl p-8 text-center">
       <div className="w-16 h-16 bg-red-800 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -57,7 +57,7 @@ const PremiumAccessRequired = ({ article }: { article: NFLArticle }) => {
 export default function ArticlePage() {
   const params = useParams()
   const { user, isAuthenticated, loading: authLoading } = useAuth()
-  const [article, setArticle] = useState<NFLArticle | null>(null)
+  const [article, setArticle] = useState<Article | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -223,7 +223,7 @@ export default function ArticlePage() {
         <div className="mt-12">
           <h3 className="text-2xl font-bold mb-6">More NFL Articles</h3>
           <div className="grid md:grid-cols-2 gap-6">
-            {nflArticles
+            {articles
               .filter(a => a.id !== article.id)
               .slice(0, 4)
               .map((relatedArticle) => (

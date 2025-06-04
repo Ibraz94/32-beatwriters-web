@@ -1,4 +1,4 @@
-export interface NFLArticle {
+export interface Article {
   id: string
   title: string
   excerpt: string
@@ -12,7 +12,7 @@ export interface NFLArticle {
   content: string
 }
 
-export const nflArticles: NFLArticle[] = [
+export const articles: Article[] = [
   {
     id: 'mahomes-mvp-season',
     title: 'Patrick Mahomes\' Path to Another MVP Season',
@@ -294,14 +294,14 @@ export const nflArticles: NFLArticle[] = [
   }
 ]
 
-export const getArticleById = (id: string): NFLArticle | undefined => {
-  return nflArticles.find(article => article.id === id)
+export const getArticleById = (id: string): Article | undefined => {
+  return articles.find(article => article.id === id)
 }
 
-export const getPremiumArticles = (): NFLArticle[] => {
-  return nflArticles.filter(article => article.isPremium)
+export const getPremiumArticles = (): Article[] => {
+  return articles.filter(article => article.isPremium)
 }
 
-export const getFreeArticles = (): NFLArticle[] => {
-  return nflArticles.filter(article => !article.isPremium)
+export const getFreeArticles = (): Article[] => {
+  return articles.filter(article => !article.isPremium)
 } 

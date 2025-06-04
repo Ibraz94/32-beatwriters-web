@@ -22,6 +22,16 @@ export interface NFLTeam {
     name: string
     position: string
     number: number
+    image: string
+    height: string
+    weight: string
+    college: string
+  }[]
+  socialMedia: {
+    website: string
+    facebook: string
+    instagram: string
+    twitter: string
   }[]
   recentNews: {
     title: string
@@ -40,13 +50,13 @@ export interface NFLTeam {
 
 export const nflTeams: NFLTeam[] = [
   {
-    id: 'kansas-city-chiefs',
-    name: 'Kansas City Chiefs',
-    city: 'Kansas City',
-    abbreviation: 'KC',
-    conference: 'AFC',
-    division: 'AFC West',
-    logo: '/teams/kansas-city-chiefs.png',
+    id: 'arizona-cardinals',
+    name: 'Arizona Cardinals',
+    city: 'Arizona',
+    abbreviation: 'ARI',
+    conference: 'NFC',
+    division: 'NFC West',
+    logo: '/ARI.webp',
     primaryColor: '#E31837',
     secondaryColor: '#FFB81C',
     founded: 1960,
@@ -57,13 +67,21 @@ export const nflTeams: NFLTeam[] = [
     championships: 3,
     playoffAppearances: 12,
     record2023: '11-6',
-    isPremium: false,
+    isPremium: true,
     description: 'The Kansas City Chiefs are the defending Super Bowl champions and one of the most dynamic teams in the NFL, led by superstar quarterback Patrick Mahomes.',
     keyPlayers: [
-      { name: 'Patrick Mahomes', position: 'QB', number: 15 },
-      { name: 'Travis Kelce', position: 'TE', number: 87 },
-      { name: 'Chris Jones', position: 'DT', number: 95 },
-      { name: 'Tyreek Hill', position: 'WR', number: 10 }
+      { name: 'Clayton Tune', position: 'QB', number: 15, image: '/clayton-tune.jpg', height: '6-3"', weight: '225', college: 'Houston' },
+      { name: 'Desmond Ridder', position: 'QB', number: 1, image: '/clayton-tune.jpg', height: '6-3"', weight: '220', college: 'Cincinnati' },
+      { name: 'Emari Demercado', position: 'DT', number: 95, image: '/clayton-tune.jpg', height: '6-5"', weight: '300', college: 'Missourri' },
+      { name: 'Greg Dortch', position: 'WR', number: 10, image: '/clayton-tune.jpg', height: '5-10"', weight: '180', college: 'West Alabama' },
+      { name: 'Kyle Pitts', position: 'TE', number: 10, image: '/clayton-tune.jpg', height: '6-6"', weight: '240', college: 'Florida' },
+      { name: 'Rondale Moore', position: 'WR', number: 11, image: '/clayton-tune.jpg', height: '5-9"', weight: '180', college: 'Purdue' },
+      { name: 'Rondale Moore', position: 'WR', number: 11, image: '/clayton-tune.jpg', height: '5-9"', weight: '180', college: 'Purdue' },
+      { name: 'Rondale Moore', position: 'WR', number: 11, image: '/clayton-tune.jpg', height: '5-9"', weight: '180', college: 'Purdue' },
+      { name: 'Rondale Moore', position: 'WR', number: 11, image: '/clayton-tune.jpg', height: '5-9"', weight: '180', college: 'Purdue' },
+      { name: 'Rondale Moore', position: 'WR', number: 11, image: '/clayton-tune.jpg', height: '5-9"', weight: '180', college: 'Purdue' },
+      { name: 'Rondale Moore', position: 'WR', number: 11, image: '/clayton-tune.jpg', height: '5-9"', weight: '180', college: 'Purdue' },
+      { name: 'Rondale Moore', position: 'WR', number: 11, image: '/clayton-tune.jpg', height: '5-9"', weight: '180', college: 'Purdue' },
     ],
     recentNews: [
       {
@@ -75,6 +93,14 @@ export const nflTeams: NFLTeam[] = [
         title: 'Mahomes Named to Pro Bowl',
         date: '2024-01-12',
         summary: 'Quarterback earns his sixth Pro Bowl selection in dominant season.'
+      }
+    ],
+    socialMedia: [
+      {
+        website: 'https://www.azcardinals.com/',
+        facebook: 'https://www.facebook.com/arizonacardinals',
+        instagram: 'https://www.instagram.com/azcardinals',
+        twitter: 'https://x.com/AZCardinals',
       }
     ],
     detailedAnalysis: `
@@ -92,13 +118,13 @@ export const nflTeams: NFLTeam[] = [
     `
   },
   {
-    id: 'san-francisco-49ers',
-    name: 'San Francisco 49ers',
-    city: 'San Francisco',
-    abbreviation: 'SF',
+    id: 'atlanta-falcons',
+    name: 'Atlanta Falcons',
+    city: 'Atlanta',
+    abbreviation: 'ATL',
     conference: 'NFC',
-    division: 'NFC West',
-    logo: '/teams/san-francisco-49ers.png',
+    division: 'NFC South',
+    logo: '/ATL.webp',
     primaryColor: '#AA0000',
     secondaryColor: '#B3995D',
     founded: 1946,
@@ -112,10 +138,10 @@ export const nflTeams: NFLTeam[] = [
     isPremium: true,
     description: 'The San Francisco 49ers are one of the most successful franchises in NFL history, known for their innovative offensive schemes and dominant defense.',
     keyPlayers: [
-      { name: 'Brock Purdy', position: 'QB', number: 13 },
-      { name: 'Christian McCaffrey', position: 'RB', number: 23 },
-      { name: 'Nick Bosa', position: 'DE', number: 97 },
-      { name: 'Deebo Samuel', position: 'WR', number: 19 }
+      { name: 'Brock Purdy', position: 'QB', number: 13, image: '/brock-purdy.webp', height: '6-2"', weight: '210', college: 'Iowa State' },
+      { name: 'Christian McCaffrey', position: 'RB', number: 23, image: '/christian-mccaffrey.webp', height: '5-10"', weight: '210', college: 'Stanford' },
+        { name: 'Nick Bosa', position: 'DE', number: 97, image: '/nick-bosa.webp', height: '6-5"', weight: '265', college: 'Ohio State' },
+      { name: 'Deebo Samuel', position: 'WR', number: 19, image: '/deebo-samuel.webp', height: '6-0"', weight: '205', college: 'South Carolina' }     
     ],
     recentNews: [
       {
@@ -127,6 +153,14 @@ export const nflTeams: NFLTeam[] = [
         title: 'Purdy\'s Remarkable Sophomore Season',
         date: '2024-01-10',
         summary: 'Second-year quarterback continues to exceed expectations as team leader.'
+      }
+    ],
+    socialMedia: [
+      {
+        website: 'https://www.azcardinals.com/',
+        facebook: 'https://www.facebook.com/arizonacardinals',
+        instagram: 'https://www.instagram.com/azcardinals',
+        twitter: 'https://x.com/AZCardinals',
       }
     ],
     premiumInsights: {
@@ -159,7 +193,7 @@ export const nflTeams: NFLTeam[] = [
     abbreviation: 'BUF',
     conference: 'AFC',
     division: 'AFC East',
-    logo: '/teams/buffalo-bills.png',
+    logo: '/BUF.webp',
     primaryColor: '#00338D',
     secondaryColor: '#C60C30',
     founded: 1960,
@@ -170,13 +204,13 @@ export const nflTeams: NFLTeam[] = [
     championships: 0,
     playoffAppearances: 21,
     record2023: '11-6',
-    isPremium: false,
+    isPremium: true,
     description: 'The Buffalo Bills are perennial AFC contenders led by dynamic quarterback Josh Allen and a passionate fanbase known as Bills Mafia.',
     keyPlayers: [
-      { name: 'Josh Allen', position: 'QB', number: 17 },
-      { name: 'Stefon Diggs', position: 'WR', number: 14 },
-      { name: 'Von Miller', position: 'OLB', number: 40 },
-      { name: 'Matt Milano', position: 'LB', number: 58 }
+      { name: 'Josh Allen', position: 'QB', number: 17, image: '/josh-allen.webp', height: '6-5"', weight: '230', college: 'Wyoming' },
+      { name: 'Stefon Diggs', position: 'WR', number: 14, image: '/stefon-diggs.webp', height: '6-1"', weight: '190', college: 'Maryland' },
+      { name: 'Von Miller', position: 'OLB', number: 40, image: '/von-miller.webp', height: '6-3"', weight: '250', college: 'Texas A&M' },
+      { name: 'Matt Milano', position: 'LB', number: 58, image: '/matt-milano.webp', height: '6-2"', weight: '210', college: 'Boston College' }
     ],
     recentNews: [
       {
@@ -188,6 +222,14 @@ export const nflTeams: NFLTeam[] = [
         title: 'Josh Allen MVP Candidate',
         date: '2024-01-13',
         summary: 'Quarterback\'s exceptional season puts him in MVP conversation.'
+      }
+    ],
+    socialMedia: [
+      {
+        website: 'https://www.azcardinals.com/',
+        facebook: 'https://www.facebook.com/arizonacardinals',
+        instagram: 'https://www.instagram.com/azcardinals',
+        twitter: 'https://x.com/AZCardinals',
       }
     ],
     detailedAnalysis: `
@@ -225,10 +267,10 @@ export const nflTeams: NFLTeam[] = [
     isPremium: true,
     description: 'America\'s Team, the Dallas Cowboys are one of the most valuable and recognizable franchises in professional sports.',
     keyPlayers: [
-      { name: 'Dak Prescott', position: 'QB', number: 4 },
-      { name: 'CeeDee Lamb', position: 'WR', number: 88 },
-      { name: 'Micah Parsons', position: 'LB', number: 11 },
-      { name: 'Trevon Diggs', position: 'CB', number: 7 }
+      { name: 'Dak Prescott', position: 'QB', number: 4, image: '/dak-prescott.webp', height: '6-2"', weight: '230', college: 'Missourri' },
+      { name: 'CeeDee Lamb', position: 'WR', number: 88, image: '/cee-dee-lamb.webp', height: '6-1"', weight: '190', college: 'Oklahoma' },
+      { name: 'Micah Parsons', position: 'LB', number: 11, image: '/micah-parsons.webp', height: '6-3"', weight: '240', college: 'Penn State' },
+      { name: 'Trevon Diggs', position: 'CB', number: 7, image: '/trevon-diggs.webp', height: '6-0"', weight: '190', college: 'Alabama' }
     ],
     recentNews: [
       {
@@ -240,6 +282,14 @@ export const nflTeams: NFLTeam[] = [
         title: 'Parsons Named Defensive Player of Year Finalist',
         date: '2024-01-14',
         summary: 'Linebacker\'s dominant season earns recognition as top defensive player.'
+      }
+    ],
+    socialMedia: [
+      {
+        website: 'https://www.azcardinals.com/',
+        facebook: 'https://www.facebook.com/arizonacardinals',
+        instagram: 'https://www.instagram.com/azcardinals',
+        twitter: 'https://x.com/AZCardinals',
       }
     ],
     premiumInsights: {
@@ -286,10 +336,10 @@ export const nflTeams: NFLTeam[] = [
     isPremium: true,
     description: 'The Philadelphia Eagles are known for their passionate fanbase and aggressive, physical style of play that embodies the city of Philadelphia.',
     keyPlayers: [
-      { name: 'Jalen Hurts', position: 'QB', number: 1 },
-      { name: 'A.J. Brown', position: 'WR', number: 11 },
-      { name: 'Lane Johnson', position: 'OT', number: 65 },
-      { name: 'Haason Reddick', position: 'OLB', number: 7 }
+      { name: 'Jalen Hurts', position: 'QB', number: 1, image: '/jalen-hurts.webp', height: '6-2"', weight: '220', college: 'Alabama' },
+      { name: 'A.J. Brown', position: 'WR', number: 11, image: '/a-j-brown.webp', height: '6-1"', weight: '210', college: 'Ole Miss' },
+      { name: 'Lane Johnson', position: 'OT', number: 65, image: '/lane-johnson.webp', height: '6-7"', weight: '310', college: 'Oklahoma' },
+      { name: 'Haason Reddick', position: 'OLB', number: 7, image: '/haason-reddick.webp', height: '6-3"', weight: '240', college: 'Temple' }
     ],
     recentNews: [
       {
@@ -301,6 +351,14 @@ export const nflTeams: NFLTeam[] = [
         title: 'Hurts\' Leadership Praised by Teammates',
         date: '2024-01-11',
         summary: 'Quarterback\'s growth as leader evident in team\'s late season surge.'
+      }
+    ],
+    socialMedia: [
+      {
+        website: 'https://www.azcardinals.com/',
+        facebook: 'https://www.facebook.com/arizonacardinals',
+        instagram: 'https://www.instagram.com/azcardinals',
+        twitter: 'https://x.com/AZCardinals',
       }
     ],
     premiumInsights: {
@@ -344,13 +402,13 @@ export const nflTeams: NFLTeam[] = [
     championships: 4,
     playoffAppearances: 36,
     record2023: '9-8',
-    isPremium: false,
+    isPremium: true,
     description: 'The Green Bay Packers are the NFL\'s only publicly-owned team, with a rich history and legendary home field advantage at Lambeau Field.',
     keyPlayers: [
-      { name: 'Jordan Love', position: 'QB', number: 10 },
-      { name: 'Christian Watson', position: 'WR', number: 9 },
-      { name: 'Jaire Alexander', position: 'CB', number: 23 },
-      { name: 'Rashan Gary', position: 'OLB', number: 52 }
+      { name: 'Jordan Love', position: 'QB', number: 10, image: '/jordan-love.webp', height: '6-3"', weight: '210', college: 'Utah State' },
+      { name: 'Christian Watson', position: 'WR', number: 9, image: '/christian-watson.webp', height: '6-3"', weight: '205', college: 'Northwestern' },
+      { name: 'Jaire Alexander', position: 'CB', number: 23, image: '/jaire-alexander.webp', height: '6-0"', weight: '190', college: 'Louisville' },
+      { name: 'Rashan Gary', position: 'OLB', number: 52, image: '/rashan-gary.webp', height: '6-4"', weight: '265', college: 'Michigan' }
     ],
     recentNews: [
       {
@@ -362,6 +420,14 @@ export const nflTeams: NFLTeam[] = [
         title: 'Packers\' Young Core Shows Promise',
         date: '2024-01-12',
         summary: 'Green Bay\'s youth movement paying dividends for future success.'
+      }
+    ],
+    socialMedia: [
+      {
+        website: 'https://www.azcardinals.com/',
+        facebook: 'https://www.facebook.com/arizonacardinals',
+        instagram: 'https://www.instagram.com/azcardinals',
+        twitter: 'https://x.com/AZCardinals',
       }
     ],
     detailedAnalysis: `
@@ -385,7 +451,7 @@ export const nflTeams: NFLTeam[] = [
     abbreviation: 'BAL',
     conference: 'AFC',
     division: 'AFC North',
-    logo: '/teams/baltimore-ravens.png',
+    logo: '/BAL.webp',
     primaryColor: '#241773',
     secondaryColor: '#000000',
     founded: 1996,
@@ -399,10 +465,10 @@ export const nflTeams: NFLTeam[] = [
     isPremium: true,
     description: 'The Baltimore Ravens are known for their physical, hard-hitting style and have been one of the most consistent franchises since their inception.',
     keyPlayers: [
-      { name: 'Lamar Jackson', position: 'QB', number: 8 },
-      { name: 'Mark Andrews', position: 'TE', number: 89 },
-      { name: 'Roquan Smith', position: 'LB', number: 18 },
-      { name: 'Kyle Hamilton', position: 'S', number: 14 }
+      { name: 'Lamar Jackson', position: 'QB', number: 8, image: '/lamar-jackson.webp', height: '6-2"', weight: '220', college: 'Louisville' },
+      { name: 'Mark Andrews', position: 'TE', number: 89, image: '/mark-andrews.webp', height: '6-5"', weight: '250', college: 'Oklahoma' },
+      { name: 'Roquan Smith', position: 'LB', number: 18, image: '/roquan-smith.webp', height: '6-2"', weight: '230', college: 'Georgia' },
+      { name: 'Kyle Hamilton', position: 'S', number: 14, image: '/kyle-hamilton.webp', height: '6-2"', weight: '205', college: 'Alabama' }
     ],
     recentNews: [
       {
@@ -414,6 +480,14 @@ export const nflTeams: NFLTeam[] = [
         title: 'Jackson Named MVP Finalist',
         date: '2024-01-15',
         summary: 'Quarterback\'s exceptional season puts him in MVP race once again.'
+      }
+    ],
+    socialMedia: [
+      {
+        website: 'https://www.azcardinals.com/',
+        facebook: 'https://www.facebook.com/arizonacardinals',
+        instagram: 'https://www.instagram.com/azcardinals',
+        twitter: 'https://x.com/AZCardinals',
       }
     ],
     premiumInsights: {
@@ -440,13 +514,13 @@ export const nflTeams: NFLTeam[] = [
     `
   },
   {
-    id: 'miami-dolphins',
-    name: 'Miami Dolphins',
-    city: 'Miami',
-    abbreviation: 'MIA',
+    id: 'cincinnati-bengals',
+    name: 'Cincinnati Bengals',
+    city: 'Cincinnati',
+    abbreviation: 'CIN',
     conference: 'AFC',
-    division: 'AFC East',
-    logo: '/teams/miami-dolphins.png',
+    division: 'AFC North',
+    logo: '/CIN.webp',
     primaryColor: '#008E97',
     secondaryColor: '#FC4C02',
     founded: 1966,
@@ -457,13 +531,13 @@ export const nflTeams: NFLTeam[] = [
     championships: 2,
     playoffAppearances: 23,
     record2023: '11-6',
-    isPremium: false,
+    isPremium: true,
     description: 'The Miami Dolphins are known for their explosive offense and the only perfect season in NFL history (1972).',
     keyPlayers: [
-      { name: 'Tua Tagovailoa', position: 'QB', number: 1 },
-      { name: 'Tyreek Hill', position: 'WR', number: 10 },
-      { name: 'Jaylen Waddle', position: 'WR', number: 17 },
-      { name: 'Bradley Chubb', position: 'OLB', number: 2 }
+      { name: 'Tua Tagovailoa', position: 'QB', number: 1, image: '/tua-tagovailoa.webp', height: '6-2"', weight: '220', college: 'Alabama' },
+      { name: 'Tyreek Hill', position: 'WR', number: 10, image: '/tyreek-hill.webp', height: '5-10"', weight: '180', college: 'West Alabama' },
+      { name: 'Jaylen Waddle', position: 'WR', number: 17, image: '/jaylen-waddle.webp', height: '5-10"', weight: '190', college: 'Alabama' },
+      { name: 'Bradley Chubb', position: 'OLB', number: 2, image: '/bradley-chubb.webp', height: '6-3"', weight: '250', college: 'North Carolina State' }
     ],
     recentNews: [
       {
@@ -475,6 +549,14 @@ export const nflTeams: NFLTeam[] = [
         title: 'Tua\'s Health Key to Playoff Success',
         date: '2024-01-11',
         summary: 'Quarterback\'s availability crucial for team\'s championship hopes.'
+      }
+    ],
+    socialMedia: [
+      {
+        website: 'https://www.azcardinals.com/',
+        facebook: 'https://www.facebook.com/arizonacardinals',
+        instagram: 'https://www.instagram.com/azcardinals',
+        twitter: 'https://x.com/AZCardinals',
       }
     ],
     detailedAnalysis: `

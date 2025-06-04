@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Clock, Shield, User } from 'lucide-react'
-import { nflArticles } from './data/nfl-articles'
+import { articles } from './data/articles'
 
 export default function ArticlesPage() {
   return (
@@ -10,7 +10,7 @@ export default function ArticlesPage() {
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          NFL <span className="text-red-800">Articles</span>
+          Articles
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           In-depth analysis, breaking news, and expert insights from the world of professional football
@@ -38,7 +38,7 @@ export default function ArticlesPage() {
 
       {/* Articles Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {nflArticles.map((article) => (
+        {articles.map((article) => (
           <article key={article.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
             {/* Article Image */}
             <div className="relative h-48 bg-gray-200">
