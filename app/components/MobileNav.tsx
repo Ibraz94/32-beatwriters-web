@@ -6,44 +6,48 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useAuth } from '../(pages)/articles/hooks/useAuth';
 
-const links = [
-  {
-    name: "Login",
-    path: "/login"
-  },
-  {
-    name: 'Beat Writers',
-    path: "/beat-writers"
-  },
-  {
-    name: 'Home',
-    path: "/"
-  },
-  {
-    name: 'Subscribe',
-    path: "/subscribe"
-  },
-  {
-    name: 'Articles',
-    path: "/articles"
-  },
-  {
-    name: 'Podcast',
-    path: "/podcast"
-  },
-  {
-    name: 'Premium',
-    path: "/premium"
-  },
-  {
-    name: 'Tools',
-    path: "/tools"
-  }
-]
 const MobileNav = () => {
   const pathname = usePathname();
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
+
+  const links = [
+    {
+      name: isAuthenticated ? "Account" : "Login",
+      path: isAuthenticated ? "/account" : "/login"
+    },
+    {
+      name: 'Beat Writers',
+      path: "/beat-writers"
+    },
+    {
+      name: 'Home',
+      path: "/"
+    },
+    {
+      name: 'Subscribe',
+      path: "/subscribe"
+    },
+    {
+      name: 'Articles',
+      path: "/articles"
+    },
+    {
+      name: 'Podcast',
+      path: "/podcast"
+    },
+    {
+      name: 'Premium',
+      path: "/premium"
+    },
+    {
+      name: 'Tools',
+      path: "/tools"
+    }
+  ];
+
   return (
     <Sheet>
       <SheetTrigger className="flex justify-center items-center transition-all duration-300">

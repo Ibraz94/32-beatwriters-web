@@ -7,11 +7,13 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
 import MobileNav from "./MobileNav";
 import { useState } from "react";
+import { useAuth } from '../(pages)/articles/hooks/useAuth';
 
 function Header() {
 
     const { theme } = useTheme();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const { user, isAuthenticated } = useAuth();
 
     return (
         <header className="container mx-auto h-20 flex flex-wrap items-center sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border transition-colors px-4">
@@ -69,22 +71,30 @@ function Header() {
 
                     {/* Regular search bar for medium and larger devices */}
                     <Form action='/search'
-                        className="flex w-[250px] sm:w-auto items-center bg-gray-100 rounded-full focus:ring-0 sm:flex-1 sm:mx-4">
+                        className="flex w-[250px] sm:w-auto items-center border rounded-full focus:ring-0 sm:flex-1 sm:mx-4">
                         <Search className="ml-2" size={16} />
                         <input type="text"
-                            name="news-search"
-                            placeholder="News Search"
+                            name="search"
+                            placeholder="Search"
                             className="text-foreground placeholder:text-muted-foreground px-2 py-2 rounded-full focus:outline-none w-[300px] max-w-2xl transition-colors"
                         />
                     </Form>
 
                     <ThemeToggle />
 
-                    <Link href="/login"
-                        className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
-                        <CircleUserRound />
-                        <span>Login</span>
-                    </Link>
+                    {isAuthenticated ? (
+                        <Link href="/account"
+                            className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
+                            <CircleUserRound />
+                            <span>Account</span>
+                        </Link>
+                    ) : (
+                        <Link href="/login"
+                            className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
+                            <CircleUserRound />
+                            <span>Login</span>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Mobile Layout: Theme Toggle on Right */}
@@ -93,7 +103,7 @@ function Header() {
                     <div className="relative">
                         <button
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
-                            className="p-2 text-foreground hover:text-red-900 transition-colors"
+                            className="p-2 text-foreground hover:text-red-900 hover:scale-105 hover:cursor-pointer transition-colors"
                         >
                             <Search size={20} />
                         </button>
@@ -104,7 +114,7 @@ function Header() {
                                         type="text"
                                         name="news-search"
                                         placeholder="Search news..."
-                                        className="w-full text-foreground placeholder:text-muted-foreground px-3 py-2 rounded-full border border-border bg-muted focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
+                                        className="w-full text-foreground placeholder:text-muted-foreground px-3 py-2 rounded-full border border-border focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
                                         autoFocus
                                     />
                                     <button
