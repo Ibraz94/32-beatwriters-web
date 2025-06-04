@@ -28,7 +28,7 @@ export default function Subscribe() {
 
     if (isSubscribed) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center px-4">
+            <div className="min-h-screen flex items-center justify-center px-4">
                 <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,7 +54,6 @@ export default function Subscribe() {
         <div className="container mx-auto max-w-7xl flex items-center justify-center px-4 mt-16 mb-24">
             <div className="max-w-4xl w-full">
 
-                
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-6xl font-bold mb-4">
                     Gain Your Competitive  <span className="text-red-800">Edge</span>
@@ -66,7 +65,7 @@ export default function Subscribe() {
 
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                     {/* Subscription Form */}
-                    <div className="rounded-2xl shadow-xl p-8">
+                    <div className="rounded-2xl border shadow-xl p-8">
                         <h2 className="text-2xl text-center font-bold mb-2">Sign up for our Premium Content</h2>
                         <p className="text-2xl text-center font-bold mb-6">used by industry leaders</p>
 

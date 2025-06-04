@@ -22,7 +22,7 @@ export const articles: Article[] = [
     readTime: '8 min read',
     isPremium: false,
     category: 'NFL Analysis',
-    image: '/api/placeholder/800/400',
+    image: '/article-image.png',
     tags: ['Mahomes', 'MVP', 'Chiefs', 'Analysis'],
     content: `
       <h2>The Making of an MVP Season</h2>
