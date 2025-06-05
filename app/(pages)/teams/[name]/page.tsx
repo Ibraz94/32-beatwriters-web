@@ -36,21 +36,21 @@ const PremiumAccessRequired = ({ team }: { team: NFLTeam }) => {
       <div className="space-y-3">
         <Link
           href="/premium"
-          className="w-full bg-red-800 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-900 transition-colors block"
+          className="w-full bg-red-800 text-white py-3 px-6 rounded-lg font-semibold hover:scale-102 transition-all block"
         >
           Upgrade to Premium
         </Link>
 
         <Link
           href="/login"
-          className="w-full border border-red-800 text-red-800 py-3 px-6 rounded-lg font-semibold hover:bg-red-50 transition-colors block"
+          className="w-full border py-3 px-6 rounded-lg font-semibold hover:scale-102 transition-all block"
         >
           Already Premium? Sign In
         </Link>
       </div>
 
       <p className="text-xs mt-4">
-        Starting at $10/month • Cancel anytime
+        Starting at $10/month
       </p>
     </div>
   )
@@ -358,8 +358,10 @@ export default function TeamPage() {
             <div className='rounded-xl border shadow-lg p-6'>
               <h3 className="text-xl font-bold mb-2">Players</h3>
               <div className="grid grid-cols-4 gap-2">
-                {team.keyPlayers.map((player, index) => (
-                  <div key={index} className="flex flex-col justify-between items-center p-1 border rounded col-span-2">
+                {team.keyPlayers.map((player, index) => {
+                  const playerId = player.name.toLowerCase().replace(/\s+/g, '-') + '-' + team.id;
+                  return (
+                  <Link href={`/players/${playerId}`} key={index} className="flex flex-col justify-between items-center p-1 border rounded col-span-2">
                     <Image
                       src={player.image}
                       alt={player.name}
@@ -371,8 +373,9 @@ export default function TeamPage() {
                     <div>
                       <h4 className="text-lg font-semibold mt-2">{player.name}</h4>
                     </div>
-                  </div>
-                ))}
+                  </Link>
+                  )
+                })}
               </div>
             </div>
           </div>
