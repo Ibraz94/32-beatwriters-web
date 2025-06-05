@@ -16,8 +16,8 @@ function Header() {
     const { user, isAuthenticated } = useAuth();
 
     return (
-        <header className="container mx-auto h-20 flex flex-wrap items-center sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border transition-colors px-4">
-            <div className="flex w-full flex-wrap justify-between items-center">
+        <header className="h-20 flex flex-wrap items-center sticky top-0 z-10 bg-background/100 backdrop-blur-md border-b border-border transition-colors px-4">
+            <div className="flex w-full flex-wrap justify-between items-center container mx-auto">
 
                 {/* Mobile Layout: Menu and Search on Left */}
                 <div className="flex items-center gap-4 sm:hidden">
