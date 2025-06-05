@@ -83,7 +83,7 @@ function Header() {
                     <ThemeToggle />
 
                     {isAuthenticated ? (
-                        <Link href="/account"
+                        <Link href="/auth/account"
                             className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
                             <CircleUserRound />
                             <span>Account</span>

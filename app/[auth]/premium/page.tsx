@@ -136,7 +136,7 @@ export default function PremiumSignup() {
 //   }
 
   return (
-    <div className=" py-6 px-4">
+    <div className=" py-6 px-4 pt-16">
       <div className="container mx-auto max-w-4xl">
         {/* Header */}
         <div className="text-center mb-4">
@@ -170,8 +170,8 @@ export default function PremiumSignup() {
             <span className='mr-42'>Personal</span>
             <span className='mr-46'>Address</span>
             <span className='mr-46'>Plan</span>
-            <span className='mr-44'>Payment</span>
-            <span>Review</span>
+            <span className='mr-44'>Review</span>
+            <span>Payment</span>
           </div>
         </div>
 
@@ -416,8 +416,78 @@ export default function PremiumSignup() {
               </div>
             )}
 
-            {/* Step 4: Payment Information */}
-            {currentStep === 4 && (
+               {/* Step 4: Review & Preferences */}
+               {currentStep === 4 && (
+              <div className="space-y-6">
+                <h2 className="text-2xl font-bold mb-6">Review & Preferences</h2>
+
+                {/* Order Summary */}
+                <div className="rounded-lg p-6">
+                  <h3 className="font-bold mb-4">Order Summary</h3>
+                  <div className="flex justify-between items-center mb-2">
+                    <span>Plan: {formData.plan.charAt(0).toUpperCase() + formData.plan.slice(1)}</span>
+                    <span className="font-bold">${planPrices.monthly.price}</span>
+                  </div>
+                  <div className="border-t pt-2 mt-2">
+                    <div className="flex justify-between items-center font-bold">
+                      <span>Total</span>
+                      <span>${planPrices.annual.price}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Communication Preferences */}
+                <div className="space-y-3">
+                  <h3 className="font-bold">Communication Preferences</h3>
+                  
+                  <div className="space-y-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="newsletter"
+                        checked={formData.newsletter}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-red-800 border-gray-300 rounded"
+                      />
+                      <span className="ml-2 text-sm">Receive our weekly newsletter with exclusive insights</span>
+                    </label>
+                    
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="smsUpdates"
+                        checked={formData.smsUpdates}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-red-800 border-gray-300 rounded"
+                      />
+                      <span className="ml-2 text-sm">Receive SMS updates for breaking news and urgent alerts</span>
+                    </label>
+                    
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        name="exclusiveOffers"
+                        checked={formData.exclusiveOffers}
+                        onChange={handleInputChange}
+                        className="w-4 h-4 text-red-800 border-gray-300 rounded"
+                      />
+                      <span className="ml-2 text-sm">Receive exclusive offers and promotions</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Terms and Conditions */}
+                <div className="text-xs space-y-2">
+                  <p>
+                    By completing this purchase, you agree to our Terms of Service and Privacy Policy.
+                    Your subscription will automatically renew at the end of each billing period.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: Payment Information */}
+            {currentStep === 5 && (
               <div className="space-y-3">
                 <div className="flex items-center mb-6">
                   <CreditCard className="w-6 h-6 text-red-800 mr-3" />
@@ -496,75 +566,6 @@ export default function PremiumSignup() {
               </div>
             )}
 
-            {/* Step 5: Review & Preferences */}
-            {currentStep === 5 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold mb-6">Review & Preferences</h2>
-
-                {/* Order Summary */}
-                <div className="rounded-lg p-6">
-                  <h3 className="font-bold mb-4">Order Summary</h3>
-                  <div className="flex justify-between items-center mb-2">
-                    <span>Plan: {formData.plan.charAt(0).toUpperCase() + formData.plan.slice(1)}</span>
-                    <span className="font-bold">${planPrices.monthly.price}</span>
-                  </div>
-                  <div className="border-t pt-2 mt-2">
-                    <div className="flex justify-between items-center font-bold">
-                      <span>Total</span>
-                      <span>${planPrices.annual.price}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Communication Preferences */}
-                <div className="space-y-3">
-                  <h3 className="font-bold">Communication Preferences</h3>
-                  
-                  <div className="space-y-3">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="newsletter"
-                        checked={formData.newsletter}
-                        onChange={handleInputChange}
-                        className="w-4 h-4 text-red-800 border-gray-300 rounded"
-                      />
-                      <span className="ml-2 text-sm">Receive our weekly newsletter with exclusive insights</span>
-                    </label>
-                    
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="smsUpdates"
-                        checked={formData.smsUpdates}
-                        onChange={handleInputChange}
-                        className="w-4 h-4 text-red-800 border-gray-300 rounded"
-                      />
-                      <span className="ml-2 text-sm">Receive SMS updates for breaking news and urgent alerts</span>
-                    </label>
-                    
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        name="exclusiveOffers"
-                        checked={formData.exclusiveOffers}
-                        onChange={handleInputChange}
-                        className="w-4 h-4 text-red-800 border-gray-300 rounded"
-                      />
-                      <span className="ml-2 text-sm">Receive exclusive offers and promotions</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Terms and Conditions */}
-                <div className="text-xs space-y-2">
-                  <p>
-                    By completing this purchase, you agree to our Terms of Service and Privacy Policy.
-                    Your subscription will automatically renew at the end of each billing period.
-                  </p>
-                </div>
-              </div>
-            )}
 
             {/* Navigation Buttons */}
             <div className="flex justify-between mt-1 pt-6 border-t">
@@ -578,7 +579,7 @@ export default function PremiumSignup() {
                 </button>
               )}
               
-              {currentStep < 5 ? (
+              {currentStep < 4 ? (
                 <button
                   type="button"
                   onClick={nextStep}
