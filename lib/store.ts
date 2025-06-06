@@ -4,7 +4,7 @@ import { playersApi } from './services/playersApi'
 import { teamsApi } from './services/teamsApi'
 import { articlesApi } from './services/articlesApi'
 import { podcastApi } from './services/podcastApi'
-import { faqsApi } from './services/faqsApi'
+import { feedsApi } from './services/feedApi'
 import { toolsApi } from './services/toolsApi'
 import { subscriptionApi } from './services/subscriptionApi'
 import { contactApi } from './services/contactApi'
@@ -19,7 +19,7 @@ export const store = configureStore({
     [teamsApi.reducerPath]: teamsApi.reducer,
     [articlesApi.reducerPath]: articlesApi.reducer,
     [podcastApi.reducerPath]: podcastApi.reducer,
-    [faqsApi.reducerPath]: faqsApi.reducer,
+    [feedsApi.reducerPath]: feedsApi.reducer,
     [toolsApi.reducerPath]: toolsApi.reducer,
     [subscriptionApi.reducerPath]: subscriptionApi.reducer,
     [contactApi.reducerPath]: contactApi.reducer,
@@ -36,7 +36,7 @@ export const store = configureStore({
       teamsApi.middleware,
       articlesApi.middleware,
       podcastApi.middleware,
-      faqsApi.middleware,
+      feedsApi.middleware,
       toolsApi.middleware,
       subscriptionApi.middleware,
       contactApi.middleware,

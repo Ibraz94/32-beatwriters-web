@@ -2,30 +2,28 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api'
 
-export interface FAQ {
+export interface Feed {
   id: string
-  question: string
-  answer: string
+  title: string
+  content: string
   category: string
   tags: string[]
+  isPremium: boolean
   isPublished: boolean
   order: number
-  views: number
-  helpful: number
-  notHelpful: number
   createdAt: string
   updatedAt: string
 }
 
-interface FAQsResponse {
-  faqs: FAQ[]
+interface FeedsResponse {
+  feeds: Feed[]
   total: number
   page: number
   limit: number
   totalPages: number
 }
 
-interface FAQFilters {
+interface FeedFilters {
   category?: string
   tags?: string[]
   search?: string
@@ -36,10 +34,10 @@ interface FAQFilters {
   sortOrder?: 'asc' | 'desc'
 }
 
-export const faqsApi = createApi({
-  reducerPath: 'faqsApi',
+export const feedsApi = createApi({
+  reducerPath: 'feedsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/faqs`,
+    baseUrl: `${API_BASE_URL}/feeds`,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as any).auth.token
       if (token) {
@@ -49,9 +47,9 @@ export const faqsApi = createApi({
       return headers
     },
   }),
-  tagTypes: ['FAQ'],
+  tagTypes: ['Feed'],
   endpoints: (builder) => ({
-    getFAQs: builder.query<FAQsResponse, FAQFilters>({
+    getFeeds: builder.query<FeedsResponse, FeedFilters>({
       query: (filters) => {
         const params = new URLSearchParams()
         Object.entries(filters).forEach(([key, value]) => {
@@ -65,53 +63,53 @@ export const faqsApi = createApi({
         })
         return `?${params.toString()}`
       },
-      providesTags: ['FAQ'],
+      providesTags: ['Feed'],
     }),
     
-    getFAQ: builder.query<{ faq: FAQ }, string>({
+    getFeed: builder.query<{ feed: Feed }, string>({
       query: (id) => `/${id}`,
-      providesTags: (result, error, id) => [{ type: 'FAQ', id }],
+      providesTags: (result, error, id) => [{ type: 'Feed', id }],
     }),
     
-    createFAQ: builder.mutation<{ faq: FAQ; message: string }, Omit<FAQ, 'id' | 'views' | 'helpful' | 'notHelpful' | 'createdAt' | 'updatedAt'>>({
-      query: (faqData) => ({
+    createFeed: builder.mutation<{ feed: Feed; message: string }, Omit<Feed, 'id' | 'createdAt' | 'updatedAt'>>({
+      query: (feedData) => ({
         url: '',
         method: 'POST',
-        body: faqData,
+        body: feedData,
       }),
-      invalidatesTags: ['FAQ'],
+      invalidatesTags: ['Feed'],
     }),
     
-    updateFAQ: builder.mutation<{ faq: FAQ; message: string }, { id: string; data: Partial<FAQ> }>({
+    updateFeed: builder.mutation<{ feed: Feed; message: string }, { id: string; data: Partial<Feed> }>({
       query: ({ id, data }) => ({
         url: `/${id}`,
         method: 'PUT',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'FAQ', id }, 'FAQ'],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Feed', id }, 'Feed'],
     }),
     
-    deleteFAQ: builder.mutation<{ message: string }, string>({
+    deleteFeed: builder.mutation<{ message: string }, string>({
       query: (id) => ({
         url: `/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'FAQ', id }, 'FAQ'],
+      invalidatesTags: (result, error, id) => [{ type: 'Feed', id }, 'Feed'],
     }),
     
-    getFAQsByCategory: builder.query<{ faqs: FAQ[] }, string>({
+    getFeedsByCategory: builder.query<{ feeds: Feed[] }, string>({
       query: (category) => `/category/${encodeURIComponent(category)}`,
-      providesTags: ['FAQ'],
+      providesTags: ['Feed'],
     }),
     
-    searchFAQs: builder.query<{ faqs: FAQ[] }, string>({
+    searchFeeds: builder.query<{ feeds: Feed[] }, string>({
       query: (searchTerm) => `/search?q=${encodeURIComponent(searchTerm)}`,
-      providesTags: ['FAQ'],
+      providesTags: ['Feed'],
     }),
     
     getFAQCategories: builder.query<{ categories: string[] }, void>({
       query: () => '/categories',
-      providesTags: ['FAQ'],
+      providesTags: ['Feed'],
     }),
     
     markHelpful: builder.mutation<{ helpful: number; notHelpful: number }, { id: string; isHelpful: boolean }>({
@@ -120,19 +118,18 @@ export const faqsApi = createApi({
         method: 'POST',
         body: { isHelpful },
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'FAQ', id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Feed', id }],
     }),
   }),
 })
 
 export const {
-  useGetFAQsQuery,
-  useGetFAQQuery,
-  useCreateFAQMutation,
-  useUpdateFAQMutation,
-  useDeleteFAQMutation,
-  useGetFAQsByCategoryQuery,
-  useSearchFAQsQuery,
-  useGetFAQCategoriesQuery,
+  useGetFeedsQuery,
+  useGetFeedQuery,
+  useCreateFeedMutation,
+  useUpdateFeedMutation,
+  useDeleteFeedMutation,
+  useGetFeedsByCategoryQuery,
+  useSearchFeedsQuery,
   useMarkHelpfulMutation,
-} = faqsApi 
+} = feedsApi 

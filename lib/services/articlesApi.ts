@@ -1,34 +1,52 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://192.168.10.110:3000/api'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'http://192.168.10.110:3000'
+
+// Helper function to construct full image URLs
+export const getImageUrl = (imagePath?: string): string | undefined => {
+  if (!imagePath) return undefined
+  
+  // If the path already includes the full URL, return as is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath
+  }
+  
+  // Handle paths that already start with /uploads
+  if (imagePath.startsWith('/uploads/')) {
+    return `${IMAGE_BASE_URL}${imagePath}`
+  }
+  
+  // Handle paths that don't start with /uploads
+  if (imagePath.startsWith('/')) {
+    return `${IMAGE_BASE_URL}/uploads${imagePath}`
+  }
+  
+  // Handle relative paths
+  return `${IMAGE_BASE_URL}/uploads/${imagePath}`
+}
 
 export interface Article {
   id: string
   title: string
   slug: string
-  excerpt: string
   content: string
+  status: 'draft' | 'published' | 'archived'
   featuredImage?: string
-  author: {
+  authorId: {
     id: string
     name: string
     avatar?: string
     bio?: string
   }
-  category: string
-  tags: string[]
-  status: 'draft' | 'published' | 'archived'
+  playerTags: string[]
+  teamTags: string[]
+  beatWriterTags: string[]
   publishedAt?: string
-  readTime: number
-  views: number
-  likes: number
-  comments: number
-  isPremium: boolean
-  seoTitle?: string
-  seoDescription?: string
-  seoKeywords?: string[]
+  modifiedAt?: string
   createdAt: string
   updatedAt: string
+  access: 'public' | 'pro' | 'lifetime'
 }
 
 interface ArticlesResponse {
@@ -52,33 +70,49 @@ interface ArticleFilters {
   sortOrder?: 'asc' | 'desc'
 }
 
-interface CreateArticleRequest {
-  title: string
-  excerpt: string
-  content: string
-  featuredImage?: string
-  category: string
-  tags: string[]
-  status: 'draft' | 'published'
-  isPremium?: boolean
-  seoTitle?: string
-  seoDescription?: string
-  seoKeywords?: string[]
-}
 
 export const articlesApi = createApi({
   reducerPath: 'articlesApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/articles`,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.token
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`)
+  baseQuery: async (args, api, extraOptions) => {
+    try {
+      const result = await fetchBaseQuery({
+        baseUrl: `${API_BASE_URL}/articles`,
+        prepareHeaders: (headers, { getState }) => {
+          const token = (getState() as any).auth.token
+          if (token) {
+            headers.set('authorization', `Bearer ${token}`)
+          }
+          headers.set('content-type', 'application/json')
+          return headers
+        },
+      })(args, api, extraOptions)
+
+      // Log the response for debugging
+      console.log('API Response:', {
+        url: args.url,
+        method: args.method || 'GET',
+        status: result.data ? 'success' : 'error',
+        data: result.data,
+        error: result.error
+      })
+
+      if (result.error) {
+        // Handle specific error cases
+        if (result.error.status === 404) {
+          return { error: { status: 404, data: 'Article not found' } }
+        }
+        if (result.error.status === 500) {
+          return { error: { status: 500, data: 'Server error' } }
+        }
       }
-      headers.set('content-type', 'application/json')
-      return headers
-    },
-  }),
+
+      return result
+    } catch (error) {
+      console.error('API Error:', error)
+      return { error: { status: 'CUSTOM_ERROR', data: 'Failed to fetch article' } }
+    }
+  },
+ 
   tagTypes: ['Article', 'Category'],
   endpoints: (builder) => ({
     // Get all articles with filtering and pagination
@@ -99,39 +133,10 @@ export const articlesApi = createApi({
       providesTags: ['Article'],
     }),
     
-    // Get single article by ID or slug
-    getArticle: builder.query<{ article: Article }, string>({
-      query: (idOrSlug) => `/${idOrSlug}`,
-      providesTags: (result, error, idOrSlug) => [{ type: 'Article', id: idOrSlug }],
-    }),
-    
-    // Create new article
-    createArticle: builder.mutation<{ article: Article; message: string }, CreateArticleRequest>({
-      query: (articleData) => ({
-        url: '',
-        method: 'POST',
-        body: articleData,
-      }),
-      invalidatesTags: ['Article'],
-    }),
-    
-    // Update article
-    updateArticle: builder.mutation<{ article: Article; message: string }, { id: string; data: Partial<CreateArticleRequest> }>({
-      query: ({ id, data }) => ({
-        url: `/${id}`,
-        method: 'PUT',
-        body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Article', id }, 'Article'],
-    }),
-    
-    // Delete article
-    deleteArticle: builder.mutation<{ message: string }, string>({
-      query: (id) => ({
-        url: `/${id}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (result, error, id) => [{ type: 'Article', id }, 'Article'],
+    // Get single article by slug
+    getArticle: builder.query<Article, string>({
+      query: (slug) => `/${slug}`,
+      providesTags: (result, error, slug) => [{ type: 'Article', id: slug }],
     }),
     
     // Get featured articles
@@ -179,12 +184,6 @@ export const articlesApi = createApi({
       invalidatesTags: (result, error, articleId) => [{ type: 'Article', id: articleId }],
     }),
     
-    // Get article categories
-    getCategories: builder.query<{ categories: string[] }, void>({
-      query: () => '/categories',
-      providesTags: ['Category'],
-    }),
-    
     // Get popular tags
     getPopularTags: builder.query<{ tags: { name: string; count: number }[] }, { limit?: number }>({
       query: ({ limit = 20 }) => `/tags/popular?limit=${limit}`,
@@ -196,15 +195,22 @@ export const articlesApi = createApi({
       query: ({ articleId, limit = 5 }) => `/${articleId}/related?limit=${limit}`,
       providesTags: ['Article'],
     }),
+    
+    // Upload image for articles
+    uploadImage: builder.mutation<{ url: string; filename: string }, FormData>({
+      query: (formData) => ({
+        url: '/upload-image',
+        method: 'POST',
+        body: formData,
+      }),
+    }),
   }),
 })
+
 
 export const {
   useGetArticlesQuery,
   useGetArticleQuery,
-  useCreateArticleMutation,
-  useUpdateArticleMutation,
-  useDeleteArticleMutation,
   useGetFeaturedArticlesQuery,
   useGetPopularArticlesQuery,
   useGetRecentArticlesQuery,
@@ -212,7 +218,7 @@ export const {
   useGetArticlesByAuthorQuery,
   useSearchArticlesQuery,
   useToggleLikeMutation,
-  useGetCategoriesQuery,
   useGetPopularTagsQuery,
   useGetRelatedArticlesQuery,
+  useUploadImageMutation,
 } = articlesApi 

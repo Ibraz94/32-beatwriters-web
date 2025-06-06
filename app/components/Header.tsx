@@ -52,9 +52,9 @@ function Header() {
                         <Link
                             href="/podcast"
                             className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Podcast</Link>
-                        <Link
+                        {/* <Link
                             href="/teams"
-                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Teams</Link>
+                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Teams</Link> */}
                         <Link
                             href="/tools"
                             className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Tools</Link>
@@ -64,10 +64,10 @@ function Header() {
 
                 {/* Desktop Layout: Right Side Items */}
                 <div className="hidden sm:flex items-center gap-6 flex-1 sm:flex-none">
-                    <Link href="/beat-writers"
+                    {/* <Link href="/beat-writers"
                         className="lg:flex hidden items-center space-x-2 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">
                         Beat Writers
-                    </Link>
+                    </Link> */}
 
                     {/* Regular search bar for medium and larger devices */}
                     <Form action='/search'
