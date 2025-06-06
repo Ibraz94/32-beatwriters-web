@@ -89,7 +89,7 @@ function Header() {
                             <span>Account</span>
                         </Link>
                     ) : (
-                        <Link href="/login"
+                        <Link href="/auth/login"
                             className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
                             <CircleUserRound />
                             <span>Login</span>

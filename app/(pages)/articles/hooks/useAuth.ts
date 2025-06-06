@@ -1,45 +1,49 @@
 import { useState, useEffect } from 'react'
+import { useAuth as useAuthSystem } from '@/lib/hooks/useAuth'
 
 export interface User {
   id: string
+  username: string
   email: string
-  name: string
-  isPremium: boolean
+  firstName: string
+  lastName: string
+  role: string
+  roleId: number
+  memebership: string
+  profilePicture: string
+  bio: string
+  lastLogin: string
+  loginCount: number
+  isAdmin: boolean
 }
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   
   useEffect(() => {
     // Mock authentication check - in real app, this would check actual auth state
     // You can modify this to test different scenarios:
     
     // Non-premium user (default):
-    const mockUser: User = {
-      id: '1',
-      email: 'user@example.com', 
-      name: 'John Doe',
-      isPremium: false // Change to true to simulate premium user
-    }
     
     // Simulate loading delay
     setTimeout(() => {
-      setUser(mockUser)
+      setUser(user)
       setLoading(false)
     }, 500)
   }, [])
   
-  const signIn = async (email: string, password: string) => {
-    // Mock sign in - in real app, this would call an API
-    const mockUser: User = {
-      id: '1',
-      email: email,
-      name: 'John Doe',
-      isPremium: email.includes('premium') // Simple way to test premium users
+  const signIn = async (email: string, password: string): Promise<User> => {
+
+    const { login } = useAuthSystem()
+    const result = await login(email, password)
+    if (result.success && result.user) {
+      setUser(result.user as unknown as User)
+      return result.user as unknown as User
     }
-    setUser(mockUser)
-    return mockUser
+    throw new Error('Login failed')
   }
   
   const signOut = () => {
@@ -48,7 +52,7 @@ export const useAuth = () => {
   
   const upgradeToPremium = () => {
     if (user) {
-      setUser({ ...user, isPremium: true })
+      setUser({ ...user, memebership: 'premium' })
     }
   }
   

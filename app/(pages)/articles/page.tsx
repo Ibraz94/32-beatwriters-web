@@ -1,15 +1,21 @@
 'use client'
 
 import Link from 'next/link'
-import { Clock, Shield, User } from 'lucide-react'
+import { Clock, Shield, User, Lock } from 'lucide-react'
 import Image from 'next/image'
 import { useGetArticlesQuery, getImageUrl } from '@/lib/services/articlesApi'
 import { useState, useEffect } from 'react'
+import { useAuth } from '@/lib/hooks/useAuth'
 
 export default function ArticlesPage() {
   const [page, setPage] = useState(1)
   const [allArticles, setAllArticles] = useState<any[]>([])
   const [hasMoreArticles, setHasMoreArticles] = useState(true)
+  const [isAccessible, setIsAccessible] = useState(false)
+  
+  // Get user authentication status and premium access
+  const { checkPremiumAccess, isAuthenticated } = useAuth()
+  const hasPremiumAccess = checkPremiumAccess()
   
   // Simplified query - fetch all published articles with basic pagination
   const { data: articles, isLoading, error, isFetching } = useGetArticlesQuery({
@@ -31,6 +37,50 @@ export default function ArticlesPage() {
       setHasMoreArticles(articles.articles.length === 12)
     }
   }, [articles, page])
+
+  useEffect(() => {
+    if (articles?.articles) {
+      setIsAccessible(articles.articles.some(article => article.access === 'public'))
+    }
+  }, [articles])
+
+  // Helper function to check if user can access an article
+  const canAccessArticle = (articleAccess: string) => {
+    if (articleAccess === 'public') return true
+    if (articleAccess === 'pro' || articleAccess === 'lifetime') {
+      return hasPremiumAccess
+    }
+    return false
+  }
+
+  // Helper function to get access status text
+  const getAccessStatusText = (articleAccess: string) => {
+    if (articleAccess === 'public') return 'Free Article'
+    if (articleAccess === 'pro') return 'Pro Article'
+    if (articleAccess === 'lifetime') return 'Premium Article'
+    return 'Article'
+  }
+
+  // Helper function to get button configuration
+  const getButtonConfig = (article: any) => {
+    const canAccess = canAccessArticle(article.access)
+    
+    if (canAccess) {
+      return {
+        text: 'Read Article',
+        href: `/articles/${article.id}`,
+        className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white hover:bg-red-900',
+        isClickable: true
+      }
+    } else {
+      return {
+        text: isAuthenticated ? 'Upgrade to Premium' : 'Sign In for Premium',
+        href: isAuthenticated ? '/auth/account' : '/auth/login',
+        className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-gradient-to-r from-red-800 to-red-900 text-white',
+        isClickable: true
+      }
+    }
+  }
   
   // Loading state (only show skeleton on initial load)
   if (isLoading && page === 1) {
@@ -99,67 +149,108 @@ export default function ArticlesPage() {
 
       {/* Articles Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {allArticles.map((article, index) => (
-          <article key={index} className="rounded-xl border shadow-lg overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer">
-            {/* Article Image */}
-            <div className="relative h-48">
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                {article.featuredImage ? (
-                  <Image 
-                    src={getImageUrl(article.featuredImage) || ''} 
-                    alt={article.title} 
-                    fill 
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover" 
-                    priority
-                  />
-                ) : (
-                  <span className="text-gray-500 text-sm">No Image</span>
+        {allArticles.map((article, index) => {
+          const buttonConfig = getButtonConfig(article)
+          const canAccess = canAccessArticle(article.access)
+          
+          return (
+            <article key={index} className="rounded-xl border shadow-lg overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer">
+              {/* Article Image */}
+              <div className="relative h-48">
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                  {article.featuredImage ? (
+                    <Image 
+                      src={getImageUrl(article.featuredImage) || ''} 
+                      alt={article.title} 
+                      fill 
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover" 
+                      priority
+                    />
+                  ) : (
+                    <span className="text-gray-500 text-sm">No Image</span>
+                  )}
+                </div>
+                
+                {/* Access Badge */}
+                {article.access !== 'public' && (
+                  <div className="absolute top-3 right-3 bg-red-800 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
+                    {article.access === 'pro' || article.access === 'lifetime' ? (
+                      <>
+                        <Shield className="w-3 h-3 mr-1" />
+                        Premium
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-3 h-3 mr-1" />
+                        Locked
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Overlay for locked content */}
+                {!canAccess && (
+                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
+                    <div className="bg-white bg-opacity-90 rounded-full p-2">
+                      <Lock className="w-6 h-6 text-red-800" />
+                    </div>
+                  </div>
                 )}
               </div>
-              
-              {/* Premium Badge */}
-              {article.isPremium && (
-                <div className="absolute top-3 right-3 bg-red-800 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-                  <Shield className="w-3 h-3 mr-1" />
-                  Premium
-                </div>
-              )} 
-            </div>
 
-            {/* Article Content */}
-            <div className="p-6">
-              <h2 className="text-lg font-bold mb-3 line-clamp-2 hover:text-red-800 transition">
-                <Link href={`/articles/${article.id}`}>
-                  {article.title}
+              {/* Article Content */}
+              <div className="p-6">
+                <h2 className="text-lg font-bold mb-3 line-clamp-2 hover:text-red-800 transition">
+                  {canAccess ? (
+                    <Link href={`/articles/${article.id}`}>
+                      {article.title}
+                    </Link>
+                  ) : (
+                    <span className="cursor-default">{article.title}</span>
+                  )}
+                </h2>
+                
+                {/* Access Status */}
+                <div className="flex items-center justify-between text-sm mb-4">
+                  <div className="flex items-center text-gray-500">
+                    {article.publishedAt}
+                  </div>
+                  <div className={`flex items-center text-xs font-medium px-2 py-1 rounded ${
+                    article.access === 'public' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {getAccessStatusText(article.access)}
+                  </div>
+                </div>
+
+                {/* Premium Access Message */}
+                {!canAccess && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-center text-red-800 text-sm">
+                      <Lock className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <span>
+                        {isAuthenticated 
+                          ? 'Upgrade to premium to read this article' 
+                          : 'Sign in with premium access to read this article'
+                        }
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Button */}
+                <Link 
+                  href={buttonConfig.href}
+                  className={buttonConfig.className}
+                >
+                  {buttonConfig.text}
                 </Link>
-              </h2>
-              
-              {/* <p className="mb-4 line-clamp-3 text-gray-600">
-                {article.excerpt}
-              </p> */}
-
-              {/* Article Meta */}
-              <div className="flex items-center justify-between text-sm mb-4 text-gray-500">
-                <div className="flex items-center">
-                  {article.publishedAt} 
-                </div>
               </div>
-
-              {/* Read More Button */}
-              <Link 
-                href={`/articles/${article.id}`}
-                className={`w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer ${
-                  article.isPremium
-                    ? 'bg-red-800 hover:bg-red-900'
-                    : 'border-2 border-red-800 text-white bg-red-800'
-                }`}
-              >
-                {article.isPremium ? 'Read Premium Article' : 'Read Article'}
-              </Link>
-            </div>
-          </article>
-        ))}
+            </article>
+          )
+        })}
       </div>
 
       {/* Load More Section */}

@@ -61,7 +61,7 @@ interface ArticleFilters {
   category?: string
   author?: string
   status?: 'draft' | 'published' | 'archived'
-  isPremium?: boolean
+  access?: 'public' | 'pro' | 'lifetime'
   tags?: string[]
   search?: string
   page?: number
@@ -93,7 +93,7 @@ export const articlesApi = createApi({
         method: args.method || 'GET',
         status: result.data ? 'success' : 'error',
         data: result.data,
-        error: result.error
+        error: result.error,
       })
 
       if (result.error) {
