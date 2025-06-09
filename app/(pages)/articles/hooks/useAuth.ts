@@ -48,6 +48,10 @@ export const useAuth = () => {
       mainAuth.updateProfile({
         subscription: {
           type: 'premium',
+          plan: 'Premium Annual',
+          status: 'active',
+          amount: '$99.99',
+          nextBilling: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
           isActive: true,
           expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year from now
         }

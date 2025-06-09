@@ -91,8 +91,14 @@ export default function Login() {
                     name: data.user.name || `${data.user.firstName || ''} ${data.user.lastName || ''}`.trim() || data.user.username,
                     avatar: data.user.profilePicture || data.user.avatar,
                     role: data.user.role || 'user',
+                    joinDate: data.user.createdAt || new Date().toISOString(),
                     subscription: {
                         type: data.user.membership || data.user.subscription?.type || 'free',
+                        plan: data.user.subscription?.plan || 'basic',
+                        status: data.user.subscription?.status || 'inactive',
+                        amount: data.user.subscription?.amount || '0',
+                        nextBilling: data.user.subscription?.nextBilling || '',
+                        expiresAt: data.user.subscription?.expiresAt,
                         isActive: data.user.subscription?.isActive || false
                     }
                 }
