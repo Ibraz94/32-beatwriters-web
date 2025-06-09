@@ -23,7 +23,7 @@ export default function Account() {
     const [successMessage, setSuccessMessage] = useState('')
 
     const { theme } = useTheme()
-    const { user, loading, signOut } = useAuth()
+    const { user, logout } = useAuth()
 
     // Mock data - in a real app, this would come from your API
     const [userData, setUserData] = useState({
@@ -111,11 +111,11 @@ export default function Account() {
     }
 
     const handleLogout = () => {
-        signOut()
+        logout()
         window.location.href = '/'
     }
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-800"></div>
@@ -232,7 +232,7 @@ export default function Account() {
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background">
                                         <Crown className="h-5 w-5 text-yellow-500" />
-                                        <span className="text-foreground">{user.roleId === 2 ? 'Premium Member' : 'Free Member'}</span>
+                                        <span className="text-foreground">{user.role === 'admin' ? 'Premium Member' : 'Free Member'}</span>
                                     </div>
                                 </div>
                             </div>

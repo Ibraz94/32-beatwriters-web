@@ -4,10 +4,10 @@ const EXTERNAL_API_BASE = 'http://192.168.10.85:3000/api'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     
     // Forward the request to your external API
     const externalUrl = `${EXTERNAL_API_BASE}/articles/${id}`
