@@ -1,7 +1,3 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -22,58 +18,35 @@ interface BeatWriter {
 }
 
 interface BeatWriterDetailPageProps {
-  params: {
+  params: Promise<{
     beatWritersId: string;
-  };
+  }>;
 }
 
-export default function BeatWriterDetailPage({ params }: BeatWriterDetailPageProps) {
-  const [writer, setWriter] = useState<BeatWriter | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    fetchBeatWriter();
-  }, [params.beatWritersId]);
-
-  const fetchBeatWriter = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/beat-writers/${params.beatWritersId}`);
-      const result = await response.json();
-      
-      if (result.success) {
-        setWriter(result.data);
-      } else {
-        setError(result.error || 'Beat writer not found');
-      }
-    } catch (err) {
-      setError('Network error while fetching beat writer');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <section className="container mx-auto mt-16 px-4">
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-        </div>
-      </section>
-    );
+async function fetchBeatWriter(beatWritersId: string): Promise<{ success: boolean; data?: BeatWriter; error?: string }> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/beat-writers/${beatWritersId}`, {
+      cache: 'no-store'
+    });
+    return await response.json();
+  } catch (err) {
+    return { success: false, error: 'Network error while fetching beat writer' };
   }
+}
 
-  if (error || !writer) {
+export default async function BeatWriterDetailPage({ params }: BeatWriterDetailPageProps) {
+  const { beatWritersId } = await params;
+  const result = await fetchBeatWriter(beatWritersId);
+  
+  if (!result.success || !result.data) {
     return (
       <section className="container mx-auto mt-16 px-4">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4 text-red-600">Beat Writer Not Found</h1>
-          <p className="text-lg text-gray-600 mb-6">{error}</p>
+          <p className="text-lg text-gray-600 mb-6">{result.error || 'Beat writer not found'}</p>
           <Link 
             href="/beat-writers"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-block"
+            className="px-6 py-3 rounded-lg hover:scale-102 hover:cursor-pointer hover:text-red-800 transition-colors inline-block"
           >
             Back to Beat Writers
           </Link>
@@ -81,6 +54,8 @@ export default function BeatWriterDetailPage({ params }: BeatWriterDetailPagePro
       </section>
     );
   }
+
+  const writer = result.data;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -91,23 +66,10 @@ export default function BeatWriterDetailPage({ params }: BeatWriterDetailPagePro
   };
 
   return (
-    <section className="container mx-auto mt-16 px-4">
-      {/* Breadcrumb */}
-      <nav className="mb-8">
-        <div className="flex items-center space-x-2 text-sm text-gray-500">
-          <Link href="/beat-writers" className="hover:text-blue-600 transition-colors">
-            Beat Writers
-          </Link>
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-          </svg>
-          <span className="text-gray-900">{writer.name}</span>
-        </div>
-      </nav>
-
+    <section className="container mx-auto mt-24 px-4">
       {/* Header Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl overflow-hidden mb-8">
-        <div className="px-8 py-12 text-white">
+      <div className="border rounded-2xl shadow-lg overflow-hidden mb-8">
+        <div className="px-8 py-12">
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
             <div className="w-32 h-32 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
               <span className="text-4xl font-bold">{writer.name.charAt(0)}</span>
@@ -123,9 +85,9 @@ export default function BeatWriterDetailPage({ params }: BeatWriterDetailPagePro
                 )}
               </div>
               
-              <p className="text-xl text-blue-100 mb-4">{writer.team} • {writer.specialty}</p>
+              <p className="text-xl mb-4">{writer.team} • {writer.specialty}</p>
               
-              <div className="flex flex-wrap gap-6 text-blue-100">
+              <div className="flex flex-wrap gap-6">
                 <div className="flex items-center gap-2">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
@@ -155,18 +117,18 @@ export default function BeatWriterDetailPage({ params }: BeatWriterDetailPagePro
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Bio Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">About</h2>
-            <p className="text-gray-600 leading-relaxed text-lg">{writer.bio}</p>
+          <div className="rounded-xl shadow-lg border p-8">
+            <h2 className="text-2xl font-bold mb-4">About</h2>
+            <p className="leading-relaxed text-lg">{writer.bio}</p>
           </div>
 
           {/* Stats Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Career Stats</h2>
+          <div className="rounded-xl shadow-lg border p-8">
+            <h2 className="text-2xl font-bold mb-6">Career Stats</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="text-3xl font-bold text-blue-600 mb-2">{writer.articles}</div>
-                <div className="text-sm text-gray-500">Articles</div>
+                <div className="text-sm">Articles</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600 mb-2">{writer.followers}</div>
@@ -191,28 +153,28 @@ export default function BeatWriterDetailPage({ params }: BeatWriterDetailPagePro
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Contact Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Contact Information</h3>
+          <div className="rounded-xl shadow-lg border p-6">
+            <h3 className="text-lg font-bold mb-4">Contact Information</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                 </svg>
-                <span className="text-sm text-gray-600">{writer.contact}</span>
+                <span className="text-sm">{writer.contact}</span>
               </div>
               <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                 </svg>
-                <span className="text-sm text-gray-600">{writer.twitter}</span>
+                <span className="text-sm">{writer.twitter}</span>
               </div>
             </div>
           </div>
 
           {/* Timeline Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Career Timeline</h3>
+          <div className="rounded-xl shadow-lg border p-6 mb-32">
+            <h3 className="text-lg font-bold mb-4">Career Timeline</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
@@ -228,33 +190,6 @@ export default function BeatWriterDetailPage({ params }: BeatWriterDetailPagePro
                   <p className="text-xs text-gray-500">Current focus area</p>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Follow {writer.name}</h3>
-            <div className="space-y-3">
-              <a
-                href={`https://twitter.com/${writer.twitter.replace('@', '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                </svg>
-                Follow on Twitter
-              </a>
-              <Link
-                href="/beat-writers"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to All Writers
-              </Link>
             </div>
           </div>
         </div>

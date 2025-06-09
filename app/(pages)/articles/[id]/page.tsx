@@ -140,9 +140,9 @@ export default function ArticlePage() {
 
         {/* Article Header */}
         <div key={article.id}>
-        <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
+        <h1 className="text-4xl font-bold mb-10">{article.title}</h1>
           <Image src={getImageUrl(article.featuredImage) || ''} 
-          alt={article.title} width={1000} height={1000} className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+          alt={article.title} width={1000} height={1000} className="rounded-lg mb-12 shadow-lg" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
           
           <div className="prose max-w-none prose" dangerouslySetInnerHTML={{__html: parsed.content}} />
         </div>

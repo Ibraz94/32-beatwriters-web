@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { User } from '../features/authSlice'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com/api/users'
 
 interface LoginRequest {
   email: string
@@ -47,7 +47,7 @@ interface ChangePasswordRequest {
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/auth`,
+    baseUrl: `${API_BASE_URL}`,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as any).auth.token
       if (token) {
@@ -62,7 +62,7 @@ export const authApi = createApi({
     // Authentication endpoints
     login: builder.mutation<AuthResponse, LoginRequest>({
       query: (credentials) => ({
-        url: '/login',
+        url: '/auth/login',
         method: 'POST',
         body: credentials,
       }),
@@ -71,7 +71,7 @@ export const authApi = createApi({
     
     register: builder.mutation<AuthResponse, RegisterRequest>({
       query: (userData) => ({
-        url: '/register',
+        url: '/auth/register',
         method: 'POST',
         body: userData,
       }),
@@ -80,7 +80,7 @@ export const authApi = createApi({
     
     logout: builder.mutation<{ message: string }, void>({
       query: () => ({
-        url: '/logout',
+        url: '/auth/logout',
         method: 'POST',
       }),
       invalidatesTags: ['User', 'Auth'],
@@ -88,7 +88,7 @@ export const authApi = createApi({
     
     refreshToken: builder.mutation<{ token: string; refreshToken?: string }, { refreshToken: string }>({
       query: ({ refreshToken }) => ({
-        url: '/refresh-token',
+        url: '/auth/refresh-token',
         method: 'POST',
         body: { refreshToken },
       }),
@@ -97,7 +97,7 @@ export const authApi = createApi({
     // Password management
     forgotPassword: builder.mutation<{ message: string }, ForgotPasswordRequest>({
       query: (data) => ({
-        url: '/forgot-password',
+        url: '/auth/forgot-password',
         method: 'POST',
         body: data,
       }),
@@ -105,7 +105,7 @@ export const authApi = createApi({
     
     resetPassword: builder.mutation<{ message: string }, ResetPasswordRequest>({
       query: (data) => ({
-        url: '/reset-password',
+        url: '/auth/reset-password',
         method: 'POST',
         body: data,
       }),
@@ -113,7 +113,7 @@ export const authApi = createApi({
     
     changePassword: builder.mutation<{ message: string }, ChangePasswordRequest>({
       query: (data) => ({
-        url: '/change-password',
+        url: '/profile/change-password',
         method: 'PUT',
         body: data,
       }),
@@ -135,19 +135,10 @@ export const authApi = createApi({
       invalidatesTags: ['User'],
     }),
     
-    deleteAccount: builder.mutation<{ message: string }, { password: string }>({
-      query: (data) => ({
-        url: '/delete-account',
-        method: 'DELETE',
-        body: data,
-      }),
-      invalidatesTags: ['User', 'Auth'],
-    }),
-    
     // Account verification
     verifyEmail: builder.mutation<{ message: string }, { token: string }>({
       query: ({ token }) => ({
-        url: '/verify-email',
+        url: '/auth/verify-email',
         method: 'POST',
         body: { token },
       }),
@@ -156,7 +147,7 @@ export const authApi = createApi({
     
     resendVerification: builder.mutation<{ message: string }, void>({
       query: () => ({
-        url: '/resend-verification',
+        url: '/auth/resend-verification',
         method: 'POST',
       }),
     }),
@@ -173,7 +164,6 @@ export const {
   useChangePasswordMutation,
   useGetProfileQuery,
   useUpdateProfileMutation,
-  useDeleteAccountMutation,
   useVerifyEmailMutation,
   useResendVerificationMutation,
 } = authApi 

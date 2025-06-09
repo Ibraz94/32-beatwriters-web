@@ -72,9 +72,9 @@ function Header() {
                         {/* <Link
                             href="/teams"
                             className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Teams</Link> */}
-                        <Link
+                        {/* <Link
                             href="/tools"
-                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Tools</Link>
+                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Tools</Link> */}
                     </div>
                 </div>
 
@@ -101,14 +101,12 @@ function Header() {
 
                     {isAuthenticated ? (
                         <Link href="/auth/account"
-                            className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
-                            <CircleUserRound />
+                            className="lg:flex hidden rounded-full items-center px-4 py-2 text-white bg-red-800 hover:scale-105 transition-all">
                             <span>{getUserDisplayName()}</span>
                         </Link>
                     ) : (
                         <Link href="/auth/login"
-                            className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
-                            <CircleUserRound />
+                            className="lg:flex hidden rounded-full items-center px-4 py-2 text-white bg-red-800 hover:scale-105 transition-all">
                             <span>Login</span>
                         </Link>
                     )}
@@ -144,22 +142,6 @@ function Header() {
                             </div>
                         )}
                     </div>
-
-                    {/* User account/login for mobile */}
-                    {isAuthenticated ? (
-                        <Link href="/auth/account"
-                            className="flex items-center space-x-1 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
-                            <CircleUserRound size={20} />
-                            <span className="text-sm max-w-20 truncate">{getUserDisplayName()}</span>
-                        </Link>
-                    ) : (
-                        <Link href="/auth/login"
-                            className="flex items-center space-x-1 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
-                            <CircleUserRound size={20} />
-                            <span className="text-sm">Login</span>
-                        </Link>
-                    )}
-
                     <ThemeToggle />
                     <MobileNav />
                 </div>

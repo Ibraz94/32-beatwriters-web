@@ -4,12 +4,24 @@ export interface User {
   id: string
   email: string
   name: string
+  firstName?: string
+  lastName?: string
   avatar?: string
   role: 'user' | 'admin' | 'premium'
+  joinDate: string
   subscription?: {
     type: 'free' | 'premium' | 'pro'
+    plan: string
+    status: string
+    amount: string
+    nextBilling: string
     expiresAt?: string
     isActive: boolean
+  }
+  paymentMethod?: {
+    type: string
+    last4: string
+    expiry: string
   }
 }
 

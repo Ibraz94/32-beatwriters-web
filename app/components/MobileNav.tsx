@@ -19,10 +19,6 @@ const MobileNav = () => {
       path: isAuthenticated ? "/auth/account" : "/auth/login"
     },
     {
-      name: 'Beat Writers',
-      path: "/beat-writers"
-    },
-    {
       name: 'Home',
       path: "/"
     },
@@ -38,19 +34,11 @@ const MobileNav = () => {
       name: 'Podcast',
       path: "/podcast"
     },
-    {
-      name: 'Premium',
-      path: "/premium"
-    },
-    {
-      name: 'Tools',
-      path: "/tools"
-    }
   ];
 
   return (
     <Sheet>
-      <SheetTrigger className="flex justify-center items-center transition-all duration-300">
+      <SheetTrigger asChild className="flex justify-center items-center transition-transform duration-300">
         <Menu className="text-[28px] sm:text-[32px]" />
       </SheetTrigger>
       <SheetContent className="flex flex-col w-[280px] sm:w-[350px] px-2 sm:px-6">

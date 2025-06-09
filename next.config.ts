@@ -4,14 +4,14 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: '192.168.10.85',
-        port: '3000',
+        protocol: 'https',
+        hostname: 'api.32beatwriters.staging.pegasync.com',
+        port: '',
       },
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3000',
+        protocol: 'https',
+        hostname: 'api.32beatwriters.staging.pegasync.com',
+        port: '',
       },
     ],
   },
