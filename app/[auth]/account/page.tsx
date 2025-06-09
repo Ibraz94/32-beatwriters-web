@@ -232,7 +232,7 @@ export default function Account() {
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background">
                                         <Crown className="h-5 w-5 text-yellow-500" />
-                                        <span className="text-foreground">{user.isPremium ? 'Premium Member' : 'Free Member'}</span>
+                                        <span className="text-foreground">{user.roleId === 2 ? 'Premium Member' : 'Free Member'}</span>
                                     </div>
                                 </div>
                             </div>

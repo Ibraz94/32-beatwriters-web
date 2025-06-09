@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Clock, Shield, User, Lock } from 'lucide-react'
+import { Shield, Lock } from 'lucide-react'
 import Image from 'next/image'
 import { useGetArticlesQuery, getImageUrl } from '@/lib/services/articlesApi'
 import { useState, useEffect } from 'react'
@@ -69,14 +69,14 @@ export default function ArticlesPage() {
       return {
         text: 'Read Article',
         href: `/articles/${article.id}`,
-        className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white hover:bg-red-900',
+        className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }
     } else {
       return {
         text: isAuthenticated ? 'Upgrade to Premium' : 'Sign In for Premium',
         href: isAuthenticated ? '/auth/account' : '/auth/login',
-        className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-gradient-to-r from-red-800 to-red-900 text-white',
+        className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }
     }
@@ -191,17 +191,16 @@ export default function ArticlesPage() {
 
                 {/* Overlay for locked content */}
                 {!canAccess && (
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                    <div className="bg-white bg-opacity-90 rounded-full p-2">
-                      <Lock className="w-6 h-6 text-red-800" />
-                    </div>
+                  <div className="flex items-center justify-center">
+                    <Image src={getImageUrl(article.featuredImage) || ''} 
+                    alt="Locked" width={100} height={100} className="object-cover" />
                   </div>
                 )}
               </div>
 
               {/* Article Content */}
               <div className="p-6">
-                <h2 className="text-lg font-bold mb-3 line-clamp-2 hover:text-red-800 transition">
+                <h2 className="text-lg font-bold mb-3 line-clamp-2 text-nowrap hover:text-red-800 transition">
                   {canAccess ? (
                     <Link href={`/articles/${article.id}`}>
                       {article.title}
@@ -224,21 +223,6 @@ export default function ArticlesPage() {
                     {getAccessStatusText(article.access)}
                   </div>
                 </div>
-
-                {/* Premium Access Message */}
-                {!canAccess && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <div className="flex items-center text-red-800 text-sm">
-                      <Lock className="w-4 h-4 mr-2 flex-shrink-0" />
-                      <span>
-                        {isAuthenticated 
-                          ? 'Upgrade to premium to read this article' 
-                          : 'Sign in with premium access to read this article'
-                        }
-                      </span>
-                    </div>
-                  </div>
-                )}
 
                 {/* Action Button */}
                 <Link 

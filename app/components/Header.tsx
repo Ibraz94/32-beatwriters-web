@@ -7,13 +7,30 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
 import MobileNav from "./MobileNav";
 import { useState } from "react";
-import { useAuth } from '../(pages)/articles/hooks/useAuth';
+import { useAuth } from '@/lib/hooks/useAuth';
 
 function Header() {
 
     const { theme } = useTheme();
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const { user, isAuthenticated } = useAuth();
+    const { user, isAuthenticated, getDisplayName } = useAuth();
+
+    // Get user display name - use the main auth system's function or fallback
+    const getUserDisplayName = () => {
+        if (!user) return null;
+        
+        // Use the built-in getDisplayName function if available
+        if (getDisplayName) {
+            return getDisplayName();
+        }
+        
+        // Fallback logic for user name
+        if (user.name) {
+            return user.name;
+        }
+        
+        return 'User';
+    };
 
     return (
         <header className="h-20 flex flex-wrap items-center sticky top-0 z-10 bg-background/100 backdrop-blur-md border-b border-border transition-colors px-4">
@@ -86,7 +103,7 @@ function Header() {
                         <Link href="/auth/account"
                             className="lg:flex hidden items-center space-x-2 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
                             <CircleUserRound />
-                            <span>Account</span>
+                            <span>{getUserDisplayName()}</span>
                         </Link>
                     ) : (
                         <Link href="/auth/login"
@@ -98,7 +115,7 @@ function Header() {
                 </div>
 
                 {/* Mobile Layout: Theme Toggle on Right */}
-                <div className="sm:hidden flex">
+                <div className="sm:hidden flex items-center gap-2">
                     {/* Search dropdown for small devices */}
                     <div className="relative">
                         <button
@@ -127,6 +144,22 @@ function Header() {
                             </div>
                         )}
                     </div>
+
+                    {/* User account/login for mobile */}
+                    {isAuthenticated ? (
+                        <Link href="/auth/account"
+                            className="flex items-center space-x-1 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
+                            <CircleUserRound size={20} />
+                            <span className="text-sm max-w-20 truncate">{getUserDisplayName()}</span>
+                        </Link>
+                    ) : (
+                        <Link href="/auth/login"
+                            className="flex items-center space-x-1 text-foreground hover:text-red-900 hover:scale-105 transition-colors">
+                            <CircleUserRound size={20} />
+                            <span className="text-sm">Login</span>
+                        </Link>
+                    )}
+
                     <ThemeToggle />
                     <MobileNav />
                 </div>

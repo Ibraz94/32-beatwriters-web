@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { useAuth } from '../(pages)/articles/hooks/useAuth';
+import { useAuth } from '@/lib/hooks/useAuth';
 
 const MobileNav = () => {
   const pathname = usePathname();
@@ -16,7 +16,7 @@ const MobileNav = () => {
   const links = [
     {
       name: isAuthenticated ? "Account" : "Login",
-      path: isAuthenticated ? "/account" : "/login"
+      path: isAuthenticated ? "/auth/account" : "/auth/login"
     },
     {
       name: 'Beat Writers',

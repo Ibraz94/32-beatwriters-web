@@ -7,25 +7,26 @@ const TOKEN_KEY = 'auth_token'
 const REFRESH_TOKEN_KEY = 'refresh_token'
 const USER_KEY = 'user_data'
 
-// Store token in localStorage
-export const setAuthTokens = (token: string, refreshToken?: string) => {
-  localStorage.setItem(TOKEN_KEY, token)
+// Store token in localStorage or sessionStorage
+export const setAuthTokens = (token: string, refreshToken?: string, persistent: boolean = true) => {
+  const storage = persistent ? localStorage : sessionStorage
+  storage.setItem(TOKEN_KEY, token)
   if (refreshToken) {
-    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)
+    storage.setItem(REFRESH_TOKEN_KEY, refreshToken)
   }
   
   // Update Redux state
   store.dispatch(setToken({ token, refreshToken }))
 }
 
-// Get token from localStorage
+// Get token from localStorage or sessionStorage
 export const getAuthToken = (): string | null => {
-  return localStorage.getItem(TOKEN_KEY)
+  return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY)
 }
 
-// Get refresh token from localStorage
+// Get refresh token from localStorage or sessionStorage
 export const getRefreshToken = (): string | null => {
-  return localStorage.getItem(REFRESH_TOKEN_KEY)
+  return localStorage.getItem(REFRESH_TOKEN_KEY) || sessionStorage.getItem(REFRESH_TOKEN_KEY)
 }
 
 // Store user data in localStorage
@@ -39,11 +40,13 @@ export const getUserData = (): User | null => {
   return userData ? JSON.parse(userData) : null
 }
 
-// Clear all auth data
+// Clear all auth data from both storages
 export const clearAuthData = () => {
   localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem(REFRESH_TOKEN_KEY)
   localStorage.removeItem(USER_KEY)
+  sessionStorage.removeItem(TOKEN_KEY)
+  sessionStorage.removeItem(REFRESH_TOKEN_KEY)
   
   // Update Redux state
   store.dispatch(logout())
@@ -87,7 +90,7 @@ export const hasRole = (requiredRole: User['role']): boolean => {
 // Check if user has premium subscription
 export const hasPremiumAccess = ( subscription: User['subscription'] ): boolean => {
   if (!subscription) return false
-  return subscription.isActive && (subscription.type === 'premium' || subscription.type === 'pro') || subscription.type === 'free'
+  return subscription.isActive && (subscription.type === 'premium' || subscription.type === 'pro')
 }
 
 // Auto logout when token expires

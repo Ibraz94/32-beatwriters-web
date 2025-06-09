@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cabin } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "../components/ThemeProvider";
+import { ReduxProvider } from "../../lib/providers/ReduxProvider";  
 
 
 const cabin = Cabin({
@@ -26,9 +27,11 @@ export default function RootLayout({
         className={`${cabin.variable} antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
+        <ReduxProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            {children}
+          </ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

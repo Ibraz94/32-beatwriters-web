@@ -5,6 +5,7 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 
 export default function Login() {
@@ -12,13 +13,14 @@ export default function Login() {
     const [isLoading, setIsLoading] = useState(false)
     const [mounted, setMounted] = useState(false)
     const [formData, setFormData] = useState({
-        email: '',
+        emailOrUsername: '',
         password: '',
         rememberMe: false
     })
     const [errors, setErrors] = useState<{[key: string]: string}>({})
 
     const { theme } = useTheme()
+    const router = useRouter()
 
     // Prevent hydration mismatch
     useEffect(() => {
@@ -28,10 +30,8 @@ export default function Login() {
     const validateForm = () => {
         const newErrors: {[key: string]: string} = {}
         
-        if (!formData.email) {
-            newErrors.email = 'Email is required'
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email address'
+        if (!formData.emailOrUsername) {
+            newErrors.emailOrUsername = 'Email or username is required'
         }
         
         if (!formData.password) {
@@ -51,13 +51,77 @@ export default function Login() {
         
         setIsLoading(true)
         
-        // Simulate API call
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            console.log('Login attempt:', formData)
-            // Handle successful login here
-        } catch (error) {
+            // Determine if input is email or username
+            const isEmail = /\S+@\S+\.\S+/.test(formData.emailOrUsername)
+            const loginData = isEmail 
+                ? { email: formData.emailOrUsername, password: formData.password }
+                : { username: formData.emailOrUsername, password: formData.password }
+
+            const response = await fetch('http://192.168.10.85:3000/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(loginData),
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || 'Login failed')
+            }
+
+            const data = await response.json()
+            console.log('Login successful:', data)
+            
+            // Store token using the correct keys that match the main auth system
+            if (data.token) {
+                if (formData.rememberMe) {
+                    localStorage.setItem('auth_token', data.token)
+                } else {
+                    sessionStorage.setItem('auth_token', data.token)
+                }
+            }
+
+            // Store user data using the correct key
+            if (data.user) {
+                const user = {
+                    id: data.user.id || data.user._id,
+                    email: data.user.email,
+                    name: data.user.name || `${data.user.firstName || ''} ${data.user.lastName || ''}`.trim() || data.user.username,
+                    avatar: data.user.profilePicture || data.user.avatar,
+                    role: data.user.role || 'user',
+                    subscription: {
+                        type: data.user.membership || data.user.subscription?.type || 'free',
+                        isActive: data.user.subscription?.isActive || false
+                    }
+                }
+                localStorage.setItem('user_data', JSON.stringify(user))
+                
+                // Import and dispatch the auth action to update Redux state
+                if (typeof window !== 'undefined') {
+                    import('@/lib/store').then(({ store }) => {
+                        import('@/lib/features/authSlice').then(({ loginSuccess }) => {
+                            store.dispatch(loginSuccess({
+                                user,
+                                token: data.token,
+                                refreshToken: data.refreshToken
+                            }))
+                        })
+                    })
+                }
+            }
+
+            // Small delay to allow state to update, then redirect
+            setTimeout(() => {
+                router.push('/')
+            }, 100)
+            
+        } catch (error: any) {
             console.error('Login error:', error)
+            setErrors({ 
+                general: error.message || 'Login failed. Please check your credentials and try again.' 
+            })
         } finally {
             setIsLoading(false)
         }
@@ -100,9 +164,16 @@ export default function Login() {
                 {/* Login Form */}
                 <div className="bg-card rounded-lg shadow-lg border border-border p-8 pt-12 pb-12">
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        {/* Email Field */}
+                        {/* General Error Message */}
+                        {errors.general && (
+                            <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3">
+                                <p className="text-sm text-destructive">{errors.general}</p>
+                            </div>
+                        )}
+                        
+                        {/* Email/Username Field */}
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-card-foreground mb-2">
+                            <label htmlFor="emailOrUsername" className="block text-sm font-medium text-card-foreground mb-2">
                                 Email / Username
                             </label>
                             <div className="relative">
@@ -110,21 +181,21 @@ export default function Login() {
                                     <Mail className="h-5 w-5 text-muted-foreground" />
                                 </div>
                                 <input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="email"
+                                    id="emailOrUsername"
+                                    name="emailOrUsername"
+                                    type="text"
+                                    autoComplete="username"
                                     required
-                                    value={formData.email}
+                                    value={formData.emailOrUsername}
                                     onChange={handleInputChange}
                                     className={`appearance-none relative block w-full pl-4 pr-3 py-3 border ${
-                                        errors.email ? 'border-destructive' : 'border-input'
+                                        errors.emailOrUsername ? 'border-destructive' : 'border-input'
                                     } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background transition-colors`}
                                     placeholder="Enter your email or username"
                                 />
                             </div>
-                            {errors.email && (
-                                <p className="mt-1 text-sm text-destructive">{errors.email}</p>
+                            {errors.emailOrUsername && (
+                                <p className="mt-1 text-sm text-destructive">{errors.emailOrUsername}</p>
                             )}
                         </div>
 

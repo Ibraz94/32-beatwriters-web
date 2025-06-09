@@ -18,50 +18,77 @@ export interface User {
 }
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null)
+  // Use the main auth system directly
+  const mainAuth = useAuthSystem()
   const [loading, setLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   
   useEffect(() => {
-    // Mock authentication check - in real app, this would check actual auth state
-    // You can modify this to test different scenarios:
-    
-    // Non-premium user (default):
-    
-    // Simulate loading delay
-    setTimeout(() => {
-      setUser(user)
+    // The main auth system handles initialization, so we just wait for it
+    const timer = setTimeout(() => {
       setLoading(false)
-    }, 500)
-  }, [])
+    }, 100)
+    
+    return () => clearTimeout(timer)
+  }, [mainAuth.user])
   
   const signIn = async (email: string, password: string): Promise<User> => {
-
-    const { login } = useAuthSystem()
-    const result = await login(email, password)
+    const result = await mainAuth.login(email, password)
     if (result.success && result.user) {
-      setUser(result.user as unknown as User)
       return result.user as unknown as User
     }
     throw new Error('Login failed')
   }
   
   const signOut = () => {
-    setUser(null)
+    mainAuth.logout()
   }
   
   const upgradeToPremium = () => {
-    if (user) {
-      setUser({ ...user, memebership: 'premium' })
+    if (mainAuth.user) {
+      mainAuth.updateProfile({
+        subscription: {
+          type: 'premium',
+          isActive: true,
+          expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year from now
+        }
+      })
+    }
+  }
+
+  // Check if user has premium access
+  const checkPremiumAccess = () => {
+    return mainAuth.checkPremiumAccess()
+  }
+
+  // Convert main auth user to articles user format if needed
+  const getArticlesUser = (): User | null => {
+    if (!mainAuth.user) return null
+    
+    const mainUser = mainAuth.user
+    return {
+      id: mainUser.id,
+      username: mainUser.name || mainUser.email,
+      email: mainUser.email,
+      firstName: mainUser.name?.split(' ')[0] || '',
+      lastName: mainUser.name?.split(' ').slice(1).join(' ') || '',
+      role: mainUser.role || 'user',
+      roleId: mainUser.role === 'admin' ? 1 : mainUser.role === 'premium' ? 2 : 3,
+      memebership: mainUser.subscription?.type || 'free',
+      profilePicture: mainUser.avatar || '',
+      bio: '',
+      lastLogin: new Date().toISOString(),
+      loginCount: 1,
+      isAdmin: mainUser.role === 'admin'
     }
   }
   
   return {
-    user,
-    loading,
-    isAuthenticated: !!user,
+    user: getArticlesUser(),
+    loading: loading || mainAuth.isLoading,
+    isAuthenticated: mainAuth.isAuthenticated,
     signIn,
     signOut,
-    upgradeToPremium
+    upgradeToPremium,
+    checkPremiumAccess
   }
 } 
