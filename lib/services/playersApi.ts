@@ -85,34 +85,6 @@ export const playersApi = createApi({
       providesTags: (result, error, id) => [{ type: 'Player', id }],
     }),
     
-    // Create new player (admin only)
-    createPlayer: builder.mutation<{ player: Player; message: string }, Omit<Player, 'id' | 'createdAt' | 'updatedAt'>>({
-      query: (playerData) => ({
-        url: '',
-        method: 'POST',
-        body: playerData,
-      }),
-      invalidatesTags: ['Player'],
-    }),
-    
-    // Update player (admin only)
-    updatePlayer: builder.mutation<{ player: Player; message: string }, { id: string; data: Partial<Player> }>({
-      query: ({ id, data }) => ({
-        url: `/${id}`,
-        method: 'PUT',
-        body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Player', id }, 'Player'],
-    }),
-    
-    // Delete player (admin only)
-    deletePlayer: builder.mutation<{ message: string }, string>({
-      query: (id) => ({
-        url: `/${id}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (result, error, id) => [{ type: 'Player', id }, 'Player'],
-    }),
     
     // Get player stats
     getPlayerStats: builder.query<{ stats: Player['stats'] }, { playerId: string; season?: string }>({
@@ -146,9 +118,6 @@ export const playersApi = createApi({
 export const {
   useGetPlayersQuery,
   useGetPlayerQuery,
-  useCreatePlayerMutation,
-  useUpdatePlayerMutation,
-  useDeletePlayerMutation,
   useGetPlayerStatsQuery,
   useGetPlayersByTeamQuery,
   useSearchPlayersQuery,

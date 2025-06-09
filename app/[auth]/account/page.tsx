@@ -5,7 +5,7 @@ import { User, Mail, Lock, CreditCard, Crown, Settings, Eye, EyeOff, Calendar, S
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
-import { useAuth } from '../../(pages)/articles/hooks/useAuth'
+import { useAuth } from '../../../lib/hooks/useAuth'
 
 export default function Account() {
     const [mounted, setMounted] = useState(false)

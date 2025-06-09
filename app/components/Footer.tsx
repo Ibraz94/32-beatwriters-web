@@ -56,22 +56,21 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-3 ml-6">
-                    <h1 className="text-xl lg:text-2xl font-bold text-foreground">T E A M U S</h1>
-                    <Link href="/" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Home</Link>
-                    <Link href="/about" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">About Us</Link>
-                    <Link href="/contact-us" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Contact Us</Link>
-                    <Link href="/privacy-policy" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Privacy Policy</Link>
-                    <Link href="/terms-and-conditions" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Terms & Conditions</Link>
-                </div>
                 <div className="flex flex-col gap-3">
                     <h1 className="text-xl lg:text-2xl font-bold text-foreground">Q U I C K L I N K S</h1>
-                    <Link href="/faqs" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">FAQ's</Link>
-                    <Link href="/about" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">About Us</Link>
-                    <Link href="/contact-us" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Contact Us</Link>
+                    <Link href="/" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Home</Link>
+                    <Link href="/faqs" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">FAQ's</Link>  
+                    
                     <Link href="/privacy-policy" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Privacy Policy</Link>
                     <Link href="/terms-and-conditions" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Terms & Conditions</Link>
                 </div>
+
+                <div className="flex flex-col gap-3 ml-6">
+                    <h1 className="text-xl lg:text-2xl font-bold text-foreground">T E A M U S</h1>
+                    <Link href="/about" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">About Us</Link>
+                    <Link href="/contact-us" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Contact Us</Link>
+                </div>
+
                 <div className="flex flex-col gap-3">
                 <h1 className="text-xl lg:text-2xl font-bold text-foreground">N E W S L E T T E R</h1>
                 <p className="text-muted-foreground text-sm lg:text-base">Stay in the Game — Right from Your Inbox</p>

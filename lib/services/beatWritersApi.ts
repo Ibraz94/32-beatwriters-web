@@ -100,35 +100,6 @@ export const beatWritersApi = createApi({
       providesTags: (result, error, idOrSlug) => [{ type: 'BeatWriter', id: idOrSlug }],
     }),
     
-    // Create new beat writer (admin only)
-    createBeatWriter: builder.mutation<{ writer: BeatWriter; message: string }, CreateBeatWriterRequest>({
-      query: (writerData) => ({
-        url: '',
-        method: 'POST',
-        body: writerData,
-      }),
-      invalidatesTags: ['BeatWriter'],
-    }),
-    
-    // Update beat writer
-    updateBeatWriter: builder.mutation<{ writer: BeatWriter; message: string }, { id: string; data: Partial<CreateBeatWriterRequest> }>({
-      query: ({ id, data }) => ({
-        url: `/${id}`,
-        method: 'PUT',
-        body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'BeatWriter', id }, 'BeatWriter'],
-    }),
-    
-    // Delete beat writer (admin only)
-    deleteBeatWriter: builder.mutation<{ message: string }, string>({
-      query: (id) => ({
-        url: `/${id}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (result, error, id) => [{ type: 'BeatWriter', id }, 'BeatWriter'],
-    }),
-    
     // Get featured beat writers
     getFeaturedBeatWriters: builder.query<{ writers: BeatWriter[] }, { limit?: number }>({
       query: ({ limit = 5 }) => `/featured?limit=${limit}`,
@@ -211,9 +182,6 @@ export const beatWritersApi = createApi({
 export const {
   useGetBeatWritersQuery,
   useGetBeatWriterQuery,
-  useCreateBeatWriterMutation,
-  useUpdateBeatWriterMutation,
-  useDeleteBeatWriterMutation,
   useGetFeaturedBeatWritersQuery,
   useGetTopRatedBeatWritersQuery,
   useGetBeatWritersByTeamQuery,

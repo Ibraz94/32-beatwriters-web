@@ -35,8 +35,7 @@ export async function GET(request: NextRequest) {
     console.log('📡 Raw response:', responseText.substring(0, 500) + (responseText.length > 500 ? '...' : ''))
     
     if (!response.ok) {
-      console.error('❌ External API error:', response.status, response.statusText)
-      console.error('❌ Response body:', responseText)
+      console.error('Response body:', responseText)
       return NextResponse.json(
         { 
           error: `External API returned ${response.status}: ${response.statusText}`,
@@ -50,10 +49,7 @@ export async function GET(request: NextRequest) {
     let data
     try {
       data = JSON.parse(responseText)
-      console.log('✅ Parsed JSON successfully:', data)
     } catch (parseError) {
-      console.error('❌ JSON parse error:', parseError)
-      console.error('❌ Raw text that failed to parse:', responseText)
       return NextResponse.json(
         { 
           error: 'External API returned non-JSON response',
@@ -62,12 +58,10 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       )
     }
-    
     // Return the data from your external API
-    return NextResponse.json(data)
-    
+    return NextResponse.json(data)   
   } catch (error) {
-    console.error('💥 Proxy error:', error)
+
     
     // Check if it's a timeout error
     if (error instanceof Error && error.name === 'AbortError') {

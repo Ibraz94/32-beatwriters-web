@@ -88,36 +88,7 @@ export const teamsApi = createApi({
       query: (id) => `/${id}`,
       providesTags: (result, error, id) => [{ type: 'Team', id }],
     }),
-    
-    // Create new team (admin only)
-    createTeam: builder.mutation<{ team: Team; message: string }, Omit<Team, 'id' | 'createdAt' | 'updatedAt'>>({
-      query: (teamData) => ({
-        url: '',
-        method: 'POST',
-        body: teamData,
-      }),
-      invalidatesTags: ['Team'],
-    }),
-    
-    // Update team (admin only)
-    updateTeam: builder.mutation<{ team: Team; message: string }, { id: string; data: Partial<Team> }>({
-      query: ({ id, data }) => ({
-        url: `/${id}`,
-        method: 'PUT',
-        body: data,
-      }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Team', id }, 'Team'],
-    }),
-    
-    // Delete team (admin only)
-    deleteTeam: builder.mutation<{ message: string }, string>({
-      query: (id) => ({
-        url: `/${id}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (result, error, id) => [{ type: 'Team', id }, 'Team'],
-    }),
-    
+     
     // Get team stats
     getTeamStats: builder.query<{ stats: Team['stats'] }, { teamId: string; season?: string }>({
       query: ({ teamId, season }) => {
@@ -174,9 +145,6 @@ export const teamsApi = createApi({
 export const {
   useGetTeamsQuery,
   useGetTeamQuery,
-  useCreateTeamMutation,
-  useUpdateTeamMutation,
-  useDeleteTeamMutation,
   useGetTeamStatsQuery,
   useGetTeamsByConferenceQuery,
   useGetTeamsByDivisionQuery,

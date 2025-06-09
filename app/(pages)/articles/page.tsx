@@ -14,7 +14,7 @@ export default function ArticlesPage() {
   const [isAccessible, setIsAccessible] = useState(false)
   
   // Get user authentication status and premium access
-  const { checkPremiumAccess, isAuthenticated } = useAuth()
+  const { checkPremiumAccess, checkRole, isAuthenticated, user } = useAuth()
   const hasPremiumAccess = checkPremiumAccess()
   
   // Simplified query - fetch all published articles with basic pagination
@@ -47,6 +47,16 @@ export default function ArticlesPage() {
   // Helper function to check if user can access an article
   const canAccessArticle = (articleAccess: string) => {
     if (articleAccess === 'public') return true
+    
+    // Check if user is admin using case-insensitive comparison
+    const userRole = user?.role?.toLowerCase()
+    const isAdminByRole = userRole === 'admin' || userRole === 'administrator'
+    
+    // Administrators can access all articles
+    if (isAdminByRole) {
+      return true
+    }
+    
     if (articleAccess === 'pro' || articleAccess === 'lifetime') {
       return hasPremiumAccess
     }

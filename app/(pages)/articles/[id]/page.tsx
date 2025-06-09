@@ -13,8 +13,6 @@ type Props = {
   content: string
 }
 
-
-
 // Premium access component
 const PremiumAccessRequired = ({content}: Props) => {
   return (
@@ -142,9 +140,10 @@ export default function ArticlePage() {
 
         {/* Article Header */}
         <div key={article.id}>
+        <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
           <Image src={getImageUrl(article.featuredImage) || ''} 
           alt={article.title} width={1000} height={1000} className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
-          <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
+          
           <div className="prose max-w-none prose" dangerouslySetInnerHTML={{__html: parsed.content}} />
         </div>
 
