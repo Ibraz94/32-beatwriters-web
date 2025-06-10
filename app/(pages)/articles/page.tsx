@@ -86,7 +86,7 @@ export default function ArticlesPage() {
     } else {
       return {
         text: isAuthenticated ? 'Upgrade to Premium' : 'Sign In for Premium',
-        href: isAuthenticated ? '/auth/account' : '/auth/login',
+        href: isAuthenticated ? '/account' : '/login',
         className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }

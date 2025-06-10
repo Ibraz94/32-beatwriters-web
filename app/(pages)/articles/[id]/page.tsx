@@ -67,7 +67,7 @@ export default function ArticlePage() {
   // Use the dedicated hook to fetch a single article by slug
   const { data: article, isLoading: articleLoading, error } = useGetArticleQuery(id as string)
 
-  const parsed = article?.content ? JSON.parse(article.content) : null;
+
 
   // Add debugging to see the response structure
   useEffect(() => {
@@ -135,7 +135,22 @@ export default function ArticlePage() {
           <Image src={getImageUrl(article.featuredImage) || ''} 
           alt={article.title} width={1000} height={1000} className="rounded-lg mb-12 shadow-lg" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
           
-          <div className="prose max-w-none prose" dangerouslySetInnerHTML={{__html: parsed.content}} />
+          <div className="prose max-w-none prose"/>
+          {(() => {
+                  try {
+                    // Check if content starts with '{' and try to parse it as JSON
+                    if (article.content.trim().startsWith('{')) {
+                      const contentObj = JSON.parse(article.content);
+                      return <div dangerouslySetInnerHTML={{ __html: contentObj.content || article.content }} />;
+                    }
+                    // If not JSON or parsing fails, return original content
+                    return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
+                  } catch (error) {
+                    // If JSON parsing fails, return original content
+                    console.error('Error parsing content:', error);
+                    return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
+                  }
+                })()}
         </div>
 
         {/* Related Articles */}
