@@ -1,43 +1,43 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com/api'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://www.playerprofiler.com/wp-content/uploads'
 
 export interface Player {
   id: string
   name: string
-  position: string
   team: string
-  teamId: string
-  jerseyNumber: number
-  age: number
+  position: string
   height: string
-  weight: string
-  experience: number
-  college?: string
-  stats?: {
-    season: string
-    games: number
-    points: number
-    rebounds: number
-    assists: number
-    steals: number
-    blocks: number
-    fieldGoalPercentage: number
-    threePointPercentage: number
-    freeThrowPercentage: number
-  }[]
-  image?: string
-  bio?: string
+  weight: number
+  headshotPic: string
+  college: string
+  draftPick: string
+  age: number
+  status: string
+  ppi: number
   createdAt: string
   updatedAt: string
 }
 
-interface PlayersResponse {
-  players: Player[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
+export interface PlayersResponse {
+  success: boolean
+  data: {
+    players: Player[]
+    pagination: {
+      total: number
+      page: number
+      pageSize: number
+      totalPages: number
+    }
+  }
+}
+
+export interface PositionsResponse {
+  success: boolean
+  data: {
+    positions: string[]
+  }
 }
 
 interface PlayerFilters {
@@ -65,8 +65,27 @@ export const playersApi = createApi({
   }),
   tagTypes: ['Player'],
   endpoints: (builder) => ({
+    getPlayers: builder.query<PlayersResponse, { page?: number; limit?: number; search?: string; position?: string; conference?: string }>({
+      query: (params) => ({
+        url: '/',
+        method: 'GET',
+        params
+      })
+    }),
+    getPositions: builder.query<PositionsResponse, void>({
+      query: () => ({
+        url: '/players/positions',
+        method: 'GET'
+      })
+    }),
+    getPlayer: builder.query<{ success: boolean; data: Player }, string>({
+      query: (id) => ({
+        url: `/players/${id}`,
+        method: 'GET'
+      })
+    }),
     // Get all players with filtering and pagination
-    getPlayers: builder.query<PlayersResponse, PlayerFilters>({
+    getPlayersWithFilters: builder.query<PlayersResponse, PlayerFilters>({
       query: (filters) => {
         const params = new URLSearchParams()
         Object.entries(filters).forEach(([key, value]) => {
@@ -77,22 +96,6 @@ export const playersApi = createApi({
         return `?${params.toString()}`
       },
       providesTags: ['Player'],
-    }),
-    
-    // Get single player by ID
-    getPlayer: builder.query<{ player: Player }, string>({
-      query: (id) => `/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Player', id }],
-    }),
-    
-    
-    // Get player stats
-    getPlayerStats: builder.query<{ stats: Player['stats'] }, { playerId: string; season?: string }>({
-      query: ({ playerId, season }) => {
-        const params = season ? `?season=${season}` : ''
-        return `/${playerId}/stats${params}`
-      },
-      providesTags: (result, error, { playerId }) => [{ type: 'Player', id: `${playerId}-stats` }],
     }),
     
     // Get players by team
@@ -112,14 +115,21 @@ export const playersApi = createApi({
       query: () => '/featured',
       providesTags: ['Player'],
     }),
+
+    getImageUrl: builder.query<string, string>({
+      query: (imagePath) => `/uploads/${imagePath}`,
+      providesTags: ['Player'],
+    }),
   }),
 })
 
 export const {
   useGetPlayersQuery,
+  useGetPositionsQuery,
   useGetPlayerQuery,
-  useGetPlayerStatsQuery,
+  useGetPlayersWithFiltersQuery,
   useGetPlayersByTeamQuery,
   useSearchPlayersQuery,
   useGetFeaturedPlayersQuery,
+  useGetImageUrlQuery,
 } = playersApi 

@@ -1,74 +1,100 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Search, Filter, Users, MapPin, Hash, GraduationCap } from "lucide-react"
-import { getAllPlayers, getAllPositions, Player } from './data/players'
+import { useGetPlayersQuery, useGetImageUrlQuery, Player, PlayersResponse } from '@/lib/services/playersApi'
 
 export default function Players() {
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedPosition, setSelectedPosition] = useState("all")
     const [selectedConference, setSelectedConference] = useState("all")
+    const [page, setPage] = useState(1)
     
-    const allPlayers = getAllPlayers()
-    const allPositions = getAllPositions()
+    // Fetch players and positions from API
+    const { 
+        data: playersResponse, 
+        isLoading: playersLoading, 
+        error: playersError 
+    } = useGetPlayersQuery({
+        page,
+        limit: 12,
+        search: searchTerm || undefined,
+        position: selectedPosition !== "all" ? selectedPosition : undefined,
+        conference: selectedConference !== "all" ? selectedConference : undefined
+    })
 
-    // Filter players based on search and filters
-    const filteredPlayers = useMemo(() => {
-        let filtered = allPlayers
+    console.log('Full API Response:', playersResponse)
 
-        // Search by name
-        if (searchTerm) {
-            filtered = filtered.filter(player => 
-                player.name.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-        }
+    // Handle search with debounce
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setPage(1) // Reset to first page when searching
+        }, 500)
 
-        // Filter by position
-        if (selectedPosition !== "all") {
-            filtered = filtered.filter(player => 
-                player.position === selectedPosition
-            )
-        }
+        return () => clearTimeout(timeoutId)
+    }, [searchTerm])
 
-        // Filter by conference
-        if (selectedConference !== "all") {
-            filtered = filtered.filter(player => 
-                player.team.conference === selectedConference
-            )
-        }
+    // Loading state
+    if (playersLoading) {
+        return (
+            <section className="container mx-auto max-w-7xl px-4 py-8">
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                        All <span className="text-red-800">Players</span>
+                    </h1>
+                    <p className="text-xl max-w-4xl mx-auto mb-6">
+                        Loading players...
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {Array.from({ length: 12 }).map((_, index) => (
+                        <div key={index} className="animate-pulse">
+                            <div className="bg-gray-300 rounded-lg h-48 mb-4"></div>
+                            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                            <div className="h-3 bg-gray-300 rounded mb-2"></div>
+                            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        )
+    }
 
-        return filtered.sort((a, b) => a.name.localeCompare(b.name))
-    }, [allPlayers, searchTerm, selectedPosition, selectedConference])
+    // Error state
+    if (playersError) {
+        return (
+            <section className="container mx-auto max-w-7xl px-4 py-8">
+                <div className="text-center">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                        All <span className="text-red-800">Players</span>
+                    </h1>
+                    <p className="text-xl text-red-600 mb-4">Failed to load players</p>
+                    <p className="text-gray-600">Please try again later.</p>
+                </div>
+            </section>
+        )
+    }
+
+    const players = playersResponse?.data?.players || []
+    const totalPlayers = playersResponse?.data?.pagination?.total || 0
+    const totalPages = playersResponse?.data?.pagination?.totalPages || 0
+
+    console.log('Processed Players:', players)
+    console.log('Is Array?', Array.isArray(players))
 
     return (
         <section className="container mx-auto max-w-7xl px-4 py-8">
             {/* Header */}
             <div className="text-center mb-8">
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                   All <span className="text-red-800">Players</span>
+                    All <span className="text-red-800">Players</span>
                 </h1>
                 <p className="text-xl max-w-4xl mx-auto mb-6">
                     Comprehensive player profiles featuring detailed stats, team information, and career highlights. 
                     Explore every key player across all NFL teams.
                 </p>
-                
-                {/* Stats */}
-                {/* <div className="flex justify-center gap-8 text-sm">
-                    <div className="text-center">
-                        <div className="text-2xl font-bold text-red-800">{allPlayers.length}</div>
-                        <div>Total Players</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-2xl font-bold text-red-800">{allPositions.length}</div>
-                        <div>Positions</div>
-                    </div>
-                    <div className="text-center">
-                        <div className="text-2xl font-bold text-red-800">32</div>
-                        <div>Teams</div>
-                    </div>
-                </div> */}
             </div>
 
             {/* Search and Filters */}
@@ -87,24 +113,16 @@ export default function Players() {
                     </div>
 
                     {/* Position Filter */}
-                    <div className="relative">
-                        <select
-                            value={selectedPosition}
-                            onChange={(e) => setSelectedPosition(e.target.value)}
-                            className="appearance-none border border-gray-200 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
-                        >
-                            <option value="all">All Positions</option>
-                            {allPositions.map(position => (
-                                <option key={position} value={position}>{position}</option>
-                            ))}
-                        </select>
-                    </div>
+                    
 
                     {/* Conference Filter */}
                     <div className="relative">
                         <select
                             value={selectedConference}
-                            onChange={(e) => setSelectedConference(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedConference(e.target.value)
+                                setPage(1)
+                            }}
                             className="appearance-none border border-gray-200 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
                         >
                             <option value="all">All Conferences</option>
@@ -138,6 +156,7 @@ export default function Players() {
                                 setSearchTerm("")
                                 setSelectedPosition("all")
                                 setSelectedConference("all")
+                                setPage(1)
                             }}
                             className="text-red-800 underline text-sm ml-2"
                         >
@@ -150,22 +169,22 @@ export default function Players() {
             {/* Results Count */}
             <div className="mb-6">
                 <p className="text-gray-600">
-                    Showing <span className="font-semibold">{filteredPlayers.length}</span> of <span className="font-semibold">{allPlayers.length}</span> players
+                    Showing <span className="font-semibold">{players.length}</span> of <span className="font-semibold">{totalPlayers}</span> players
                 </p>
             </div>
 
             {/* Players Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {filteredPlayers.map((player) => (
+                {players.map((player) => (
                     <Link 
                         href={`/players/${player.id}`} 
                         key={player.id}
                         className="rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden"
                     >
                         {/* Player Image */}
-                        <div className="relative h-48">
+                        {/* <div className="relative h-48">
                             <Image 
-                                src={player.image} 
+                                src={useGetImageUrlQuery(player.headshotPic).data || '/default-player.jpg'}
                                 alt={player.name}
                                 fill
                                 className="object-cover"
@@ -174,16 +193,7 @@ export default function Players() {
                                     target.src = '/default-player.jpg'
                                 }}
                             />
-                            <div className="absolute top-2 right-2 rounded-full p-1">
-                                <Image 
-                                    src={player.team.logo} 
-                                    alt={player.team.name}
-                                    width={24}
-                                    height={24}
-                                    className="rounded-full"
-                                />
-                            </div>
-                        </div>
+                        </div> */}
 
                         {/* Player Info */}
                         <div className="p-4">
@@ -192,7 +202,7 @@ export default function Players() {
                                     {player.name}
                                 </h3>
                                 <span className="px-2 py-1 rounded text-xs font-medium">
-                                    #{player.number}
+                                    #{player.draftPick}
                                 </span>
                             </div>
 
@@ -204,7 +214,7 @@ export default function Players() {
                                 
                                 <div className="flex items-center">
                                     <MapPin className="w-4 h-4 mr-2" />
-                                    <span>{player.team.city} {player.team.name}</span>
+                                    <span>{player.team}</span>
                                 </div>
                                 
                                 <div className="flex items-center">
@@ -215,7 +225,7 @@ export default function Players() {
                                 <div className="flex items-center justify-between pt-2 border-t">
                                     <span className="text-xs">{player.height} • {player.weight}</span>
                                     <span className="text-xs px-2 py-1 rounded">
-                                        {player.team.conference}
+                                        {player.team}
                                     </span>
                                 </div>
                             </div>
@@ -225,7 +235,7 @@ export default function Players() {
             </div>
 
             {/* No Results */}
-            {filteredPlayers.length === 0 && (
+            {players.length === 0 && (
                 <div className="text-center py-12">
                     <Users className="w-16 h-16 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold mb-2">No players found</h3>
@@ -237,11 +247,52 @@ export default function Players() {
                             setSearchTerm("")
                             setSelectedPosition("all")
                             setSelectedConference("all")
+                            setPage(1)
                         }}
                         className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
                     >
                         Clear Filters
                     </button>
+                </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="mt-8 flex justify-center">
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                            className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        >
+                            Previous
+                        </button>
+                        
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            const pageNum = Math.max(1, Math.min(totalPages - 4, page - 2)) + i
+                            return (
+                                <button
+                                    key={pageNum}
+                                    onClick={() => setPage(pageNum)}
+                                    className={`px-4 py-2 rounded-lg border transition-colors ${
+                                        pageNum === page
+                                            ? 'bg-red-800 text-white border-red-800'
+                                            : 'hover:bg-gray-50'
+                                    }`}
+                                >
+                                    {pageNum}
+                                </button>
+                            )
+                        })}
+                        
+                        <button
+                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            disabled={page === totalPages}
+                            className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
             )}
         </section>
