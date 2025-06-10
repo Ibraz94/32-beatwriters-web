@@ -47,7 +47,7 @@ export default function NewArticles() {
                                 <div className="p-3 md:p-4 flex flex-col justify-between flex-grow">
                                     <h4 className="text-base md:text-lg lg:text-xl font-bold mb-2 line-clamp-2">{relatedArticle.title}</h4>
                                     <div className="flex flex-col">
-                                        <p className="text-xs md:text-sm text-gray-600 mb-2">{new Date(relatedArticle.publishedAt || '').toLocaleDateString()}</p>
+                                        <p className="text-xs md:text-sm mb-2">{new Date(relatedArticle.publishedAt || '').toLocaleDateString()}</p>
                                     </div>
                                 </div>
                             </Link>

@@ -67,8 +67,8 @@ function Header() {
                             href="/articles"
                             className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Articles</Link>
                         <Link
-                            href="/podcast"
-                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Podcast</Link>
+                            href="/podcasts"
+                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Podcasts</Link>
                         <Link
                             href="/players"
                             className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Players</Link>

@@ -16,7 +16,7 @@ const MobileNav = () => {
   const links = [
     {
       name: isAuthenticated ? "Account" : "Login",
-      path: isAuthenticated ? "/auth/account" : "/auth/login"
+      path: isAuthenticated ? "/auth/account" : "/login"
     },
     {
       name: 'Home',

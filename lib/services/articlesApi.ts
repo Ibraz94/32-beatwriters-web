@@ -50,11 +50,13 @@ export interface Article {
 }
 
 interface ArticlesResponse {
+  data: {
   articles: Article[]
   total: number
-  page: number
-  limit: number
-  totalPages: number
+    page: number
+    limit: number
+    totalPages: number
+  }
 }
 
 interface ArticleFilters {

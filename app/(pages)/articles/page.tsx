@@ -26,21 +26,21 @@ export default function ArticlesPage() {
 
   // Handle loading more articles
   useEffect(() => {
-    if (articles?.articles) {
+    if (articles?.data.articles) {
       if (page === 1) {
         // First load - replace all articles
-        setAllArticles(articles.articles)
+        setAllArticles(articles.data.articles)
       } else {
         // Load more - append new articles
-        setAllArticles(prev => [...prev, ...articles.articles])
+        setAllArticles(prev => [...prev, ...articles.data.articles])
       }
-      setHasMoreArticles(articles.articles.length === 12)
+      setHasMoreArticles(articles.data.articles.length === 12)
     }
   }, [articles, page])
 
   useEffect(() => {
-    if (articles?.articles) {
-      setIsAccessible(articles.articles.some(article => article.access === 'public'))
+      if (articles?.data.articles) {
+      setIsAccessible(articles.data.articles.some(article => article.access === 'public'))
     }
   }, [articles])
 
@@ -54,6 +54,7 @@ export default function ArticlesPage() {
     
     // Administrators can access all articles
     if (isAdminByRole) {
+      console.log('✅ Administrator access granted for article:', articleAccess)
       return true
     }
     
@@ -85,7 +86,7 @@ export default function ArticlesPage() {
     } else {
       return {
         text: isAuthenticated ? 'Upgrade to Premium' : 'Sign In for Premium',
-        href: isAuthenticated ? '/premium' : '/login',
+        href: isAuthenticated ? '/auth/account' : '/auth/login',
         className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }
@@ -146,7 +147,7 @@ export default function ArticlesPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto max-w-7xl px-4 py-8">
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
