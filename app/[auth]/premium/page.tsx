@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, CreditCard, User, Mail, Phone, MapPin, Calendar, Shield, Star } from 'lucide-react'
+import { Check, CreditCard, User, MapPin, Shield, Star } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
@@ -136,57 +136,57 @@ export default function PremiumSignup() {
 //   }
 
   return (
-    <div className=" py-6 px-4 pt-16">
+    <div className="py-4 sm:py-6 px-4 pt-12 sm:pt-16">
       <div className="container mx-auto max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
             Get Our Premium <span className="text-red-800">Membership</span>
           </h1>
-          <p className="text-xl max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-2">
             Unlock exclusive content, advanced insights, and premium features designed for serious fantasy football enthusiasts.
           </p>
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
+        <div className="mb-6 sm:mb-8 sm:block hidden">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             {[1, 2, 3, 4, 5].map((step) => (
-              <div key={step} className="flex items-center ">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+              <div key={step} className="flex items-center flex-1">
+                <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold ${
                   currentStep >= step ? 'bg-red-800 text-white' : 'bg-gray-300 text-gray-600'
                 }`}>
                   {step}
                 </div>
                 {step < 5 && (
-                  <div className={`w-46 h-1 mx- ${
+                  <div className={`flex-1 h-1 sm:w-[168px] w-[55px] mx-auto sm:mx-2 ${
                     currentStep > step ? 'bg-red-800' : 'bg-gray-300'
                   }`} />
                 )}
               </div>
             ))}
           </div>
-          <div className="flex text-xs">
-            <span className='mr-42'>Personal</span>
-            <span className='mr-46'>Address</span>
-            <span className='mr-46'>Plan</span>
-            <span className='mr-44'>Review</span>
+          <div className="hidden sm:flex justify-between text-xs">
+            <span>Personal</span>
+            <span>Address</span>
+            <span>Plan</span>
+            <span>Review</span>
             <span>Payment</span>
           </div>
         </div>
 
         {/* Form */}
-        <div className="rounded-2xl border shadow-sm p-8">
+        <div className="rounded-lg sm:rounded-2xl border shadow-sm p-4 sm:p-6 md:p-8">
           <form onSubmit={handleSubmit}>
             {/* Step 1: Personal Information */}
             {currentStep === 1 && (
-              <div className="space-y-3">
-                <div className="flex items-center mb-6">
-                  <User className="w-6 h-6 text-red-800 mr-3" />
-                  <h2 className="text-2xl font-bold">Personal Information</h2>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <User className="w-5 h-5 sm:w-6 sm:h-6 text-red-800 mr-2 sm:mr-3" />
+                  <h2 className="text-xl sm:text-2xl font-bold">Personal Information</h2>
                 </div>
                 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       First Name *
@@ -196,7 +196,7 @@ export default function PremiumSignup() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                       required
                     />
                   </div>
@@ -210,7 +210,7 @@ export default function PremiumSignup() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                       required
                     />
                   </div>
@@ -225,12 +225,12 @@ export default function PremiumSignup() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border rounded-lg"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                     required
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       Phone Number *
@@ -240,7 +240,7 @@ export default function PremiumSignup() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                       required
                     />
                   </div>
@@ -254,7 +254,7 @@ export default function PremiumSignup() {
                       name="dateOfBirth"
                       value={formData.dateOfBirth}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                     />
                   </div>
                 </div>
@@ -263,10 +263,10 @@ export default function PremiumSignup() {
 
             {/* Step 2: Address Information */}
             {currentStep === 2 && (
-              <div className="space-y-3">
-                <div className="flex items-center mb-6">
-                  <MapPin className="w-6 h-6 text-red-800 mr-3" />
-                  <h2 className="text-2xl font-bold">Address Information</h2>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-red-800 mr-2 sm:mr-3" />
+                  <h2 className="text-xl sm:text-2xl font-bold">Address Information</h2>
                 </div>
 
                 <div>
@@ -278,12 +278,12 @@ export default function PremiumSignup() {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border rounded-lg"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                     required
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       City *
@@ -293,7 +293,7 @@ export default function PremiumSignup() {
                       name="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                       required
                     />
                   </div>
@@ -307,13 +307,13 @@ export default function PremiumSignup() {
                       name="state"
                       value={formData.state}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       ZIP/Postal Code *
@@ -323,7 +323,7 @@ export default function PremiumSignup() {
                       name="zipCode"
                       value={formData.zipCode}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                       required
                     />
                   </div>
@@ -336,7 +336,7 @@ export default function PremiumSignup() {
                       name="country"
                       value={formData.country}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                     >
                       <option value="United States">United States</option>
                       <option value="Canada">Canada</option>
@@ -351,31 +351,31 @@ export default function PremiumSignup() {
 
             {/* Step 3: Subscription Plan */}
             {currentStep === 3 && (
-              <div className="space-y-3">
-                <div className="flex items-center mb-6">
-                  <Star className="w-6 h-6 text-red-800 mr-3" />
-                  <h2 className="text-2xl font-bold">Choose Your Plan</h2>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <Star className="w-5 h-5 sm:w-6 sm:h-6 text-red-800 mr-2 sm:mr-3" />
+                  <h2 className="text-xl sm:text-2xl font-bold">Choose Your Plan</h2>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   {Object.entries(planPrices).map(([planKey, planInfo]) => (
                     <div
                       key={planKey}
-                      className={`border-2 rounded-xl p-6 cursor-pointer transition-all ${
+                      className={`border-2 rounded-lg sm:rounded-xl p-4 sm:p-6 cursor-pointer transition-all ${
                         formData.plan === planKey 
-                          ? 'scale-102 shadow-xl'   
-                          : 'scale-100'
+                          ? 'scale-102 shadow-xl border-red-800'   
+                          : 'scale-100 hover:border-red-300'
                       }`}
                       onClick={() => setFormData(prev => ({ ...prev, plan: planKey as any }))}
                     >
                       <div className="text-center">
-                        <h3 className="text-4xl font-bold capitalize mb-2">{planKey}</h3>
-                        <div className="text-4xl font-bold text-red-800 mb-1">
+                        <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold capitalize mb-2">{planKey}</h3>
+                        <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-800 mb-1">
                           ${planInfo.price}
                         </div>
-                        <div className="text-xl mb-4">{planInfo.billing}</div>
+                        <div className="text-base sm:text-lg md:text-xl mb-3 sm:mb-4">{planInfo.billing}</div>
                         {planInfo.savings && (
-                          <div className="text-green-800 text-xs font-bold px-2 py-1 rounded-full">
+                          <div className="text-green-800 text-xs sm:text-sm font-bold px-2 py-1 rounded-full bg-green-100">
                             {planInfo.savings}
                           </div>
                         )}
@@ -394,9 +394,9 @@ export default function PremiumSignup() {
                   ))}
                 </div>
 
-                <div className="rounded-lg p-6">
-                  <h3 className="font-bold mb-4">All plans include:</h3>
-                  <div className="grid md:grid-cols-2 gap-3">
+                <div className="rounded-lg bg-gray-50 p-4 sm:p-6">
+                  <h3 className="font-bold mb-3 sm:mb-4 text-sm sm:text-base">All plans include:</h3>
+                  <div className="grid sm:grid-cols-2 gap-2 sm:gap-3">
                     {[
                       'Exclusive premium content',
                       'Advanced analytics & insights',
@@ -418,12 +418,12 @@ export default function PremiumSignup() {
 
                {/* Step 4: Review & Preferences */}
                {currentStep === 4 && (
-              <div className="space-y-6">
-                <h2 className="text-2xl font-bold mb-6">Review & Preferences</h2>
+              <div className="space-y-4 sm:space-y-6">
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Review & Preferences</h2>
 
                 {/* Order Summary */}
-                <div className="rounded-lg p-6">
-                  <h3 className="font-bold mb-4">Order Summary</h3>
+                <div className="rounded-lg bg-gray-50 p-4 sm:p-6">
+                  <h3 className="font-bold mb-3 sm:mb-4 text-sm sm:text-base">Order Summary</h3>
                   <div className="flex justify-between items-center mb-2">
                     <span>Plan: {formData.plan.charAt(0).toUpperCase() + formData.plan.slice(1)}</span>
                     <span className="font-bold">${planPrices.monthly.price}</span>
@@ -437,10 +437,10 @@ export default function PremiumSignup() {
                 </div>
 
                 {/* Communication Preferences */}
-                <div className="space-y-3">
-                  <h3 className="font-bold">Communication Preferences</h3>
+                <div className="space-y-3 sm:space-y-4">
+                  <h3 className="font-bold text-sm sm:text-base">Communication Preferences</h3>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-3 sm:space-y-4">
                     <label className="flex items-center">
                       <input
                         type="checkbox"
@@ -488,10 +488,10 @@ export default function PremiumSignup() {
 
             {/* Step 5: Payment Information */}
             {currentStep === 5 && (
-              <div className="space-y-3">
-                <div className="flex items-center mb-6">
-                  <CreditCard className="w-6 h-6 text-red-800 mr-3" />
-                  <h2 className="text-2xl font-bold">Payment Information</h2>
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-red-800 mr-2 sm:mr-3" />
+                  <h2 className="text-xl sm:text-2xl font-bold">Payment Information</h2>
                 </div>
 
                 <div>
@@ -503,7 +503,7 @@ export default function PremiumSignup() {
                     name="cardholderName"
                     value={formData.cardholderName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border rounded-lg"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                     required
                   />
                 </div>
@@ -518,12 +518,12 @@ export default function PremiumSignup() {
                     value={formData.cardNumber}
                     onChange={handleInputChange}
                     placeholder="1234 5678 9012 3456"
-                    className="w-full px-4 py-3 border rounded-lg"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                     required
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Expiry Date *
@@ -534,7 +534,7 @@ export default function PremiumSignup() {
                       value={formData.expiryDate}
                       onChange={handleInputChange}
                       placeholder="MM/YY"
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                       required
                     />
                   </div>
@@ -549,16 +549,16 @@ export default function PremiumSignup() {
                       value={formData.cvv}
                       onChange={handleInputChange}
                       placeholder="123"
-                      className="w-full px-4 py-3 border rounded-lg"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg text-sm sm:text-base"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-center">
-                    <Shield className="w-5 h-5 text-blue-600 mr-2" />
-                    <span className="text-sm text-blue-800">
+                <div className="border border-blue-200 rounded-lg p-3 sm:p-4">
+                  <div className="flex items-start sm:items-center">
+                    <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 mr-2 mt-0.5 sm:mt-0 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-blue-800">
                       Your payment information is encrypted and secure. We use industry-standard SSL encryption.
                     </span>
                   </div>
@@ -568,12 +568,12 @@ export default function PremiumSignup() {
 
 
             {/* Navigation Buttons */}
-            <div className="flex justify-between mt-1 pt-6 border-t">
+            <div className="flex justify-between mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
               {currentStep > 1 && (
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="px-6 py-3 border border-gray-300 bg-red-800 text-white rounded-lg font-semibold cursor-pointer hover:scale-103 transition-all"
+                  className="px-4 sm:px-6 py-2 sm:py-3 border border-gray-300 bg-red-800 text-white rounded-lg font-semibold cursor-pointer hover:scale-103 transition-all text-sm sm:text-base"
                 >
                   Previous
                 </button>
@@ -584,7 +584,7 @@ export default function PremiumSignup() {
                   type="button"
                   onClick={nextStep}
                   disabled={!validateStep(currentStep)}
-                  className="ml-auto px-6 py-3 bg-red-800 text-white rounded-lg font-semibold cursor-pointer hover:scale-103 disabled:bg-gray-400 disabled:text-white disabled:cursor-not-allowed transition-all"
+                  className="ml-auto px-4 sm:px-6 py-2 sm:py-3 bg-red-800 text-white rounded-lg font-semibold cursor-pointer hover:scale-103 disabled:bg-gray-400 disabled:text-white disabled:cursor-not-allowed transition-all text-sm sm:text-base"
                 >
                   Next
                 </button>
@@ -592,7 +592,7 @@ export default function PremiumSignup() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="ml-auto px-8 py-3 bg-red-800 text-white rounded-lg font-semibold cursor-pointer hover:bg-red-900 disabled:bg-gray-400 disabled:text-white disabled:cursor-not-allowed transition-all"
+                  className="ml-auto px-6 sm:px-8 py-2 sm:py-3 bg-red-800 text-white rounded-lg font-semibold cursor-pointer hover:bg-red-900 disabled:bg-gray-400 disabled:text-white disabled:cursor-not-allowed transition-all text-sm sm:text-base"
                 >
                   {/* {isSubmitting ? 'Processing...' : 'Complete Purchase'} */}
                   Complete Purchase
@@ -603,13 +603,13 @@ export default function PremiumSignup() {
         </div>
 
         {/* Trust Signals */}
-        <div className="mt-8 text-center">
-          <p className="text-gray-600 mb-4">Trusted by thousands of fantasy football enthusiasts</p>
-          <div className="flex justify-center items-center space-x-8 opacity-60">
-            <div className="text-sm text-gray-500">🔒 SSL Secured</div>
-            <div className="text-sm text-gray-500">💳 Secure Payment</div>
-            <div className="text-sm text-gray-500">⚡️ Instant Access</div>
-            <div className="text-sm text-gray-500">📱 Mobile Friendly</div>
+        <div className="mt-6 sm:mt-8 text-center">
+          <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base px-4">Trusted by thousands of fantasy football enthusiasts</p>
+          <div className="flex justify-center items-center space-x-3 sm:space-x-6 md:space-x-8 opacity-60 flex-wrap gap-2 sm:gap-0">
+            <div className="text-xs sm:text-sm text-gray-500">🔒 SSL Secured</div>
+            <div className="text-xs sm:text-sm text-gray-500">💳 Secure Payment</div>
+            <div className="text-xs sm:text-sm text-gray-500">⚡️ Instant Access</div>
+            <div className="text-xs sm:text-sm text-gray-500">📱 Mobile Friendly</div>
           </div>
         </div>
       </div>
