@@ -55,7 +55,7 @@ export default function Players() {
                 </p>
                 
                 {/* Stats */}
-                <div className="flex justify-center gap-8 text-sm">
+                {/* <div className="flex justify-center gap-8 text-sm">
                     <div className="text-center">
                         <div className="text-2xl font-bold text-red-800">{allPlayers.length}</div>
                         <div>Total Players</div>
@@ -68,7 +68,7 @@ export default function Players() {
                         <div className="text-2xl font-bold text-red-800">32</div>
                         <div>Teams</div>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             {/* Search and Filters */}
