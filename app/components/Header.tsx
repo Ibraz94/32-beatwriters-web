@@ -129,7 +129,7 @@ function Header() {
                             <Search size={20} />
                         </button>
                         {isSearchOpen && (
-                            <div className="absolute -right-2 top-16 mt-2 w-80 bg-background border border-border rounded-lg shadow-lg p-4 z-50">
+                            <div className="absolute w-[360px] -right-22 top-16 mt-2 bg-background border border-border rounded-lg shadow-lg p-4 z-50">
                                 <Form action='/search' className="w-full">
                                     <input
                                         type="text"
