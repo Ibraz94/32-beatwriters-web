@@ -72,7 +72,7 @@ export default function Players() {
             </div>
 
             {/* Search and Filters */}
-            <div className="bg-white rounded-xl shadow-md p-6 mb-8 border">
+            <div className="rounded-xl shadow-md p-6 mb-8 border">
                 <div className="flex flex-col md:flex-row gap-4">
                     {/* Search */}
                     <div className="flex-1 relative">
@@ -91,7 +91,7 @@ export default function Players() {
                         <select
                             value={selectedPosition}
                             onChange={(e) => setSelectedPosition(e.target.value)}
-                            className="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
+                            className="appearance-none border border-gray-200 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
                         >
                             <option value="all">All Positions</option>
                             {allPositions.map(position => (
@@ -105,7 +105,7 @@ export default function Players() {
                         <select
                             value={selectedConference}
                             onChange={(e) => setSelectedConference(e.target.value)}
-                            className="appearance-none bg-white border border-gray-200 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
+                            className="appearance-none border border-gray-200 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
                         >
                             <option value="all">All Conferences</option>
                             <option value="AFC">AFC</option>
@@ -160,10 +160,10 @@ export default function Players() {
                     <Link 
                         href={`/players/${player.id}`} 
                         key={player.id}
-                        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden"
+                        className="rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden"
                     >
                         {/* Player Image */}
-                        <div className="relative h-48 bg-gray-100">
+                        <div className="relative h-48">
                             <Image 
                                 src={player.image} 
                                 alt={player.name}
@@ -174,7 +174,7 @@ export default function Players() {
                                     target.src = '/default-player.jpg'
                                 }}
                             />
-                            <div className="absolute top-2 right-2 bg-white rounded-full p-1">
+                            <div className="absolute top-2 right-2 rounded-full p-1">
                                 <Image 
                                     src={player.team.logo} 
                                     alt={player.team.name}
@@ -191,12 +191,12 @@ export default function Players() {
                                 <h3 className="font-bold text-lg leading-tight hover:text-red-800 transition-colors">
                                     {player.name}
                                 </h3>
-                                <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-medium">
+                                <span className="px-2 py-1 rounded text-xs font-medium">
                                     #{player.number}
                                 </span>
                             </div>
 
-                            <div className="space-y-2 text-sm text-gray-600">
+                            <div className="space-y-2 text-sm">
                                 <div className="flex items-center">
                                     <Users className="w-4 h-4 mr-2" />
                                     <span className="font-medium">{player.position}</span>
@@ -214,7 +214,7 @@ export default function Players() {
                                 
                                 <div className="flex items-center justify-between pt-2 border-t">
                                     <span className="text-xs">{player.height} • {player.weight}</span>
-                                    <span className="text-xs px-2 py-1 bg-gray-100 rounded">
+                                    <span className="text-xs px-2 py-1 rounded">
                                         {player.team.conference}
                                     </span>
                                 </div>
@@ -227,9 +227,9 @@ export default function Players() {
             {/* No Results */}
             {filteredPlayers.length === 0 && (
                 <div className="text-center py-12">
-                    <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-600 mb-2">No players found</h3>
-                    <p className="text-gray-500 mb-4">
+                    <Users className="w-16 h-16 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold mb-2">No players found</h3>
+                    <p className="mb-4">
                         Try adjusting your search criteria or filters
                     </p>
                     <button

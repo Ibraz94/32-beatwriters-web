@@ -34,6 +34,10 @@ const MobileNav = () => {
       name: 'Podcast',
       path: "/podcast"
     },
+    {
+      name: 'Players',
+      path: "/players"
+    }
   ];
 
   return (
