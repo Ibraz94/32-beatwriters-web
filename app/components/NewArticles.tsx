@@ -18,7 +18,7 @@ export default function NewArticles() {
             <div className="mt-8 md:mt-12">
                 <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center md:text-left">Latest <span className="text-red-800">Articles</span> </h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                    {articles?.articles
+                    {articles?.data.articles
                         .filter((article: Article) => article.access === 'public')
                         .slice(0, 5)
                         .map((relatedArticle: Article) => (
