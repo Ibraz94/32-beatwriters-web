@@ -332,7 +332,7 @@ export default function Login() {
                 <div className="text-center">
                     <p className="text-sm text-muted-foreground">
                         Not a member?{' '}
-                            <Link href="/auth/premium" className="font-medium text-primary hover:text-red-800 transition-colors">
+                            <Link href="/premium" className="font-medium text-primary hover:text-red-800 transition-colors">
                                 Get premium access now
                             </Link>
                     </p>

@@ -71,7 +71,7 @@ export default function Subscribe() {
 
                
                             <button
-                                onClick={() => router.push('/auth/premium')}
+                                onClick={() => router.push('/premium')}
                                 type="submit"
                                 className="w-full bg-red-800 text-white py-3 px-6 rounded-lg font-semibold hover:cursor-pointer hover:scale-102 transition-all"
                             >

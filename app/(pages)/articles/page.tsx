@@ -85,7 +85,7 @@ export default function ArticlesPage() {
     } else {
       return {
         text: isAuthenticated ? 'Upgrade to Premium' : 'Sign In for Premium',
-        href: isAuthenticated ? '/auth/account' : '/auth/login',
+        href: isAuthenticated ? '/premium' : '/login',
         className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }
@@ -224,13 +224,6 @@ export default function ArticlesPage() {
                 <div className="flex items-center justify-between text-sm mb-4">
                   <div className="flex items-center text-gray-500">
                     {article.publishedAt}
-                  </div>
-                  <div className={`flex items-center text-xs font-medium px-2 py-1 rounded ${
-                    article.access === 'public' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {getAccessStatusText(article.access)}
                   </div>
                 </div>
 

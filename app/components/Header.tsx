@@ -106,12 +106,12 @@ function Header() {
                     <ThemeToggle />
 
                     {isAuthenticated ? (
-                        <Link href="/auth/account"
+                        <Link href="/account"
                             className="lg:flex hidden rounded-full items-center px-4 py-2 text-white bg-red-800 hover:scale-105 transition-all">
                             <span>{getUserDisplayName()}</span>
                         </Link>
                     ) : (
-                        <Link href="/auth/login"
+                        <Link href="/login"
                             className="lg:flex hidden rounded-full items-center px-4 py-2 text-white bg-red-800 hover:scale-105 transition-all">
                             <span>Login</span>
                         </Link>
