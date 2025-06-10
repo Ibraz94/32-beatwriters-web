@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Form from "next/form";
 import Image from "next/image";
-import { CircleUserRound, Search } from "lucide-react";
+import {Search } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
 import MobileNav from "./MobileNav";
@@ -69,6 +69,9 @@ function Header() {
                         <Link
                             href="/podcast"
                             className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Podcast</Link>
+                        <Link
+                            href="/players"
+                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Players</Link>
                         {/* <Link
                             href="/teams"
                             className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Teams</Link> */}

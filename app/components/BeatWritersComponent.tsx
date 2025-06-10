@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function BeatWritersComponent() {
     return (
         <section className="container mx-auto mt-16">
-            <h1 className="text-2xl font-bold mb-4">Beat Writers <span>Corner</span></h1>
+            <h1 className="text-2xl font-bold mb-4">Beat Writers <span className="text-red-800">Corner</span></h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 border rounded-lg">
 

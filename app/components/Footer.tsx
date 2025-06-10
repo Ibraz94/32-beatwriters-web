@@ -65,7 +65,7 @@ export default function Footer() {
                     <Link href="/terms-and-conditions" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Terms & Conditions</Link>
                 </div>
 
-                <div className="flex flex-col gap-3 ml-6">
+                <div className="flex flex-col gap-3">
                     <h1 className="text-xl lg:text-2xl font-bold text-foreground">T E A M U S</h1>
                     <Link href="/about" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">About Us</Link>
                     <Link href="/contact-us" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Contact Us</Link>
