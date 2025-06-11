@@ -50,6 +50,28 @@ interface PlayerFilters {
   sortOrder?: 'asc' | 'desc'
 }
 
+export const getImageUrl = (imagePath?: string): string | undefined => {
+  if (!imagePath) return undefined
+  
+  // If the path already includes the full URL, return as is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath
+  }
+  
+  // Handle paths that already start with /uploads
+  if (imagePath.startsWith('/uploads/')) {
+    return `${IMAGE_BASE_URL}${imagePath}`
+  }
+  
+  // Handle paths that don't start with /uploads
+  if (imagePath.startsWith('/')) {
+    return `${IMAGE_BASE_URL}/uploads${imagePath}`
+  }
+  
+  // Handle relative paths
+  return `${IMAGE_BASE_URL}/uploads/${imagePath}`
+}
+
 export const playersApi = createApi({
   reducerPath: 'playersApi',
   baseQuery: fetchBaseQuery({
@@ -65,7 +87,7 @@ export const playersApi = createApi({
   }),
   tagTypes: ['Player'],
   endpoints: (builder) => ({
-    getPlayers: builder.query<PlayersResponse, { page?: number; limit?: number; search?: string; position?: string; conference?: string }>({
+    getPlayers: builder.query<PlayersResponse, { page?: number; limit?: number; pageSize?: number; search?: string; position?: string; conference?: string }>({
       query: (params) => ({
         url: '/',
         method: 'GET',
@@ -115,11 +137,6 @@ export const playersApi = createApi({
       query: () => '/featured',
       providesTags: ['Player'],
     }),
-
-    getImageUrl: builder.query<string, string>({
-      query: (imagePath) => `/uploads/${imagePath}`,
-      providesTags: ['Player'],
-    }),
   }),
 })
 
@@ -131,5 +148,4 @@ export const {
   useGetPlayersByTeamQuery,
   useSearchPlayersQuery,
   useGetFeaturedPlayersQuery,
-  useGetImageUrlQuery,
 } = playersApi 

@@ -4,7 +4,69 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Search, Filter, Users, MapPin, Hash, GraduationCap } from "lucide-react"
-import { useGetPlayersQuery, useGetImageUrlQuery, Player, PlayersResponse } from '@/lib/services/playersApi'
+import { useGetPlayersQuery, getImageUrl, Player, PlayersResponse } from '@/lib/services/playersApi'
+
+// PlayerCard component to handle individual player rendering with hooks
+function PlayerCard({ player }: { player: Player }) {
+    const imageUrl = getImageUrl(player.headshotPic)
+    
+    return (
+        <Link 
+            href={`/players/${player.id}`} 
+            className="rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden"
+        >
+            {/* Player Image */}
+            <div className="relative h-48">
+                <Image 
+                    src={imageUrl || '/default-player.jpg'}
+                    alt={player.name}
+                    fill
+                    className="object-cover"
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = '/default-player.jpg'
+                    }}
+                />
+            </div>
+
+            {/* Player Info */}
+            <div className="p-4">
+                <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-bold text-lg leading-tight hover:text-red-800 transition-colors">
+                        {player.name}
+                    </h3>
+                    <span className="px-2 py-1 rounded text-xs font-medium">
+                        #{player.draftPick}
+                    </span>
+                </div>
+
+                <div className="space-y-2 text-sm">
+                    <div className="flex items-center">
+                        <Users className="w-4 h-4 mr-2" />
+                        <span className="font-medium">{player.position}</span>
+                    </div>
+                    
+                    <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        <span>{player.team}</span>
+                    </div>
+                    
+                    <div className="flex items-center">
+                        <GraduationCap className="w-4 h-4 mr-2" />
+                        <span>{player.college}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-2 border-t">
+                        <span className="text-xs">{player.height} • {player.weight}</span>
+                        <span className="text-xs px-2 py-1 rounded">
+                            {player.team}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </Link>
+    )
+}
 
 export default function Players() {
     const [searchTerm, setSearchTerm] = useState("")
@@ -20,6 +82,7 @@ export default function Players() {
     } = useGetPlayersQuery({
         page,
         limit: 12,
+        pageSize: 12,
         search: searchTerm || undefined,
         position: selectedPosition !== "all" ? selectedPosition : undefined,
         conference: selectedConference !== "all" ? selectedConference : undefined
@@ -29,7 +92,7 @@ export default function Players() {
 
     // Handle search with debounce
     useEffect(() => {
-        const timeoutId = setTimeout(() => {
+        const timeoutId = setTimeout(() => {    
             setPage(1) // Reset to first page when searching
         }, 500)
 
@@ -176,61 +239,7 @@ export default function Players() {
             {/* Players Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {players.map((player) => (
-                    <Link 
-                        href={`/players/${player.id}`} 
-                        key={player.id}
-                        className="rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden"
-                    >
-                        {/* Player Image */}
-                        {/* <div className="relative h-48">
-                            <Image 
-                                src={useGetImageUrlQuery(player.headshotPic).data || '/default-player.jpg'}
-                                alt={player.name}
-                                fill
-                                className="object-cover"
-                                onError={(e) => {
-                                    const target = e.target as HTMLImageElement
-                                    target.src = '/default-player.jpg'
-                                }}
-                            />
-                        </div> */}
-
-                        {/* Player Info */}
-                        <div className="p-4">
-                            <div className="flex items-start justify-between mb-2">
-                                <h3 className="font-bold text-lg leading-tight hover:text-red-800 transition-colors">
-                                    {player.name}
-                                </h3>
-                                <span className="px-2 py-1 rounded text-xs font-medium">
-                                    #{player.draftPick}
-                                </span>
-                            </div>
-
-                            <div className="space-y-2 text-sm">
-                                <div className="flex items-center">
-                                    <Users className="w-4 h-4 mr-2" />
-                                    <span className="font-medium">{player.position}</span>
-                                </div>
-                                
-                                <div className="flex items-center">
-                                    <MapPin className="w-4 h-4 mr-2" />
-                                    <span>{player.team}</span>
-                                </div>
-                                
-                                <div className="flex items-center">
-                                    <GraduationCap className="w-4 h-4 mr-2" />
-                                    <span>{player.college}</span>
-                                </div>
-                                
-                                <div className="flex items-center justify-between pt-2 border-t">
-                                    <span className="text-xs">{player.height} • {player.weight}</span>
-                                    <span className="text-xs px-2 py-1 rounded">
-                                        {player.team}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </Link>
+                    <PlayerCard key={player.id} player={player} />
                 ))}
             </div>
 
