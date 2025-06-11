@@ -174,25 +174,6 @@ export default function Players() {
                             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
                         />
                     </div>
-
-                    {/* Position Filter */}
-                    
-
-                    {/* Conference Filter */}
-                    <div className="relative">
-                        <select
-                            value={selectedConference}
-                            onChange={(e) => {
-                                setSelectedConference(e.target.value)
-                                setPage(1)
-                            }}
-                            className="appearance-none border border-gray-200 rounded-lg px-4 py-3 pr-8 focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
-                        >
-                            <option value="all">All Conferences</option>
-                            <option value="AFC">AFC</option>
-                            <option value="NFC">NFC</option>
-                        </select>
-                    </div>
                 </div>
 
                 {/* Active Filters Display */}
