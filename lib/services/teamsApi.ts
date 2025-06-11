@@ -59,7 +59,8 @@ export const teamsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_BASE_URL}/teams`,
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.token
+      // Make auth token optional for public team data
+      const token = (getState() as any).auth?.token
       if (token) {
         headers.set('authorization', `Bearer ${token}`)
       }

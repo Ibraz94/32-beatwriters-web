@@ -4,7 +4,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beat
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://www.playerprofiler.com/wp-content/uploads'
 
 export interface Player {
-  id: string
+  id: number | string
+  playerId?: string
   name: string
   team: string
   position: string
@@ -77,7 +78,8 @@ export const playersApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${API_BASE_URL}/players`,
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.token
+      // Make auth token optional for public player data
+      const token = (getState() as any).auth?.token
       if (token) {
         headers.set('authorization', `Bearer ${token}`)
       }
@@ -100,10 +102,10 @@ export const playersApi = createApi({
         method: 'GET'
       })
     }),
-    getPlayer: builder.query<{ success: boolean; data: Player }, string>({
+    getPlayer: builder.query<Player, string>({
       query: (id) => ({
-        url: `/players/${id}`,
-        method: 'GET'
+        url: `/${id}`,
+        method: 'GET',
       })
     }),
     // Get all players with filtering and pagination
