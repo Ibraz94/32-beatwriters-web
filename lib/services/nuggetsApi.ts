@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 // Base API URL - defaults to localhost for development
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com/api/'
-const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com' || 'https://www.playerprofiler.com/wp-content/uploads'
 
 /**
  * Feed interface representing a single feed item
@@ -19,8 +19,18 @@ export interface Nuggets {
   images: string[]
   createdAt: string
   updatedAt: string
+  player: {
+    id: number
+    playerId: string
+    name: string
+    team: string
+    position: string
+    headshotPic: string
   }
 }
+}
+
+
 
 interface PaginatedNuggets {
   data: {

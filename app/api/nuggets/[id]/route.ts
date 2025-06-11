@@ -4,10 +4,10 @@ const EXTERNAL_API_BASE = 'https://api.32beatwriters.staging.pegasync.com/api'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     
     // Forward the request to your external API
     const externalUrl = `${EXTERNAL_API_BASE}/nuggets/${id}`
@@ -81,10 +81,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
     
     // Forward the PUT request to your external API
@@ -160,10 +160,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     
     // Forward the DELETE request to your external API
     const externalUrl = `${EXTERNAL_API_BASE}/nuggets/${id}`
