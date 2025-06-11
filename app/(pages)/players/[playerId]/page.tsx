@@ -11,9 +11,6 @@ export default function PlayerProfile() {
   const params = useParams()
   const playerId = params.playerId as string
 
-  // Add authentication check
-  const { isAuthenticated, isLoading: authLoading } = useAuth()
-
   // Fetch individual player
   const { data: player, isLoading: playerLoading, error: playerError } = useGetPlayerQuery(playerId)
 
@@ -38,25 +35,7 @@ export default function PlayerProfile() {
     .filter(p => p.team === player?.team && p.id !== player?.id)
     .slice(0, 6)
 
-  const loading = playerLoading || teamLoading || authLoading
-
-  // Show authentication required message if not authenticated
-  if (!authLoading && !isAuthenticated) {
-    return (
-      <div className="container mx-auto h-screen px-4 py-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
-          <p className="text-gray-600 mb-8">Please sign in to view player profiles.</p>
-          <Link
-            href="/login"
-            className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-900 transition-colors"
-          >
-            Sign In
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  const loading = playerLoading || teamLoading
 
   if (loading) {
     return (
@@ -334,6 +313,22 @@ export default function PlayerProfile() {
           </div>
         </div>
       </div>
+      <div className="flex items-center justify-center gap-2 mt-10 mb-2">
+            <h1 className="text-sm">Data Powered By PlayerProfiler </h1>
+            <Link
+            href='https://playerprofiler.com/'
+            target="_blank"
+            >
+            <Image
+            src="/pp-logo.png"
+            width={30}
+            height={30}
+            alt="pp=logo"
+            />
+            </Link>
+            </div>
+
+
     </div>
   )
 } 

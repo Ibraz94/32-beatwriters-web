@@ -272,6 +272,21 @@ export default function Players() {
                     </div>
                 </div>
             )}
+
+            <div className="flex items-center justify-center gap-2 mt-10 -mb-6">
+            <h1 className="text-sm">Data Powered By PlayerProfiler </h1>
+            <Link
+            href='https://playerprofiler.com/'
+            target="_blank"
+            >
+            <Image
+            src="/pp-logo.png"
+            width={30}
+            height={30}
+            alt="pp=logo"
+            />
+            </Link>
+            </div>
         </section>
     )
 }
