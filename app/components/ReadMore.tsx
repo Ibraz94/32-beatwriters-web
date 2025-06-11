@@ -3,17 +3,16 @@ import { useState } from 'react'
 interface ReadMoreProps {
   id: string
   text: string
-  amountOfWords?: number
+  amountOfCharacters?: number
 }
 
-export const ReadMore = ({ id, text, amountOfWords = 36 }: ReadMoreProps) => {
+export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const splittedText = text.split(' ')
-  const itCanOverflow = splittedText.length > amountOfWords
+  const itCanOverflow = text.length > amountOfCharacters
   const beginText = itCanOverflow
-    ? splittedText.slice(0, amountOfWords - 1).join(' ')
+    ? text.slice(0, amountOfCharacters)
     : text
-  const endText = splittedText.slice(amountOfWords - 1).join(' ')
+  const endText = text.slice(amountOfCharacters)
   
   const handleKeyboard = (e: any) => {
     if (e.code === 'Space' || e.code === 'Enter') {
@@ -42,7 +41,7 @@ export const ReadMore = ({ id, text, amountOfWords = 36 }: ReadMoreProps) => {
             onKeyDown={handleKeyboard}
             onClick={() => setIsExpanded(!isExpanded)}
           >
-            {isExpanded ? 'show less' : 'show more'}
+            {isExpanded ? 'read less' : 'read more'}
           </span>
         </>
       )}

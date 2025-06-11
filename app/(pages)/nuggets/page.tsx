@@ -248,11 +248,11 @@ export default function NuggetsPage() {
                                     </div>
                                 </div>
 
-                                <h3 className="text-xl font-bold hover:text-red-600 transition-colors  p-6">
+                                <h3 className="text-xl font-bold p-6">
                                     {nugget.title}
                                 </h3>
                                 <p className="p-6 -mt-10">
-                                    <ReadMore id={nugget.id} text={nugget.content} amountOfWords={100} />
+                                    <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                 </p>
 
                                 {/* Nugget Images */}
