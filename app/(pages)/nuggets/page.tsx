@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, Calendar, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import Masonry from 'react-masonry-css'
 import { ReadMore } from '@/app/components/ReadMore'
 import {
@@ -22,6 +22,12 @@ interface NuggetFilters {
     sortOrder?: 'asc' | 'desc'
 }
 
+interface ImageModalData {
+    src: string
+    alt: string
+    images?: string[]
+    currentIndex?: number
+}
 
 export default function NuggetsPage() {
     const [filters, setFilters] = useState<NuggetFilters>({
@@ -34,7 +40,7 @@ export default function NuggetsPage() {
     const [isSearching, setIsSearching] = useState(false)
     const [allNuggets, setAllNuggets] = useState<any[]>([])
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
-
+    const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
 
     // Main query for nuggets
     const {
@@ -103,6 +109,46 @@ export default function NuggetsPage() {
         setAllNuggets([])
     }
 
+    // Image modal functions
+    const openImageModal = (src: string, alt: string, images?: string[], currentIndex?: number) => {
+        setImageModal({ src, alt, images, currentIndex })
+    }
+
+    const closeImageModal = () => {
+        setImageModal(null)
+    }
+
+    const navigateImage = (direction: 'prev' | 'next') => {
+        if (!imageModal || !imageModal.images || imageModal.currentIndex === undefined) return
+        
+        const newIndex = direction === 'prev' 
+            ? (imageModal.currentIndex - 1 + imageModal.images.length) % imageModal.images.length
+            : (imageModal.currentIndex + 1) % imageModal.images.length
+        
+        setImageModal({
+            ...imageModal,
+            src: getImageUrl(imageModal.images[newIndex]) || '',
+            currentIndex: newIndex
+        })
+    }
+
+    // Handle keyboard navigation
+    useEffect(() => {
+        const handleKeyPress = (e: KeyboardEvent) => {
+            if (!imageModal) return
+            
+            if (e.key === 'Escape') {
+                closeImageModal()
+            } else if (e.key === 'ArrowLeft') {
+                navigateImage('prev')
+            } else if (e.key === 'ArrowRight') {
+                navigateImage('next')
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyPress)
+        return () => window.removeEventListener('keydown', handleKeyPress)
+    }, [imageModal])
 
     const isLoading = isLoadingNuggets || isLoadingSearch
     const error = nuggetsError || searchError
@@ -155,187 +201,255 @@ export default function NuggetsPage() {
     }
 
     return (
-        <div className="container mx-auto max-w-7xl px-4 py-8">
-            {/* Header */}
-            <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">Feed</h1>
-                <p className="text-xl max-w-4xl mx-auto">
-                    Latest nuggets, insights, and updates from across the NFL
-                </p>
-            </div>
-
-            {/* Search and Filters */}
-            <div className="mb-8 space-y-4">
-                {/* Search Bar */}
-                <div className="relative flex gap-4 max-w-2xl mx-auto">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                        type="text"
-                        placeholder="Search nuggets..."
-                        value={searchTerm}
-                        onChange={(e) => handleSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                    <select
-                        value={`${filters.sortBy}-${filters.sortOrder}`}
-                        onChange={(e) => {
-                            const [sortBy, sortOrder] = e.target.value.split('-') as ['order' | 'createdAt', 'asc' | 'desc']
-                            handleSortChange(sortBy, sortOrder)
-                        }}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    >
-                        <option value="createdAt-desc">Newest First</option>
-                        <option value="createdAt-asc">Oldest First</option>
-                        <option value="order-asc">Order (Ascending)</option>
-                        <option value="order-desc">Order (Descending)</option>
-                    </select>
-                </div>
-
-                {/* Sort Options */}
-                <div className="flex flex-wrap justify-center gap-4">
-
-                </div>
-            </div>
-
-            {/* Results Count */}
-            {isSearching && searchTerm && (
-                <div className="mb-6 text-center">
-                    <p className="text-gray-600">
-                        {displayNuggets.length} result{displayNuggets.length !== 1 ? 's' : ''} for "{searchTerm}"
+        <>
+            <div className="container mx-auto max-w-7xl px-4 py-8">
+                {/* Header */}
+                <div className="text-center mb-12">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">Feed</h1>
+                    <p className="text-xl max-w-4xl mx-auto">
+                        Latest nuggets, insights, and updates from across the NFL
                     </p>
                 </div>
-            )}
 
-            {/* Nuggets Grid */}
-            {displayNuggets.length === 0 && !isLoading ? (
-                <div className="text-center py-12">
-                    <p className="text-xl text-gray-600 mb-4">
-                        {isSearching ? 'No nuggets found for your search.' : 'No nuggets available.'}
-                    </p>
-                    {isSearching && (
-                        <button
-                            onClick={() => handleSearch('')}
-                            className="text-red-600 hover:text-red-800 font-semibold"
+                {/* Search and Filters */}
+                <div className="mb-8 space-y-4">
+                    {/* Search Bar */}
+                    <div className="relative flex gap-4 max-w-2xl mx-auto">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <input
+                            type="text"
+                            placeholder="Search nuggets..."
+                            value={searchTerm}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        />
+                        <select
+                            value={`${filters.sortBy}-${filters.sortOrder}`}
+                            onChange={(e) => {
+                                const [sortBy, sortOrder] = e.target.value.split('-') as ['order' | 'createdAt', 'asc' | 'desc']
+                                handleSortChange(sortBy, sortOrder)
+                            }}
+                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                         >
-                            Clear search
-                        </button>
-                    )}
+                            <option value="createdAt-desc">Newest First</option>
+                            <option value="createdAt-asc">Oldest First</option>
+                            <option value="order-asc">Order (Ascending)</option>
+                            <option value="order-desc">Order (Descending)</option>
+                        </select>
+                    </div>
+
+                    {/* Sort Options */}
+                    <div className="flex flex-wrap justify-center gap-4">
+
+                    </div>
                 </div>
-            ) : (
-                <>
-                    <Masonry
-                        breakpointCols={{
-                            default: 3,
-                            1100: 2,
-                            700: 1
-                        }}
-                        className="flex w-auto -ml-6"
-                        columnClassName="pl-6 bg-clip-padding"
-                    >
-                        {displayNuggets.map((nugget, index) => (
-                            <div key={`${nugget.id}-${index}`} className="rounded-xl border shadow-lg overflow-hidden hover:shadow-xl transition-shadow mb-6">
-                                <div className='flex mt-8 gap-2 ml-4'>
-                                    <Image
-                                        src={getImageUrl(nugget.player.headshotPic) || ''}
-                                        alt={nugget.title}
-                                        width={70}
-                                        height={80}
-                                        className='rounded-xl object-cover bg-white'
-                                    />
-                                    <div className='flex items-center justify-between w-full p-2'>
-                                        <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
-                                        <h1 className='text-lg mr-4'>{new Date(nugget.createdAt).toLocaleDateString()}</h1>
+
+                {/* Results Count */}
+                {isSearching && searchTerm && (
+                    <div className="mb-6 text-center">
+                        <p className="text-gray-600">
+                            {displayNuggets.length} result{displayNuggets.length !== 1 ? 's' : ''} for "{searchTerm}"
+                        </p>
+                    </div>
+                )}
+
+                {/* Nuggets Grid */}
+                {displayNuggets.length === 0 && !isLoading ? (
+                    <div className="text-center py-12">
+                        <p className="text-xl text-gray-600 mb-4">
+                            {isSearching ? 'No nuggets found for your search.' : 'No nuggets available.'}
+                        </p>
+                        {isSearching && (
+                            <button
+                                onClick={() => handleSearch('')}
+                                className="text-red-600 hover:text-red-800 font-semibold"
+                            >
+                                Clear search
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    <>
+                        <Masonry
+                            breakpointCols={{
+                                default: 3,
+                                1100: 2,
+                                700: 1
+                            }}
+                            className="flex w-auto -ml-6"
+                            columnClassName="pl-6 bg-clip-padding"
+                        >
+                            {displayNuggets.map((nugget, index) => (
+                                <div key={`${nugget.id}-${index}`} className="rounded-xl border shadow-lg overflow-hidden hover:shadow-xl transition-shadow mb-6">
+                                    <div className='flex mt-8 gap-2 ml-4'>
+                                        <div 
+                                            className="cursor-pointer hover:opacity-80 transition-opacity"
+                                            onClick={() => openImageModal(
+                                                getImageUrl(nugget.player.headshotPic) || '', 
+                                                `${nugget.player.name} headshot`
+                                            )}
+                                        >
+                                            <Image
+                                                src={getImageUrl(nugget.player.headshotPic) || ''}
+                                                alt={nugget.title}
+                                                width={70}
+                                                height={80}
+                                                className='rounded-xl object-cover bg-white'
+                                            />
+                                        </div>
+                                        <div className='flex items-center justify-between w-full p-2'>
+                                            <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
+                                            <h1 className='text-lg mr-4'>{new Date(nugget.createdAt).toLocaleDateString()}</h1>
+                                        </div>
+                                    </div>
+
+                                    <h3 className="text-xl font-bold p-6">
+                                        {nugget.title}
+                                    </h3>
+                                    <p className="p-6 -mt-10">
+                                        <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
+                                    </p>
+
+                                    {/* Nugget Images */}
+                                    <div className='p-6 -mt-8'>
+                                        {nugget.images && nugget.images.length > 0 && (
+                                            <div className={`grid gap-2 ${
+                                                nugget.images.length === 1 ? 'grid-cols-1' :
+                                                nugget.images.length === 2 ? 'grid-cols-2' :
+                                                nugget.images.length === 3 ? 'grid-cols-3' :
+                                                'grid-cols-2'
+                                            }`}>
+                                                {nugget.images.map((image: string, imageIndex: number) => (
+                                                    <div 
+                                                        key={imageIndex} 
+                                                        className={`relative w-full cursor-pointer hover:opacity-80 transition-opacity ${
+                                                            nugget.images.length === 1 ? 'h-64' :
+                                                            nugget.images.length === 2 ? 'h-48' :
+                                                            nugget.images.length === 3 ? 'h-32' :
+                                                            'h-40'
+                                                        }`}
+                                                        onClick={() => openImageModal(
+                                                            getImageUrl(image) || '',
+                                                            `${nugget.player.name} image ${imageIndex + 1}`,
+                                                            nugget.images,
+                                                            imageIndex
+                                                        )}
+                                                    >
+                                                        <Image
+                                                            src={getImageUrl(image) || ''}
+                                                            alt={`${nugget.player.name} image ${imageIndex + 1}`}
+                                                            priority={imageIndex === 0}
+                                                            fill
+                                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                            className="object-cover rounded-lg"
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                         )}
+                                    </div>
+
+                                    {/* Nugget Content */}
+                                    <div className="p-6">
+                                        {/* Actions */}
+                                        {/* <div className="flex items-center justify-between">
+                        {nugget.sourceUrl && (
+                          <Link
+                            href={nugget.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center text-red-600 hover:text-red-800 font-semibold text-sm transition-colors"
+                          >
+                            <ExternalLink className="w-4 h-4 mr-1" />
+                            Read Source
+                          </Link>
+                        )}
+                      </div> */}
                                     </div>
                                 </div>
+                            ))}
+                        </Masonry>
 
-                                <h3 className="text-xl font-bold p-6">
-                                    {nugget.title}
-                                </h3>
-                                <p className="p-6 -mt-10">
-                                    <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
-                                </p>
-
-                                {/* Nugget Images */}
-                                <div className='p-6 -mt-8'>
-                                    {nugget.images && nugget.images.length > 0 && (
-                                        <div className={`grid gap-2 ${
-                                            nugget.images.length === 1 ? 'grid-cols-1' :
-                                            nugget.images.length === 2 ? 'grid-cols-2' :
-                                            nugget.images.length === 3 ? 'grid-cols-3' :
-                                            'grid-cols-2'
-                                        }`}>
-                                            {nugget.images.map((image: string, imageIndex: number) => (
-                                                <div key={imageIndex} className={`relative w-full ${
-                                                    nugget.images.length === 1 ? 'h-64' :
-                                                    nugget.images.length === 2 ? 'h-48' :
-                                                    nugget.images.length === 3 ? 'h-32' :
-                                                    'h-40'
-                                                }`}>
-                                                    <Image
-                                                        src={getImageUrl(image) || ''}
-                                                        alt={`${nugget.player.name} image ${imageIndex + 1}`}
-                                                        priority={imageIndex === 0}
-                                                        fill
-                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                        className="object-cover rounded-lg"
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-                                     )}
-                                </div>
-
-                                {/* Nugget Content */}
-                                <div className="p-6">
-
-
-                                    {/* Metadata */}
-                                    {/* <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      {formatDate(nugget.createdAt)}
-                    </div>
-                    {nugget.playerId && (
-                      <div className="text-red-600 font-semibold">
-                        Player {nugget.playerId}
-                      </div>
-                    )}
-                  </div> */}
-
-                                    {/* Actions */}
-                                    {/* <div className="flex items-center justify-between">
-                    {nugget.sourceUrl && (
-                      <Link
-                        href={nugget.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center text-red-600 hover:text-red-800 font-semibold text-sm transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-1" />
-                        Read Source
-                      </Link>
-                    )}
-                  </div> */}
-                                </div>
+                        {/* Load More Button */}
+                        {!isSearching && hasMoreNuggets && (
+                            <div className="text-center mt-12">
+                                <button
+                                    onClick={loadMore}
+                                    disabled={isFetchingNuggets}
+                                    className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold"
+                                >
+                                    {isFetchingNuggets ? 'Loading...' : 'Load More'}
+                                </button>
                             </div>
-                        ))}
-                    </Masonry>
+                        )}
+                    </>
+                )}
+            </div>
 
-                    {/* Load More Button */}
-                    {!isSearching && hasMoreNuggets && (
-                        <div className="text-center mt-12">
-                            <button
-                                onClick={loadMore}
-                                disabled={isFetchingNuggets}
-                                className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold"
-                            >
-                                {isFetchingNuggets ? 'Loading...' : 'Load More'}
-                            </button>
+            {/* Image Modal */}
+            {imageModal && (
+                <div 
+                    className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
+                    onClick={closeImageModal}
+                >
+                    <div className="relative max-w-screen-lg max-h-screen-lg w-full h-full flex items-center justify-center">
+                        {/* Close Button */}
+                        <button
+                            onClick={closeImageModal}
+                            className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-70 transition-all"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+
+                        {/* Navigation Buttons */}
+                        {imageModal.images && imageModal.images.length > 1 && imageModal.currentIndex !== undefined && (
+                            <>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        navigateImage('prev')
+                                    }}
+                                    className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all"
+                                >
+                                    <ChevronLeft className="w-6 h-6" />
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        navigateImage('next')
+                                    }}
+                                    className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-all"
+                                >
+                                    <ChevronRight className="w-6 h-6" />
+                                </button>
+                            </>
+                        )}
+
+                        {/* Image Counter */}
+                        {imageModal.images && imageModal.images.length > 1 && imageModal.currentIndex !== undefined && (
+                            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                                {imageModal.currentIndex + 1} / {imageModal.images.length}
+                            </div>
+                        )}
+
+                        {/* Image */}
+                        <div 
+                            className="relative max-w-full max-h-full"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Image
+                                src={imageModal.src}
+                                alt={imageModal.alt}
+                                width={1200}
+                                height={800}
+                                className="max-w-full max-h-full object-contain rounded-lg"
+                                priority
+                            />
                         </div>
-                    )}
-                </>
+                    </div>
+                </div>
             )}
-        </div>
+        </>
     )
 }
 
