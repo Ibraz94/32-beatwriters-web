@@ -41,7 +41,7 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
             onKeyDown={handleKeyboard}
             onClick={() => setIsExpanded(!isExpanded)}
           >
-            {isExpanded ? 'read less' : 'read more'}
+            {isExpanded ? 'Read less' : 'Read more'}
           </span>
         </>
       )}
