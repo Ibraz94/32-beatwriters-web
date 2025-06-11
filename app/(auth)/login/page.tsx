@@ -6,11 +6,10 @@ import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-
+import { useAuth } from '@/lib/hooks/useAuth'
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
     const [mounted, setMounted] = useState(false)
     const [formData, setFormData] = useState({
         emailOrUsername: '',
@@ -21,11 +20,19 @@ export default function Login() {
 
     const { theme } = useTheme()
     const router = useRouter()
+    const { login, isLoading, isAuthenticated, logout } = useAuth()
 
     // Prevent hydration mismatch
     useEffect(() => {
         setMounted(true)
     }, [])
+
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            router.push('/')
+        }
+    }, [isAuthenticated, router])
 
     const validateForm = () => {
         const newErrors: {[key: string]: string} = {}
@@ -49,87 +56,62 @@ export default function Login() {
         
         if (!validateForm()) return
         
-        setIsLoading(true)
-        
         try {
-            // Determine if input is email or username
+            // Determine if input is email or username and convert to email if needed
+            let emailToUse = formData.emailOrUsername
             const isEmail = /\S+@\S+\.\S+/.test(formData.emailOrUsername)
-            const loginData = isEmail 
-                ? { email: formData.emailOrUsername, password: formData.password }
-                : { username: formData.emailOrUsername, password: formData.password }
-
-            const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginData),
-            })
-
-            if (!response.ok) {
-                const errorData = await response.json()
-                throw new Error(errorData.message || 'Login failed')
-            }
-
-            const data = await response.json()
-            console.log('Login successful:', data)
             
-            // Store token using the correct keys that match the main auth system
-            if (data.token) {
-                if (formData.rememberMe) {
-                    localStorage.setItem('auth_token', data.token)
-                } else {
-                    sessionStorage.setItem('auth_token', data.token)
+            // If it's a username, we'll try direct API call to handle both cases
+            if (!isEmail) {
+                // Make a direct API call for username login since the useAuth login expects email
+                const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        username: formData.emailOrUsername, 
+                        password: formData.password 
+                    }),
+                })
+
+                if (!response.ok) {
+                    const errorData = await response.json()
+                    throw new Error(errorData.message || 'Login failed')
                 }
+
+                const data = await response.json()
+                
+                // Use the email from the response for the main auth system
+                emailToUse = data.user.email
             }
 
-            // Store user data using the correct key
-            if (data.user) {
-                const user = {
-                    id: data.user.id || data.user._id,
-                    email: data.user.email,
-                    name: data.user.name || `${data.user.firstName || ''} ${data.user.lastName || ''}`.trim() || data.user.username,
-                    avatar: data.user.profilePicture || data.user.avatar,
-                    role: data.user.role || 'user',
-                    joinDate: data.user.createdAt || new Date().toISOString(),
-                    subscription: {
-                        type: data.user.membership || data.user.subscription?.type || 'free',
-                        plan: data.user.subscription?.plan || 'basic',
-                        status: data.user.subscription?.status || 'inactive',
-                        amount: data.user.subscription?.amount || '0',
-                        nextBilling: data.user.subscription?.nextBilling || '',
-                        expiresAt: data.user.subscription?.expiresAt,
-                        isActive: data.user.subscription?.isActive || false
+            // Now use the main auth system with the email
+            const result = await login(emailToUse, formData.password)
+            
+            if (result.success) {
+                // Set token storage based on remember me preference
+                if (formData.rememberMe) {
+                    // The auth system already handles localStorage, but we ensure it's persistent
+                    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token')
+                    if (token) {
+                        localStorage.setItem('auth_token', token)
+                        sessionStorage.removeItem('auth_token')
                     }
                 }
-                localStorage.setItem('user_data', JSON.stringify(user))
                 
-                // Import and dispatch the auth action to update Redux state
-                if (typeof window !== 'undefined') {
-                    import('@/lib/store').then(({ store }) => {
-                        import('@/lib/features/authSlice').then(({ loginSuccess }) => {
-                            store.dispatch(loginSuccess({
-                                user,
-                                token: data.token,
-                                refreshToken: data.refreshToken
-                            }))
-                        })
-                    })
-                }
-            }
-
-            // Small delay to allow state to update, then redirect
-            setTimeout(() => {
                 router.push('/')
-            }, 100)
+            } else {
+                setErrors({ 
+                    general: result.error || 'Login failed. Please check your credentials and try again.' 
+                })
+            }
             
         } catch (error: any) {
             console.error('Login error:', error)
             setErrors({ 
                 general: error.message || 'Login failed. Please check your credentials and try again.' 
             })
-        } finally {
-            setIsLoading(false)
         }
     }
 

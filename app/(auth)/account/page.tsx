@@ -169,9 +169,16 @@ export default function Account() {
         }
     }
 
-    const handleLogout = () => {
-        logout()
-        window.location.href = '/'
+    const handleLogout = async () => {
+        try {
+            await logout()
+            // Force a hard refresh to clear all state
+            window.location.href = '/'
+        } catch (error) {
+            console.error('Logout error:', error)
+            // Force logout even if API call fails
+            window.location.href = '/'
+        }
     }
 
     const cancelEdit = (field: string) => {

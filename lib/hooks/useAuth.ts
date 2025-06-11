@@ -94,6 +94,33 @@ export const useAuth = () => {
     } finally {
       // Clear local data and Redux state
       clearAuthData()
+      
+      // Additional cleanup - force clear any remaining state
+      if (typeof window !== 'undefined') {
+        // Clear any cached state in local storage
+        try {
+          const keys = Object.keys(localStorage)
+          keys.forEach(key => {
+            if (key.includes('auth') || key.includes('user') || key.includes('token')) {
+              localStorage.removeItem(key)
+            }
+          })
+        } catch (e) {
+          console.warn('Error clearing localStorage:', e)
+        }
+        
+        // Clear sessionStorage as well
+        try {
+          const keys = Object.keys(sessionStorage)
+          keys.forEach(key => {
+            if (key.includes('auth') || key.includes('user') || key.includes('token')) {
+              sessionStorage.removeItem(key)
+            }
+          })
+        } catch (e) {
+          console.warn('Error clearing sessionStorage:', e)
+        }
+      }
     }
   }, [logoutMutation])
 

@@ -2,7 +2,7 @@
 
 import { Provider } from 'react-redux'
 import { store } from '../store'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { initializeAuth } from '../utils/auth'
 
 interface ReduxProviderProps {
@@ -11,18 +11,32 @@ interface ReduxProviderProps {
 
 // Component to handle auth initialization
 function AuthInitializer() {
+  const [isHydrated, setIsHydrated] = useState(false)
+  
   useEffect(() => {
-    // Initialize auth state from localStorage on app startup
-    initializeAuth()
+    // Ensure we're on the client side before initializing auth
+    if (typeof window !== 'undefined') {
+      initializeAuth()
+      setIsHydrated(true)
+    }
   }, [])
+  
+  // Return null during hydration to prevent mismatches
+  if (!isHydrated) return null
   
   return null
 }
 
 export function ReduxProvider({ children }: ReduxProviderProps) {
+  const [isClient, setIsClient] = useState(false)
+  
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+  
   return (
     <Provider store={store}>
-      <AuthInitializer />
+      {isClient && <AuthInitializer />}
       {children}
     </Provider>
   )
