@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Search, Filter, Users, MapPin, Hash, GraduationCap } from "lucide-react"
-import { useGetPlayersQuery, getImageUrl, Player, PlayersResponse } from '@/lib/services/playersApi'
+import { Search, Users, MapPin, GraduationCap } from "lucide-react"
+import { useGetPlayersQuery, getImageUrl, Player } from '@/lib/services/playersApi'
 
 // PlayerCard component to handle individual player rendering with hooks
 function PlayerCard({ player }: { player: Player }) {
@@ -31,29 +31,23 @@ function PlayerCard({ player }: { player: Player }) {
 
             {/* Player Info */}
             <div className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-bold text-lg leading-tight hover:text-red-800 transition-colors">
+                <div className="flex items-start justify-center mb-2">
+                    <h3 className="font-bold text-2xl leading-tight hover:text-red-800 transition-colors">
                         {player.name}
                     </h3>
-                    <span className="px-2 py-1 rounded text-xs font-medium">
-                        #{player.draftPick}
-                    </span>
                 </div>
 
                 <div className="space-y-2 text-sm">
-                    <div className="flex items-center">
-                        <Users className="w-4 h-4 mr-2" />
-                        <span className="font-medium">{player.position}</span>
+                    <div className="flex flex-col items-start justify-center">
+                        <h1 className="font-bold text-lg">Position <span className="font-normal">{player.position}</span></h1>
+                        <h1 className="font-bold text-lg">Draft Pick: <span className="font-normal">{player.draftPick}</span></h1>
+                        <h1 className="font-bold text-lg">College: <span className="font-normal">{player.college}</span></h1>
+                        <h1 className="font-bold text-lg">Team: <span className="font-normal">{player.team || 'N/A'}</span></h1>
                     </div>
                     
-                    <div className="flex items-center">
-                        <MapPin className="w-4 h-4 mr-2" />
-                        <span>{player.team}</span>
-                    </div>
-                    
-                    <div className="flex items-center">
-                        <GraduationCap className="w-4 h-4 mr-2" />
-                        <span>{player.status}</span>
+                    <div className="flex flex-col items-center justify-center">
+                       
+                        
                     </div>
                 </div>
             </div>
@@ -246,7 +240,7 @@ export default function Players() {
                         <button
                             onClick={() => setPage(p => Math.max(1, p - 1))}
                             disabled={page === 1}
-                            className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                            className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
                         >
                             Previous
                         </button>
@@ -260,7 +254,7 @@ export default function Players() {
                                     className={`px-4 py-2 rounded-lg border transition-colors ${
                                         pageNum === page
                                             ? 'bg-red-800 text-white border-red-800'
-                                            : 'hover:bg-gray-50'
+                                            : 'hover:scale-105 transition-all'
                                     }`}
                                 >
                                     {pageNum}
@@ -271,7 +265,7 @@ export default function Players() {
                         <button
                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                             disabled={page === totalPages}
-                            className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                            className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
                         >
                             Next
                         </button>
