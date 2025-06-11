@@ -1,60 +1,76 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 // Base API URL - defaults to localhost for development
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com/api/'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com'
 
 /**
  * Feed interface representing a single feed item
  * Contains all the properties that define a feed in the system
  */
-export interface Feed {
+export interface Nuggets {
+  data: {
   id: string
   title: string
   content: string
-  category: string
-  tags: string[]
-  isPremium: boolean
-  isPublished: boolean
-  order: number
+  playerId: number
+  sourceName: string
+  sourceUrl: string
+  images: string[]
   createdAt: string
   updatedAt: string
+  }
 }
 
-/**
- * Response interface for paginated feeds data
- * Used when fetching multiple feeds with pagination information
- */
-interface FeedsResponse {
-  feeds: Feed[]
+interface PaginatedNuggets {
+  data: {
+  nuggets: Nuggets[]
   total: number
-  page: number
-  limit: number
-  totalPages: number
+    page: number
+    limit: number
+    totalPages: number
+  }
 }
 
-/**
- * Interface for filtering and querying feeds
- * Allows for flexible feed searching and filtering
- */
-interface FeedFilters {
-  category?: string
-  tags?: string[]
-  search?: string
-  isPublished?: boolean
+interface NuggetFilters {
+  playerId?: number
+  sourceName?: string
+  sourceUrl?: string
+  images?: string[]
   page?: number
   limit?: number
-  sortBy?: 'order' | 'views' | 'helpful' | 'createdAt'
+  sortBy?: 'order' | 'createdAt'
   sortOrder?: 'asc' | 'desc'
 }
 
-/**
- * RTK Query API for managing feeds
- * Provides CRUD operations and various query endpoints for feed data
- */
-export const feedsApi = createApi({
-  reducerPath: 'feedsApi',
+// Helper function to construct full image URLs
+export const getImageUrl = (imagePath?: string): string | undefined => {
+  if (!imagePath) return undefined
+  
+  // If the path already includes the full URL, return as is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath
+  }
+  
+  // Handle paths that already start with /uploads
+  if (imagePath.startsWith('/uploads/')) {
+    return `${IMAGE_BASE_URL}${imagePath}`
+  }
+  
+  // Handle paths that don't start with /uploads
+  if (imagePath.startsWith('/')) {
+    return `${IMAGE_BASE_URL}/uploads${imagePath}`
+  }
+  
+  // Handle relative paths
+  return `${IMAGE_BASE_URL}/uploads/${imagePath}`
+}
+
+
+export const nuggetsApi = createApi({
+  reducerPath: 'nuggetsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/feeds`,
+    baseUrl: `${API_BASE_URL}/nuggets`,
     prepareHeaders: (headers, { getState }) => {
       // Add authorization token if available
       const token = (getState() as any).auth.token
@@ -65,13 +81,13 @@ export const feedsApi = createApi({
       return headers
     },
   }),
-  tagTypes: ['Feed'], // Cache invalidation tags
+  tagTypes: ['Nugget'], // Cache invalidation tags
   endpoints: (builder) => ({
     /**
-     * Get feeds with optional filtering and pagination
+     * Get nuggets with optional filtering and pagination
      * Supports category, tags, search, published status, and sorting
      */
-    getFeeds: builder.query<FeedsResponse, FeedFilters>({
+    getNuggets: builder.query<PaginatedNuggets, NuggetFilters>({
       query: (filters) => {
         const params = new URLSearchParams()
         // Convert filter object to URL search parameters
@@ -87,43 +103,43 @@ export const feedsApi = createApi({
         })
         return `?${params.toString()}`
       },
-      providesTags: ['Feed'],
+      providesTags: ['Nugget'],
     }),
     
     /**
      * Get a single feed by ID
      * Returns detailed feed information
      */
-    getFeed: builder.query<{ feed: Feed }, string>({
+    getNugget: builder.query<{ nugget: Nuggets }, string>({
       query: (id) => `/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Feed', id }],
+      providesTags: (result, error, id) => [{ type: 'Nugget', id }],
     }),
     
     /**
      * Get all feeds in a specific category
      * Returns feeds filtered by category name
      */       
-    getFeedsByCategory: builder.query<{ feeds: Feed[] }, string>({
+    getNuggetsByCategory: builder.query<{ nuggets: Nuggets[] }, string>({
       query: (category) => `/category/${encodeURIComponent(category)}`,
-      providesTags: ['Feed'],
+      providesTags: ['Nugget'],
     }),
     
     /**
      * Search feeds by text query
      * Performs full-text search across feed titles and content
      */
-    searchFeeds: builder.query<{ feeds: Feed[] }, string>({
+    searchNuggets: builder.query<{ nuggets: Nuggets[] }, string>({
       query: (searchTerm) => `/search?q=${encodeURIComponent(searchTerm)}`,
-      providesTags: ['Feed'],
+      providesTags: ['Nugget'],
     }),
     
     /**
      * Get all available feed categories
      * Returns a list of unique categories for filtering
      */
-    getFAQCategories: builder.query<{ categories: string[] }, void>({
+    getNuggetCategories: builder.query<{ categories: string[] }, void>({
       query: () => '/categories',
-      providesTags: ['Feed'],
+      providesTags: ['Nugget'],
     }),
     
     /**
@@ -137,7 +153,7 @@ export const feedsApi = createApi({
         body: { isHelpful },
       }),
       // Invalidate the specific feed cache to refetch updated data
-      invalidatesTags: (result, error, { id }) => [{ type: 'Feed', id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Nugget', id }],
     }),
   }),
 })
@@ -145,9 +161,9 @@ export const feedsApi = createApi({
 // Export generated hooks for use in React components
 // These hooks provide automatic data fetching, caching, and re-fetching capabilities
 export const {
-  useGetFeedsQuery,        // Hook for fetching feeds with filters
-  useGetFeedQuery,         // Hook for fetching a single feed
-  useGetFeedsByCategoryQuery, // Hook for fetching feeds by category
-  useSearchFeedsQuery,     // Hook for searching feeds
-  useMarkHelpfulMutation,  // Hook for marking feeds as helpful
-} = feedsApi 
+  useGetNuggetsQuery,        // Hook for fetching nuggets with filters
+  useGetNuggetQuery,         // Hook for fetching a single nugget
+  useGetNuggetsByCategoryQuery, // Hook for fetching nuggets by category
+  useSearchNuggetsQuery,     // Hook for searching nuggets
+  useMarkHelpfulMutation,  // Hook for marking nuggets as helpful
+} = nuggetsApi 

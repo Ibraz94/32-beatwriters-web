@@ -40,7 +40,7 @@ const MobileNav = () => {
     },
     {
       name: 'Feed',
-      path: "/feed"
+      path: "/nuggets"
     }
   ];
 

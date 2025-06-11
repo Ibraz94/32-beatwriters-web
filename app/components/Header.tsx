@@ -73,7 +73,7 @@ function Header() {
                             href="/players"
                             className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Players</Link>
                         <Link
-                            href="/feed"
+                            href="/nuggets"
                             className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Feed</Link>
                         {/* <Link
                             href="/teams"
