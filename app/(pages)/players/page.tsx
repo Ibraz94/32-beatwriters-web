@@ -53,14 +53,7 @@ function PlayerCard({ player }: { player: Player }) {
                     
                     <div className="flex items-center">
                         <GraduationCap className="w-4 h-4 mr-2" />
-                        <span>{player.college}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-2 border-t">
-                        <span className="text-xs">{player.height} • {player.weight}</span>
-                        <span className="text-xs px-2 py-1 rounded">
-                            {player.team}
-                        </span>
+                        <span>{player.status}</span>
                     </div>
                 </div>
             </div>
