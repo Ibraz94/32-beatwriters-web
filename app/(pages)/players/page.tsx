@@ -274,7 +274,7 @@ export default function Players() {
             )}
 
             <div className="flex items-center justify-center gap-2 mt-10 -mb-6">
-            <h1 className="text-sm">Data Powered By PlayerProfiler </h1>
+            <h1 className="text-sm font-light">Data Powered By <span className="font-bold">PlayerProfiler</span> </h1>
             <Link
             href='https://playerprofiler.com/'
             target="_blank"
