@@ -1,42 +1,38 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, MapPin, Users, Hash, GraduationCap, Trophy, Activity, Star, ExternalLink } from 'lucide-react'
+import { ArrowLeft, MapPin, Users, Hash, GraduationCap, Trophy, Activity, Star, Calendar, Weight, Ruler } from 'lucide-react'
 import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery } from '@/lib/services/playersApi'
-import { Team, useGetTeamQuery } from '@/lib/services/teamsApi'
 import { useAuth } from '@/lib/hooks/useAuth'
 
 export default function PlayerProfile() {
   const params = useParams()
   const playerId = params.playerId as string
-  
+
   // Add authentication check
   const { isAuthenticated, isLoading: authLoading } = useAuth()
-  
+
   // Fetch individual player
   const { data: player, isLoading: playerLoading, error: playerError } = useGetPlayerQuery(playerId)
-  
+
   // Debug: Log the actual response structure (remove in production)
   if (process.env.NODE_ENV === 'development') {
     console.log('Player API Response:', player)
     console.log('Player Error:', playerError)
   }
-  
-  // For now, we'll work with the team name directly from player data
-  // In the future, you might want to add a team lookup by name
+
   const teamName = player?.team
   const teamLoading = false
-  
+
   // Fetch all players for teammates
   const { data: playersResponse, isLoading: playersLoading } = useGetPlayersQuery({
     page: 1,
     limit: 50
   })
   const allPlayers = playersResponse?.data?.players || []
-  
+
   // Get teammates (same team, different player)
   const teammates = allPlayers
     .filter(p => p.team === player?.team && p.id !== player?.id)
@@ -83,7 +79,7 @@ export default function PlayerProfile() {
   if (playerError || !player) {
     // Check if the error is specifically an authentication error
     const isAuthError = playerError && 'status' in playerError && (playerError.status === 401 || playerError.status === 403)
-    
+
     if (isAuthError) {
       return (
         <div className="container mx-auto px-4 py-8">
@@ -108,7 +104,7 @@ export default function PlayerProfile() {
         </div>
       )
     }
-    
+
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto h-screen text-center">
@@ -129,237 +125,212 @@ export default function PlayerProfile() {
   const playerImage = getImageUrl(player.headshotPic) || '/default-player.jpg'
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Back Button */}
-        <Link
+    <div className="min-h-screen">
+      {/* Back Navigation */}
+      <div className="container mx-auto px-4 pt-6">
+        <Link 
           href="/players"
-          className="inline-flex items-center text-red-800 hover:text-red-900 font-semibold mb-6 transition-colors"
+          className="inline-flex items-center hover:text-red-800 transition-colors mb-6"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Players
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          <span className="text-lg font-medium">Back to Players</span>
         </Link>
+      </div>
 
-        {/* Player Header */}
-        <div className="rounded-xl border shadow-lg overflow-hidden mb-8">
-          {/* Player Banner */}
-          <div
-            className="relative h-64 md:h-80"
-            style={{ backgroundColor: '#1f2937' }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
-
-            {/* Player Info Overlay */}
-            <div className="absolute bottom-6 left-6 text-white">
-              <div className="flex items-end gap-6 mb-4">
-                <div className="relative">
-                  <Image
-                    src={playerImage}
-                    alt={player.name}
-                    width={120}
-                    height={120}
-                    className="rounded-lg border-4 border-white"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.src = '/default-player.jpg'
-                    }}
-                  />
-                  {player.draftPick && (
-                    <div className="absolute -top-2 -right-2 bg-red-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-                      {player.draftPick}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-bold mb-2">{player.name}</h1>
-                  <div className="flex items-center gap-4 text-lg opacity-90">
-                    <span className="font-semibold">{player.position}</span>
-                    <span>•</span>
-                    <span>{teamName}</span>
-                  </div>
-                </div>
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="container mx-auto px-4 py-16 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            {/* Player Image */}
+            <div className="relative">
+              <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl">
+                <Image
+                  src={playerImage}
+                  alt={player.name}
+                  width={400}
+                  height={400}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
 
-            {/* Team Logo - Placeholder for now */}
-            {/* You can add team logos later when you have team data */}
-          </div>
-
-          {/* Player Stats */}
-          <div className="p-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-800">{player.age}</div>
-                <div className="text-sm">Age</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-800">{player.height}</div>
-                <div className="text-sm">Height</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-800">{player.weight}</div>
-                <div className="text-sm">Weight</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-red-800">{player.position}</div>
-                <div className="text-sm">Position</div>
+            {/* Player Info */}
+            <div className="flex-1 text-center lg:text-left">
+              <div className="mb-4">
+                <h1 className="text-6xl lg:text-8xl font-black mb-4 leading-none">
+                  {player.name}
+                </h1>
+                <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-8">
+                  <span className="text-3xl lg:text-4xl font-bold text-red-200">
+                    {player.team || 'N/A'}
+                  </span>
+                  <div className="hidden lg:block w-1 h-8 bg-white/30"></div>
+                  <span className="text-2xl lg:text-3xl font-semibold text-white/90">
+                    #{player.position}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Content Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Player Details */}
-            <div className="rounded-xl shadow-md p-6 border">
-              <h2 className="text-2xl font-bold mb-6">Player Information</h2>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <Users className="w-5 h-5 mr-3 " />
-                    <div>
-                      <div className="text-sm ">Position</div>
-                      <div className="font-semibold">{player.position}</div>
-                    </div>
-                  </div>
-                  
-                  {player.draftPick && (
-                    <div className="flex items-center">
-                      <Hash className="w-5 h-5 mr-3 " />
-                      <div>
-                        <div className="text-sm ">Draft Pick</div>
-                        <div className="font-semibold">{player.draftPick}</div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center">
-                    <Activity className="w-5 h-5 mr-3 " />
-                    <div>
-                      <div className="text-sm ">Physical</div>
-                      <div className="font-semibold">{player.height} • {player.weight} lbs</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <GraduationCap className="w-5 h-5 mr-3 " />
-                    <div>
-                      <div className="text-sm">College</div>
-                      <div className="font-semibold">{player.college}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center">
-                    <MapPin className="w-5 h-5 mr-3" />
-                    <div>
-                      <div className="text-sm">Team</div>
-                      <div className="font-semibold">{teamName}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      {/* Stats Grid */}
+      <div className="container mx-auto px-4 -mt-16 relative z-20 mb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
+            <div className="flex items-center mb-3">
+              <Calendar className="w-6 h-6 text-red-600 mr-3" />
+              <span className="text-sm font-medium text-white">AGE</span>
             </div>
+            <div className="text-4xl text-white">{player.age}</div>
+            <div className="text-sm mt-1 text-white">Years Old</div>
+          </div>
 
-            {/* Career Highlights */}
-            <div className="rounded-xl shadow-md p-6 border">
-              <h2 className="text-2xl font-bold mb-6">Career Highlights</h2>
-              
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <Star className="w-5 h-5 mr-3 text-yellow-500 mt-1" />
-                  <div>
-                    <div className="font-semibold">Professional Career</div>
-                    <div>Key player for the {teamName}</div>
+          <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
+            <div className="flex items-center mb-3">
+              <Ruler className="w-6 h-6 text-red-600 mr-3" />
+              <span className="text-sm font-medium text-white">HEIGHT</span>
+            </div>
+            <div className="text-4xl text-white">{player.height}</div>
+            <div className="text-sm mt-1 text-white">Tall</div>
+          </div>
+
+          <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
+            <div className="flex items-center mb-3">
+              <Weight className="w-6 h-6 text-red-600 mr-3" />
+              <span className="text-sm font-medium text-white">WEIGHT</span>
+            </div>
+            <div className="text-4xl text-white">{player.weight}</div>
+            <div className="text-sm mt-1 text-white">Pounds</div>
+          </div>
+
+          <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
+            <div className="flex items-center mb-3">
+              <Users className="w-6 h-6 text-red-600 mr-3" />
+              <span className="text-sm font-medium text-white">POSITION</span>
+            </div>
+            <div className="text-2xl text-white">{player.position}</div>
+            <div className="text-sm mt-1 text-white">Role</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 pb-16">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Player Details */}
+          <div className="lg:col-span-2">
+            <div className="rounded-3xl p-8 shadow-xl border">
+              <h2 className="text-4xl lg:text-5xl font-black mb-8">
+                Player Details
+              </h2>
+
+              <div className="space-y-8">
+                {/* College */}
+                <div className="border-l-4 border-red-600 pl-6">
+                  <div className="flex items-center mb-2">
+                    <GraduationCap className="w-7 h-7 text-red-600 mr-3" />
+                    <span className="text-lg font-bold">COLLEGE</span>
                   </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <GraduationCap className="w-5 h-5 mr-3 text-blue-500 mt-1" />
-                  <div>
-                    <div className="font-semibold">College Career</div>
-                    <div>Played college football at {player.college}</div>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <Activity className="w-5 h-5 mr-3 text-green-500 mt-1" />
-                  <div>
-                    <div className="font-semibold">Position Excellence</div>
-                    <div>Specialized {player.position} with proven track record</div>
-                  </div>
+                  <div className="text-3xl">{player.college}</div>
                 </div>
 
-                {player.ppi && (
-                  <div className="flex items-start">
-                    <Trophy className="w-5 h-5 mr-3 text-red-500 mt-1" />
-                    <div>
-                      <div className="font-semibold">Player Performance Index</div>
-                      <div>PPI Score: {player.ppi}</div>
+                {/* Draft Pick */}
+                {player.draftPick && (
+                  <div className="border-l-4 border-red-600 pl-6">
+                    <div className="flex items-center mb-2">
+                      <Hash className="w-7 h-7 text-red-600 mr-3" />
+                      <span className="text-lg font-bold ">DRAFT PICK</span>
                     </div>
+                    <div className="text-3xl">{player.draftPick}</div>
+                  </div>
+                )}
+
+                {/* Team */}
+                <div className="border-l-4 border-red-600 pl-6">
+                  <div className="flex items-center mb-2">
+                    <MapPin className="w-7 h-7 text-red-600 mr-3" />
+                    <span className="text-lg font-bold">CURRENT TEAM</span>
+                  </div>
+                  <div className="text-3xl">{teamName || 'N/A'}</div>
+                </div>
+
+                {/* Performance Index */}
+                {player.ppi && (
+                  <div className="border-l-4 border-red-600 pl-6">
+                    <div className="flex items-center mb-2">
+                      <Trophy className="w-7 h-7 text-red-600 mr-3" />
+                      <span className="text-lg font-bold">PERFORMANCE INDEX</span>
+                    </div>
+                    <div className="text-3xl">{player.ppi}</div>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Sidebar */}
+          {/* Teammates Sidebar */}
           <div className="space-y-8">
-            {/* Team Info */}
-            {teamName && (
-              <div className="rounded-xl shadow-md p-6 border">
-                <h3 className="text-xl font-bold mb-4">Team Information</h3>
-                
-                <div className="p-4 rounded-lg border bg-gray-50">
-                  <div className="font-semibold">{teamName}</div>
-                  <div className="text-sm text-gray-600">NFL Team</div>
-                </div>
-              </div>
-            )}
-
-            {/* Teammates */}
             {teammates.length > 0 && (
-              <div className="rounded-xl shadow-md p-6 border">
-                <h3 className="text-xl font-bold mb-4">Teammates</h3>
+              <div className="rounded-3xl p-6 shadow-xl border">
+                <h3 className="text-2xl font-black mb-6">Teammates</h3>
                 
-                <div className="space-y-3">
-                  {teammates.map((teammate) => (
+                <div className="space-y-4">
+                  {teammates.slice(0, 4).map((teammate) => (
                     <Link
                       key={teammate.id}
                       href={`/players/${teammate.id}`}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-4 p-4 rounded-xl transition-colors border border-gray-100"
                     >
                       <Image
                         src={getImageUrl(teammate.headshotPic) || '/default-player.jpg'}
                         alt={teammate.name}
-                        width={40}
-                        height={40}
-                        className="rounded-lg"
+                        width={50}
+                        height={50}
+                        className="rounded-xl"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
                           target.src = '/default-player.jpg'
                         }}
                       />
                       <div className="flex-1">
-                        <div className="font-medium text-sm">{teammate.name}</div>
-                        <div className="text-xs text-gray-600">{teammate.position} • Age {teammate.age}</div>
+                        <div className="font-bold">{teammate.name}</div>
+                        <div className="text-sm">{teammate.position}</div>
+                        <div className="text-xs">Age {teammate.age}</div>
                       </div>
                     </Link>
                   ))}
                 </div>
-                
+
                 <Link
                   href="/players"
-                  className="block text-center text-red-800 hover:text-red-900 font-semibold text-sm mt-4 transition-colors"
+                  className="block text-center text-red-800 hover:text-red-900 font-bold text-lg mt-6 transition-colors"
                 >
                   View All Players →
                 </Link>
               </div>
             )}
+
+            {/* Quick Stats Card */}
+            {/* <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-3xl p-6 text-white shadow-xl">
+              <h3 className="text-2xl font-black mb-6">Quick Stats</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">Position</span>
+                  <span className="text-xl font-black">{player.position}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">Age</span>
+                  <span className="text-xl font-black">{player.age}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">Team</span>
+                  <span className="text-lg font-black">{player.team || 'N/A'}</span>
+                </div>
+              </div>
+            </div> */}
           </div>
         </div>
       </div>
