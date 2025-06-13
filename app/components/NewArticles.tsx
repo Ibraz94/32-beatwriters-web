@@ -2,65 +2,176 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { Calendar, Clock, ArrowRight, TrendingUp } from "lucide-react";
 import { useGetArticlesQuery, Article, getImageUrl } from "@/lib/services/articlesApi";
 
-
-
-
 export default function NewArticles() {
-    const { data: articles, isLoading, error } = useGetArticlesQuery({ page: 1, limit: 10 });
+    const { data: articles, isLoading, error } = useGetArticlesQuery({ page: 1, limit: 6 });
 
-    if (isLoading) return <div className="text-center text-2xl font-bold max-w-4xl mx-auto mt-12">Loading...</div>;
-    if (error) return <div>Error: {(error as any).data as string}</div>;
+    if (isLoading) {
+        return (
+            <section className="container mx-auto px-4 py-16">
+                <div className="animate-pulse space-y-6">
+                    <div className="h-8 bg-gray-200 rounded w-64 mx-auto"></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="bg-gray-200 rounded-xl h-80"></div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
+    if (error) {
+        return (
+            <section className="container mx-auto px-4 py-16">
+                <div className="text-center">
+                    <p className="text-red-600 font-medium">Failed to load articles</p>
+                </div>
+            </section>
+        );
+    }
+
+    const publicArticles = articles?.data.articles
+        .filter((article: Article) => article.access === 'public')
+        .slice(0, 6) || [];
 
     return (
-        <section className="container mx-auto px-4">
-            <div className="mt-8 md:mt-12">
-                <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center md:text-left">Latest <span className="text-red-800">Articles</span> </h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                    {articles?.data.articles
-                        .filter((article: Article) => article.access === 'public')
-                        .slice(0, 5)
-                        .map((relatedArticle: Article) => (
-                            <Link
-                                key={relatedArticle.id}
-                                href={`/articles/${relatedArticle.id}`}
-                                className="rounded-lg shadow-md border overflow-hidden hover:shadow-lg transition-shadow flex flex-col sm:flex-row"
-                            >
-                                <div className="flex-shrink-0">
-                                    {relatedArticle.featuredImage ? (
-                                        <div className="relative p-2 h-48 sm:h-32 md:h-40 lg:h-48 w-full sm:w-48 md:w-56 lg:w-72 overflow-hidden">
-                                            <Image 
-                                                src={getImageUrl(relatedArticle.featuredImage) || ''} 
-                                                alt={relatedArticle.title} 
-                                                width={300} 
-                                                height={200} 
-                                                className="object-cover w-full h-full rounded-lg lg:rounded-lg" 
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className="relative h-48 sm:h-32 md:h-40 lg:h-48 w-full sm:w-48 md:w-56 bg-gray-100 flex items-center justify-center">
-                                            <span className="text-gray-500 text-sm">No Image</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="p-3 md:p-4 flex flex-col justify-between flex-grow">
-                                    <h4 className="text-base md:text-lg lg:text-xl font-bold mb-2 line-clamp-2">{relatedArticle.title}</h4>
-                                    <div className="flex flex-col">
-                                        <p className="text-xs md:text-sm mb-2">{new Date(relatedArticle.publishedAt || '').toLocaleDateString()}</p>
+        <section className="container mx-auto px-4 py-16">
+            {/* Header */}
+            <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                    Latest <span className="text-red-800">Articles</span>
+                </h2>
+                <p className="text-lg max-w-2xl mx-auto">
+                    In-depth analysis, breaking news, and insider reports from our network of NFL beat writers.
+                </p>
+            </div>
+
+            {/* Articles Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {publicArticles.map((article: Article, index: number) => (
+                    <Link
+                        key={article.id}
+                        href={`/articles/${article.id}`}
+                        className={`group rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-red-200 transition-all duration-300 overflow-hidden ${
+                            index === 0 ? 'md:col-span-2 lg:col-span-1' : ''
+                        }`}
+                    >
+                        {/* Article Image */}
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                            {article.featuredImage ? (
+                                <Image 
+                                    src={getImageUrl(article.featuredImage) || ''} 
+                                    alt={article.title}
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <div className="text-center text-gray-500">
+                                        <svg className="w-16 h-16 mx-auto mb-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                                        </svg>
+                                        <span className="text-sm font-medium">No Image Available</span>
                                     </div>
                                 </div>
-                            </Link>
-                        ))}
+                            )}
+                            
+                            {/* Trending Badge (for first article) */}
+                            {index === 0 && (
+                                <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                                    <TrendingUp className="h-3 w-3" />
+                                    Featured
+                                </div>
+                            )}
+
+                            {/* Reading time overlay */}
+                            <div className="absolute bottom-4 right-4 bg-black/70 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                <span>5 min read</span>
+                            </div>
+                        </div>
+
+                        {/* Article Content */}
+                        <div className="p-6">
+                            {/* Date */}
+                            <div className="flex items-center gap-2 text-sm mb-3">
+                                <Calendar className="h-4 w-4" />
+                                <time dateTime={article.publishedAt}>
+                                    {new Date(article.publishedAt || '').toLocaleDateString('en-US', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                    })}
+                                </time>
+                            </div>
+
+                            {/* Title */}
+                            <h3 className="font-bold text-xl mb-3 line-clamp-2 group-hover:text-red-600 transition-colors leading-tight">
+                                {article.title}
+                            </h3>
+
+
+                            {/* Footer */}
+                            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                                {/* Author/Category */}
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 border-2 border-gray-100 rounded-full flex items-center justify-center">
+                                        <span className="text-xs font-bold">
+                                            {article.authorId?.name?.charAt(0).toUpperCase() || 'A'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <div className="text-sm font-medium">
+                                            {article.authorId?.name || 'Anonymous'}
+                                        </div>
+                                        <div className="text-xs">
+                                            Beat Writer
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Read More */}
+                                <div className="flex items-center gap-1 text-red-600 font-medium text-sm group-hover:gap-2 transition-all">
+                                    <span>Read More</span>
+                                    <ArrowRight className="h-4 w-4" />
+                                </div>
+                            </div>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+
+            {/* Show message if no articles */}
+            {publicArticles.length === 0 && (
+                <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No Articles Available</h3>
+                    <p className="text-muted-foreground">Check back soon for new content from our beat writers.</p>
                 </div>
-                <div className="flex justify-center mt-6 md:mt-10">
-                    <Link href="/articles" className="text-lg hover:text-red-800 transition-colors">
-                        <button className="bg-red-800 text-white px-6 md:px-8 py-2 md:py-3 rounded-lg font-semibold hover:scale-102 hover:cursor-pointer transition-all text-sm md:text-base">
+            )}
+
+            {/* Call to Action */}
+            {publicArticles.length > 0 && (
+                <div className="text-center mt-12">
+                    <Link href="/articles">
+                        <button className="group bg-red-800 hover:scale-102 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto">
                             View All Articles
+                            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                         </button>
                     </Link>
+                    
+                    <p className="text-sm text-muted-foreground mt-4">
+                        Access exclusive content and in-depth analysis from all 32 NFL teams
+                    </p>
                 </div>
-            </div>
+            )}
         </section>
-    )
+    );
 }

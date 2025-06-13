@@ -9,8 +9,9 @@ import { useState, useEffect } from 'react'
 
 const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
   return (
-    <div className="rounded-lg shadow-lg border overflow-hidden hover:shadow-lg transition-shadow group">
+    <div className="rounded-lg space-y-2 shadow-md border-3 overflow-hidden hover:shadow-lg transition-shadow group">
       {/* Podcast Thumbnail */}
+      <Link href={`/podcasts/${podcast.id}`}>
       <div className="relative h-48 w-full">
         <Image 
           src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"} 
@@ -26,11 +27,11 @@ const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
 
       {/* Podcast Info */}
       <div className="p-4">
-        <Link href={`/podcasts/${podcast.id}`}>
-          <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-red-800 transition-colors cursor-pointer">
+        
+          <h3 className="font-bold text-lg mb-2 line-clamp-2">
             {podcast.title}
           </h3>
-        </Link>
+
         <p className="text-sm mb-3 line-clamp-2 ">
           {podcast.description}
         </p>
@@ -40,10 +41,15 @@ const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
           Hosted by: {podcast.hostedBy}
         </p>
           <p className="text-xs">
-            {new Date(podcast.podcastTime).toLocaleDateString()}
+            {new Date(podcast.podcastTime).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric'
+            })}
           </p>
         </div>
       </div>
+      </Link>
     </div>
   )
 }
@@ -110,7 +116,7 @@ export default function AllPodcastsPage() {
 
       {/* Results */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
           {Array.from({ length: 12 }).map((_, index) => (
             <div key={index} className="animate-pulse">
               <div className="bg-gray-300 rounded-lg h-48 mb-4"></div>
@@ -139,7 +145,7 @@ export default function AllPodcastsPage() {
           </div>
 
           {/* Episodes Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
             {apiResponse.podcasts.map((podcast) => (
               <PodcastCard key={podcast.id} podcast={podcast} />
             ))}

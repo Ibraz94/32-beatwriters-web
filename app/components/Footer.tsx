@@ -4,113 +4,183 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-
-
-
-
+import { Mail, Twitter, Instagram, Youtube, ArrowRight, MapPin, Phone } from "lucide-react";
 
 export default function Footer() {
     const { theme } = useTheme();
+    const [email, setEmail] = useState("");
+    const [isSubscribed, setIsSubscribed] = useState(false);
 
-    const [email, setEmail] = useState('')
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [isSubscribed, setIsSubscribed] = useState(false)
+    const handleNewsletterSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        // Handle newsletter signup
+        setIsSubscribed(true);
+        setEmail("");
+        setTimeout(() => setIsSubscribed(false), 3000);
+    };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (!email) return
+    const footerLinks = {
+        Company: [
+            { label: "About Us", href: "/about" },
+            { label: "Our Writers", href: "/beat-writers" },
+            { label: "Careers", href: "/" },
+            { label: "Contact", href: "/contact-us" }
+        ],
+        Content: [
+            { label: "Articles", href: "/articles" },
+            { label: "Podcasts", href: "/podcasts" },
+            { label: "Live Feed", href: "/nuggets" },
+            { label: "Player Analysis", href: "/players" }
+        ],
+        Support: [
+            { label: "Help Center", href: "/" },
+            { label: "Privacy Policy", href: "/privacy-policy" },
+            { label: "Terms of Service", href: "/terms-and-conditions" },
+            { label: "Cookie Policy", href: "/" }
+        ]
+    };
 
-        setIsSubmitting(true)
-        
-        // Simulate API call
-        setTimeout(() => {
-            setIsSubscribed(true)
-            setIsSubmitting(false)
-            setEmail('')
-        }, 1000)
-    }
+    const socialLinks = [
+        { icon: Twitter, href: "https://twitter.com/32beatwriters", label: "Twitter" },
+        { icon: Instagram, href: "https://instagram.com/32beatwriters", label: "Instagram" },
+        { icon: Youtube, href: "https://youtube.com/32beatwriters", label: "YouTube" }
+    ];
 
     return (
-        <footer className="">
-            <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 py-10 px-4 border-t border-gray-200">
-
-                <div className="flex flex-col gap-4">
-                <div className="flex flex-row gap-2 items-center">
-                <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={45} height={45} />
-                <h1 className="text-2xl lg:text-[32px] text-foreground">32BeatWriters</h1>
-                </div>
-                <p className="flex flex-initial text-muted-foreground text-sm lg:text-base">32BeatWriters is your source for all the news you need to win your fantasy football league.  We source all our info directly from the beat writers.</p>
-                    <div className="flex flex-row gap-6">
-                    <a 
-                    href="https://x.com/32beatwriters"
-                    className="w-6 h-6 opacity-70 hover:scale-108 transition-all"><img src="/twitter.svg" alt="Twitter"/></a>
-                    <a 
-                    href="https://tiktok.com/@32beatwriters"
-                    className="w-6 h-6 opacity-70 hover:scale-108 transition-all"><img src="/tiktok.svg"  alt="Tiktok"/></a>
-                    <a 
-                    href="https://reddit.com/r/32beatwriters"
-                    className="w-6 h-6 opacity-70 hover:scale-108 transition-all"><img src="/reddit.svg" alt="Reddit"/></a>
-                    <a 
-                    href="https://youtube.com/@32beatwriters"
-                    className="w-6 h-6 opacity-70 hover:scale-108 transition-all"><img src="/youtube.svg" alt="Youtube"/></a> 
-                    </div>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                    <h1 className="text-xl lg:text-2xl font-bold text-foreground">Q U I C K L I N K S</h1>
-                    <Link href="/" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Home</Link>
-                    <Link href="/faqs" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">FAQ's</Link>  
-                    
-                    <Link href="/privacy-policy" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Privacy Policy</Link>
-                    <Link href="/terms-and-conditions" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Terms & Conditions</Link>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                    <h1 className="text-xl lg:text-2xl font-bold text-foreground">T E A M U S</h1>
-                    <Link href="/about" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">About Us</Link>
-                    <Link href="/contact-us" className="text-muted-foreground hover:text-red-900 hover:scale-101 transition-all text-sm lg:text-base">Contact Us</Link>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                <h1 className="text-xl lg:text-2xl font-bold text-foreground">N E W S L E T T E R</h1>
-                <p className="text-muted-foreground text-sm lg:text-base">Stay in the Game — Right from Your Inbox</p>
-                <form onSubmit={handleSubmit} className="space-y-4">    
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                    Email address
-                                </label>
+        <footer className="bg-background border-t">
+            {/* Newsletter Section */}
+            <div className="border-b bg-muted/20">
+                <div className="container mx-auto px-4 py-12">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <h3 className="text-2xl md:text-3xl font-bold mb-3">
+                            Stay Ahead of the Game
+                        </h3>
+                        <p className="text-muted-foreground mb-8 text-lg">
+                            Get breaking news, insider reports, and fantasy insights delivered straight to your inbox.
+                        </p>
+                        
+                        <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                            <div className="flex-1">
                                 <input
                                     type="email"
-                                    id="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Enter your email"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-red-800 focus:border-red-800 transition-colors"
+                                    placeholder="Enter your email address"
+                                    className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                                     required
                                 />
                             </div>
-                            
                             <button
                                 type="submit"
-                                disabled={isSubmitting || !email}
-                                className="w-full bg-red-800 text-white py-3 px-6 rounded-lg font-semibold focus:scale-102 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-6 py-3 bg-red-800 text-white font-semibold rounded-lg hover:scale-102 transition-all flex items-center justify-center gap-2"
                             >
-                                {isSubmitting ? (
-                                    <span className="flex items-center justify-center">
-                                        Subscribing...
-                                    </span>
-                                ) : (
-                                    'Subscribe Now'
-                                )}
+                                {isSubscribed ? "Subscribed!" : "Subscribe"}
+                                <ArrowRight className="h-4 w-4" />
                             </button>
                         </form>
-                        <p className="text-xs text-gray-500 -mt-2">
-                            By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.
-                        </p>
-                </div>
 
+                        <p className="text-sm text-muted-foreground mt-4">
+                            Join 10,000+ fantasy players getting weekly insights. Unsubscribe anytime.
+                        </p>
+                    </div>
+                </div>
             </div>
-            <h1 className="text-center text-muted-foreground pb-4 text-sm lg:text-base px-4">Copyright © 2025 32BeatWriters. All rights reserved.</h1>
+
+            {/* Main Footer Content */}
+            <div className="container mx-auto px-4 py-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+                    {/* Brand Section */}
+                    <div className="lg:col-span-2 text-center md:text-left">
+                        <Link href="/" className="flex items-center justify-center md:justify-start space-x-3 mb-4">
+                            <Image 
+                                src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} 
+                                alt="32 Beat Writers" 
+                                width={40} 
+                                height={40}
+                                className="w-10 h-10"
+                            />
+                            <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
+                                32 Beat Writers
+                            </span>
+                        </Link>
+                        
+                        <p className="text-muted-foreground mb-6 leading-relaxed">
+                            The most comprehensive NFL coverage network, bringing you insider access 
+                            to all 32 teams through our dedicated beat writers.
+                        </p>
+
+                        {/* Stats */}
+                        <div className="grid grid-cols-3 gap-4 mb-6">
+                            <div className="text-center p-3 bg-muted/50 rounded-lg">
+                                <div className="font-bold text-lg text-red-600">32</div>
+                                <div className="text-xs text-muted-foreground">Writers</div>
+                            </div>
+                            <div className="text-center p-3 bg-muted/50 rounded-lg">
+                                <div className="font-bold text-lg text-red-600">24/7</div>
+                                <div className="text-xs text-muted-foreground">Coverage</div>
+                            </div>
+                            <div className="text-center p-3 bg-muted/50 rounded-lg">
+                                <div className="font-bold text-lg text-red-600">10K+</div>
+                                <div className="text-xs text-muted-foreground">Subscribers</div>
+                            </div>
+                        </div>
+
+                        {/* Social Links */}
+                        <div className="flex justify-center md:justify-start space-x-4">
+                            {socialLinks.map((social) => (
+                                <Link
+                                    key={social.label}
+                                    href={social.href}
+                                    className="w-10 h-10 bg-muted hover:bg-red-800 hover:text-white rounded-lg flex items-center justify-center transition-colors"
+                                    aria-label={social.label}
+                                >
+                                    <social.icon className="h-5 w-5" />
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Footer Links */}
+                    {Object.entries(footerLinks).map(([category, links]) => (
+                        <div key={category} className="text-center md:text-left">
+                            <h4 className="font-semibold text-foreground mb-4">{category}</h4>
+                            <ul className="space-y-3">
+                                {links.map((link) => (
+                                    <li key={link.label}>
+                                        <Link
+                                            href={link.href}
+                                            className="text-muted-foreground hover:text-red-600 transition-colors text-sm"
+                                        >
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Bottom Section */}
+            <div className="border-t bg-muted/10">
+                <div className="container mx-auto px-4 py-6">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                        <div className="text-sm text-muted-foreground">
+                            © 2025 32 Beat Writers. All rights reserved.
+                        </div>
+                        
+                        <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground">
+                            <div className="flex items-center justify-center gap-1">
+                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <span>All systems operational</span>
+                            </div>
+                            <Link href="" className="hover:text-red-600 transition-colors">
+                                Status
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </footer>
     );
 }

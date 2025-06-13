@@ -12,13 +12,17 @@ import {
     useMarkHelpfulMutation,
     getImageUrl
 } from '@/lib/services/nuggetsApi'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import { SelectGroup, SelectLabel } from '@radix-ui/react-select'
 
 interface NuggetFilters {
-    playerId?: number
-    sourceName?: string
-    page?: number
-    limit?: number
-    sortBy?: 'order' | 'createdAt'
+    sortBy?: 'createdAt' | 'playerName'
     sortOrder?: 'asc' | 'desc'
 }
 
@@ -31,8 +35,6 @@ interface ImageModalData {
 
 export default function NuggetsPage() {
     const [filters, setFilters] = useState<NuggetFilters>({
-        page: 1,
-        limit: 12,
         sortBy: 'createdAt',
         sortOrder: 'desc'
     })
@@ -42,71 +44,63 @@ export default function NuggetsPage() {
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
 
-    // Main query for nuggets
+    // Main query for nuggets - simplified to just fetch all nuggets
     const {
         data: nuggetsData,
         isLoading: isLoadingNuggets,
         error: nuggetsError,
         isFetching: isFetchingNuggets
-    } = useGetNuggetsQuery(filters, {
-        skip: isSearching
+    } = useGetNuggetsQuery({}, {
+        skip: false
     })
 
-    // Search query
-    const {
-        data: searchData,
-        isLoading: isLoadingSearch,
-        error: searchError
-    } = useSearchNuggetsQuery(searchTerm, {
-        skip: !isSearching || !searchTerm
-    })
+    // Search query - we'll handle this client-side
+    const [searchResults, setSearchResults] = useState<any[]>([])
 
-    // Mutation for marking helpful
-    const [markHelpful] = useMarkHelpfulMutation()
-
-    // Handle loading more nuggets
+    // Handle loading nuggets
     useEffect(() => {
-        if (nuggetsData?.data?.nuggets && !isSearching) {
-            if (filters.page === 1) {
-                setAllNuggets(nuggetsData.data.nuggets)
-            } else {
-                setAllNuggets(prev => [...prev, ...nuggetsData.data.nuggets])
-            }
-            setHasMoreNuggets(nuggetsData.data.nuggets.length === filters.limit)
+        if (nuggetsData?.data?.nuggets) {
+            setAllNuggets(nuggetsData.data.nuggets)
+            setHasMoreNuggets(false) // Since we're loading all at once
         }
-    }, [nuggetsData, filters.page, isSearching])
+    }, [nuggetsData])
 
-    // Handle search results
-    useEffect(() => {
-        if (searchData?.nuggets && isSearching) {
-            setAllNuggets(searchData.nuggets)
-            setHasMoreNuggets(false) // Search doesn't support pagination
-        }
-    }, [searchData, isSearching])
-
-    // Search functionality
+    // Client-side search functionality
     const handleSearch = (term: string) => {
         setSearchTerm(term)
         setIsSearching(!!term)
+        
         if (term) {
-            setAllNuggets([])
+            const searchTermLower = term.toLowerCase()
+            const filtered = allNuggets.filter(nugget => 
+                nugget.content.toLowerCase().includes(searchTermLower) ||
+                nugget.player.name.toLowerCase().includes(searchTermLower) ||
+                nugget.sourceName?.toLowerCase().includes(searchTermLower)
+            )
+            setSearchResults(filtered)
         } else {
-            // Reset to filtered view
-            setFilters(prev => ({ ...prev, page: 1 }))
+            setSearchResults([])
         }
     }
 
-    // Load more nuggets
-    const loadMore = () => {
-        if (!isSearching && hasMoreNuggets && !isFetchingNuggets) {
-            setFilters(prev => ({ ...prev, page: prev.page! + 1 }))
-        }
+    // Client-side sorting
+    const getSortedNuggets = (nuggets: any[]) => {
+        return [...nuggets].sort((a, b) => {
+            if (filters.sortBy === 'playerName') {
+                const comparison = a.player.name.localeCompare(b.player.name)
+                return filters.sortOrder === 'asc' ? comparison : -comparison
+            } else {
+                const dateA = new Date(a.createdAt).getTime()
+                const dateB = new Date(b.createdAt).getTime()
+                return filters.sortOrder === 'asc' ? dateA - dateB : dateB - dateA
+            }
+        })
     }
 
     // Handle sort change
-    const handleSortChange = (sortBy: 'order' | 'createdAt', sortOrder: 'asc' | 'desc') => {
-        setFilters(prev => ({ ...prev, sortBy, sortOrder, page: 1 }))
-        setAllNuggets([])
+    const handleSortChange = (value: string) => {
+        const [sortBy, sortOrder] = value.split('-') as ['createdAt' | 'playerName', 'asc' | 'desc']
+        setFilters({ sortBy, sortOrder })
     }
 
     // Image modal functions
@@ -120,11 +114,11 @@ export default function NuggetsPage() {
 
     const navigateImage = (direction: 'prev' | 'next') => {
         if (!imageModal || !imageModal.images || imageModal.currentIndex === undefined) return
-        
-        const newIndex = direction === 'prev' 
+
+        const newIndex = direction === 'prev'
             ? (imageModal.currentIndex - 1 + imageModal.images.length) % imageModal.images.length
             : (imageModal.currentIndex + 1) % imageModal.images.length
-        
+
         setImageModal({
             ...imageModal,
             src: getImageUrl(imageModal.images[newIndex]) || '',
@@ -136,7 +130,7 @@ export default function NuggetsPage() {
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
             if (!imageModal) return
-            
+
             if (e.key === 'Escape') {
                 closeImageModal()
             } else if (e.key === 'ArrowLeft') {
@@ -150,9 +144,9 @@ export default function NuggetsPage() {
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [imageModal])
 
-    const isLoading = isLoadingNuggets || isLoadingSearch
-    const error = nuggetsError || searchError
-    const displayNuggets = isSearching ? searchData?.nuggets || [] : allNuggets
+    const isLoading = isLoadingNuggets
+    const error = nuggetsError
+    const displayNuggets = isSearching ? searchResults : getSortedNuggets(allNuggets)
 
     // Loading state
     if (isLoading && allNuggets.length === 0) {
@@ -202,44 +196,82 @@ export default function NuggetsPage() {
 
     return (
         <>
-            <div className="container mx-auto max-w-7xl px-4 py-8">
+            <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="text-center mb-12">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">Feed</h1>
-                    <p className="text-xl max-w-4xl mx-auto">
+                    <p className="text-xl max-w-4xl mx-auto px-4">
                         Latest nuggets, insights, and updates from across the NFL
                     </p>
                 </div>
 
                 {/* Search and Filters */}
-                <div className="mb-8 space-y-4">
+                <div className="mb-8 space-y-4 px-4 sm:px-0">
                     {/* Search Bar */}
-                    <div className="relative flex gap-4 max-w-2xl mx-auto">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <div className="relative flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+                        <Search className="absolute left-3 top-3 transform translate-y-1/4 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
                             placeholder="Search nuggets..."
                             value={searchTerm}
                             onChange={(e) => handleSearch(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                            className="w-full pl-10 pr-4 py-3 border-3 border-gray-400 rounded-lg shadow-md"
                         />
-                        <select
-                            value={`${filters.sortBy}-${filters.sortOrder}`}
-                            onChange={(e) => {
-                                const [sortBy, sortOrder] = e.target.value.split('-') as ['order' | 'createdAt', 'asc' | 'desc']
-                                handleSortChange(sortBy, sortOrder)
-                            }}
-                            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        <Select
+                            onValueChange={handleSortChange}
                         >
-                            <option value="createdAt-desc">Newest First</option>
-                            <option value="createdAt-asc">Oldest First</option>
-                            <option value="order-asc">Order (Ascending)</option>
-                            <option value="order-desc">Order (Descending)</option>
-                        </select>
-                    </div>
+                            <SelectTrigger className="w-full lg:w-1/3 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg" value={`${filters.sortBy}-${filters.sortOrder}`}>
+                                <SelectValue placeholder="Sort by Date" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                                <SelectItem value="createdAt-asc">Oldest First</SelectItem>
+                                <SelectItem value="playerName-asc">Player Name (A-Z)</SelectItem>
+                                <SelectItem value="playerName-desc">Player Name (Z-A)</SelectItem>
+                            </SelectContent>
+                        </Select>
 
-                    {/* Sort Options */}
-                    <div className="flex flex-wrap justify-center gap-4">
+                        <Select
+                            onValueChange={handleSortChange}
+                        >
+                            <SelectTrigger className="w-full lg:w-1/3 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg"  value={`${filters.sortBy}-${filters.sortOrder}`}>
+                                <SelectValue placeholder="Sort by Team" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="createdAt-desc">AFC North</SelectItem>
+                                <SelectItem value="createdAt-asc">AFC East</SelectItem>
+                                <SelectItem value="playerName-asc">AFC South</SelectItem>
+                                <SelectItem value="playerName-desc">AFC West</SelectItem>
+                                <SelectItem value="playerName-desc">NFC North</SelectItem>
+                                <SelectItem value="playerName-desc">NFC East</SelectItem>
+                                <SelectItem value="playerName-desc">NFC South</SelectItem>
+                                <SelectItem value="playerName-desc">NFC West</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <Select
+                            onValueChange={handleSortChange}
+                        >
+                            <SelectTrigger className="w-full lg:w-1/3 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg" value={`${filters.sortBy}-${filters.sortOrder}`}
+                            >
+                                <SelectValue placeholder="Sort by Position" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                <SelectLabel>Position</SelectLabel>
+                                <SelectItem value="createdAt-desc">QB</SelectItem>
+                                <SelectItem value="createdAt-asc">RB</SelectItem>
+                                <SelectItem value="playerName-asc">WR</SelectItem>
+                                <SelectItem value="playerName-desc">TE</SelectItem>
+                                <SelectItem value="playerName-desc">K</SelectItem>
+                                <SelectItem value="playerName-desc">DEF</SelectItem>
+                                <SelectItem value="playerName-desc">DL</SelectItem>
+                                <SelectItem value="playerName-desc">LB</SelectItem>
+                                <SelectItem value="playerName-desc">DB</SelectItem>
+                                <SelectItem value="playerName-desc">S</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
 
                     </div>
                 </div>
@@ -272,46 +304,53 @@ export default function NuggetsPage() {
                     <>
                         <Masonry
                             breakpointCols={{
-                                default: 3,
+                                default: 1,
                                 1100: 2,
                                 700: 1
                             }}
-                            className="flex w-auto -ml-6"
-                            columnClassName="pl-6 bg-clip-padding"
+                            className="flex max-w-3xl mx-auto"
+                            columnClassName="pl-0 sm:pl-6 bg-clip-padding"
                         >
                             {displayNuggets.map((nugget, index) => (
-                                <div key={`${nugget.id}-${index}`} className="rounded-xl border shadow-lg overflow-hidden hover:shadow-xl transition-shadow mb-6">
-                                    <div className='flex mt-8 gap-2 ml-4'>
-                                        <div 
+                                <div key={`${nugget.id}-${index}`} className="rounded-xl border-3 overflow-hidden shadow-md hover:shadow-xl transition-shadow mb-6 mx-4 sm:mx-0">
+                                    <div className='flex mt-8 gap-2 ml-4 mr-4'>
+                                        <div
                                             className="cursor-pointer hover:opacity-80 transition-opacity"
                                             onClick={() => openImageModal(
-                                                getImageUrl(nugget.player.headshotPic) || '', 
+                                                getImageUrl(nugget.player.headshotPic) || '',
                                                 `${nugget.player.name} headshot`
                                             )}
                                         >
                                             <Image
                                                 src={getImageUrl(nugget.player.headshotPic) || ''}
                                                 alt={nugget.title}
-                                                width={70}
+                                                width={80}
                                                 height={80}
-                                                className='rounded-xl object-cover bg-white'
+                                                className='rounded-full object-cover bg-background'
                                             />
                                         </div>
                                         <div className='flex items-center justify-between w-full p-2'>
                                             <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
-                                            <h1 className='text-lg mr-4'>{new Date(nugget.createdAt).toLocaleDateString()}</h1>
+
                                         </div>
                                     </div>
-
-                                    <h3 className="text-xl font-bold p-6">
-                                        {nugget.title}
-                                    </h3>
-                                    <p className="p-6 -mt-10">
+                                    <p className="px-6 py-4">
                                         <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                     </p>
+                                    <div className='flex justify-between px-6 py-1 -mb-10'>
+                                        <div className='flex flex-col mt-1'>
+                                            <h1 className='text-left'>{nugget.sourceName}</h1>
+                                            <h1 className='text-left text-gray-400'>{nugget.sourceUrl}</h1>
+                                        </div>
+                                        <h1 className='text-right text-gray-400 mt-6'>{new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric'
+                                        })}</h1>
+                                    </div>
 
                                     {/* Nugget Images */}
-                                    <div className='p-6 -mt-8'>
+                                    {/* <div className='p-6 -mt-8'>
                                         {nugget.images && nugget.images.length > 0 && (
                                             <div className={`grid gap-2 ${
                                                 nugget.images.length === 1 ? 'grid-cols-1' :
@@ -347,7 +386,7 @@ export default function NuggetsPage() {
                                                 ))}
                                             </div>
                                          )}
-                                    </div>
+                                    </div> */}
 
                                     {/* Nugget Content */}
                                     <div className="p-6">
@@ -369,26 +408,13 @@ export default function NuggetsPage() {
                                 </div>
                             ))}
                         </Masonry>
-
-                        {/* Load More Button */}
-                        {!isSearching && hasMoreNuggets && (
-                            <div className="text-center mt-12">
-                                <button
-                                    onClick={loadMore}
-                                    disabled={isFetchingNuggets}
-                                    className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold"
-                                >
-                                    {isFetchingNuggets ? 'Loading...' : 'Load More'}
-                                </button>
-                            </div>
-                        )}
                     </>
                 )}
             </div>
 
             {/* Image Modal */}
             {imageModal && (
-                <div 
+                <div
                     className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4"
                     onClick={closeImageModal}
                 >
@@ -433,7 +459,7 @@ export default function NuggetsPage() {
                         )}
 
                         {/* Image */}
-                        <div 
+                        <div
                             className="relative max-w-full max-h-full"
                             onClick={(e) => e.stopPropagation()}
                         >

@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         hostname: 'www.playerprofiler.com',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+      },
     ],
   },
 };

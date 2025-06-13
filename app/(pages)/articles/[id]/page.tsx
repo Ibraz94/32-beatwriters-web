@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, Clock, User, Shield, Lock, Calendar, Eye } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import Image from 'next/image'
-import { useGetArticleQuery, getImageUrl, Article } from '@/lib/services/articlesApi'
+import { useGetArticleQuery, getImageUrl, Article, useGetArticlesQuery } from '@/lib/services/articlesApi'
 
 
 type Props = {
@@ -66,14 +66,24 @@ export default function ArticlePage() {
   
   // Use the dedicated hook to fetch a single article by slug
   const { data: article, isLoading: articleLoading, error } = useGetArticleQuery(id as string)
-
-
+  // Fetch recent articles
+  const { data: recentArticlesData, isLoading: recentLoading } = useGetArticlesQuery({
+    limit: 6,
+    status: 'published',
+    sortBy: 'publishedAt',
+    sortOrder: 'desc'
+  })
 
   // Add debugging to see the response structure
   useEffect(() => {
   }, [article, articleLoading, error])
 
-  if (articleLoading || authLoading) {
+  // Add debugging for recent articles
+  useEffect(() => {
+    console.log('Recent Articles Data:', recentArticlesData?.data?.articles)
+  }, [recentArticlesData])
+
+  if (articleLoading || authLoading || recentLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
@@ -153,35 +163,57 @@ export default function ArticlePage() {
                 })()}
         </div>
 
-        {/* Related Articles */}
+        {/* Recent Articles */}
         <div className="mt-12">
-          <h3 className="text-2xl font-bold mb-6">More NFL Articles</h3>
-          <div className="grid md:grid-cols-2 gap-6">
-          
-                <Link 
-                  key={article.id}
-                  href={`/articles/${article.id}`}
-                  className="rounded-lg shadow-md border overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  <div className="relative h-32">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Image src={getImageUrl(article.featuredImage) || ''} 
-                      alt={article.title} width={1000} height={1000} className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
-                    </div>
-                    {article.access === 'pro' && (
-                      <div className="absolute top-2 right-2 bg-red-800 text-white px-2 py-1 rounded text-xs font-semibold">
-                        Premium
+          <h3 className="text-2xl font-bold mb-6">Recent Articles</h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            {recentArticlesData?.data?.articles
+              .filter((recentArticle: Article) => {
+                console.log('Article being filtered:', recentArticle)
+                return recentArticle.id !== article?.id
+              })
+              .sort((a: Article, b: Article) => new Date(b.publishedAt || '').getTime() - new Date(a.publishedAt || '').getTime())
+              .slice(0, 3)
+              .map((recentArticle: Article) => {
+                console.log('Rendering article:', recentArticle)
+                return (
+                  <Link 
+                    key={recentArticle.id}
+                    href={`/articles/${recentArticle.id}`}
+                    className="rounded-lg shadow-md border overflow-hidden hover:shadow-lg transition-shadow"
+                  >
+                    <div className="relative h-32">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Image 
+                          src={getImageUrl(recentArticle.featuredImage) || ''} 
+                          alt={recentArticle.title || 'Article image'} 
+                          width={1000} 
+                          height={1000} 
+                          className="object-cover w-full h-full" 
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
+                        />
                       </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-bold mb-2 line-clamp-2">{article.title}</h4>
-                    <div className="flex items-center justify-between mt-3 text-xs">
-                      <span>{article.authorId.name}</span>
-                      <span>{article.publishedAt}</span>
+                      {recentArticle.access === 'pro' && (
+                        <div className="absolute top-2 right-2 bg-red-800 text-white px-2 py-1 rounded text-xs font-semibold">
+                          Premium
+                        </div>
+                      )}
                     </div>
-                  </div>
-                </Link>
+                    <div className="p-4">
+                      <h4 className="font-bold mb-2 line-clamp-2 min-h-[3rem]">
+                        {recentArticle.title || 'Untitled Article'}
+                      </h4>
+                      <div className="flex items-center justify-between mt-3 text-xs">
+                        <span>{new Date(recentArticle.publishedAt || '').toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}</span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
           </div>
         </div>
       </div>

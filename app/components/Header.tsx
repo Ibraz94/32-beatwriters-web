@@ -1,30 +1,24 @@
 "use client"
 import Link from "next/link";
-import Form from "next/form";
 import Image from "next/image";
-import {Search } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
-import MobileNav from "./MobileNav";
 import { useState } from "react";
 import { useAuth } from '@/lib/hooks/useAuth';
 
 function Header() {
-
     const { theme } = useTheme();
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { user, isAuthenticated, getDisplayName } = useAuth();
 
-    // Get user display name - use the main auth system's function or fallback
     const getUserDisplayName = () => {
         if (!user) return null;
         
-        // Use the built-in getDisplayName function if available
         if (getDisplayName) {
             return getDisplayName();
         }
         
-        // Fallback logic for user name
         if (user.name) {
             return user.name;
         }
@@ -32,128 +26,200 @@ function Header() {
         return 'User';
     };
 
+    const navLinks = [
+        { href: "/", label: "Home" },
+        { href: "/articles", label: "Articles" },
+        { href: "/podcasts", label: "Podcasts" },
+        { href: "/players", label: "Players" },
+        { href: "/nuggets", label: "Feed" },
+    ];
+
     return (
-        <header className="h-20 flex flex-wrap items-center sticky top-0 z-10 bg-background/100 backdrop-blur-md border-b border-border transition-colors px-4">
-            <div className="flex w-full flex-wrap justify-between items-center container mx-auto">
-
-                {/* Mobile Layout: Menu and Search on Left */}
-                <div className="flex items-center gap-4 sm:hidden">
-
-                    {/* Mobile Layout: Logo on Right */}
-                    <div className="sm:hidden">
-                        <Link href="/"
-                            className="hover:opacity-90 cursor-pointer flex items-center gap-2">
-                            <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={35} height={35} />
-                            <h1 className="text-xl font-extralight">32 Beat Writers</h1>
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Desktop Layout: Logo and Navigation on Left */}
-                <div className="hidden sm:flex items-center gap-24">
-                    <Link href="/"
-                        className="hover:opacity-90 cursor-pointer flex items-center gap-2">
-                        <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={35} height={35} />
-                        <h1 className="text-xl font-extralight">32 Beat Writers</h1>
+        <header className="sticky top-0 z-50 w-full border-b border-gray-100 shadow-sm bg-background/90">
+            <div className="container mx-auto px-4 lg:px-8">
+                <div className="flex h-20 items-center justify-between">
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+                        <div className="relative">
+                            <Image 
+                                src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} 
+                                alt="32 Beat Writers" 
+                                width={40} 
+                                height={40}
+                                className="w-10 h-10"
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
+                                32BeatWriters
+                            </span>
+                            <span className="text-xs text-gray-600 -mt-1 hidden sm:block">
+                                NFL Insider Network
+                            </span>
+                        </div>
                     </Link>
-                    <div className="hidden lg:flex gap-10">
-                        <Link
-                            href="/"
-                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Home</Link>
-                        <Link
-                            href="/subscribe"
-                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Subscribe</Link>
-                        <Link
-                            href="/articles"
-                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Articles</Link>
-                        <Link
-                            href="/podcasts"
-                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Podcasts</Link>
-                        <Link
-                            href="/players"
-                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Players</Link>
-                        <Link
-                            href="/nuggets"
-                            className="flex gap-1 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Feed</Link>
-                        {/* <Link
-                            href="/teams"
-                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Teams</Link> */}
-                        {/* <Link
-                            href="/tools"
-                            className="text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">Tools</Link> */}
-                    </div>
-                </div>
 
+                    {/* Desktop Navigation */}
+                    <nav className="hidden lg:flex items-center space-x-8">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="relative hover:text-red-800 font-medium text-lg transition-colors duration-200 py-2 group"
+                            >
+                                {link.label}
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-800 transition-all duration-300 group-hover:w-full"></span>
+                            </Link>
+                        ))}
+                    </nav>
 
-                {/* Desktop Layout: Right Side Items */}
-                <div className="hidden sm:flex items-center gap-6 flex-1 sm:flex-none">
-                    {/* <Link href="/beat-writers"
-                        className="lg:flex hidden items-center space-x-2 text-sm md:text-base text-foreground hover:text-red-900 hover:scale-105 transition-colors">
-                        Beat Writers
-                    </Link> */}
-
-                    {/* Regular search bar for medium and larger devices */}
-                    <Form action='/search'
-                        className="flex w-[250px] sm:w-auto items-center border rounded-full focus:ring-0 sm:flex-1 sm:mx-4">
-                        <Search className="ml-2" size={16} />
-                        <input type="text"
-                            name="search"
-                            placeholder="Search"
-                            className="text-foreground placeholder:text-muted-foreground px-2 py-2 rounded-full focus:outline-none w-[300px] max-w-2xl transition-colors"
-                        />
-                    </Form>
-
-                    <ThemeToggle />
-
-                    {isAuthenticated ? (
-                        <Link href="/account"
-                            className="lg:flex hidden rounded-full items-center px-4 py-2 text-white bg-red-800 hover:scale-105 transition-all">
-                            <span>{getUserDisplayName()}</span>
-                        </Link>
-                    ) : (
-                        <Link href="/login"
-                            className="lg:flex hidden rounded-full items-center px-4 py-2 text-white bg-red-800 hover:scale-105 transition-all">
-                            <span>Login</span>
-                        </Link>
-                    )}
-                </div>
-
-                {/* Mobile Layout: Theme Toggle on Right */}
-                <div className="sm:hidden flex items-center gap-2">
-                    {/* Search dropdown for small devices */}
-                    <div className="relative">
-                        <button
-                            onClick={() => setIsSearchOpen(!isSearchOpen)}
-                            className="p-2 text-foreground hover:text-red-900 hover:scale-105 hover:cursor-pointer transition-colors"
-                        >
-                            <Search size={20} />
-                        </button>
-                        {isSearchOpen && (
-                            <div className="absolute w-[360px] -right-22 top-16 mt-2 bg-background border border-border rounded-lg shadow-lg p-4 z-50">
-                                <Form action='/search' className="w-full">
-                                    <input
-                                        type="text"
-                                        name="news-search"
-                                        placeholder="Search news..."
-                                        className="w-full text-foreground placeholder:text-muted-foreground px-3 py-2 rounded-full border border-border focus:outline-none focus:ring-1 focus:ring-ring transition-colors"
-                                        autoFocus
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="w-full mt-2 px-2 py-2 bg-red-900 text-white rounded-full transition-colors"
-                                    >
-                                        Search
-                                    </button>
-                                </Form>
+                    {/* Desktop Actions */}
+                    <div className="hidden lg:flex items-center space-x-4">
+                        <ThemeToggle />
+                        
+                        <div className="w-px h-6 bg-gray-300"></div>
+                        
+                        {isAuthenticated ? (
+                            <div className="flex items-center space-x-3">
+                                <Link 
+                                    href="/account" 
+                                    className="flex items-center space-x-2 px-4 py-2 bg-red-800 text-white hover:scale-102 rounded-xl transition-colors"
+                                >
+                                    <span className="text-lg font-medium">
+                                        {getUserDisplayName()}
+                                    </span>
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="flex items-center space-x-3">
+                                <Link 
+                                    href="/login"
+                                    className=" hover:text-red-800 hover:scale-102 font-medium transition-colors"
+                                >
+                                    Login
+                                </Link>
+                                <Link 
+                                    href="/subscribe"
+                                    className="bg-red-800 hover:scale-102 text-white px-6 py-2.5 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                                >
+                                    Subscribe
+                                </Link>
                             </div>
                         )}
                     </div>
-                    <ThemeToggle />
-                    <MobileNav />
+
+                    {/* Mobile Menu Button */}
+                    <div className="flex lg:hidden items-center space-x-3">
+                        <ThemeToggle />
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="p-2 rounded-lg transition-colors"
+                            aria-label="Toggle menu"
+                        >
+                            {isMobileMenuOpen ? (
+                                <X className="h-6 w-6" />
+                            ) : (
+                                <Menu className="h-6 w-6" />
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Mobile Menu */}
+                <div className={`lg:hidden border-t border-gray-100 bg-background/90 transition-all duration-300 ease-in-out overflow-hidden ${
+                    isMobileMenuOpen 
+                        ? 'max-h-screen opacity-100 translate-y-0' 
+                        : 'max-h-0 opacity-0 -translate-y-2'
+                }`}>
+                    <div className="py-6 space-y-4">
+                        {/* Navigation Links */}
+                        <div className="space-y-1">
+                            {navLinks.map((link, index) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className="block px-4 py-3 hover:text-red-800 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    style={{
+                                        animationDelay: isMobileMenuOpen ? `${index * 50}ms` : '0ms'
+                                    }}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
+
+                        {/* Divider */}
+                        <div className="border-t border-gray-200 my-4"></div>
+
+                        {/* User Actions */}
+                        <div className="px-4 space-y-3">
+                            {isAuthenticated ? (
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-center space-x-3 p-3 rounded-lg">
+                                        <div className="w-10 h-10 bg-red-800 rounded-full flex items-center justify-center">
+                                            <span className="text-white font-medium">
+                                                {getUserDisplayName()?.charAt(0).toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <div className="font-medium">
+                                                {getUserDisplayName()}
+                                            </div>
+                                            <div className="text-sm text-gray-400">
+                                                Subscriber
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Link 
+                                        href="/account"
+                                        className="block w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center hover:text-red-800 transform hover:scale-105"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        My Account
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    <Link 
+                                        href="/login"
+                                        className="block w-full py-3 px-4 hover:bg-gray-200 text-gray-700 font-medium text-lg rounded-lg transition-all duration-200 text-center transform hover:scale-105"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Login
+                                    </Link>
+                                    <Link 
+                                        href="/subscribe"
+                                        className="block w-full py-3 px-4 bg-red-800 text-white font-semibold rounded-lg transition-all duration-200 text-center transform hover:scale-102"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Subscribe Now
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Mobile Footer Info */}
+                        <div className="px-4 pt-4 border-t border-gray-200">
+                            <div className="text-center">
+                                <p className="text-sm text-gray-600">
+                                    Follow 32 NFL teams with insider access
+                                </p>
+                                <div className="flex justify-center items-center mt-2 space-x-4 text-xs text-gray-500">
+                                    <span className="flex items-center">
+                                        <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                                        Live Coverage
+                                    </span>
+                                    <span>24/7 Updates</span>
+                                    <span>10K+ Users</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
-    )
+    );
 }
 
 export default Header;

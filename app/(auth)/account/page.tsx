@@ -5,7 +5,7 @@ import { User, Mail, Lock, CreditCard, Crown, Eye, EyeOff, Calendar, Shield, Log
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { useAuth } from '../../../lib/hooks/useAuth'
-import { useUpdateProfileMutation, useChangePasswordMutation } from '../../../lib/services/authApi'
+import { useUpdateProfileMutation, useChangePasswordMutation, useGetProfileQuery } from '../../../lib/services/authApi'
 
 export default function Account() {
     const [mounted, setMounted] = useState(false)
@@ -33,18 +33,52 @@ export default function Account() {
     const { user, logout, updateProfile } = useAuth()
     const [updateProfileMutation] = useUpdateProfileMutation()
     const [changePasswordMutation] = useChangePasswordMutation()
+    
+    // Fetch fresh profile data
+    const { data: profileData, error: profileError, isLoading: profileLoading } = useGetProfileQuery()
+
+    // Helper function to get display name from user data
+    const getDisplayName = (userData: typeof user) => {
+        if (!userData) return ''
+        
+        let displayName = userData.name || ''
+        if (!displayName && (userData.firstName || userData.lastName)) {
+            displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
+        }
+        if (!displayName && userData.email) {
+            displayName = userData.email.split('@')[0]
+        }
+        return displayName
+    }
 
     useEffect(() => {
         setMounted(true)
-        if (user) {
+        
+        // Use fresh profile data if available, otherwise fall back to user from auth context
+        const currentUser = profileData?.user || user
+        
+        if (currentUser) {
+            console.log('User data received:', currentUser) // Debug log
+            console.log('Profile data:', profileData) // Debug log
+            
+            // Construct name from available data
+            let displayName = getDisplayName(currentUser)
+            
             setProfileForm({
-                name: user.name || '',
-                email: user.email || '',
-                firstName: user.firstName || '',
-                lastName: user.lastName || ''
+                name: displayName,
+                email: currentUser.email || '',
+                firstName: currentUser.firstName || '',
+                lastName: currentUser.lastName || ''
             })
+            
+            console.log('Profile form set to:', {
+                name: displayName,
+                email: currentUser.email || '',
+                firstName: currentUser.firstName || '',
+                lastName: currentUser.lastName || ''
+            }) // Debug log
         }
-    }, [user])
+    }, [user, profileData])
 
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -184,15 +218,22 @@ export default function Account() {
     const cancelEdit = (field: string) => {
         setEditMode(prev => ({ ...prev, [field]: false }))
         if (user) {
-            setProfileForm(prev => ({
-                ...prev,
-                [field]: user[field as keyof typeof user] as string || ''
-            }))
+            if (field === 'name') {
+                setProfileForm(prev => ({
+                    ...prev,
+                    [field]: getDisplayName(user)
+                }))
+            } else {
+                setProfileForm(prev => ({
+                    ...prev,
+                    [field]: user[field as keyof typeof user] as string || ''
+                }))
+            }
         }
         setErrors({})
     }
 
-    if (!user) {
+    if (!user || profileLoading) {
         return (
             <section className="container mx-auto mt-24 px-4">
                 <div className="flex justify-center items-center min-h-[400px]">
@@ -200,6 +241,11 @@ export default function Account() {
                 </div>
             </section>
         )
+    }
+
+    // Show profile error if any
+    if (profileError) {
+        console.error('Profile fetch error:', profileError)
     }
 
     return (
@@ -293,7 +339,7 @@ export default function Account() {
                                             </div>
                                         ) : (
                                             <>
-                                                <span className="flex-1 text-foreground">{user.name}</span>
+                                                <span className="flex-1 text-foreground">{getDisplayName(user)}</span>
                                                 <button
                                                     onClick={() => toggleEditMode('name')}
                                                     className="text-blue-600 hover:text-blue-700"

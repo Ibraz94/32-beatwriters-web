@@ -86,7 +86,7 @@ export default function ArticlesPage() {
     } else {
       return {
         text: isAuthenticated ? 'Upgrade to Premium' : 'Sign In for Premium',
-        href: isAuthenticated ? '/account' : '/login',
+        href: isAuthenticated ? '/premium' : '/login',
         className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }
@@ -165,8 +165,9 @@ export default function ArticlesPage() {
           const canAccess = canAccessArticle(article.access)
           
           return (
-            <article key={index} className="rounded-xl border shadow-lg overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer">
+            <article key={index} className="rounded-xl border-3 shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer">
               {/* Article Image */}
+              <Link href={buttonConfig.href}>
               <div className="relative h-48">
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                   {article.featuredImage ? (
@@ -193,8 +194,8 @@ export default function ArticlesPage() {
                       </>
                     ) : (
                       <>
-                        <Lock className="w-3 h-3 mr-1" />
-                        Locked
+                        <Shield className="w-3 h-3 mr-1" />
+                        Premium
                       </>
                     )}
                   </div>
@@ -211,11 +212,11 @@ export default function ArticlesPage() {
 
               {/* Article Content */}
               <div className="p-6">
-                <h2 className="text-lg font-bold mb-3 line-clamp-2 text-nowrap hover:text-red-800 transition">
+                <h2 className="text-lg font-bold mb-3 line-clamp-2 text-nowrap">
                   {canAccess ? (
-                    <Link href={`/articles/${article.id}`}>
+                    <div>
                       {article.title}
-                    </Link>
+                    </div>
                   ) : (
                     <span className="cursor-default">{article.title}</span>
                   )}
@@ -224,18 +225,23 @@ export default function ArticlesPage() {
                 {/* Access Status */}
                 <div className="flex items-center justify-between text-sm mb-4">
                   <div className="flex items-center text-gray-500">
-                    {article.publishedAt}
+                      {new Date(article.publishedAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
                   </div>
                 </div>
 
                 {/* Action Button */}
-                <Link 
-                  href={buttonConfig.href}
+                <div 
+                  
                   className={buttonConfig.className}
                 >
                   {buttonConfig.text}
-                </Link>
+                </div>
               </div>
+              </Link>
             </article>
           )
         })}
