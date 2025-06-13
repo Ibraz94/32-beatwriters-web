@@ -69,10 +69,10 @@ export default function NuggetsPage() {
     const handleSearch = (term: string) => {
         setSearchTerm(term)
         setIsSearching(!!term)
-        
+
         if (term) {
             const searchTermLower = term.toLowerCase()
-            const filtered = allNuggets.filter(nugget => 
+            const filtered = allNuggets.filter(nugget =>
                 nugget.content.toLowerCase().includes(searchTermLower) ||
                 nugget.player.name.toLowerCase().includes(searchTermLower) ||
                 nugget.sourceName?.toLowerCase().includes(searchTermLower)
@@ -125,6 +125,16 @@ export default function NuggetsPage() {
             currentIndex: newIndex
         })
     }
+
+    const fantasyInsight = (fantasyInsight: string) => {
+        if (fantasyInsight) {
+            return <p dangerouslySetInnerHTML={{ __html: fantasyInsight }}></p>
+        } else if (fantasyInsight === '') {
+        } else {
+            return null
+        }
+    }
+
 
     // Handle keyboard navigation
     useEffect(() => {
@@ -234,7 +244,7 @@ export default function NuggetsPage() {
                         <Select
                             onValueChange={handleSortChange}
                         >
-                            <SelectTrigger className="w-full lg:w-1/3 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg"  value={`${filters.sortBy}-${filters.sortOrder}`}>
+                            <SelectTrigger className="w-full lg:w-1/3 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg" value={`${filters.sortBy}-${filters.sortOrder}`}>
                                 <SelectValue placeholder="Sort by Team" />
                             </SelectTrigger>
                             <SelectContent>
@@ -258,17 +268,17 @@ export default function NuggetsPage() {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                <SelectLabel>Position</SelectLabel>
-                                <SelectItem value="createdAt-desc">QB</SelectItem>
-                                <SelectItem value="createdAt-asc">RB</SelectItem>
-                                <SelectItem value="playerName-asc">WR</SelectItem>
-                                <SelectItem value="playerName-desc">TE</SelectItem>
-                                <SelectItem value="playerName-desc">K</SelectItem>
-                                <SelectItem value="playerName-desc">DEF</SelectItem>
-                                <SelectItem value="playerName-desc">DL</SelectItem>
-                                <SelectItem value="playerName-desc">LB</SelectItem>
-                                <SelectItem value="playerName-desc">DB</SelectItem>
-                                <SelectItem value="playerName-desc">S</SelectItem>
+                                    <SelectLabel>Position</SelectLabel>
+                                    <SelectItem value="createdAt-desc">QB</SelectItem>
+                                    <SelectItem value="createdAt-asc">RB</SelectItem>
+                                    <SelectItem value="playerName-asc">WR</SelectItem>
+                                    <SelectItem value="playerName-desc">TE</SelectItem>
+                                    <SelectItem value="playerName-desc">K</SelectItem>
+                                    <SelectItem value="playerName-desc">DEF</SelectItem>
+                                    <SelectItem value="playerName-desc">DL</SelectItem>
+                                    <SelectItem value="playerName-desc">LB</SelectItem>
+                                    <SelectItem value="playerName-desc">DB</SelectItem>
+                                    <SelectItem value="playerName-desc">S</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -337,12 +347,22 @@ export default function NuggetsPage() {
                                     <p className="px-6 py-4">
                                         <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                     </p>
+                                    <p className='px-6 py-4'>
+                                        {nugget.fantasyInsight && (
+                                        <>
+                                            <h1 className='text-lg font-semibold mt-4'>Fantasy Insight:</h1>
+                                            {fantasyInsight(nugget.fantasyInsight)}
+                                        </>
+                                    )}
+                                    </p>
+
                                     <div className='flex justify-between px-6 py-1 -mb-10'>
-                                        <div className='flex flex-col mt-1'>
+                                        <div className='flex flex-col mt-1 text-sm'>
+                                            <h1 className=''>Source:</h1>
                                             <h1 className='text-left'>{nugget.sourceName}</h1>
                                             <h1 className='text-left text-gray-400'>{nugget.sourceUrl}</h1>
                                         </div>
-                                        <h1 className='text-right text-gray-400 mt-6'>{new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                                        <h1 className='text-right text-gray-400 mt-6 text-sm'>{new Date(nugget.createdAt).toLocaleDateString('en-US', {
                                             year: 'numeric',
                                             month: 'short',
                                             day: 'numeric'

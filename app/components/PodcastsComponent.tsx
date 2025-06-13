@@ -41,7 +41,7 @@ export default function PodcastsComponent() {
     };
 
     return (
-        <section className="bg-gradient-to-b from-gray-900 to-gray-800 rounded-3xl px-4 py-16">
+        <section className="bg-gradient-to-b from-gray-900 to-gray-800 rounded-3xl px-4 py-16 ">
             {/* Header */}
             <div className="text-center mb-12">
                 <h2 className="text-4xl text-white md:text-5xl font-bold mb-4">
