@@ -17,6 +17,7 @@ export default function Home() {
       <NewArticles/>
       <BeatWritersComponent/>
       <PodcastsComponent/>
+      {/* <FeedComponent/> */}
     </div>
   );
-}
+}``

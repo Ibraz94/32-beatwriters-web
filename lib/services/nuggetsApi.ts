@@ -13,6 +13,7 @@ export interface Nuggets {
   id: string
   title: string
   content: string
+  fantasyInsight: string
   playerId: number
   sourceName: string
   sourceUrl: string
