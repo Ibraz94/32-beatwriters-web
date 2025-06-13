@@ -6,9 +6,15 @@ import Image from 'next/image'
 
 interface SubscriptionOption {
   id: string
-  interval: 'month' | 'year'
-  amount: number
+  object: string
+  active: boolean
   currency: string
+  recurring: {
+    interval: 'month' | 'year'
+    interval_count: number
+  }
+  unit_amount: number
+  nickname: string
 }
 
 interface Product {
@@ -35,8 +41,7 @@ interface FormData {
 export default function PremiumSignup() {
   const [isLoading, setIsLoading] = useState(false)
   const [subscriptionOptions, setSubscriptionOptions] = useState<{
-    product: Product
-    prices: SubscriptionOption[]
+    data: SubscriptionOption[]
   } | null>(null)
   const [selectedPriceId, setSelectedPriceId] = useState<string>('')
   const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'general', string>>>({})
@@ -64,7 +69,7 @@ export default function PremiumSignup() {
         const data = await response.json()
         setSubscriptionOptions(data)
         // Set default selected price to monthly
-        const monthlyPrice = data.prices.find((price: SubscriptionOption) => price.interval === 'month')
+        const monthlyPrice = data.data.find((price: SubscriptionOption) => price.recurring.interval === 'month')
         if (monthlyPrice) {
           setSelectedPriceId(monthlyPrice.id)
         }
@@ -161,7 +166,7 @@ export default function PremiumSignup() {
             <div className="space-y-4">
               <h2 className="text-xl font-semibold text-foreground">Choose Your Plan</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {subscriptionOptions?.prices.map((price) => (
+                {subscriptionOptions?.data.map((price) => (
                   <div
                     key={price.id}
                     className={`border rounded-lg p-4 cursor-pointer transition-all ${
@@ -174,18 +179,18 @@ export default function PremiumSignup() {
                     <div className="flex justify-between items-center">
                       <div>
                         <h3 className="font-semibold text-foreground">
-                          {price.interval === 'month' ? 'Monthly' : 'Annual'}
+                          {price.recurring.interval === 'month' ? 'Monthly' : 'Annual'}
                         </h3>
                         <p className="text-muted-foreground">
-                          {price.interval === 'month' ? 'Billed monthly' : 'Billed annually'}
+                          {price.recurring.interval === 'month' ? 'Billed monthly' : 'Billed annually'}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold text-foreground">
-                          ${price.amount}
+                          ${(price.unit_amount / 100).toFixed(2)}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          per {price.interval}
+                          per {price.recurring.interval}
                         </p>
                       </div>
                     </div>
