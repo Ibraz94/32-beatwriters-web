@@ -71,9 +71,11 @@ export default function HeroSection() {
 
                             {/* CTA Button */}
                             <div className="pt-4">
-                                <button className="px-8 py-4 bg-red-800 text-white rounded-lg text-lg font-semibold hover:bg-red-800 transition-colors duration-300 shadow-lg hover:shadow-xl">
-                                    Get Started Today
-                                </button>
+                                <Link href="/subscribe">
+                                    <button className="px-8 py-4 bg-red-800 text-white rounded-lg text-lg font-semibold hover:scale-102 transition-colors duration-300 shadow-lg hover:shadow-xl">
+                                        Get Started Today
+                                    </button>
+                                </Link>
                             </div>
                         </div>
 

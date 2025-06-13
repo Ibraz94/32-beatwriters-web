@@ -4,12 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-import { Mail, Twitter, Instagram, Youtube, ArrowRight, MapPin, Phone } from "lucide-react";
+import { Mail, Twitter, Instagram, Youtube, ArrowRight, MapPin, Phone, ChevronDown, ChevronUp } from "lucide-react";
 
 export default function Footer() {
     const { theme } = useTheme();
     const [email, setEmail] = useState("");
     const [isSubscribed, setIsSubscribed] = useState(false);
+    const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
     const handleNewsletterSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -17,6 +18,14 @@ export default function Footer() {
         setIsSubscribed(true);
         setEmail("");
         setTimeout(() => setIsSubscribed(false), 3000);
+    };
+
+    const toggleSection = (section: string) => {
+        setExpandedSections(prev => 
+            prev.includes(section) 
+                ? prev.filter(s => s !== section)
+                : [...prev, section]
+        );
     };
 
     const footerLinks = {
@@ -142,14 +151,32 @@ export default function Footer() {
 
                     {/* Footer Links */}
                     {Object.entries(footerLinks).map(([category, links]) => (
-                        <div key={category} className="text-center md:text-left">
-                            <h4 className=" text-2xl font-semibold text-foreground mb-4">{category}</h4>
-                            <ul className="space-y-3">
+                        <div key={category} className="text-left">
+                            {/* Mobile: Collapsible Header */}
+                            <button
+                                onClick={() => toggleSection(category)}
+                                className="md:hidden w-full flex items-center justify-between text-xl font-semibold text-foreground mb-4 py-2 border-b border-muted-foreground/20"
+                            >
+                                <span>{category}</span>
+                                {expandedSections.includes(category) ? (
+                                    <ChevronUp className="h-5 w-5" />
+                                ) : (
+                                    <ChevronDown className="h-5 w-5" />
+                                )}
+                            </button>
+                            
+                            {/* Desktop: Regular Header */}
+                            <h4 className="hidden md:block text-xl font-semibold text-foreground mb-4">{category}</h4>
+                            
+                            {/* Links - Always visible on desktop, collapsible on mobile */}
+                            <ul className={`space-y-3 transition-all duration-200 ${
+                                expandedSections.includes(category) ? 'block' : 'hidden'
+                            } md:block`}>
                                 {links.map((link) => (
                                     <li key={link.label}>
                                         <Link
                                             href={link.href}
-                                            className="text-muted-foreground hover:text-red-600 transition-colors text-lg"
+                                            className="text-muted-foreground hover:text-red-600 transition-colors text-md"
                                         >
                                             {link.label}
                                         </Link>

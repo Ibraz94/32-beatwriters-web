@@ -105,7 +105,7 @@ export default function AllPodcastsPage() {
   const categories = ['NFL Analysis', 'Fantasy Football', 'Draft Coverage', 'Trade Analysis', 'Player Interviews']
 
   return (
-    <div className="container mx-auto max-w-7xl mt-6 mb-28">
+    <div className="container mx-auto max-w-7xl mt-6 mb-28 p-3">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-5xl text-center font-bold mb-4">All <span className="text-red-800">Podcasts</span></h1>
