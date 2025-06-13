@@ -11,7 +11,7 @@ export default function RegistrationSuccess() {
     const sessionId = new URLSearchParams(window.location.search).get('session_id')
     if (sessionId) {
       // Fetch session details from your backend
-      fetch(`http://localhost:4004/api/stripe/session/${sessionId}`)
+      fetch(`https://api.32beatwriters.staging.pegasync.com/api/stripe/session/${sessionId}`)
         .then(response => response.json())
         .then(data => setSessionDetails(data))
         .catch(error => console.error('Error fetching session details:', error))

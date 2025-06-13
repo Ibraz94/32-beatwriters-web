@@ -60,7 +60,7 @@ export default function PremiumSignup() {
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
       try {
-        const response = await fetch('http://localhost:4004/api/stripe/subscription-options')
+        const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/stripe/subscription-options')
         const data = await response.json()
         setSubscriptionOptions(data)
         // Set default selected price to monthly
@@ -124,7 +124,7 @@ export default function PremiumSignup() {
     if (!validateForm() || !selectedPriceId) return
     setIsLoading(true)
     try {
-      const response = await fetch('http://localhost:4004/api/stripe/create-checkout-session', {
+      const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
