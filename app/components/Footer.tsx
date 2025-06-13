@@ -49,7 +49,7 @@ export default function Footer() {
     return (
         <footer className="bg-background border-t">
             {/* Newsletter Section */}
-            <div className="border-b bg-muted/20">
+            <div className="border-b bg-card">
                 <div className="container mx-auto px-4 py-12">
                     <div className="max-w-4xl mx-auto text-center">
                         <h3 className="text-2xl md:text-3xl font-bold mb-3">
@@ -66,7 +66,7 @@ export default function Footer() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Enter your email address"
-                                    className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                                    className="w-full bg-card px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                                     required
                                 />
                             </div>
@@ -143,13 +143,13 @@ export default function Footer() {
                     {/* Footer Links */}
                     {Object.entries(footerLinks).map(([category, links]) => (
                         <div key={category} className="text-center md:text-left">
-                            <h4 className="font-semibold text-foreground mb-4">{category}</h4>
+                            <h4 className=" text-2xl font-semibold text-foreground mb-4">{category}</h4>
                             <ul className="space-y-3">
                                 {links.map((link) => (
                                     <li key={link.label}>
                                         <Link
                                             href={link.href}
-                                            className="text-muted-foreground hover:text-red-600 transition-colors text-sm"
+                                            className="text-muted-foreground hover:text-red-600 transition-colors text-lg"
                                         >
                                             {link.label}
                                         </Link>

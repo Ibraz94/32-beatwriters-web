@@ -41,29 +41,29 @@ export default function PodcastsComponent() {
     };
 
     return (
-        <section className="container mx-auto px-4 py-16">
+        <section className="bg-gradient-to-b from-gray-900 to-gray-800 rounded-3xl px-4 py-16">
             {/* Header */}
             <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                <h2 className="text-4xl text-white md:text-5xl font-bold mb-4">
                     NFL <span className="text-red-800">Podcasts</span>
                 </h2>
-                <p className="text-lg max-w-2xl mx-auto">
+                <p className="text-lg text-white max-w-2xl mx-auto">
                     In-depth analysis, insider reports, and expert commentary from our network of beat writers across all 32 teams.
                 </p>
             </div>
 
             {/* Featured Episodes */}
-            <div className="mb-12">
+            <div className="mb-12 container mx-auto">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-2xl font-bold">Latest Episodes</h3>
-                    <Link href="/podcasts" className="text-red-600 hover:text-red-700 font-medium flex items-center gap-1">
+                    <h3 className="text-3xl text-white font-bold">Latest Episodes</h3>
+                    <Link href="/podcasts" className="text-white hover:scale-102 font-medium flex items-center gap-1">
                         View All <ArrowRight className="h-4 w-4" />
                     </Link>
                 </div>
 
                 {/* Loading State */}
                 {isLoading && (
-                    <div className="space-y-6">
+                    <div className="space-y-6 text-white">
                         {Array.from({ length: 3 }).map((_, index) => (
                             <div key={index} className="animate-pulse border border-border rounded-xl p-6">
                                 <div className="flex flex-col lg:flex-row gap-6">
@@ -97,7 +97,7 @@ export default function PodcastsComponent() {
                 {apiResponse?.podcasts && apiResponse.podcasts.length > 0 && (
                     <div className="space-y-6">
                         {apiResponse.podcasts.map((podcast, index) => (
-                            <div key={podcast.id} className={`group border-2 border-border shadow-md rounded-xl p-6 hover:shadow-lg hover:border-red-200 transition-all duration-300 ${index === 0 ? '' : ''}`}>
+                            <div key={podcast.id} className={`group border shadow-md rounded-xl p-6 hover:shadow-lg hover:border-red-200 transition-all duration-300 ${index === 0 ? '' : ''}`}>
                                 <div className="flex flex-col lg:flex-row gap-6">
                                     {/* Podcast Image */}
                                     <div className="relative lg:w-32 lg:h-32 w-full h-48 flex-shrink-0">
@@ -109,7 +109,7 @@ export default function PodcastsComponent() {
                                         />
                                         <div className="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                                                <Play className="h-6 w-6 text-red-600 ml-1" />
+                                                <Play className="h-6 w-6 text-red-800 ml-1" />
                                             </div>
                                         </div>
                                         {index === 0 && (
@@ -123,23 +123,23 @@ export default function PodcastsComponent() {
                                     {/* Content */}
                                     <div className="flex-1">
                                         <div className="flex flex-wrap items-center gap-2 mb-2">
-                                            <span className="text-xs px-2 py-1 border-2 border-gray-100 rounded-full font-medium">
+                                            <span className="text-xs text-white px-2 py-1 border-2 border-gray-100 rounded-full font-medium">
                                                 {podcast.hostedBy}
                                             </span>
-                                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                            <div className="flex items-center gap-1 text-xs text-white">
                                                 <Calendar className="h-3 w-3" />
                                                 {formatTimeAgo(podcast.podcastTime)}
                                             </div>
                                         </div>
 
                                         <Link href={`/podcasts/${podcast.id}`}>
-                                            <h4 className="font-bold text-xl mb-2 group-hover:text-red-800 transition-colors cursor-pointer">
+                                            <h4 className="font-bold text-xl text-white mb-2 transition-colors cursor-pointer">
                                                 {podcast.title}
                                             </h4>
                                         </Link>
 
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                            <div className="flex items-center gap-4 text-sm text-white">
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="h-4 w-4" />
                                                     {podcast.duration}
@@ -168,8 +168,8 @@ export default function PodcastsComponent() {
 
                 {/* No Data State */}
                 {apiResponse?.podcasts && apiResponse.podcasts.length === 0 && (
-                    <div className="text-center py-12">
-                        <p className="text-gray-600 mb-4">No episodes available at the moment.</p>
+                    <div className="text-center py-12 container mx-auto">
+                        <p className="text-white mb-4">No episodes available at the moment.</p>
                         <Link href="/podcasts">
                             <button className="bg-red-800 text-white px-6 py-2 rounded-lg hover:scale-102 transition-colors">
                                 Explore All Podcasts
@@ -180,9 +180,9 @@ export default function PodcastsComponent() {
             </div>
 
             {/* Call to Action */}
-            <div className="text-center border-2 p-8 rounded-2xl shadow-md">
-                <h3 className="text-2xl font-bold mb-2">Never Miss an Episode</h3>
-                <p className="mb-6 max-w-md mx-auto">
+            <div className="text-center border p-8 rounded-2xl shadow-md container mx-auto">
+                <h3 className="text-2xl text-white font-bold mb-2">Never Miss an Episode</h3>
+                <p className="text-white mb-6 max-w-md mx-auto">
                     Subscribe to get the latest NFL insights, fantasy advice, and insider reports delivered to your favorite podcast app.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -192,7 +192,7 @@ export default function PodcastsComponent() {
                         </button>
                     </Link>
                     <Link href="/subscribe">
-                        <button className="border border-gray-600 hover:border-gray-500 px-6 py-3 rounded-lg font-semibold transition-colors hover:text-red-800 hover:scale-102">
+                        <button className="border border-gray-600 hover:border-gray-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors hover:text-red-800 hover:scale-102">
                             Subscribe Now
                         </button>
                     </Link>

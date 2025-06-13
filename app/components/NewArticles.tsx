@@ -38,19 +38,19 @@ export default function NewArticles() {
         .slice(0, 6) || [];
 
     return (
-        <section className="container mx-auto px-4 py-16">
+        <section className="px-4 py-16 bg-card">
             {/* Header */}
             <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                <h2 className="text-3xl md:text-5xl font-bold mb-4">
                     Latest <span className="text-red-800">Articles</span>
                 </h2>
-                <p className="text-lg max-w-2xl mx-auto">
+                <p className="text-xl max-w-2xl mx-auto">
                     In-depth analysis, breaking news, and insider reports from our network of NFL beat writers.
                 </p>
             </div>
 
             {/* Articles Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 container mx-auto">
                 {publicArticles.map((article: Article, index: number) => (
                     <Link
                         key={article.id}
@@ -81,17 +81,11 @@ export default function NewArticles() {
                             
                             {/* Trending Badge (for first article) */}
                             {index === 0 && (
-                                <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                                <div className="absolute top-4 left-4 bg-red-800 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                                     <TrendingUp className="h-3 w-3" />
                                     Featured
                                 </div>
                             )}
-
-                            {/* Reading time overlay */}
-                            <div className="absolute bottom-4 right-4 bg-black/70 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                <span>5 min read</span>
-                            </div>
                         </div>
 
                         {/* Article Content */}
@@ -109,36 +103,13 @@ export default function NewArticles() {
                             </div>
 
                             {/* Title */}
-                            <h3 className="font-bold text-xl mb-3 line-clamp-2 group-hover:text-red-600 transition-colors leading-tight">
+                            <h3 className="font-bold text-xl mb-3 line-clamp-2 leading-tight">
                                 {article.title}
                             </h3>
 
 
                             {/* Footer */}
-                            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                {/* Author/Category */}
-                                <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 border-2 border-gray-100 rounded-full flex items-center justify-center">
-                                        <span className="text-xs font-bold">
-                                            {article.authorId?.name?.charAt(0).toUpperCase() || 'A'}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <div className="text-sm font-medium">
-                                            {article.authorId?.name || 'Anonymous'}
-                                        </div>
-                                        <div className="text-xs">
-                                            Beat Writer
-                                        </div>
-                                    </div>
-                                </div>
 
-                                {/* Read More */}
-                                <div className="flex items-center gap-1 text-red-600 font-medium text-sm group-hover:gap-2 transition-all">
-                                    <span>Read More</span>
-                                    <ArrowRight className="h-4 w-4" />
-                                </div>
-                            </div>
                         </div>
                     </Link>
                 ))}
