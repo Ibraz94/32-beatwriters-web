@@ -114,9 +114,9 @@ export default function HeroSection() {
             {/* Mobile Layout */}
             <div className="lg:hidden relative min-h-screen">
                 {/* Mobile Content */}
-                <div className="relative z-10 px-6 pt-12 pb-8">
+                <div className="relative z-10 px-6 pt-2 pb-2">
                     {/* Badge */}
-                    <div className="flex justify-center mb-8">
+                    <div className="flex justify-center">
                         <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border-2 border-red-800">
                             <span className="w-2 h-2 bg-red-600 rounded-full mr-2 animate-pulse"></span>
                             Latest NFL News
@@ -124,7 +124,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* Main Heading */}
-                    <div className="text-center space-y-4 mb-8">
+                    <div className="text-center space-y-3 mb-4">
                         <div className="font-black">
                             <h1 className="text-5xl sm:text-6xl font-bold leading-tight">
                                 League <span className="text-red-700">Winning</span>
@@ -140,45 +140,45 @@ export default function HeroSection() {
                     </div>
 
                     {/* Features List - 2x2 Grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-8 px-4">
+                    <div className="grid grid-cols-2 gap-4 mb-6 px-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-5 h-5 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-4 h-4 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
                                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-sm font-medium">32 Dedicated Writes</span>
+                            <span className="text-xs font-medium">32 Dedicated Writes</span>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="w-5 h-5 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-4 h-4 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
                                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-sm font-medium ">Real-Time Updates</span>
+                            <span className="text-xs font-medium ">Real-Time Updates</span>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="w-5 h-5 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-4 h-4 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
                                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-sm font-medium ">Fantasy Insight</span>
+                            <span className="text-xs font-medium ">Fantasy Insight</span>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="w-5 h-5 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-4 h-4 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
                                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-sm font-medium">Insider Access</span>
+                            <span className="text-xs font-medium">Insider Access</span>
                         </div>
                     </div>
 
                     {/* CTA Button */}
-                    <div className="px-6 mb-12">
+                    <div>
                         <Link href="/subscribe">
-                            <button className="w-full px-8 py-2 bg-red-800 text-white rounded-lg text-lg font-semibold hover:scale-102 transition-colors duration-300 shadow-lg">
+                            <button className="w-full px-8 py-2 bg-red-800 text-white rounded-lg font-semibold hover:scale-102 transition-colors duration-300 shadow-lg">
                                 Get Started Today
                             </button>
                         </Link>
