@@ -15,11 +15,13 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { SelectGroup, SelectLabel } from '@radix-ui/react-select'
+
 
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
