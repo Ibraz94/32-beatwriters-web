@@ -115,7 +115,7 @@ export default function PodcastDetailPage() {
                 )}
 
                 {/* Platform Availability Indicators */}
-                <div className="flex items-center justify-center gap-4 mb-6">
+                <div className="flex flex-wrap gap-4 mb-6">
                     {hasYouTube && (
                         <div className="flex items-center gap-2 text-red-600">
                             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -143,35 +143,7 @@ export default function PodcastDetailPage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                    {hasSpotify && (
-                        <a
-                            href={podcast.spotifyLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:scale-102 transition-all font-medium"
-                        >
-                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/>
-                            </svg>
-                            Listen on Spotify
-                        </a>
-                    )}
-
-                    {hasApple && (
-                        <a
-                            href={podcast.appleLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center flex-1 bg-gray-800 text-white py-3 px-4 rounded-lg hover:scale-102 transition-all font-medium"
-                        >
-                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.41-1.09-.47-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.41C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.19 2.31-.89 3.51-.84 1.54.07 2.7.61 3.44 1.57-3.14 1.88-2.29 5.13.22 6.41-.65 1.29-1.52 2.58-2.25 4.03zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                            </svg>
-                            Listen on Apple Podcasts
-                        </a>
-                    )}
-
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     {hasYouTube && (
                         <a
                             href={podcast.youtubeLink}
@@ -185,24 +157,32 @@ export default function PodcastDetailPage() {
                             Watch on YouTube
                         </a>
                     )}
-
-                    <button
-                        onClick={() => {
-                            if (navigator.share) {
-                                navigator.share({
-                                    title: podcast.title,
-                                    text: podcast.description,
-                                    url: window.location.href,
-                                })
-                            } else {
-                                navigator.clipboard.writeText(window.location.href)
-                                alert('Link copied to clipboard!')
-                            }
-                        }}
-                        className="bg-red-800 text-white px-4 py-4 rounded-lg hover:scale-102 transition-all text-sm font-medium hover:cursor-pointer flex items-center justify-center"
-                    >
-                        <Share2 className="w-5 h-5" />
-                    </button>
+                    {hasSpotify && (
+                        <a
+                            href={podcast.spotifyLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:scale-102 transition-all font-medium"
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.6 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.42 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
+                            Listen on Spotify
+                        </a>
+                    )}
+                    {hasApple && (
+                        <a
+                            href={podcast.appleLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center flex-1 bg-gray-800 text-white py-3 px-4 rounded-lg hover:scale-102 transition-all font-medium"
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.41-1.09-.47-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.41C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.19 2.31-.89 3.51-.84 1.54.07 2.7.61 3.44 1.57-3.14 1.88-2.29 5.13.22 6.41-.65 1.29-1.52 2.58-2.25 4.03zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                            </svg>
+                            Listen on Apple Podcasts
+                        </a>
+                    )}
                 </div>
 
                 <p className="leading-relaxed whitespace-pre-line mb-4 mt-6">

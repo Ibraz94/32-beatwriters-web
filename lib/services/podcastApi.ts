@@ -11,6 +11,8 @@ export interface PodcastData {
   duration: string
   hostedBy: string
   spotifyLink: string
+  youtubeLink?: string
+  appleLink?: string
   podcastTime: string
   createdAt: string
   updatedAt: string
