@@ -1,22 +1,42 @@
 "use client"
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, Youtube } from "lucide-react";
+import { Menu, X, Youtube, ChevronDown, User, LogOut } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAuth } from '@/lib/hooks/useAuth';
 
 function Header() {
     const { theme } = useTheme();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const { user, isAuthenticated, getDisplayName } = useAuth();
+    const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+    const { user, isAuthenticated, logout } = useAuth();
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsUserDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const getUserDisplayName = () => {
         if (!user) return null;
         
-        if (getDisplayName) {
-            return getDisplayName();
+        if (user.firstName && user.lastName) {
+            return `${user.firstName} ${user.lastName}`;
+        }
+        
+        if (user.firstName) {
+            return user.firstName;
         }
         
         if (user.username) {
@@ -24,6 +44,35 @@ function Header() {
         }
         
         return 'User';
+    };
+
+    const getUserInitials = () => {
+        if (!user) return 'U';
+        
+        if (user.firstName && user.lastName) {
+            return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+        }
+        
+        if (user.firstName) {
+            return user.firstName.charAt(0).toUpperCase();
+        }
+        
+        if (user.username) {
+            return user.username.charAt(0).toUpperCase();
+        }
+        
+        return 'U';
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            setIsUserDropdownOpen(false);
+        } catch (error) {
+            console.error('Logout error:', error);
+            // Close dropdown even if logout fails
+            setIsUserDropdownOpen(false);
+        }
     };
 
     const navLinks = [
@@ -38,29 +87,31 @@ function Header() {
         <header className="sticky top-0 z-50 w-full border-b border-gray-100 shadow-sm bg-background/90">
             <div className="container mx-auto px-4 lg:px-8">
                 <div className="flex h-20 items-center justify-between">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
-                        <div className="relative">
-                            <Image 
-                                src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} 
-                                alt="32 Beat Writers" 
-                                width={40} 
-                                height={40}
-                                className="w-10 h-10"
-                            />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
-                                32BeatWriters
-                            </span>
-                            <span className="text-xs text-gray-500 -mt-1 hidden sm:block">
-                                NFL Insider Network
-                            </span>
-                        </div>
+                    {/* Logo and Social Links */}
+                    <div className="flex items-center space-x-3">
+                        <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+                            <div className="relative">
+                                <Image 
+                                    src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} 
+                                    alt="32 Beat Writers" 
+                                    width={40} 
+                                    height={40}
+                                    className="w-10 h-10"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
+                                    32BeatWriters
+                                </span>
+                                <span className="text-xs text-gray-500 -mt-1 hidden sm:block">
+                                    NFL Insider Network
+                                </span>
+                            </div>
+                        </Link>
 
                         <div className="w-px h-7 bg-gray-300"></div>
 
-                        <div className="flex justify-center items-center md:justify-start space-x-2">
+                        <div className="hidden justify-center items-center md:justify-start space-x-2 lg:flex">
                             <Link href="https://x.com/32beatwriters" className="w-8 h-8 hover:scale-90  bg-gradient-to-r from-red-600 to-red-800 rounded-md flex items-center justify-center transition-colors">
                                 <Image src={"/x-white-logo.svg"} alt="Twitter" width={20} height={20} className="h-4 w-4" />
                             </Link>
@@ -68,7 +119,7 @@ function Header() {
                                 <Youtube className="h-5 w-5 text-white" />
                             </Link>
                         </div>
-                    </Link>
+                    </div>
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-8">
@@ -91,15 +142,57 @@ function Header() {
                         <div className="w-px h-6 bg-gray-300"></div>
                         
                         {isAuthenticated ? (
-                            <div className="flex items-center space-x-3">
-                                <Link 
-                                    href="/account" 
-                                    className="flex items-center space-x-2 px-4 py-2 bg-red-800 text-white hover:scale-102 rounded-xl transition-colors"
+                            <div className="relative" ref={dropdownRef}>
+                                <button
+                                    onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                                    className="flex items-center space-x-3 px-4 py-2 hover:cursor-pointer"
                                 >
-                                    <span className="text-lg font-medium">
-                                        {getUserDisplayName()}
-                                    </span>
-                                </Link>
+                                    <div className="flex items-center space-x-2">
+                                        {user?.profilePicture ? (
+                                            <Image
+                                                src={user.profilePicture}
+                                                alt="Profile"
+                                                width={32}
+                                                height={32}
+                                                className="w-8 h-8 rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8 bg-red-800 rounded-full flex items-center justify-center">
+                                                <span className="text-white font-medium text-sm">
+                                                    {getUserInitials()}
+                                                </span>
+                                            </div>
+                                        )}
+                                        <span className="text-sm font-medium">
+                                            {getUserDisplayName()}
+                                        </span>
+                                    </div>
+                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {/* User Dropdown Menu */}
+                                {isUserDropdownOpen && (
+                                    <div className="absolute right-0 mt-4 w-46 rounded-sm shadow-lg border bg-background/90 py-2 z-50">                                        
+                                        <div className="py-1">
+                                            <Link
+                                                href="/account"
+                                                className="flex items-center px-4 py-2 text-sm transition-colors"
+                                                onClick={() => setIsUserDropdownOpen(false)}
+                                            >
+                                                <User className="h-4 w-4 mr-2" />
+                                                My Account
+                                            </Link>
+                                            
+                                            <button
+                                                onClick={handleLogout}
+                                                className="flex items-center w-full px-4 py-2 text-sm text-red-800 hover:cursor-pointer"
+                                            >
+                                                <LogOut className="h-4 w-4 mr-2" />
+                                                Log out
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="flex items-center space-x-3">
@@ -167,28 +260,49 @@ function Header() {
                         <div className="px-4 space-y-3">
                             {isAuthenticated ? (
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-center space-x-3 p-3 rounded-lg">
-                                        <div className="w-10 h-10 bg-red-800 rounded-full flex items-center justify-center">
-                                            <span className="text-white font-medium">
-                                                {getUserDisplayName()?.charAt(0).toUpperCase()}
-                                            </span>
-                                        </div>
+                                    <div className="flex items-center space-x-3 p-3 rounded-lg">
+                                        {user?.profilePicture ? (
+                                            <Image
+                                                src={user.profilePicture}
+                                                alt="Profile"
+                                                width={40}
+                                                height={40}
+                                                className="w-10 h-10 rounded-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="w-10 h-10 bg-red-800 rounded-full flex items-center justify-center">
+                                                <span className="text-white font-medium">
+                                                    {getUserInitials()}
+                                                </span>
+                                            </div>
+                                        )}
                                         <div>
                                             <div className="font-medium">
                                                 {getUserDisplayName()}
                                             </div>
                                             <div className="text-sm text-gray-400">
-                                                Subscriber
+                                                {user?.memberships?.type || 'Subscriber'}
                                             </div>
                                         </div>
                                     </div>
                                     <Link 
                                         href="/account"
-                                        className="block w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center hover:text-red-800 transform hover:scale-105"
+                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center hover:text-red-800 transform hover:scale-105"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
-                                        My Account
+                                        <User className="h-4 w-4" />
+                                        <span>My Account</span>
                                     </Link>
+                                    <button
+                                        onClick={() => {
+                                            setIsMobileMenuOpen(false);
+                                            handleLogout();
+                                        }}
+                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transform hover:scale-105"
+                                    >
+                                        <LogOut className="h-4 w-4" />
+                                        <span>Sign out</span>
+                                    </button>
                                 </div>
                             ) : (
                                 <div className="space-y-3">

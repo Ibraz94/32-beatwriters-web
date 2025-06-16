@@ -60,7 +60,7 @@ export const authApi = createApi({
   tagTypes: ['User', 'Auth'],
   endpoints: (builder) => ({
     // Authentication endpoints
-    login: builder.mutation<AuthResponse, LoginRequest>({
+    login: builder.mutation<AuthResponse, LoginRequest>({ 
       query: (credentials) => ({
         url: '/login',
         method: 'POST',
@@ -69,18 +69,9 @@ export const authApi = createApi({
       invalidatesTags: ['User', 'Auth'],
     }),
     
-    register: builder.mutation<AuthResponse, RegisterRequest>({
-      query: (userData) => ({
-        url: '/auth/register',
-        method: 'POST',
-        body: userData,
-      }),
-      invalidatesTags: ['User', 'Auth'],
-    }),
-    
     logout: builder.mutation<{ message: string }, void>({
       query: () => ({
-        url: '/auth/logout',
+        url: '/logout',
         method: 'POST',
       }),
       invalidatesTags: ['User', 'Auth'],
@@ -88,32 +79,32 @@ export const authApi = createApi({
     
     refreshToken: builder.mutation<{ token: string; refreshToken?: string }, { refreshToken: string }>({
       query: ({ refreshToken }) => ({
-        url: '/auth/refresh-token',
+        url: '/refresh-token',
         method: 'POST',
         body: { refreshToken },
       }),
     }),
     
     // Password management
-    forgotPassword: builder.mutation<{ message: string }, ForgotPasswordRequest>({
+    requestOtp: builder.mutation<{ message: string }, ForgotPasswordRequest>({
       query: (data) => ({
-        url: '/auth/forgot-password',
+        url: '/forgot-password/request-otp',
         method: 'POST',
         body: data,
       }),
     }),
     
-    resetPassword: builder.mutation<{ message: string }, ResetPasswordRequest>({
+    verifyOtp: builder.mutation<{ message: string }, ResetPasswordRequest>({
       query: (data) => ({
-        url: '/auth/reset-password',
+        url: '/forgot-password/verify-otp',
         method: 'POST',
         body: data,
       }),
     }),
     
-    changePassword: builder.mutation<{ message: string }, ChangePasswordRequest>({
+    resetPassword: builder.mutation<{ message: string }, ChangePasswordRequest>({
       query: (data) => ({
-        url: '/profile/change-password',
+        url: '/forgot-password/reset',
         method: 'PUT',
         body: data,
       }),
@@ -134,36 +125,17 @@ export const authApi = createApi({
       }),
       invalidatesTags: ['User'],
     }),
-    
-    // Account verification
-    verifyEmail: builder.mutation<{ message: string }, { token: string }>({
-      query: ({ token }) => ({
-        url: '/auth/verify-email',
-        method: 'POST',
-        body: { token },
-      }),
-      invalidatesTags: ['User'],
-    }),
-    
-    resendVerification: builder.mutation<{ message: string }, void>({
-      query: () => ({
-        url: '/auth/resend-verification',
-        method: 'POST',
-      }),
-    }),
-  }),
+  })
 })
+
 
 export const {
   useLoginMutation,
-  useRegisterMutation,
   useLogoutMutation,
   useRefreshTokenMutation,
-  useForgotPasswordMutation,
+  useRequestOtpMutation,
+  useVerifyOtpMutation,
   useResetPasswordMutation,
-  useChangePasswordMutation,
   useGetProfileQuery,
   useUpdateProfileMutation,
-  useVerifyEmailMutation,
-  useResendVerificationMutation,
 } = authApi 

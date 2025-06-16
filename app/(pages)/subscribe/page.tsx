@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { Check } from 'lucide-react'
 
 interface SubscriptionOption {
@@ -45,9 +44,8 @@ export default function PremiumSignup() {
     data: SubscriptionOption[]
   } | null>(null)
   const [selectedPriceId, setSelectedPriceId] = useState<string>('')
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'general', string>>>({})
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'general' | 'email' | 'username', string>>>({})
   const router = useRouter()
-
   const [formData, setFormData] = useState<FormData>({
     email: '',
     firstName: '',
@@ -98,11 +96,22 @@ export default function PremiumSignup() {
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormData, string>> = {}
-    if (!formData.email) {
+    
+    // Check for existing email/username errors first
+    if (errors.email === 'Email already exists') {
+      newErrors.email = 'Email already exists'
+    } else if (!formData.email) {
       newErrors.email = 'Email is required'
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Invalid email format'
     }
+    
+    if (errors.username === 'Username already exists') {
+      newErrors.username = 'Username already exists'
+    } else if (!formData.username) {
+      newErrors.username = 'Username is required'
+    }
+    
     if (!formData.firstName) newErrors.firstName = 'First name is required'
     if (!formData.lastName) newErrors.lastName = 'Last name is required'
     if (!formData.phoneNumber) newErrors.phoneNumber = 'Phone number is required'
@@ -110,7 +119,6 @@ export default function PremiumSignup() {
     if (!formData.city) newErrors.city = 'City is required'
     if (!formData.state) newErrors.state = 'State is required'
     if (!formData.zipCode) newErrors.zipCode = 'ZIP code is required'
-    if (!formData.username) newErrors.username = 'Username is required'
     if (!formData.password) {
       newErrors.password = 'Password is required'
     } else if (formData.password.length < 8) {
@@ -124,6 +132,7 @@ export default function PremiumSignup() {
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
+
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -149,6 +158,88 @@ export default function PremiumSignup() {
       setIsLoading(false)
     }
   }
+
+  const checkEmail = async (email: string) => {
+    const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/users/check-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    })
+    const data = await response.json()
+    return data
+  }
+
+  const checkUsername = async (username: string) => {
+    const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/users/check-username', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username }),
+    })
+    const data = await response.json()
+    return data
+  }
+
+  useEffect(() => {
+    const checkEmailAndUsername = async () => {
+      // Only check if the fields have values and are not empty
+      if (formData.email && formData.email.includes('@')) {
+        try {
+          const emailResponse = await checkEmail(formData.email)
+          if (emailResponse.exists) {
+            setErrors(prev => ({
+              ...prev,
+              email: 'Email already exists'
+            }))
+          } else {
+            // Clear email error if it was previously set for existence
+            setErrors(prev => {
+              const newErrors = { ...prev }
+              if (newErrors.email === 'Email already exists') {
+                delete newErrors.email
+              }
+              return newErrors
+            })
+          }
+        } catch (error) {
+          console.error('Error checking email:', error)
+        }
+      }
+
+      if (formData.username && formData.username.length > 0) {
+        try {
+          const usernameResponse = await checkUsername(formData.username)
+          if (usernameResponse.exists) {
+            setErrors(prev => ({
+              ...prev,
+              username: 'Username already exists'
+            }))
+          } else {
+            // Clear username error if it was previously set for existence
+            setErrors(prev => {
+              const newErrors = { ...prev }
+              if (newErrors.username === 'Username already exists') {
+                delete newErrors.username
+              }
+              return newErrors
+            })
+          }
+        } catch (error) {
+          console.error('Error checking username:', error)
+        }
+      }
+    }
+
+    // Debounce the API calls to avoid too many requests
+    const timeoutId = setTimeout(() => {
+      checkEmailAndUsername()
+    }, 500) // Wait 500ms after user stops typing
+
+    return () => clearTimeout(timeoutId)
+  }, [formData.email, formData.username])
 
   return (
     <div className="container mx-auto max-w-8xl flex items-center justify-center px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12 lg:mt-12 mb-16 sm:mb-20 lg:mb-24">

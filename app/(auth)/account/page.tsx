@@ -5,7 +5,7 @@ import { User, Mail, Lock, CreditCard, Crown, Eye, EyeOff, Calendar, Shield, Log
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { useAuth } from '../../../lib/hooks/useAuth'
-import { useUpdateProfileMutation, useChangePasswordMutation, useGetProfileQuery } from '../../../lib/services/authApi'
+import { useUpdateProfileMutation, useResetPasswordMutation, useGetProfileQuery,  useLogoutMutation } from '../../../lib/services/authApi'
 
 export default function Account() {
     const [mounted, setMounted] = useState(false)
@@ -32,8 +32,9 @@ export default function Account() {
     const { theme } = useTheme()
     const { user, logout, updateProfile } = useAuth()
     const [updateProfileMutation] = useUpdateProfileMutation()
-    const [changePasswordMutation] = useChangePasswordMutation()
-    
+    const [resetPasswordMutation] = useResetPasswordMutation()
+    const [logoutMutation] = useLogoutMutation()
+
     // Fetch fresh profile data
     const { data: profileData, error: profileError, isLoading: profileLoading } = useGetProfileQuery()
 
@@ -183,7 +184,7 @@ export default function Account() {
         setIsLoading(true)
         
         try {
-            await changePasswordMutation({
+            await resetPasswordMutation({
                 currentPassword: passwordForm.currentPassword,
                 newPassword: passwordForm.newPassword,
                 confirmPassword: passwordForm.confirmPassword
@@ -200,18 +201,6 @@ export default function Account() {
             setErrors({ general: error?.data?.message || 'Failed to update password. Please try again.' })
         } finally {
             setIsLoading(false)
-        }
-    }
-
-    const handleLogout = async () => {
-        try {
-            await logout()
-            // Force a hard refresh to clear all state
-            window.location.href = '/'
-        } catch (error) {
-            console.error('Logout error:', error)
-            // Force logout even if API call fails
-            window.location.href = '/'
         }
     }
 
@@ -566,17 +555,6 @@ export default function Account() {
                             </form>
                         </div>
                     )}
-                </div>
-
-                {/* Logout Button */}
-                <div className="mt-8 text-center">
-                    <button
-                        onClick={handleLogout}
-                        className="inline-flex items-center px-4 py-2 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                    >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Sign Out
-                    </button>
                 </div>
             </div>
         </div>

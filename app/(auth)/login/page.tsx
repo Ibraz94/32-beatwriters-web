@@ -30,7 +30,7 @@ export default function Login() {
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
-            router.push('/')
+            router.push('/nuggets')
         }
     }, [isAuthenticated, router])
 
