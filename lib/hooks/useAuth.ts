@@ -153,13 +153,13 @@ export const useAuth = () => {
   }, [user, dispatch])
 
   // Check if user has specific role
-  const checkRole = useCallback((role: User['role']) => {
+  const checkRole = useCallback((role: User['roles']) => {
     return hasRole(role)
   }, [])
 
   // Check if user has premium access
   const checkPremiumAccess = useCallback(() => {
-    return hasPremiumAccess(user?.memberships)
+    return hasPremiumAccess(user?.memberships)  
   }, [user])
 
   // Get user display name
@@ -211,7 +211,7 @@ export const useAuthGuard = (redirectTo?: string) => {
 }
 
 // Hook for role-based access
-export const useRoleGuard = (requiredRole: User['role'], redirectTo?: string) => {
+export const useRoleGuard = (requiredRole: User['roles'], redirectTo?: string) => {
   const { checkRole, isAuthenticated, isLoading } = useAuth()
   const hasRequiredRole = checkRole(requiredRole)
   

@@ -105,7 +105,7 @@ export default function TeamPage() {
     )
   }
 
-  const canAccessPremium = !team.isPremium || (isAuthenticated && user?.role === 'admin')
+  const canAccessPremium = !team.isPremium || (isAuthenticated && user?.roles.id === 1)
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -124,7 +124,7 @@ export default function TeamPage() {
           <div className="border rounded-lg p-3 mb-6">
             <p className="text-sm text-blue-800">
               Signed in as: <strong>{user?.email}</strong>
-              {user?.role === 'admin' ? (
+              {user?.roles.id === 1 || user?.roles.id === 2 || user?.roles.id === 3 || user?.roles.id === 4 ? (
                 <span className="ml-2 bg-red-800 text-white px-2 py-1 rounded text-xs font-semibold">Premium</span>
               ) : (
                 <span className="ml-2 px-2 py-1 border rounded text-xs">Free</span>

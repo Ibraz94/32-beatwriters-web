@@ -109,7 +109,7 @@ export const checkTokenExpiration = () => {
 export const getUserDisplayName = (user: User | null): string | null => {
   if (!user) return null
   
-  if (user.name) return user.name
+  if (user.username) return user.username
   if (user.firstName || user.lastName) {
     return `${user.firstName || ''} ${user.lastName || ''}`.trim()
   }
@@ -121,22 +121,22 @@ export const getUserDisplayName = (user: User | null): string | null => {
 // Get user avatar URL
 export const getUserAvatarUrl = (user: User | null): string | null => {
   if (!user) return null
-  return user.avatar || null
+  return user.profilePicture || null
 }
 
 // Check if user has premium access
-export const hasPremiumAccess = (subscription?: User['subscription']): boolean => {
-  if (!subscription) return false
-  return subscription.isActive && (subscription.type === 'premium' || subscription.type === 'pro')
+export const hasPremiumAccess = (memberships?: User['memberships']): boolean => {
+  if (!memberships) return false
+  return memberships.type === '' || memberships.type === 'pro' || memberships.type === 'lifetime'
 }
 
 // Check if user has specific role
-export const hasRole = (requiredRole: User['role']): boolean => {
+export const hasRole = (requiredRole: User['roles']): boolean => {
   const user = getUserData()
   if (!user) return false
   
   // Admin has access to everything
-  if (user.role === 'admin') return true
+  if (user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4) return true
   
-  return user.role === requiredRole
+  return user.roles.id === requiredRole.id || user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4
 } 

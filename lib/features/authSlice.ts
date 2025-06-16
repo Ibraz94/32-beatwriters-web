@@ -36,7 +36,7 @@ export interface User {
   }
   memberships: {
     id: number
-    type: 'free' | 'premium' | 'pro' 
+    type: '' | 'pro' | 'lifetime' 
     description: string
     price: number
     features: string[]

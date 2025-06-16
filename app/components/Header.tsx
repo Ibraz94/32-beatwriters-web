@@ -19,8 +19,8 @@ function Header() {
             return getDisplayName();
         }
         
-        if (user.name) {
-            return user.name;
+        if (user.username) {
+            return user.username;
         }
         
         return 'User';
