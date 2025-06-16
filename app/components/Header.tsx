@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Youtube } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
 import { useState } from "react";
@@ -53,9 +53,20 @@ function Header() {
                             <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
                                 32BeatWriters
                             </span>
-                            <span className="text-xs text-gray-600 -mt-1 hidden sm:block">
+                            <span className="text-xs text-gray-500 -mt-1 hidden sm:block">
                                 NFL Insider Network
                             </span>
+                        </div>
+
+                        <div className="w-px h-7 bg-gray-300"></div>
+
+                        <div className="flex justify-center items-center md:justify-start space-x-2">
+                            <Link href="https://x.com/32beatwriters" className="w-8 h-8 hover:scale-90  bg-gradient-to-r from-red-600 to-red-800 rounded-md flex items-center justify-center transition-colors">
+                                <Image src={"/x-white-logo.svg"} alt="Twitter" width={20} height={20} className="h-4 w-4" />
+                            </Link>
+                            <Link href="https://youtube.com/@32beatwriters" className="w-8 h-8  bg-gradient-to-r from-red-600 to-red-800 hover:scale-90 rounded-md flex items-center justify-center transition-colors">
+                                <Youtube className="h-5 w-5 text-white" />
+                            </Link>
                         </div>
                     </Link>
 

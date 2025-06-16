@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useState } from "react";
-import { Mail, Twitter, Instagram, Youtube, ArrowRight, MapPin, Phone, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 
 export default function Footer() {
     const { theme } = useTheme();
@@ -31,8 +31,8 @@ export default function Footer() {
     const footerLinks = {
         Company: [
             { label: "About Us", href: "/about" },
-            { label: "Our Writers", href: "/beat-writers" },
-            { label: "Careers", href: "/" },
+            // { label: "Our Writers", href: "/beat-writers" },
+            // { label: "Careers", href: "/" },
             { label: "Contact", href: "/contact-us" }
         ],
         Content: [
@@ -42,18 +42,12 @@ export default function Footer() {
             { label: "Player Analysis", href: "/players" }
         ],
         Support: [
-            { label: "Help Center", href: "/" },
+            // { label: "Help Center", href: "/" },
             { label: "Privacy Policy", href: "/privacy-policy" },
             { label: "Terms of Service", href: "/terms-and-conditions" },
-            { label: "Cookie Policy", href: "/" }
+            // { label: "Cookie Policy", href: "/" }
         ]
     };
-
-    const socialLinks = [
-        { icon: Twitter, href: "https://twitter.com/32beatwriters", label: "Twitter" },
-        { icon: Instagram, href: "https://instagram.com/32beatwriters", label: "Instagram" },
-        { icon: Youtube, href: "https://youtube.com/32beatwriters", label: "YouTube" }
-    ];
 
     return (
         <footer className="bg-background border-t">
@@ -109,7 +103,7 @@ export default function Footer() {
                                 className="w-10 h-10"
                             />
                             <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
-                                32 Beat Writers
+                                32BeatWriters
                             </span>
                         </Link>
                         
@@ -117,36 +111,6 @@ export default function Footer() {
                             The most comprehensive NFL coverage network, bringing you insider access 
                             to all 32 teams through our dedicated beat writers.
                         </p>
-
-                        {/* Stats */}
-                        <div className="grid grid-cols-3 gap-4 mb-6">
-                            <div className="text-center p-3 bg-muted/50 rounded-lg">
-                                <div className="font-bold text-lg text-red-600">32</div>
-                                <div className="text-xs text-muted-foreground">Writers</div>
-                            </div>
-                            <div className="text-center p-3 bg-muted/50 rounded-lg">
-                                <div className="font-bold text-lg text-red-600">24/7</div>
-                                <div className="text-xs text-muted-foreground">Coverage</div>
-                            </div>
-                            <div className="text-center p-3 bg-muted/50 rounded-lg">
-                                <div className="font-bold text-lg text-red-600">10K+</div>
-                                <div className="text-xs text-muted-foreground">Subscribers</div>
-                            </div>
-                        </div>
-
-                        {/* Social Links */}
-                        <div className="flex justify-center md:justify-start space-x-4">
-                            {socialLinks.map((social) => (
-                                <Link
-                                    key={social.label}
-                                    href={social.href}
-                                    className="w-10 h-10 bg-muted hover:bg-red-800 hover:text-white rounded-lg flex items-center justify-center transition-colors"
-                                    aria-label={social.label}
-                                >
-                                    <social.icon className="h-5 w-5" />
-                                </Link>
-                            ))}
-                        </div>
                     </div>
 
                     {/* Footer Links */}
@@ -193,7 +157,7 @@ export default function Footer() {
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                         <div className="text-sm text-muted-foreground">
-                            © 2025 32 Beat Writers. All rights reserved.
+                            © 2025 32BeatWriters. All rights reserved.
                         </div>
                         
                         <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground">
@@ -201,9 +165,6 @@ export default function Footer() {
                                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                 <span>All systems operational</span>
                             </div>
-                            <Link href="" className="hover:text-red-600 transition-colors">
-                                Status
-                            </Link>
                         </div>
                     </div>
                 </div>

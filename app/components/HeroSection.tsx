@@ -41,7 +41,7 @@ export default function HeroSection() {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <span className="text-sm font-medium">32 Dedicated Writes</span>
+                                    <span className="text-sm font-medium">Player Feed</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className="w-5 h-5 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
@@ -49,15 +49,7 @@ export default function HeroSection() {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <span className="text-sm font-medium ">Real-Time Updates</span>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-5 h-5 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
-                                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-sm font-medium ">Fantasy Insight</span>
+                                    <span className="text-sm font-medium ">Offseason Reports</span>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className="w-5 h-5 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
@@ -67,13 +59,21 @@ export default function HeroSection() {
                                     </div>
                                     <span className="text-sm font-medium ">Insider Access</span>
                                 </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-5 h-5 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-sm font-medium ">Premium Articles & Insight</span>
+                                </div>
                             </div>
 
                             {/* CTA Button */}
                             <div className="pt-4">
                                 <Link href="/subscribe">
-                                    <button className="px-8 py-4 bg-red-800 text-white rounded-lg text-lg font-semibold hover:scale-102 transition-colors duration-300 shadow-lg hover:shadow-xl">
-                                        Get Started Today
+                                    <button className="px-8 py-3 bg-red-800 text-white rounded-lg text-lg font-semibold hover:scale-102 hover:cursor-pointer transition-colors duration-300 shadow-lg hover:shadow-xl">
+                                        Subscribe
                                     </button>
                                 </Link>
                             </div>
@@ -147,7 +147,7 @@ export default function HeroSection() {
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-xs font-medium">32 Dedicated Writes</span>
+                            <span className="text-xs font-medium">Player Feed</span>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="w-4 h-4 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
@@ -155,7 +155,7 @@ export default function HeroSection() {
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-xs font-medium ">Real-Time Updates</span>
+                            <span className="text-xs font-medium ">Offseason Reports</span>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="w-4 h-4 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
@@ -163,7 +163,7 @@ export default function HeroSection() {
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-xs font-medium ">Fantasy Insight</span>
+                            <span className="text-xs font-medium ">Insider Access</span>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="w-4 h-4 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
@@ -171,7 +171,7 @@ export default function HeroSection() {
                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                 </svg>
                             </div>
-                            <span className="text-xs font-medium">Insider Access</span>
+                            <span className="text-xs font-medium">Premium Articles & Insight</span>
                         </div>
                     </div>
 

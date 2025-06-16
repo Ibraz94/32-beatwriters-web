@@ -14,7 +14,7 @@ const cabin = Cabin({
 });
 
 export const metadata: Metadata = {
-  title: "32 Beat Writers",
+  title: "32 BeatWriters",
   description: "32 Beat Writers is a platform for beat writers to create and share their beats.",
 };
 

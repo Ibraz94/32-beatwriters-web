@@ -45,7 +45,7 @@ export default function PodcastsComponent() {
             {/* Header */}
             <div className="text-center mb-12">
                 <h2 className="text-4xl text-white md:text-5xl font-bold mb-4">
-                    NFL <span className="text-red-800">Podcasts</span>
+                    Our Podcasts <span className="text-red-800">Network</span>
                 </h2>
                 <p className="text-lg text-white max-w-2xl mx-auto">
                     In-depth analysis, insider reports, and expert commentary from our network of beat writers across all 32 teams.
