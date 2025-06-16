@@ -109,7 +109,7 @@ function Header() {
                             </div>
                         </Link>
 
-                        <div className="w-px h-7 bg-gray-300"></div>
+                        <div className="w-px h-7 bg-gray-300 sm:block hidden"></div>
 
                         <div className="hidden justify-center items-center md:justify-start space-x-2 lg:flex">
                             <Link href="https://x.com/32beatwriters" className="w-8 h-8 hover:scale-90  bg-gradient-to-r from-red-600 to-red-800 rounded-md flex items-center justify-center transition-colors">
@@ -260,7 +260,7 @@ function Header() {
                         <div className="px-4 space-y-3">
                             {isAuthenticated ? (
                                 <div className="space-y-3">
-                                    <div className="flex items-center space-x-3 p-3 rounded-lg">
+                                    <div className="flex items-center justify-center space-x-3 p-3 rounded-lg">
                                         {user?.profilePicture ? (
                                             <Image
                                                 src={user.profilePicture}
@@ -326,19 +326,15 @@ function Header() {
 
                         {/* Mobile Footer Info */}
                         <div className="px-4 pt-4 border-t border-gray-200">
-                            <div className="text-center">
-                                <p className="text-sm text-gray-600">
-                                    Follow 32 NFL teams with insider access
-                                </p>
-                                <div className="flex justify-center items-center mt-2 space-x-4 text-xs text-gray-500">
-                                    <span className="flex items-center">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                                        Live Coverage
-                                    </span>
-                                    <span>24/7 Updates</span>
-                                    <span>10K+ Users</span>
-                                </div>
-                            </div>
+                             <h1 className="text-center text-sm text-gray-500 mb-2">Join Us On Social Media</h1>
+                        <div className="flex justify-center items-center space-x-4">
+                            <Link href="https://x.com/32beatwriters" className="w-8 h-8 hover:scale-90  bg-gradient-to-r from-red-600 to-red-800 rounded-md flex items-center justify-center transition-colors">
+                                <Image src={"/x-white-logo.svg"} alt="Twitter" width={20} height={20} className="h-4 w-4" />
+                            </Link>
+                            <Link href="https://youtube.com/@32beatwriters" className="w-8 h-8  bg-gradient-to-r from-red-600 to-red-800 hover:scale-90 rounded-md flex items-center justify-center transition-colors">
+                                <Youtube className="h-5 w-5 text-white" />
+                            </Link>
+                        </div>
                         </div>
                     </div>
                 </div>
