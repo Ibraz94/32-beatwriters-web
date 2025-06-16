@@ -132,7 +132,7 @@ export default function Login() {
     }
 
     return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-accent/20 px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8 mt-20 mb-26">
                 <div className="max-w-sm w-full space-y-12">
                 {/* Header */}
                 <div className="text-center">
@@ -161,7 +161,7 @@ export default function Login() {
                         
                         {/* Email/Username Field */}
                         <div>
-                            <label htmlFor="emailOrUsername" className="block text-sm font-medium text-card-foreground mb-2">
+                            <label htmlFor="emailOrUsername" className="block text-sm mb-2">
                                 Email / Username
                             </label>
                             <div className="relative">
@@ -175,7 +175,7 @@ export default function Login() {
                                     onChange={handleInputChange}
                                     className={`appearance-none relative block w-full pl-4 pr-3 py-3 border ${
                                         errors.emailOrUsername ? 'border-destructive' : 'border-input'
-                                    } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background transition-colors`}
+                                    } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring focus:ring-ring focus:border-transparent bg-background/20 transition-colors`}
                                     placeholder="Enter your email or username"
                                 />
                             </div>
@@ -200,7 +200,7 @@ export default function Login() {
                                     onChange={handleInputChange}
                                     className={`appearance-none relative block w-full pl-4 pr-10 py-3 border ${
                                         errors.password ? 'border-destructive' : 'border-input'
-                                    } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background transition-colors`}
+                                    } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background/20 transition-colors`}
                                     placeholder="Enter your password"
                                 />
                                 <button
@@ -307,9 +307,9 @@ export default function Login() {
                 {/* Sign Up Link */}
                 <div className="text-center">
                     <p className="text-sm text-muted-foreground">
-                        Not a member?{' '}
-                            <Link href="/premium" className="font-medium text-primary hover:text-red-800 transition-colors">
-                                Get premium access now
+                    Don't have an account?{'  '}
+                            <Link href="/subscribe" className="font-medium text-primary hover:text-red-800 transition-colors">
+                                 Subscribe now
                             </Link>
                     </p>
                 </div>

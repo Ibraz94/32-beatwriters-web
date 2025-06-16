@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { useAuth } from '../../../lib/hooks/useAuth'
 import { useUpdateProfileMutation, useResetPasswordMutation, useGetProfileQuery,  useLogoutMutation } from '../../../lib/services/authApi'
+import DiscordButton from '@/app/components/DiscordButton'
 
 export default function Account() {
     const [mounted, setMounted] = useState(false)
@@ -556,6 +557,7 @@ export default function Account() {
                         </div>
                     )}
                 </div>
+                
             </div>
         </div>
     )

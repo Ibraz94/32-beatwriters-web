@@ -26,9 +26,15 @@ interface ForgotPasswordRequest {
   email: string
 }
 
+interface OtpVerificationRequest {
+  email: string
+  otp: string
+}
+
 interface ResetPasswordRequest {
-  token: string
-  password: string
+  email: string
+  otp: string
+  newPassword: string
   confirmPassword: string
 }
 
@@ -94,7 +100,7 @@ export const authApi = createApi({
       }),
     }),
     
-    verifyOtp: builder.mutation<{ message: string }, ResetPasswordRequest>({
+    verifyOtp: builder.mutation<{ message: string }, OtpVerificationRequest>({
       query: (data) => ({
         url: '/forgot-password/verify-otp',
         method: 'POST',
@@ -102,7 +108,7 @@ export const authApi = createApi({
       }),
     }),
     
-    resetPassword: builder.mutation<{ message: string }, ChangePasswordRequest>({
+    resetPassword: builder.mutation<{ message: string }, ResetPasswordRequest>({
       query: (data) => ({
         url: '/forgot-password/reset',
         method: 'PUT',
