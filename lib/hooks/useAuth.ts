@@ -159,7 +159,7 @@ export const useAuth = () => {
 
   // Check if user has premium access
   const checkPremiumAccess = useCallback(() => {
-    return hasPremiumAccess(user?.subscription)
+    return hasPremiumAccess(user?.memberships)
   }, [user])
 
   // Get user display name

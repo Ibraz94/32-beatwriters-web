@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { Shield, Lock } from 'lucide-react'
+import { Shield } from 'lucide-react'
 import Image from 'next/image'
 import { useGetArticlesQuery, getImageUrl } from '@/lib/services/articlesApi'
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/lib/hooks/useAuth'
+import { useAuth } from './hooks/useAuth'
 
 export default function ArticlesPage() {
   const [page, setPage] = useState(1)
@@ -13,8 +13,8 @@ export default function ArticlesPage() {
   const [hasMoreArticles, setHasMoreArticles] = useState(true)
   const [isAccessible, setIsAccessible] = useState(false)
   
-  // Get user authentication status and premium access
-  const { checkPremiumAccess, checkRole, isAuthenticated, user } = useAuth()
+  // Get user authentication status and premium access  
+  const { checkPremiumAccess, isAuthenticated, user } = useAuth()
   const hasPremiumAccess = checkPremiumAccess()
   
   // Simplified query - fetch all published articles with basic pagination
@@ -40,17 +40,17 @@ export default function ArticlesPage() {
 
   useEffect(() => {
       if (articles?.data.articles) {
-      setIsAccessible(articles.data.articles.some(article => article.access === 'public'))
+      setIsAccessible(articles.data.articles.some(article => article.access === 'public' || article.access === 'pro' || article.access === 'lifetime'))
     }
   }, [articles])
 
   // Helper function to check if user can access an article
   const canAccessArticle = (articleAccess: string) => {
     if (articleAccess === 'public') return true
-    
+
     // Check if user is admin using case-insensitive comparison
-    const userRole = user?.role?.toLowerCase()
-    const isAdminByRole = userRole === 'admin' || userRole === 'administrator'
+    const userRole = user?.roles.id
+    const isAdminByRole = userRole === 1 || userRole === 2 || userRole === 3 || userRole === 4
     
     // Administrators can access all articles
     if (isAdminByRole) {
@@ -58,7 +58,7 @@ export default function ArticlesPage() {
       return true
     }
     
-    if (articleAccess === 'pro' || articleAccess === 'lifetime') {
+    if (articleAccess === 'premium' || articleAccess === 'lifetime') {
       return hasPremiumAccess
     }
     return false
@@ -67,8 +67,8 @@ export default function ArticlesPage() {
   // Helper function to get access status text
   const getAccessStatusText = (articleAccess: string) => {
     if (articleAccess === 'public') return 'Free Article'
-    if (articleAccess === 'pro') return 'Pro Article'
-    if (articleAccess === 'lifetime') return 'Premium Article'
+    if (articleAccess === 'premium') return 'Premium Article'
+    if (articleAccess === 'lifetime') return 'Lifetime Article'
     return 'Article'
   }
 
@@ -86,7 +86,7 @@ export default function ArticlesPage() {
     } else {
       return {
         text: isAuthenticated ? 'Upgrade to Premium' : 'Sign In for Premium',
-        href: isAuthenticated ? '/premium' : '/login',
+        href: isAuthenticated ? '/subscribe' : '/login',
         className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }

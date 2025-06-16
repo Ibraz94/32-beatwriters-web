@@ -41,7 +41,7 @@ export default function Account() {
     const getDisplayName = (userData: typeof user) => {
         if (!userData) return ''
         
-        let displayName = userData.name || ''
+        let displayName = userData.username || ''
         if (!displayName && (userData.firstName || userData.lastName)) {
             displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
         }
@@ -410,7 +410,7 @@ export default function Account() {
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background">
                                         <Calendar className="h-5 w-5 text-muted-foreground" />
                                         <span className="text-foreground">
-                                            {user.joinDate ? new Date(user.joinDate).toLocaleDateString() : 'N/A'}
+                                            {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                                         </span>
                                     </div>
                                 </div>
@@ -423,7 +423,7 @@ export default function Account() {
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background">
                                         <Crown className="h-5 w-5 text-yellow-500" />
                                         <span className="text-foreground">
-                                            {user.role === 'admin' ? 'Admin' : user.role === 'premium' ? 'Premium Member' : 'Free Member'}
+                                            {user.role === 'Administrator' ? 'Admin' : user.role === 'Subscriber' ? 'Premium Member' : 'Free Member'}
                                         </span>
                                     </div>
                                 </div>

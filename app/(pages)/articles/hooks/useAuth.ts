@@ -7,9 +7,23 @@ export interface User {
   email: string
   firstName: string
   lastName: string
-  role: string
+  humanId: number
+  roles: {
+    id: number
+    name: string
+    description: string
+    createdAt: string
+    updatedAt: string
+  }
   roleId: number
-  memebership: string
+  membershipId: number
+  memberships: {
+    id: number
+    type: string
+    description: string
+    price: number
+    features: string[]
+  }
   profilePicture: string
   bio: string
   lastLogin: string
@@ -42,22 +56,7 @@ export const useAuth = () => {
   const signOut = () => {
     mainAuth.logout()
   }
-  
-  const upgradeToPremium = () => {
-    if (mainAuth.user) {
-      mainAuth.updateProfile({
-        subscription: {
-          type: 'premium',
-          plan: 'Premium Annual',
-          status: 'active',
-          amount: '$99.99',
-          nextBilling: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-          isActive: true,
-          expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year from now
-        }
-      })
-    }
-  }
+
 
   // Check if user has premium access
   const checkPremiumAccess = () => {
@@ -71,18 +70,20 @@ export const useAuth = () => {
     const mainUser = mainAuth.user
     return {
       id: mainUser.id,
-      username: mainUser.name || mainUser.email,
+      username: mainUser.username || mainUser.email,
       email: mainUser.email,
-      firstName: mainUser.name?.split(' ')[0] || '',
-      lastName: mainUser.name?.split(' ').slice(1).join(' ') || '',
-      role: mainUser.role || 'user',
-      roleId: mainUser.role === 'admin' ? 1 : mainUser.role === 'premium' ? 2 : 3,
-      memebership: mainUser.subscription?.type || 'free',
-      profilePicture: mainUser.avatar || '',
-      bio: '',
+      firstName: mainUser.firstName || '',
+      lastName: mainUser.lastName || '',  
+      roleId: mainUser.roleId || 0,
+      roles: mainUser.roles,
+      humanId: mainUser.humanId || 0,
+      membershipId: mainUser.membershipId || 0,
+      memberships: mainUser.memberships || [],
+      profilePicture: mainUser.profilePicture || '',
+      bio: mainUser.bio || '',
       lastLogin: new Date().toISOString(),
       loginCount: 1,
-      isAdmin: mainUser.role === 'admin'
+      isAdmin: true || false
     }
   }
   
@@ -92,7 +93,6 @@ export const useAuth = () => {
     isAuthenticated: mainAuth.isAuthenticated,
     signIn,
     signOut,
-    upgradeToPremium,
     checkPremiumAccess
   }
 } 

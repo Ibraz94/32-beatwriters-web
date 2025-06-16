@@ -2,27 +2,52 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface User {
   id: string
+  humanId: number
+  username: string
   email: string
-  name: string
   firstName?: string
   lastName?: string
-  avatar?: string
-  role: 'user' | 'admin' | 'premium'
-  joinDate: string
-  subscription?: {
-    type: 'free' | 'premium' | 'pro'
-    plan: string
-    status: string
-    amount: string
-    nextBilling: string
-    expiresAt?: string
-    isActive: boolean
+  address1?: string
+  address2?: string
+  city?: string
+  state?: string
+  zipCode?: string
+  country?: string
+  phoneNumber?: string
+  profilePicture?: string
+  bio?: string
+  lastLogin?: string
+  loginCount?: number
+  activationKey?: string
+  roleId: number
+  membershipId: number
+  createdAt: string
+  updatedAt: string
+  stripeCustomerId: string
+  stripeSubscriptionId: string
+  subscriptionStatus: string
+  subscriptionEndDate: string
+  roles: {
+    id: number
+    name: string
+    description: string
+    createdAt: string
+    updatedAt: string
   }
-  paymentMethod?: {
-    type: string
-    last4: string
-    expiry: string
+  memberships: {
+    id: number
+    type: 'free' | 'premium' | 'pro' 
+    description: string
+    price: number
+    features: string[]
+    createdAt: string
+    updatedAt: string
+    stripePriceId: string
+    stripeProductId: string
   }
+  role: 'Administrator' | 'Editor' | 'Author' | 'Subscriber'
+  membership: 'free' | 'premium' | 'pro'
+  isAdmin: boolean
 }
 
 interface AuthState {
@@ -77,9 +102,9 @@ const authSlice = createSlice({
         state.user = { ...state.user, ...action.payload }
       }
     },
-    updateSubscription: (state, action: PayloadAction<User['subscription']>) => {
+    updateSubscription: (state, action: PayloadAction<User['memberships']>) => {
       if (state.user) {
-        state.user.subscription = action.payload
+        state.user.memberships = action.payload
       }
     },
     clearError: (state) => {
