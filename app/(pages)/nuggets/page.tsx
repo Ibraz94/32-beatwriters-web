@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, X, ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import Masonry from 'react-masonry-css'
 import { ReadMore } from '@/app/components/ReadMore'
 import {
@@ -25,6 +25,8 @@ import { useAuth } from '@/lib/hooks/useAuth'
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
     sortOrder?: 'asc' | 'desc'
+    teams?: string[]
+    positions?: string[]
 }
 
 interface ImageModalData {
@@ -41,13 +43,19 @@ export default function NuggetsPage() {
 
     const [filters, setFilters] = useState<NuggetFilters>({
         sortBy: 'createdAt',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
+        teams: [],
+        positions: []
     })
+    const [selectedDate, setSelectedDate] = useState<string>('')
     const [searchTerm, setSearchTerm] = useState('')
     const [isSearching, setIsSearching] = useState(false)
     const [allNuggets, setAllNuggets] = useState<any[]>([])
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
+    const [availableTeams, setAvailableTeams] = useState<string[]>([])
+    const [availablePositions, setAvailablePositions] = useState<string[]>([])
+    const [filteredNuggets, setFilteredNuggets] = useState<any[]>([])
 
     // Main query for nuggets - simplified to just fetch all nuggets
     const {
@@ -62,11 +70,25 @@ export default function NuggetsPage() {
     // Search query - we'll handle this client-side
     const [searchResults, setSearchResults] = useState<any[]>([])
 
-    // Handle loading nuggets
+    // Handle loading nuggets and extracting filter options
     useEffect(() => {
         if (nuggetsData?.data?.nuggets) {
             setAllNuggets(nuggetsData.data.nuggets)
             setHasMoreNuggets(false) // Since we're loading all at once
+            
+            // Extract unique teams and positions
+            const teams = [...new Set(nuggetsData.data.nuggets
+                .map((nugget: any) => nugget.player.team)
+                .filter(Boolean)
+            )].sort()
+            
+            const positions = [...new Set(nuggetsData.data.nuggets
+                .map((nugget: any) => nugget.player.position)
+                .filter(Boolean)
+            )].sort()
+            
+            setAvailableTeams(teams)
+            setAvailablePositions(positions)
         }
     }, [nuggetsData])
 
@@ -88,24 +110,79 @@ export default function NuggetsPage() {
         }
     }
 
-    // Client-side sorting
-    const getSortedNuggets = (nuggets: any[]) => {
-        return [...nuggets].sort((a, b) => {
-            if (filters.sortBy === 'playerName') {
-                const comparison = a.player.name.localeCompare(b.player.name)
-                return filters.sortOrder === 'asc' ? comparison : -comparison
-            } else {
-                const dateA = new Date(a.createdAt).getTime()
-                const dateB = new Date(b.createdAt).getTime()
-                return filters.sortOrder === 'asc' ? dateA - dateB : dateB - dateA
-            }
+    // Client-side filtering and sorting
+    const getFilteredAndSortedNuggets = (nuggets: any[]) => {
+        let filtered = [...nuggets]
+        
+        // Apply date filter if selected
+        if (selectedDate) {
+            const selectedDateObj = new Date(selectedDate)
+            filtered = filtered.filter(nugget => {
+                const nuggetDate = new Date(nugget.createdAt)
+                return nuggetDate.toDateString() === selectedDateObj.toDateString()
+            })
+        }
+        
+        // Apply team filter
+        if (filters.teams && filters.teams.length > 0) {
+            filtered = filtered.filter(nugget => 
+                filters.teams!.includes(nugget.player.team)
+            )
+        }
+        
+        // Apply position filter
+        if (filters.positions && filters.positions.length > 0) {
+            filtered = filtered.filter(nugget => 
+                filters.positions!.includes(nugget.player.position)
+            )
+        }
+        
+        // Apply sorting (always sort by date, newest first)
+        return filtered.sort((a, b) => {
+            const dateA = new Date(a.createdAt).getTime()
+            const dateB = new Date(b.createdAt).getTime()
+            return dateB - dateA // Newest first
         })
     }
 
-    // Handle sort change
-    const handleSortChange = (value: string) => {
-        const [sortBy, sortOrder] = value.split('-') as ['createdAt' | 'playerName', 'asc' | 'desc']
-        setFilters({ sortBy, sortOrder })
+    // Handle date change
+    const handleDateChange = (date: string) => {
+        setSelectedDate(date)
+    }
+    
+    // Clear date filter
+    const clearDateFilter = () => {
+        setSelectedDate('')
+    }
+    
+    // Handle team filter change
+    const handleTeamFilterChange = (team: string) => {
+        setFilters(prev => ({
+            ...prev,
+            teams: prev.teams!.includes(team)
+                ? prev.teams!.filter(t => t !== team)
+                : [...prev.teams!, team]
+        }))
+    }
+    
+    // Handle position filter change
+    const handlePositionFilterChange = (position: string) => {
+        setFilters(prev => ({
+            ...prev,
+            positions: prev.positions!.includes(position)
+                ? prev.positions!.filter(p => p !== position)
+                : [...prev.positions!, position]
+        }))
+    }
+    
+    // Clear all filters
+    const clearFilters = () => {
+        setFilters(prev => ({
+            ...prev,
+            teams: [],
+            positions: []
+        }))
+        setSelectedDate('')
     }
 
     // Image modal functions
@@ -161,7 +238,7 @@ export default function NuggetsPage() {
 
     const isLoading = isLoadingNuggets || authLoading || premiumLoading
     const error = nuggetsError
-    const displayNuggets = isSearching ? searchResults : getSortedNuggets(allNuggets)
+    const displayNuggets = isSearching ? searchResults : getFilteredAndSortedNuggets(allNuggets)
 
     // Show authentication required message if not authenticated
     if (!authLoading && !isAuthenticated && !user?.memberships) {
@@ -244,68 +321,129 @@ export default function NuggetsPage() {
 
                 {/* Search and Filters */}
                 <div className="mb-8 space-y-4 px-4 sm:px-0">
-                    {/* Search Bar */}
-                    <div className="relative flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto">
-               
-                        <Search className="absolute left-3 top-3 transform translate-y-1/4 text-gray-400 w-5 h-5" />
-                        <input
-                            type="text"
-                            placeholder="Search nuggets..."
-                            value={searchTerm}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 border-2 border-gray-400 rounded-lg shadow-md"
-                        />
+                <div className="relative flex-1 max-w-2xl mx-auto items-center justify-center">
+                            <Search className="absolute left-3 top-3 transform translate-y-1/4 text-gray-400 w-5 h-5" />
+                            <input
+                                type="text"
+                                placeholder="Search nuggets..."
+                                value={searchTerm}
+                                onChange={(e) => handleSearch(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 border-2 border-gray-400 rounded-lg shadow-md"
+                            />
+                        </div>
+                    {/* Search Bar and Filters */}
+                    <div className="relative flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto items-center justify-center">
+                       {/* Date Filter */}
+                        <div className="relative w-full sm:w-48">
+                            <input
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => handleDateChange(e.target.value)}
+                                className="w-full pl-4 px-4 py-3 h-12 border-2 text-gray-400 border-gray-400 rounded-lg shadow-md appearance-none"
+                                placeholder="Sort by Date"
+                            />
 
-                        <Select
-                            onValueChange={handleSortChange}
-                        >
-                            <SelectTrigger className="w-full lg:w-1/3 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg" value={`${filters.sortBy}-${filters.sortOrder}`}>
-                                <SelectValue placeholder="Sort by Team" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="createdAt-desc">AFC North</SelectItem>
-                                <SelectItem value="createdAt-asc">AFC East</SelectItem>
-                                <SelectItem value="playerName-asc">AFC South</SelectItem>
-                                <SelectItem value="playerName-desc">AFC West</SelectItem>
-                                <SelectItem value="playerName-desc">NFC North</SelectItem>
-                                <SelectItem value="playerName-desc">NFC East</SelectItem>
-                                <SelectItem value="playerName-desc">NFC South</SelectItem>
-                                <SelectItem value="playerName-desc">NFC West</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        </div>
 
-                        <Select
-                            onValueChange={handleSortChange}
-                        >
-                            <SelectTrigger className="w-full lg:w-1/3 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg" value={`${filters.sortBy}-${filters.sortOrder}`}
-                            >
-                                <SelectValue placeholder="Sort by Position" />
+                        {/* Team Filter Dropdown */}
+                        <Select>
+                            <SelectTrigger className="w-full sm:w-48 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg">
+                                <SelectValue placeholder={
+                                    filters.teams && filters.teams.length > 0 
+                                        ? `Teams (${filters.teams.length})`
+                                        : "Filter by Team"
+                                } />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectLabel>Position</SelectLabel>
-                                    <SelectItem value="createdAt-desc">QB</SelectItem>
-                                    <SelectItem value="createdAt-asc">RB</SelectItem>
-                                    <SelectItem value="playerName-asc">WR</SelectItem>
-                                    <SelectItem value="playerName-desc">TE</SelectItem>
-                                    <SelectItem value="playerName-desc">K</SelectItem>
-                                    <SelectItem value="playerName-desc">DEF</SelectItem>
-                                    <SelectItem value="playerName-desc">DL</SelectItem>
-                                    <SelectItem value="playerName-desc">LB</SelectItem>
-                                    <SelectItem value="playerName-desc">DB</SelectItem>
-                                    <SelectItem value="playerName-desc">S</SelectItem>
+                                    <SelectLabel>Select Teams</SelectLabel>
+                                    {availableTeams.map(team => (
+                                        <div
+                                            key={team}
+                                            className="flex items-center space-x-2 px-2 py-1.5 text-sm cursor-pointer rounded"
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                handleTeamFilterChange(team)
+                                            }}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.teams?.includes(team) || false}
+                                                onChange={() => handleTeamFilterChange(team)}
+                                                className="rounded border-gray-300"
+                                            />
+                                            <span>{team}</span>
+                                        </div>
+                                    ))}
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
 
+                        {/* Position Filter Dropdown */}
+                        <Select>
+                            <SelectTrigger className="w-full sm:w-48 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg">
+                                <SelectValue placeholder={
+                                    filters.positions && filters.positions.length > 0 
+                                        ? `Positions (${filters.positions.length})`
+                                        : "Filter by Position"
+                                } />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Select Positions</SelectLabel>
+                                    {availablePositions.map(position => (
+                                        <div
+                                            key={position}
+                                            className="flex items-center space-x-2 px-2 py-1.5 text-sm cursor-pointer rounded"
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                handlePositionFilterChange(position)
+                                            }} 
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.positions?.includes(position) || false}
+                                                onChange={() => handlePositionFilterChange(position)}
+                                                className="rounded border-gray-300"
+                                            />
+                                            <span>{position}</span>
+                                        </div>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        {/* Clear Filters Button */}
+                        <div className={`w-full sm:w-auto ${(selectedDate || (filters.teams && filters.teams.length > 0) || (filters.positions && filters.positions.length > 0)) ? 'block' : 'hidden sm:block'}`}>
+                            <button
+                                onClick={clearFilters}
+                                disabled={!selectedDate && (!filters.teams || filters.teams.length === 0) && (!filters.positions || filters.positions.length === 0)}
+                                className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                                    !selectedDate && (!filters.teams || filters.teams.length === 0) && (!filters.positions || filters.positions.length === 0)
+                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                        : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
+                                }`}
+                            >
+                                Clear Filters
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 {/* Results Count */}
-                {isSearching && searchTerm && (
+                {(isSearching && searchTerm) && (
                     <div className="mb-6 text-center">
                         <p className="text-gray-600">
                             {displayNuggets.length} result{displayNuggets.length !== 1 ? 's' : ''} for "{searchTerm}"
+                        </p>
+                    </div>
+                )}
+                
+                {/* Filter Results Count */}
+                {!isSearching && (selectedDate || (filters.teams && filters.teams.length > 0) || (filters.positions && filters.positions.length > 0)) && (
+                    <div className="mb-6 text-center">
+                        <p className="text-gray-600">
+                            {displayNuggets.length} nugget{displayNuggets.length !== 1 ? 's' : ''} found with current filters
                         </p>
                     </div>
                 )}
@@ -365,7 +503,7 @@ export default function NuggetsPage() {
                                     <div className='px-6 py-4'>
                                         {nugget.fantasyInsight && (
                                         <>
-                                            <h1 className='text-lg font-semibold mt-4'>Fantasy Insight:</h1>
+                                            <h1 className='font-semibold mt-4'>Fantasy Insight:</h1>
                                             {fantasyInsight(nugget.fantasyInsight)}
                                         </>
                                     )}
@@ -524,4 +662,5 @@ export default function NuggetsPage() {
         </>
     )
 }
+
 

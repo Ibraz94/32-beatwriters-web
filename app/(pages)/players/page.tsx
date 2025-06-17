@@ -33,17 +33,17 @@ function PlayerCard({ player, currentPage }: { player: Player; currentPage: numb
             {/* Player Info */}
             <div className="p-4">
                 <div className="flex items-start justify-center mb-2">
-                    <h3 className="font-bold text-2xl leading-tight hover:text-red-800 transition-colors">
+                    <h3 className="font-bold text-xl leading-tight hover:text-red-800 transition-colors">
                         {player.name}
                     </h3>
                 </div>
 
                 <div className="space-y-2 text-sm">
                     <div className="flex flex-col items-start justify-center">
-                        <h1 className="font-bold text-lg">Position <span className="font-normal">{player.position}</span></h1>
-                        <h1 className="font-bold text-lg">Draft Pick: <span className="font-normal">{player.draftPick}</span></h1>
-                        <h1 className="font-bold text-lg">College: <span className="font-normal">{player.college}</span></h1>
-                        <h1 className="font-bold text-lg">Team: <span className="font-normal">{player.team || 'N/A'}</span></h1>
+                        <h1 className="font-bold text-sm">Position: <span className="text-sm font-normal">{player.position}</span></h1>
+                        <h1 className="font-bold text-sm">Draft Pick: <span className="text-sm font-normal">{player.draftPick}</span></h1>
+                        <h1 className="font-bold text-sm">College: <span className="text-sm font-normal">{player.college}</span></h1>
+                        <h1 className="font-bold text-sm">Team: <span className="text-sm font-normal">{player.team || 'N/A'}</span></h1>
                     </div>
                     
                     <div className="flex flex-col items-center justify-center">
