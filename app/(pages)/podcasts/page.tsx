@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react'
 
 const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
   return (
-    <div className="rounded-lg space-y-2 shadow-md border-3 overflow-hidden hover:shadow-lg transition-shadow group">
+    <div className="rounded-lg space-y-2 shadow-md border-3 overflow-hidden hover:shadow-lg transition-shadow group hover:scale-101">
       {/* Podcast Thumbnail */}
       <Link href={`/podcasts/${podcast.id}`}>
       <div className="relative h-48 w-full">
