@@ -177,33 +177,33 @@ export default function Account() {
         return Object.keys(newErrors).length === 0
     }
 
-    const handlePasswordSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+    // const handlePasswordSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault()
         
-        if (!validatePasswordForm()) return
+    //     if (!validatePasswordForm()) return
         
-        setIsLoading(true)
+    //     setIsLoading(true)
         
-        try {
-            await resetPasswordMutation({
-                currentPassword: passwordForm.currentPassword,
-                newPassword: passwordForm.newPassword,
-                confirmPassword: passwordForm.confirmPassword
-            }).unwrap()
+    //     try {
+    //         await resetPasswordMutation({
+    //             currentPassword: passwordForm.currentPassword,
+    //             newPassword: passwordForm.newPassword,
+    //             confirmPassword: passwordForm.confirmPassword
+    //         }).unwrap()
             
-            setSuccessMessage('Password updated successfully!')
-            setPasswordForm({
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: ''
-            })
-            setTimeout(() => setSuccessMessage(''), 3000)
-        } catch (error: any) {
-            setErrors({ general: error?.data?.message || 'Failed to update password. Please try again.' })
-        } finally {
-            setIsLoading(false)
-        }
-    }
+    //         setSuccessMessage('Password updated successfully!')
+    //         setPasswordForm({
+    //             currentPassword: '',
+    //             newPassword: '',
+    //             confirmPassword: ''
+    //         })
+    //         setTimeout(() => setSuccessMessage(''), 3000)
+    //     } catch (error: any) {
+    //         setErrors({ general: error?.data?.message || 'Failed to update password. Please try again.' })
+    //     } finally {
+    //         setIsLoading(false)
+    //     }
+    // }
 
     const cancelEdit = (field: string) => {
         setEditMode(prev => ({ ...prev, [field]: false }))
@@ -426,7 +426,10 @@ export default function Account() {
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-foreground">Update Password</h2>
                             
-                            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                            <form 
+                            // onSubmit={handlePasswordSubmit} 
+                            
+                            className="space-y-4">
                                 <div>
                                     <label htmlFor="currentPassword" className="block text-sm font-medium text-card-foreground mb-2">
                                         Current Password
