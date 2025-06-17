@@ -304,10 +304,10 @@ function Header() {
                                             setIsMobileMenuOpen(false);
                                             handleLogout();
                                         }}
-                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transform hover:scale-105"
+                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 transform hover:scale-105"
                                     >
                                         <LogOut className="h-4 w-4" />
-                                        <span>Sign out</span>
+                                        <span>Log out</span>
                                     </button>
                                 </div>
                             ) : (

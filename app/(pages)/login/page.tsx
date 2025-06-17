@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
@@ -11,16 +11,29 @@ import { useAuth } from '@/lib/hooks/useAuth'
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false)
     const [mounted, setMounted] = useState(false)
+    const [rememberMe, setRememberMe] = useState(false);
     const [formData, setFormData] = useState({
         emailOrUsername: '',
         password: '',
-        rememberMe: false
     })
     const [errors, setErrors] = useState<{[key: string]: string}>({})
 
     const { theme } = useTheme()
     const router = useRouter()
-    const { login, isLoading, isAuthenticated, logout } = useAuth()
+    const { login, isLoading, isAuthenticated} = useAuth()
+
+
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('emailOrUsername');
+        const savedPassword = localStorage.getItem('password');
+        if (savedEmail && savedPassword) {
+            setFormData({
+                emailOrUsername: savedEmail || '',
+                password: savedPassword || '',  
+            })
+            setRememberMe(true);
+        }
+    }, [])
 
     // Prevent hydration mismatch
     useEffect(() => {
@@ -91,14 +104,20 @@ export default function Login() {
             
             if (result.success) {
                 // Set token storage based on remember me preference
-                if (formData.rememberMe) {
+                if (rememberMe) {
+                    localStorage.setItem('emailOrUsername', formData.emailOrUsername);
+                    localStorage.setItem('password', formData.password);
+                } else {
+                    localStorage.removeItem('emailOrUsername');
+                    localStorage.removeItem('password');
+                }
+
                     // The auth system already handles localStorage, but we ensure it's persistent
                     const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token')
                     if (token) {
                         localStorage.setItem('auth_token', token)
                         sessionStorage.removeItem('auth_token')
                     }
-                }
                 
                 router.push('/nuggets')
             } else {
@@ -227,8 +246,8 @@ export default function Login() {
                                     id="rememberMe"
                                     name="rememberMe"
                                     type="checkbox"
-                                    checked={formData.rememberMe}
-                                    onChange={handleInputChange}
+                                    checked={rememberMe}
+                                    onChange={() => setRememberMe(!rememberMe)}
                                     className="h-3 w-3 text-primary focus:ring-ring border-input rounded "
                                 />
                                 <label htmlFor="rememberMe" className="ml-1 block text-sm text-muted-foreground hover:cursor-pointer">
