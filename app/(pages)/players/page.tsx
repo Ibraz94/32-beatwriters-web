@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Search, Users, MapPin, GraduationCap } from "lucide-react"
@@ -56,7 +56,7 @@ function PlayerCard({ player, currentPage }: { player: Player; currentPage: numb
     )
 }
 
-export default function Players() {
+function PlayersContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
     
@@ -350,5 +350,34 @@ export default function Players() {
             </Link>
             </div>
         </section>
+    )
+}
+
+export default function Players() {
+    return (
+        <Suspense fallback={
+            <section className="container mx-auto max-w-7xl px-4 py-8">
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                        All <span className="text-red-800">Players</span>
+                    </h1>
+                    <p className="text-xl max-w-4xl mx-auto mb-6">
+                        Loading players...
+                    </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {Array.from({ length: 12 }).map((_, index) => (
+                        <div key={index} className="animate-pulse">
+                            <div className="bg-gray-300 rounded-lg h-48 mb-4"></div>
+                            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                            <div className="h-3 bg-gray-300 rounded mb-2"></div>
+                            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        }>
+            <PlayersContent />
+        </Suspense>
     )
 }
