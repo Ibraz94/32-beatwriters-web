@@ -100,7 +100,7 @@ export default function Login() {
                     }
                 }
                 
-                router.push('/')
+                router.push('/nuggets')
             } else {
                 setErrors({ 
                     general: result.error || 'Login failed. Please check your credentials and try again.' 

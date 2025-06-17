@@ -10,7 +10,7 @@ const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://api.32
  */
 export interface Nuggets {
   data: {
-  id: string
+  id: number
   title: string
   content: string
   fantasyInsight: string
@@ -30,7 +30,6 @@ export interface Nuggets {
   }
 }
 }
-
 
 
 interface PaginatedNuggets {

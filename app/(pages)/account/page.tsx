@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { User, Mail, Lock, CreditCard, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, Check, X } from 'lucide-react'
+import { User, Mail, Lock, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, Check, X } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { useAuth } from '../../../lib/hooks/useAuth'
@@ -263,7 +263,7 @@ export default function Account() {
 
                 {/* Navigation Tabs */}
                 <div className="mb-8">
-                    <div className="border-b border-border">
+                    <div className="border-b border-border flex flex-col sm:flex-row justify-between items-center gap-2">
                         <nav className="-mb-px flex space-x-8">
                             {[
                                 { id: 'profile', label: 'Profile', icon: User },
@@ -284,7 +284,11 @@ export default function Account() {
                                     </div>
                                 </button>
                             ))}
+                        
                         </nav>
+                        <div className='w-full sm:w-auto'>
+                                <DiscordButton />
+                            </div>
                     </div>
                 </div>
 
@@ -301,7 +305,7 @@ export default function Account() {
                                     <label className="block text-sm font-medium text-card-foreground mb-2">
                                         Full Name
                                     </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background">
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <User className="h-5 w-5 text-muted-foreground" />
                                         {editMode.name ? (
                                             <div className="flex-1 flex items-center space-x-2">
@@ -310,7 +314,7 @@ export default function Account() {
                                                     name="name"
                                                     value={profileForm.name}
                                                     onChange={handleProfileChange}
-                                                    className="flex-1 bg-transparent border-none outline-none text-foreground"
+                                                    className="flex-1 border-none outline-none text-foreground"
                                                     autoFocus
                                                 />
                                                 <button
@@ -349,7 +353,7 @@ export default function Account() {
                                     <label className="block text-sm font-medium text-card-foreground mb-2">
                                         Email Address
                                     </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background">
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <Mail className="h-5 w-5 text-muted-foreground" />
                                         {editMode.email ? (
                                             <div className="flex-1 flex items-center space-x-2">
@@ -397,7 +401,7 @@ export default function Account() {
                                     <label className="block text-sm font-medium text-card-foreground mb-2">
                                         Member Since
                                     </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background">
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <Calendar className="h-5 w-5 text-muted-foreground" />
                                         <span className="text-foreground">
                                             {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
@@ -410,7 +414,7 @@ export default function Account() {
                                     <label className="block text-sm font-medium text-card-foreground mb-2">
                                         Account Status
                                     </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background">
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <Crown className="h-5 w-5 text-yellow-500" />
                                         <span className="text-foreground">
                                             {user.role === 'Administrator' ? 'Admin' : user.role === 'Subscriber' ? 'Premium Member' : 'Free Member'}
@@ -446,7 +450,7 @@ export default function Account() {
                                             onChange={handlePasswordChange}
                                             className={`w-full pl-10 pr-10 py-3 border ${
                                                 errors.currentPassword ? 'border-destructive' : 'border-input'
-                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background`}
+                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
                                             placeholder="Enter current password"
                                         />
                                         <button
@@ -482,7 +486,7 @@ export default function Account() {
                                             onChange={handlePasswordChange}
                                             className={`w-full pl-10 pr-10 py-3 border ${
                                                 errors.newPassword ? 'border-destructive' : 'border-input'
-                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background`}
+                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
                                             placeholder="Enter new password"
                                         />
                                         <button
@@ -518,7 +522,7 @@ export default function Account() {
                                             onChange={handlePasswordChange}
                                             className={`w-full pl-10 pr-10 py-3 border ${
                                                 errors.confirmPassword ? 'border-destructive' : 'border-input'
-                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background`}
+                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
                                             placeholder="Confirm new password"
                                         />
                                         <button

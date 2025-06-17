@@ -3,13 +3,11 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
 import Masonry from 'react-masonry-css'
 import { ReadMore } from '@/app/components/ReadMore'
 import {
     useGetNuggetsQuery,
-    useSearchNuggetsQuery,
-    useMarkHelpfulMutation,
     getImageUrl
 } from '@/lib/services/nuggetsApi'
 import {
@@ -135,7 +133,7 @@ export default function NuggetsPage() {
 
     const fantasyInsight = (fantasyInsight: string) => {
         if (fantasyInsight) {
-            return <p dangerouslySetInnerHTML={{ __html: fantasyInsight }}></p>
+            return <div dangerouslySetInnerHTML={{ __html: fantasyInsight }}></div>
         } else if (fantasyInsight === '') {
         } else {
             return null
@@ -247,28 +245,16 @@ export default function NuggetsPage() {
                 {/* Search and Filters */}
                 <div className="mb-8 space-y-4 px-4 sm:px-0">
                     {/* Search Bar */}
-                    <div className="relative flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+                    <div className="relative flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto">
+               
                         <Search className="absolute left-3 top-3 transform translate-y-1/4 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
                             placeholder="Search nuggets..."
                             value={searchTerm}
                             onChange={(e) => handleSearch(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 border-3 border-gray-400 rounded-lg shadow-md"
+                            className="w-full pl-10 pr-4 py-3 border-2 border-gray-400 rounded-lg shadow-md"
                         />
-                        <Select
-                            onValueChange={handleSortChange}
-                        >
-                            <SelectTrigger className="w-full lg:w-1/3 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg" value={`${filters.sortBy}-${filters.sortOrder}`}>
-                                <SelectValue placeholder="Sort by Date" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="createdAt-desc">Newest First</SelectItem>
-                                <SelectItem value="createdAt-asc">Oldest First</SelectItem>
-                                <SelectItem value="playerName-asc">Player Name (A-Z)</SelectItem>
-                                <SelectItem value="playerName-desc">Player Name (Z-A)</SelectItem>
-                            </SelectContent>
-                        </Select>
 
                         <Select
                             onValueChange={handleSortChange}
@@ -360,36 +346,47 @@ export default function NuggetsPage() {
                                                 `${nugget.player.name} headshot`
                                             )}
                                         >
-                                            <Image
-                                                src={getImageUrl(nugget.player.headshotPic) || ''}
-                                                alt={nugget.title}
-                                                width={80}
-                                                height={80}
-                                                className='rounded-full object-cover bg-background'
-                                            />
+                                                                        <Image
+                                src={getImageUrl(nugget.player.headshotPic) || ''}
+                                alt={`${nugget.player.name} headshot`}
+                                width={80}
+                                height={80}
+                                className='rounded-full object-cover bg-background'
+                            />
                                         </div>
                                         <div className='flex items-center justify-between w-full p-2'>
                                             <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
 
                                         </div>
                                     </div>
-                                    <p className="px-6 py-4">
+                                    <div className="px-6 py-4">
                                         <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
-                                    </p>
-                                    <p className='px-6 py-4'>
+                                    </div>
+                                    <div className='px-6 py-4'>
                                         {nugget.fantasyInsight && (
                                         <>
                                             <h1 className='text-lg font-semibold mt-4'>Fantasy Insight:</h1>
                                             {fantasyInsight(nugget.fantasyInsight)}
                                         </>
                                     )}
-                                    </p>
+                                    </div>
 
                                     <div className='flex justify-between px-6 py-1 -mb-10'>
                                         <div className='flex flex-col mt-1 text-sm'>
                                             <h1 className=''>Source:</h1>
                                             <h1 className='text-left'>{nugget.sourceName}</h1>
-                                            <h1 className='text-left text-gray-400'>{nugget.sourceUrl}</h1>
+                                            {nugget.sourceUrl ? (
+                                                <Link 
+                                                href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
+                                                    ? nugget.sourceUrl 
+                                                    : `https://${nugget.sourceUrl}`} 
+                                                target='_blank'
+                                                rel='noopener noreferrer' 
+                                                className='text-left text-gray-400 hover:text-blue-800'>{nugget.sourceUrl}
+                                                </Link>
+                                            ) : (
+                                                <span className='text-left text-gray-400'></span>
+                                            )}
                                         </div>
                                         <h1 className='text-right text-gray-400 mt-6 text-sm'>{new Date(nugget.createdAt).toLocaleDateString('en-US', {
                                             year: 'numeric',

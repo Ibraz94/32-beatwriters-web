@@ -11,8 +11,14 @@ function Header() {
     const { theme } = useTheme();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const { user, isAuthenticated, logout } = useAuth();
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Prevent hydration mismatch by only applying theme after mounting
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -92,7 +98,7 @@ function Header() {
                         <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
                             <div className="relative">
                                 <Image 
-                                    src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} 
+                                    src={mounted && theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} 
                                     alt="32 Beat Writers" 
                                     width={40} 
                                     height={40}
