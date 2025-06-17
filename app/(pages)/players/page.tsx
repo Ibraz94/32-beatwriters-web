@@ -5,14 +5,15 @@ import Link from "next/link"
 import Image from "next/image"
 import { Search, Users, MapPin, GraduationCap } from "lucide-react"
 import { useGetPlayersQuery, getImageUrl, Player } from '@/lib/services/playersApi'
+import { useSearchParams, useRouter } from "next/navigation"
 
 // PlayerCard component to handle individual player rendering with hooks
-function PlayerCard({ player }: { player: Player }) {
+function PlayerCard({ player, currentPage }: { player: Player; currentPage: number }) {
     const imageUrl = getImageUrl(player.headshotPic)
     
     return (
         <Link 
-            href={`/players/${player.id}`} 
+            href={`/players/${player.id}?page=${currentPage}`} 
             className="rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden"
         >
             {/* Player Image */}
@@ -56,11 +57,71 @@ function PlayerCard({ player }: { player: Player }) {
 }
 
 export default function Players() {
+    const searchParams = useSearchParams()
+    const router = useRouter()
+    
+    // Initialize state from URL parameters
     const [searchTerm, setSearchTerm] = useState("")
     const [selectedPosition, setSelectedPosition] = useState("all")
     const [selectedConference, setSelectedConference] = useState("all")
-    const [page, setPage] = useState(1)
-    
+    const [page, setPage] = useState(() => {
+        const pageFromUrl = searchParams?.get('page')
+        return pageFromUrl ? parseInt(pageFromUrl, 10) : 1
+    })
+
+    const updateURL = (newPage?: number, newSearch?: string, newPosition?: string, newConference?: string) => {
+        const params = new URLSearchParams()
+        
+        const currentPage = newPage ?? page
+        const currentSearch = newSearch ?? searchTerm
+        const currentPosition = newPosition ?? selectedPosition
+        const currentConference = newConference ?? selectedConference
+        
+        if (currentPage > 1) params.set('page', currentPage.toString())
+        if (currentSearch) params.set('search', currentSearch)
+        if (currentPosition !== "all") params.set('position', currentPosition)
+        if (currentConference !== "all") params.set('conference', currentConference)
+        
+        const newURL = params.toString() ? `?${params.toString()}` : '/players'
+        router.replace(newURL, { scroll: false })
+    }
+
+    // Initialize from URL parameters on mount
+    useEffect(() => {
+        const urlPage = searchParams?.get('page')
+        const urlSearch = searchParams?.get('search')
+        const urlPosition = searchParams?.get('position')
+        const urlConference = searchParams?.get('conference')
+        
+        if (urlPage) setPage(parseInt(urlPage, 10))
+        if (urlSearch) setSearchTerm(urlSearch)
+        if (urlPosition) setSelectedPosition(urlPosition)
+        if (urlConference) setSelectedConference(urlConference)
+    }, [searchParams])
+
+    // Handle search term changes with debouncing
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchTerm !== (searchParams?.get('search') || '')) {
+                setPage(1) // Reset to first page when searching
+                updateURL(1, searchTerm, selectedPosition, selectedConference)
+            }
+        }, 500) // 500ms debounce
+
+        return () => clearTimeout(timeoutId)
+    }, [searchTerm])
+
+    // Handle filter changes (position and conference)
+    useEffect(() => {
+        const currentPosition = searchParams?.get('position') || 'all'
+        const currentConference = searchParams?.get('conference') || 'all'
+        
+        if (selectedPosition !== currentPosition || selectedConference !== currentConference) {
+            setPage(1) // Reset to first page when filters change
+            updateURL(1, searchTerm, selectedPosition, selectedConference)
+        }
+    }, [selectedPosition, selectedConference])
+
     // Fetch players and positions from API
     const { 
         data: playersResponse, 
@@ -77,14 +138,24 @@ export default function Players() {
 
     console.log('Full API Response:', playersResponse)
 
-    // Handle search with debounce
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {    
-            setPage(1) // Reset to first page when searching
-        }, 500)
 
-        return () => clearTimeout(timeoutId)
-    }, [searchTerm])
+
+    // Handle page changes
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage)
+        updateURL(newPage, searchTerm, selectedPosition, selectedConference)
+        // Scroll to top when page changes
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    const clearAllFilters = () => {
+        setSearchTerm("")
+        setSelectedPosition("all")
+        setSelectedConference("all")
+        const newPage = 1
+        setPage(newPage)
+        updateURL(newPage, "", "all", "all")
+    }
 
     // Loading state
     if (playersLoading) {
@@ -183,12 +254,7 @@ export default function Players() {
                             </span>
                         )}
                         <button
-                            onClick={() => {
-                                setSearchTerm("")
-                                setSelectedPosition("all")
-                                setSelectedConference("all")
-                                setPage(1)
-                            }}
+                            onClick={clearAllFilters}
                             className="text-red-800 underline text-sm ml-2"
                         >
                             Clear all
@@ -201,13 +267,14 @@ export default function Players() {
             <div className="mb-6">
                 <p className="text-gray-600">
                     Showing <span className="font-semibold">{players.length}</span> of <span className="font-semibold">{totalPlayers}</span> players
+                    {page > 1 && <span> (Page {page} of {totalPages})</span>}
                 </p>
             </div>
 
             {/* Players Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {players.map((player) => (
-                    <PlayerCard key={player.id} player={player} />
+                    <PlayerCard key={player.id} player={player} currentPage={page} />
                 ))}
             </div>
 
@@ -220,12 +287,7 @@ export default function Players() {
                         Try adjusting your search criteria or filters
                     </p>
                     <button
-                        onClick={() => {
-                            setSearchTerm("")
-                            setSelectedPosition("all")
-                            setSelectedConference("all")
-                            setPage(1)
-                        }}
+                        onClick={clearAllFilters}
                         className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
                     >
                         Clear Filters
@@ -238,7 +300,7 @@ export default function Players() {
                 <div className="mt-8 flex justify-center">
                     <div className="flex gap-2">
                         <button
-                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                            onClick={() => handlePageChange(Math.max(1, page - 1))}
                             disabled={page === 1}
                             className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
                         >
@@ -250,7 +312,7 @@ export default function Players() {
                             return (
                                 <button
                                     key={pageNum}
-                                    onClick={() => setPage(pageNum)}
+                                    onClick={() => handlePageChange(pageNum)}
                                     className={`px-4 py-2 rounded-lg border transition-colors ${
                                         pageNum === page
                                             ? 'bg-red-800 text-white border-red-800'
@@ -263,7 +325,7 @@ export default function Players() {
                         })}
                         
                         <button
-                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
                             disabled={page === totalPages}
                             className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
                         >

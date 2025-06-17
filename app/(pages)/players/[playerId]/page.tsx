@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams } from 'next/navigation'
+import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, MapPin, Users, Hash, GraduationCap, Trophy, Activity, Star, Calendar, Weight, Ruler } from 'lucide-react'
@@ -9,7 +9,12 @@ import { useAuth } from '@/lib/hooks/useAuth'
 
 export default function PlayerProfile() {
   const params = useParams()
+  const searchParams = useSearchParams()  
   const playerId = params.playerId as string
+  
+  // Get the page number user came from (for back navigation)
+  const fromPage = searchParams?.get('page')
+  const backToPlayersUrl = fromPage ? `/players?page=${fromPage}` : '/players'
 
   // Add authentication check
   const { isAuthenticated, isLoading: authLoading } = useAuth()
@@ -30,7 +35,7 @@ export default function PlayerProfile() {
   // Fetch all players for teammates
   const { data: playersResponse, isLoading: playersLoading } = useGetPlayersQuery({
     page: 1,
-    limit: 50
+    limit: 12
   })
   const allPlayers = playersResponse?.data?.players || []
 
@@ -98,7 +103,7 @@ export default function PlayerProfile() {
                 Sign In
               </Link>
               <Link
-                href="/players"
+                href={backToPlayersUrl}
                 className="text-red-800 border border-red-800 px-6 py-3 rounded-lg font-semibold hover:bg-red-800 hover:text-white transition-colors"
               >
                 Back to Players
@@ -115,7 +120,7 @@ export default function PlayerProfile() {
           <h1 className="text-3xl font-bold mb-4">Player Not Found</h1>
           <p className="text-gray-600 mb-8">The player you're looking for doesn't exist or has been moved.</p>
           <Link
-            href="/players"
+            href={backToPlayersUrl}
             className="text-red-800 px-6 py-3 rounded-lg font-semibold hover:bg-white transition-colors"
           >
             Back to Players
@@ -133,11 +138,13 @@ export default function PlayerProfile() {
       {/* Back Navigation */}
       <div className="container mx-auto px-4 pt-6">
         <Link 
-          href="/players"
+          href={backToPlayersUrl}
           className="inline-flex items-center hover:text-red-800 transition-colors mb-6"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
-          <span className="text-lg font-medium">Back to Players</span>
+          <span className="text-lg font-medium">
+            Back to Players
+          </span>
         </Link>
       </div>
 
@@ -148,7 +155,7 @@ export default function PlayerProfile() {
           <div className="flex flex-col lg:flex-row items-center gap-12">
             {/* Player Image */}
             <div className="relative">
-              <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl">
+              <div className="w-80 h-80 lg:w-80 lg:h-80 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl">
                 <Image
                   src={playerImage}
                   alt={player.name}
@@ -162,16 +169,16 @@ export default function PlayerProfile() {
             {/* Player Info */}
             <div className="flex-1 text-center lg:text-left">
               <div className="mb-4">
-                <h1 className="text-6xl lg:text-8xl font-black mb-4 leading-none">
+                <h1 className="text-4xl lg:text-5xl font-black mb-4 leading-none">
                   {player.name}
                 </h1>
                 <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-8">
-                  <span className="text-3xl lg:text-4xl font-bold text-red-200">
+                  <span className="text-xl lg:text-2xl font-bold text-red-200">
                     {player.team || 'N/A'}
                   </span>
-                  <div className="hidden lg:block w-1 h-8 bg-white/30"></div>
-                  <span className="text-2xl lg:text-3xl font-semibold text-white/90">
-                    #{player.position}
+                  <div className="hidden lg:block w-1 h-7 bg-white/30"></div>
+                  <span className="text-xl lg:text-2xl font-semibold text-white/90">
+                    {player.position}
                   </span>
                 </div>
               </div>
@@ -188,8 +195,7 @@ export default function PlayerProfile() {
               <Calendar className="w-6 h-6 text-red-600 mr-3" />
               <span className="text-sm font-medium text-white">AGE</span>
             </div>
-            <div className="text-4xl text-white">{player.age}</div>
-            <div className="text-sm mt-1 text-white">Years Old</div>
+            <div className="text-3xl text-white">{player.age}</div>
           </div>
 
           <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
@@ -197,8 +203,7 @@ export default function PlayerProfile() {
               <Ruler className="w-6 h-6 text-red-600 mr-3" />
               <span className="text-sm font-medium text-white">HEIGHT</span>
             </div>
-            <div className="text-4xl text-white">{player.height}</div>
-            <div className="text-sm mt-1 text-white">Tall</div>
+            <div className="text-3xl text-white">{player.height}</div>
           </div>
 
           <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
@@ -206,8 +211,7 @@ export default function PlayerProfile() {
               <Weight className="w-6 h-6 text-red-600 mr-3" />
               <span className="text-sm font-medium text-white">WEIGHT</span>
             </div>
-            <div className="text-4xl text-white">{player.weight}</div>
-            <div className="text-sm mt-1 text-white">Pounds</div>
+            <div className="text-3xl text-white">{player.weight}</div>
           </div>
 
           <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
@@ -215,8 +219,7 @@ export default function PlayerProfile() {
               <Users className="w-6 h-6 text-red-600 mr-3" />
               <span className="text-sm font-medium text-white">POSITION</span>
             </div>
-            <div className="text-2xl text-white">{player.position}</div>
-            <div className="text-sm mt-1 text-white">Role</div>
+            <div className="text-3xl text-white">{player.position}</div>
           </div>
         </div>
       </div>
@@ -227,7 +230,7 @@ export default function PlayerProfile() {
           {/* Player Details */}
           <div className="lg:col-span-2">
             <div className="rounded-3xl p-8 shadow-xl border">
-              <h2 className="text-4xl lg:text-5xl font-black mb-8">
+              <h2 className="text-3xl lg:text-3xl font-black mb-8">
                 Player Details
               </h2>
 
@@ -235,42 +238,31 @@ export default function PlayerProfile() {
                 {/* College */}
                 <div className="border-l-4 border-red-600 pl-6">
                   <div className="flex items-center mb-2">
-                    <GraduationCap className="w-7 h-7 text-red-600 mr-3" />
+                    <GraduationCap className="w-6 h-6 text-red-600 mr-3" />
                     <span className="text-lg font-bold">COLLEGE</span>
                   </div>
-                  <div className="text-3xl">{player.college}</div>
+                  <div className="text-xl">{player.college}</div>
                 </div>
 
                 {/* Draft Pick */}
                 {player.draftPick && (
                   <div className="border-l-4 border-red-600 pl-6">
                     <div className="flex items-center mb-2">
-                      <Hash className="w-7 h-7 text-red-600 mr-3" />
+                      <Hash className="w-6 h-6 text-red-600 mr-3" />
                       <span className="text-lg font-bold ">DRAFT PICK</span>
                     </div>
-                    <div className="text-3xl">{player.draftPick}</div>
+                    <div className="text-xl">{player.draftPick}</div>
                   </div>
                 )}
 
                 {/* Team */}
                 <div className="border-l-4 border-red-600 pl-6">
                   <div className="flex items-center mb-2">
-                    <MapPin className="w-7 h-7 text-red-600 mr-3" />
+                    <MapPin className="w-6 h-6 text-red-600 mr-3" />
                     <span className="text-lg font-bold">CURRENT TEAM</span>
                   </div>
-                  <div className="text-3xl">{teamName || 'N/A'}</div>
+                  <div className="text-xl">{teamName || 'N/A'}</div>
                 </div>
-
-                {/* Performance Index */}
-                {player.ppi && (
-                  <div className="border-l-4 border-red-600 pl-6">
-                    <div className="flex items-center mb-2">
-                      <Trophy className="w-7 h-7 text-red-600 mr-3" />
-                      <span className="text-lg font-bold">PERFORMANCE INDEX</span>
-                    </div>
-                    <div className="text-3xl">{player.ppi}</div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -302,14 +294,13 @@ export default function PlayerProfile() {
                       <div className="flex-1">
                         <div className="font-bold">{teammate.name}</div>
                         <div className="text-sm">{teammate.position}</div>
-                        <div className="text-xs">Age {teammate.age}</div>
                       </div>
                     </Link>
                   ))}
                 </div>
 
                 <Link
-                  href="/players"
+                  href={backToPlayersUrl}
                   className="block text-center text-red-800 hover:text-red-900 font-bold text-lg mt-6 transition-colors"
                 >
                   View All Players →
@@ -338,7 +329,7 @@ export default function PlayerProfile() {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-center gap-2 mt-10">
+      <div className="flex items-center justify-center gap-2 mt-10 mb-4">
             <h1 className="text-sm">Data Powered By PlayerProfiler </h1>
             <Link
             href='https://playerprofiler.com/'
