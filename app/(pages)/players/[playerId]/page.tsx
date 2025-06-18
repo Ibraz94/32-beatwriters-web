@@ -3,15 +3,21 @@
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, MapPin, Users, Hash, GraduationCap, Trophy, Activity, Star, Calendar, Weight, Ruler } from 'lucide-react'
-import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery } from '@/lib/services/playersApi'
+import { useState } from 'react'
+import { Trophy, Activity, Timer, Target, ArrowLeft } from 'lucide-react'
+import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery } from '@/lib/services/playersApi'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { ChartConfig, ChartContainer } from "@/components/ui/chart"
+import { Bar, BarChart, LabelList, XAxis, YAxis, Cell } from "recharts"
 
 export default function PlayerProfile() {
   const params = useParams()
-  const searchParams = useSearchParams()  
+  const searchParams = useSearchParams()
   const playerId = params.playerId as string
-  
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState('workout')
+
   // Get the page number user came from (for back navigation)
   const fromPage = searchParams?.get('page')
   const backToPlayersUrl = fromPage ? `/players?page=${fromPage}` : '/players'
@@ -20,20 +26,28 @@ export default function PlayerProfile() {
   const { isAuthenticated, isLoading: authLoading } = useAuth()
   const { user, isLoading: premiumLoading } = useAuth()
 
-  // Fetch individual player
-  const { data: player, isLoading: playerLoading, error: playerError } = useGetPlayerQuery(playerId)
+  // First, fetch the player from internal API to get the playerId
+  const { data: internalPlayer, isLoading: internalPlayerLoading, error: internalPlayerError } = useGetPlayerQuery(playerId)
+
+  // Then use the playerId from internal API to fetch detailed data from Player Profiler API
+  const { data: playerResponse, isLoading: playerLoading, error: playerError } = useGetPlayerProfilerQuery(internalPlayer?.playerId || '')
+
+  // Extract player data from the nested response
+  const player = playerResponse?.data?.Player
+  const basicPlayer = internalPlayer // Data from internal API
 
   // Debug: Log the actual response structure (remove in production)
   if (process.env.NODE_ENV === 'development') {
-    console.log('Player API Response:', player)
+    console.log('Internal Player API Response:', internalPlayer)
+    console.log('Player Data:', player)
     console.log('Player Error:', playerError)
   }
 
-  const teamName = player?.team
+  const teamName = player?.Core?.Team?.Name || basicPlayer?.team
   const teamLoading = false
 
   // Fetch all players for teammates
-  const { data: playersResponse, isLoading: playersLoading } = useGetPlayersQuery({
+  const { data: playersResponse } = useGetPlayersQuery({
     page: 1,
     limit: 12
   })
@@ -41,10 +55,24 @@ export default function PlayerProfile() {
 
   // Get teammates (same team, different player)
   const teammates = allPlayers
-    .filter(p => p.team === player?.team && p.id !== player?.id)
+    .filter(p => p.team === (player?.Core?.Team?.Name || basicPlayer?.team) && p.id !== basicPlayer?.id)
     .slice(0, 6)
 
-  const loading = playerLoading || teamLoading || authLoading || premiumLoading
+  const loading = playerLoading || teamLoading || authLoading || premiumLoading || internalPlayerLoading
+
+  const chartConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "#2563eb",
+    },
+  } satisfies ChartConfig
+
+  // Tab components
+  const tabs = [
+    { id: 'workout', label: 'Workout Metrics', icon: Timer },
+    { id: 'performance', label: 'Performance Metrics', icon: Trophy },
+    { id: 'news', label: 'News & Updates', icon: Activity }
+  ]
 
   // Show authentication required message if not authenticated
   if (!authLoading && !isAuthenticated && !user?.memberships) {
@@ -85,9 +113,10 @@ export default function PlayerProfile() {
     )
   }
 
-  if (playerError || !player) {
+  if ((playerError && internalPlayerError) || (!player && !basicPlayer)) {
     // Check if the error is specifically an authentication error
-    const isAuthError = playerError && 'status' in playerError && (playerError.status === 401 || playerError.status === 403)
+    const isAuthError = (playerError && 'status' in playerError && (playerError.status === 401 || playerError.status === 403)) ||
+      (internalPlayerError && 'status' in internalPlayerError && (internalPlayerError.status === 401 || internalPlayerError.status === 403))
 
     if (isAuthError) {
       return (
@@ -130,14 +159,267 @@ export default function PlayerProfile() {
     )
   }
 
-  // Get player image URL
-  const playerImage = getImageUrl(player.headshotPic) || '/default-player.jpg'
+  // Get player image URL - prefer Player Profiler API image, fallback to internal API
+  const playerImage = player?.Core?.Avatar || player?.Core?.['Alt Image'] || getImageUrl(basicPlayer?.headshotPic) || '/default-player.jpg'
+
+  // Get player name - prefer Player Profiler API, fallback to internal API
+  const playerName = player?.Core?.['Full Name'] || basicPlayer?.name || 'Unknown Player'
+
+  // Get player position - prefer Player Profiler API, fallback to internal API
+  const playerPosition = player?.Core?.Position || basicPlayer?.position || 'N/A'
+
+  // Get player age - prefer Player Profiler API, fallback to internal API
+  const playerAge = player?.Core?.Age || basicPlayer?.age || 'N/A'
+
+  // Render tab content
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'workout':
+        return (
+          <div className="space-y-8">
+            {/* Workout Metrics - Only show if Player Profiler data is available */}
+            {player?.['Workout Metrics'] ? (
+              <div className="p-8 border rounded-xl">
+                <h2 className="text-3xl font-black mb-8">Workout Metrics</h2>
+
+                <div className="text-white">
+                  {/* Primary Metrics Chart */}
+                  <div className="mb-8 flex items-center justify-center">
+                    <ChartContainer config={chartConfig} className="h-[450px]">
+                      <BarChart
+                        maxBarSize={90}
+                        
+                        data={[
+                          {
+                            name: "40-YARD DASH",
+                            value: parseFloat(player['Workout Metrics']['40-Yard Dash']) || 0,
+                            displayValue: player['Workout Metrics']['40-Yard Dash'] || 'N/A',
+                            rank: player['Workout Metrics']['40-Yard Dash Rank'] || 10,
+                            hasData: !!player['Workout Metrics']['40-Yard Dash'],
+                          },
+                          {
+                            name: "SPEED SCORE",
+                            value: parseFloat(player['Workout Metrics']['Speed Score']) || 0,
+                            displayValue: player['Workout Metrics']['Speed Score'] || 'N/A',
+                            rank: player['Workout Metrics']['Speed Score Rank'] || 10,
+                            hasData: !!player['Workout Metrics']['Speed Score'],
+                          },
+                          {
+                            name: "BURST SCORE",
+                            value: parseFloat(player['Workout Metrics']['Burst Score']) || 0,
+                            displayValue: player['Workout Metrics']['Burst Score'] || 'N/A',
+                            rank: player['Workout Metrics']['Burst Score Rank'] || 10,
+                            hasData: !!player['Workout Metrics']['Burst Score'],
+                          },
+                          {
+                            name: "AGILITY SCORE",
+                            value: parseFloat(player['Workout Metrics']['Agility Score']) || 0,
+                            displayValue: player['Workout Metrics']['Agility Score'] || 'N/A',
+                            rank: player['Workout Metrics']['Agility Score Rank'] || 10,
+                            hasData: !!player['Workout Metrics']['Agility Score'],
+                          },
+                          {
+                            name: "CATCH RADIUS",
+                            value: parseFloat(player['Workout Metrics']['Catch Radius']) || 0,
+                            displayValue: player['Workout Metrics']['Catch Radius'] || 'N/A',
+                            rank: player['Workout Metrics']['Catch Radius Rank'] || 10,
+                            hasData: !!player['Workout Metrics']['Catch Radius'],
+                          },
+                        ]}
+                      >
+                        <Bar dataKey="rank" radius={[4, 4, 0, 0]}>
+                          {[
+                            {
+                              name: "40-YARD DASH",
+                              hasData: !!player['Workout Metrics']['40-Yard Dash'],
+                            },
+                            {
+                              name: "SPEED SCORE",
+                              hasData: !!player['Workout Metrics']['Speed Score'],
+                            },
+                            {
+                              name: "BURST SCORE",
+                              hasData: !!player['Workout Metrics']['Burst Score'],
+                            },
+                            {
+                              name: "AGILITY SCORE",
+                              hasData: !!player['Workout Metrics']['Agility Score'],
+                            },
+                            {
+                              name: "CATCH RADIUS",
+                              hasData: !!player['Workout Metrics']['Catch Radius'],
+                            },
+                          ].map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={entry.hasData ? "#9F0712" : "#D1D5DB"} 
+                            />
+                          ))}
+                          <LabelList
+                            dataKey="displayValue"
+                            position="top"
+                            offset={10}
+                            style={{ fontSize: '20px', fontWeight: 'bold' }}
+                          />
+                          <LabelList
+                            dataKey="rank"
+                            position="insideTop"
+                            offset={10}
+                            style={{ fontSize: '16px', textAlign: 'left', fill: 'white' }}
+                          />
+                        </Bar>
+                        <XAxis
+                          dataKey="name"
+                          axisLine={false}
+                          tickLine={false}
+                          interval={0}
+                          textAnchor="middle"
+                          fontSize={16}
+                          fontWeight={600}
+
+                        />
+                      </BarChart>
+                    </ChartContainer>
+                  </div>
+
+                </div>
+                {player?.['College Performance'] && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+
+                  <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="flex items-center justify-between text-lg">
+                        <h1>{player['College Performance']['College Dominator Rating']}</h1>
+                        <h2 className="mr-2">{player['College Performance']['College Dominator Rating Rank']}</h2>
+                    </div>
+                    <div className="flex items-end">
+                      <span className="text-lg font-semibold">College Dominator</span>
+                    </div>
+                  </div>
+
+                  <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="flex items-center justify-between text-lg">
+                        <h1>{player['College Performance']['College Target Share']}%</h1>
+                        <h2 className="mr-2">{player['College Performance']['College Target Share Rank']}</h2>
+                    </div>
+                    <div className="flex items-end">
+                      <span className="text-lg font-semibold">College Target Share</span>
+                    </div>
+                  </div>
+
+
+
+                  <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="flex items-center justify-between text-lg">
+                        <h1>{player['College Performance']['Breakout Age']}</h1>
+                        <h2 className="mr-2">{player['College Performance']['Breakout Age Rank']}</h2>
+                    </div>
+                    <div className="flex items-end">
+                      <span className="text-lg font-semibold">Breakout Age</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              </div>
+
+              
+
+            ) : (
+              <div className="rounded-xl p-8 shadow-xl border text-center">
+                <Timer className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-600 mb-2">Workout Metrics Unavailable</h3>
+                <p className="text-gray-500">Detailed workout metrics are not available for this player.</p>
+              </div>
+            )}
+          </div>
+        )
+
+      case 'performance':
+        return (
+          <div className="space-y-8">
+            {/* Performance Metrics - Only show if Player Profiler data is available */}
+            {player?.['College Performance'] ? (
+              <div className="rounded-xl p-8  border">
+                <h2 className="text-2xl font-black mb-8">Performance Metrics</h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border-2 bg-card rounded-xl p-4">
+                    <div className="flex items-center mb-2">
+                        <h1>Opportunity</h1>
+                    </div>
+                    <div className="text-2xl font-bold">{player['College Performance']['Breakout Age']}</div>
+                    <div className="text-sm">Rank: {player['College Performance']['Breakout Age Rank']}</div>
+                  </div>
+
+                  <div className="border-2 bg-card rounded-xl p-4">
+                    <div className="flex items-center mb-2">
+                      <Target className="w-5 h-5 text-red-600 mr-2" />
+                      <span className="font-semibold">Dominator Rating</span>
+                    </div>
+                    <div className="text-2xl font-bold">{player['College Performance']['College Dominator Rating']}</div>
+                    <div className="text-sm">Rank: {player['College Performance']['College Dominator Rating Rank'] || 'N/A'}</div>
+                  </div>
+
+                  {player['College Performance']['College YPC'] && (
+                    <div className="border-2 bg-card rounded-xl p-4">
+                      <div className="flex items-center mb-2">
+                        <Activity className="w-5 h-5 text-red-600 mr-2" />
+                        <span className="font-semibold">Yards Per Carry</span>
+                      </div>
+                      <div className="text-2xl font-bold">{player['College Performance']['College YPC']}</div>
+                      <div className="text-sm">Rank: {player['College Performance']['College YPC Rank'] || 'N/A'}</div>
+                    </div>
+                  )}
+
+                  <div className="border-2 bg-card rounded-xl p-4">
+                    <div className="flex items-center mb-2">
+                      <Trophy className="w-5 h-5 text-red-600 mr-2" />
+                      <span className="font-semibold">Breakout Rating</span>
+                    </div>
+                    <div className="text-2xl font-bold">{player['College Performance']['Breakout Rating']}</div>
+                    <div className="text-sm">Rank: {player['College Performance']['Breakout Rating Rank'] || 'N/A'}</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-xl p-8 shadow-xl border text-center">
+                <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-600 mb-2">Performance Metrics Unavailable</h3>
+                <p className="text-gray-500">Detailed performance metrics are not available for this player.</p>
+              </div>
+            )}
+          </div>
+        )
+
+      case 'news':
+        return (
+          <div className="space-y-8">
+            <div className="rounded-xl p-8 shadow-xl border text-center">
+              <Activity className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-600 mb-2">News & Updates</h3>
+              <p className="text-gray-500 mb-6">Player news and updates feature coming soon. Stay tuned for the latest information about {playerName}.</p>
+              <div className="bg-gray-50 rounded-lg p-4 text-left">
+                <h4 className="font-semibold text-gray-700 mb-2">Coming Soon:</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>• Latest injury reports</li>
+                  <li>• Trade rumors and updates</li>
+                  <li>• Performance news</li>
+                  <li>• Contract information</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )
+
+      default:
+        return null
+    }
+  }
 
   return (
     <div className="min-h-screen">
       {/* Back Navigation */}
       <div className="container mx-auto px-4 pt-6">
-        <Link 
+        <Link
           href={backToPlayersUrl}
           className="inline-flex items-center hover:text-red-800 transition-colors mb-6"
         >
@@ -154,11 +436,11 @@ export default function PlayerProfile() {
         <div className="container mx-auto px-4 py-16 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             {/* Player Image */}
-            <div className="relative">
-              <div className="w-80 h-80 lg:w-80 lg:h-80 rounded-3xl overflow-hidden border-2 border-white/20 shadow-2xl">
+            <div className="relative pl-6 pb-4">
+              <div className="w-80 h-80 lg:w-80 lg:h-60 rounded border-2 border-white/90 overflow-hidden">
                 <Image
                   src={playerImage}
-                  alt={player.name}
+                  alt={playerName}
                   width={400}
                   height={400}
                   className="w-full h-full object-cover"
@@ -169,16 +451,12 @@ export default function PlayerProfile() {
             {/* Player Info */}
             <div className="flex-1 text-center lg:text-left">
               <div className="mb-4">
-                <h1 className="text-4xl lg:text-5xl font-black mb-4 leading-none">
-                  {player.name}
+                <h1 className="text-3xl lg:text-5xl font-black mb-4 leading-none">
+                  {playerName}
                 </h1>
                 <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-8">
-                  <span className="text-xl lg:text-2xl font-bold text-red-200">
-                    {player.team || 'N/A'}
-                  </span>
-                  <div className="hidden lg:block w-1 h-7 bg-white/30"></div>
-                  <span className="text-xl lg:text-2xl font-semibold text-white/90">
-                    {player.position}
+                  <span className="text-xl lg:text-2xl">
+                    {teamName || 'N/A'}
                   </span>
                 </div>
               </div>
@@ -189,90 +467,100 @@ export default function PlayerProfile() {
 
       {/* Stats Grid */}
       <div className="container mx-auto px-4 -mt-16 relative z-20 mb-12">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className="bg-card rounded p-6 shadow-xl border-2">
             <div className="flex items-center mb-3">
-              <Calendar className="w-6 h-6 text-red-600 mr-3" />
-              <span className="text-sm font-medium text-white">AGE</span>
+              <span className="text-sm font-medium">Height</span>
             </div>
-            <div className="text-3xl text-white">{player.age}</div>
+            <div className="text-2xl">{basicPlayer?.height}</div>
           </div>
 
-          <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
+          <div className="bg-card rounded p-6 shadow-xl border-2">
             <div className="flex items-center mb-3">
-              <Ruler className="w-6 h-6 text-red-600 mr-3" />
-              <span className="text-sm font-medium text-white">HEIGHT</span>
+
+              <span className="text-sm font-medium">Weight</span>
             </div>
-            <div className="text-3xl text-white">{player.height}</div>
+            <div className="text-2xl">{player?.Core?.Weight || basicPlayer?.weight || 'N/A'}</div>
           </div>
 
-          <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
+          <div className="bg-card rounded p-6 shadow-xl border-2">
             <div className="flex items-center mb-3">
-              <Weight className="w-6 h-6 text-red-600 mr-3" />
-              <span className="text-sm font-medium text-white">WEIGHT</span>
+
+              <span className="text-sm font-medium">Arm Length</span>
             </div>
-            <div className="text-3xl text-white">{player.weight}</div>
+            <div className="text-2xl">{player?.Core['Arm Length']} <span className="text-sm">({player?.Core['Arm Length Rank']})</span></div>
+
           </div>
 
-          <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl p-6 shadow-xl border">
+          <div className="bg-card rounded p-6 shadow-xl border-2">
             <div className="flex items-center mb-3">
-              <Users className="w-6 h-6 text-red-600 mr-3" />
-              <span className="text-sm font-medium text-white">POSITION</span>
+
+              <span className="text-sm font-medium">Draft Pick</span>
             </div>
-            <div className="text-3xl text-white">{player.position}</div>
+            <div className="text-2xl">{player?.Core?.['Draft Pick']} <span className="text-sm">({player?.Core?.['Draft Year']})</span>
+
+            </div>
+          </div>
+          <div className="bg-card rounded p-6 shadow-xl border-2">
+            <div className="flex items-center mb-3">
+
+              <span className="text-sm font-medium">College</span>
+            </div>
+            <div className="text-2xl">{basicPlayer?.college}</div>
+          </div>
+          <div className="bg-card rounded p-6 shadow-xl border-2">
+            <div className="flex items-center mb-3">
+
+              <span className="text-sm font-medium">Age</span>
+            </div>
+            <div className="text-2xl">{basicPlayer?.age}</div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 pb-16">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Player Details */}
-          <div className="lg:col-span-2">
-            <div className="rounded-3xl p-8 shadow-xl border">
-              <h2 className="text-3xl lg:text-3xl font-black mb-8">
-                Player Details
-              </h2>
+        <div className="grid lg:grid-cols-1 gap-8">
+          {/* Player Details and Tabs */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Tabs Section */}
+            <div className="rounded shadow-xl border overflow-hidden">
+              {/* Tab Navigation */}
+              <div className="border-b">
+                <nav className="flex space-x-0">
+                  {tabs.map((tab) => {
+                    const IconComponent = tab.icon
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition-all bg-card ${activeTab === tab.id
+                          ? 'bg-red-800 text-white border-b-2 border-red-600'
+                          : 'text-gray-600 hover:text-red-800'
+                          }`}
+                      >
+                        <IconComponent className="w-4 h-4" />
+                        <span className="hidden sm:inline">{tab.label}</span>
+                      </button>
+                    )
+                  })}
+                </nav>
+              </div>
 
-              <div className="space-y-8">
-                {/* College */}
-                <div className="border-l-4 border-red-600 pl-6">
-                  <div className="flex items-center mb-2">
-                    <GraduationCap className="w-6 h-6 text-red-600 mr-3" />
-                    <span className="text-lg font-bold">COLLEGE</span>
-                  </div>
-                  <div className="text-xl">{player.college}</div>
-                </div>
-
-                {/* Draft Pick */}
-                {player.draftPick && (
-                  <div className="border-l-4 border-red-600 pl-6">
-                    <div className="flex items-center mb-2">
-                      <Hash className="w-6 h-6 text-red-600 mr-3" />
-                      <span className="text-lg font-bold ">DRAFT PICK</span>
-                    </div>
-                    <div className="text-xl">{player.draftPick}</div>
-                  </div>
-                )}
-
-                {/* Team */}
-                <div className="border-l-4 border-red-600 pl-6">
-                  <div className="flex items-center mb-2">
-                    <MapPin className="w-6 h-6 text-red-600 mr-3" />
-                    <span className="text-lg font-bold">CURRENT TEAM</span>
-                  </div>
-                  <div className="text-xl">{teamName || 'N/A'}</div>
-                </div>
+              {/* Tab Content */}
+              <div className="p-8">
+                {renderTabContent()}
               </div>
             </div>
           </div>
+
 
           {/* Teammates Sidebar */}
           <div className="space-y-8">
             {teammates.length > 0 && (
               <div className="rounded-3xl p-6 shadow-xl border">
                 <h3 className="text-2xl font-black mb-6">Teammates</h3>
-                
+
                 <div className="space-y-4">
                   {teammates.slice(0, 4).map((teammate) => (
                     <Link
@@ -286,10 +574,6 @@ export default function PlayerProfile() {
                         width={50}
                         height={50}
                         className="rounded-xl"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement
-                          target.src = '/default-player.jpg'
-                        }}
                       />
                       <div className="flex-1">
                         <div className="font-bold">{teammate.name}</div>
@@ -307,44 +591,24 @@ export default function PlayerProfile() {
                 </Link>
               </div>
             )}
-
-            {/* Quick Stats Card */}
-            {/* <div className="bg-gradient-to-br from-red-600 to-red-800 rounded-3xl p-6 text-white shadow-xl">
-              <h3 className="text-2xl font-black mb-6">Quick Stats</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">Position</span>
-                  <span className="text-xl font-black">{player.position}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">Age</span>
-                  <span className="text-xl font-black">{player.age}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold">Team</span>
-                  <span className="text-lg font-black">{player.team || 'N/A'}</span>
-                </div>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
+
       <div className="flex items-center justify-center gap-2 mt-10 mb-4">
-            <h1 className="text-sm">Data Powered By PlayerProfiler </h1>
-            <Link
-            href='https://playerprofiler.com/'
-            target="_blank"
-            >
-            <Image
+        <h1 className="text-sm">Data Powered By PlayerProfiler </h1>
+        <Link
+          href='https://playerprofiler.com/'
+          target="_blank"
+        >
+          <Image
             src="/pp-logo.png"
             width={30}
             height={30}
             alt="pp=logo"
-            />
-            </Link>
-            </div>
-
-
+          />
+        </Link>
+      </div>
     </div>
   )
 } 
