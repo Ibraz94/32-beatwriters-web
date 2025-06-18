@@ -351,7 +351,7 @@ export default function FeedComponent() {
             {/* Bottom Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-8 border-t">
                 <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600">{nuggetsData?.data?.total || 0}</div>
+                    <div className="text-2xl font-bold text-red-600">{nuggetsData?.data?.pagination?.total || 0}</div>
                     <div className="text-sm text-muted-foreground">Total Updates</div>
                 </div>
                 <div className="text-center">

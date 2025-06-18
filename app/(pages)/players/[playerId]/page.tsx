@@ -6,9 +6,11 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { Trophy, Activity, Timer, Target, ArrowLeft } from 'lucide-react'
 import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery } from '@/lib/services/playersApi'
+import { useGetNuggetsByPlayerIdQuery, getImageUrl as getNuggetImageUrl } from '@/lib/services/nuggetsApi'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { ReadMore } from '@/app/components/ReadMore'
 import { ChartConfig, ChartContainer } from "@/components/ui/chart"
-import { Bar, BarChart, LabelList, XAxis, YAxis, Cell } from "recharts"
+import { Bar, BarChart, LabelList, XAxis, Cell, YAxis } from "recharts"
 
 export default function PlayerProfile() {
   const params = useParams()
@@ -46,6 +48,11 @@ export default function PlayerProfile() {
   const teamName = player?.Core?.Team?.Name || basicPlayer?.team
   const teamLoading = false
 
+  // Fetch nuggets for this specific player
+  const { data: nuggetResponse, isLoading: nuggetsLoading } = useGetNuggetsByPlayerIdQuery(playerId)
+  const nuggets = nuggetResponse?.data?.nuggets || []
+  console.log('Nuggets for player:', nuggets)
+
   // Fetch all players for teammates
   const { data: playersResponse } = useGetPlayersQuery({
     page: 1,
@@ -65,6 +72,10 @@ export default function PlayerProfile() {
       label: "Desktop",
       color: "#2563eb",
     },
+    mobile: {
+      label: "Mobile",
+      color: "#2563eb",
+    }
   } satisfies ChartConfig
 
   // Tab components
@@ -184,102 +195,211 @@ export default function PlayerProfile() {
 
                 <div className="text-white">
                   {/* Primary Metrics Chart */}
-                  <div className="mb-8 flex items-center justify-center">
-                    <ChartContainer config={chartConfig} className="h-[450px]">
-                      <BarChart
-                        maxBarSize={90}
-                        
-                        data={[
-                          {
-                            name: "40-YARD DASH",
-                            value: parseFloat(player['Workout Metrics']['40-Yard Dash']) || 0,
-                            displayValue: player['Workout Metrics']['40-Yard Dash'] || 'N/A',
-                            rank: player['Workout Metrics']['40-Yard Dash Rank'] || 10,
-                            hasData: !!player['Workout Metrics']['40-Yard Dash'],
-                          },
-                          {
-                            name: "SPEED SCORE",
-                            value: parseFloat(player['Workout Metrics']['Speed Score']) || 0,
-                            displayValue: player['Workout Metrics']['Speed Score'] || 'N/A',
-                            rank: player['Workout Metrics']['Speed Score Rank'] || 10,
-                            hasData: !!player['Workout Metrics']['Speed Score'],
-                          },
-                          {
-                            name: "BURST SCORE",
-                            value: parseFloat(player['Workout Metrics']['Burst Score']) || 0,
-                            displayValue: player['Workout Metrics']['Burst Score'] || 'N/A',
-                            rank: player['Workout Metrics']['Burst Score Rank'] || 10,
-                            hasData: !!player['Workout Metrics']['Burst Score'],
-                          },
-                          {
-                            name: "AGILITY SCORE",
-                            value: parseFloat(player['Workout Metrics']['Agility Score']) || 0,
-                            displayValue: player['Workout Metrics']['Agility Score'] || 'N/A',
-                            rank: player['Workout Metrics']['Agility Score Rank'] || 10,
-                            hasData: !!player['Workout Metrics']['Agility Score'],
-                          },
-                          {
-                            name: "CATCH RADIUS",
-                            value: parseFloat(player['Workout Metrics']['Catch Radius']) || 0,
-                            displayValue: player['Workout Metrics']['Catch Radius'] || 'N/A',
-                            rank: player['Workout Metrics']['Catch Radius Rank'] || 10,
-                            hasData: !!player['Workout Metrics']['Catch Radius'],
-                          },
-                        ]}
-                      >
-                        <Bar dataKey="rank" radius={[4, 4, 0, 0]}>
-                          {[
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* Mobile Chart */}
+                    <div className="w-full block sm:hidden">
+                      <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                        <BarChart
+                          data={[
+                            {
+                              name: "40-YARD",
+                              fullName: "40-YARD DASH",
+                              value: parseFloat(player['Workout Metrics']['40-Yard Dash']) || 0,
+                              displayValue: player['Workout Metrics']['40-Yard Dash'] || 'N/A',
+                              rank: player['Workout Metrics']['40-Yard Dash Rank'] || 10,
+                              hasData: !!player['Workout Metrics']['40-Yard Dash'],
+                            },
+                            {
+                              name: "SPEED",
+                              fullName: "SPEED SCORE",
+                              value: parseFloat(player['Workout Metrics']['Speed Score']) || 0,
+                              displayValue: player['Workout Metrics']['Speed Score'] || 'N/A',
+                              rank: player['Workout Metrics']['Speed Score Rank'] || 10,
+                              hasData: !!player['Workout Metrics']['Speed Score'],
+                            },
+                            {
+                              name: "BURST",
+                              fullName: "BURST SCORE",
+                              value: parseFloat(player['Workout Metrics']['Burst Score']) || 0,
+                              displayValue: player['Workout Metrics']['Burst Score'] || 'N/A',
+                              rank: player['Workout Metrics']['Burst Score Rank'] || 10,
+                              hasData: !!player['Workout Metrics']['Burst Score'],
+                            },
+                            {
+                              name: "AGILITY",
+                              fullName: "AGILITY SCORE",
+                              value: parseFloat(player['Workout Metrics']['Agility Score']) || 0,
+                              displayValue: player['Workout Metrics']['Agility Score'] || 'N/A',
+                              rank: player['Workout Metrics']['Agility Score Rank'] || 10,
+                              hasData: !!player['Workout Metrics']['Agility Score'],
+                            },
+                            {
+                              name: "CATCH",
+                              fullName: "CATCH RADIUS",
+                              value: parseFloat(player['Workout Metrics']['Catch Radius']) || 0,
+                              displayValue: player['Workout Metrics']['Catch Radius'] || 'N/A',
+                              rank: player['Workout Metrics']['Catch Radius Rank'] || 10,
+                              hasData: !!player['Workout Metrics']['Catch Radius'],
+                            },
+                          ]}
+                          margin={{ top: 15, right: 15, left: 15, bottom: 40 }}
+                          barSize={25}
+                        >
+                          <Bar dataKey="rank" radius={[4, 4, 0, 0]}>
+                            {[
+                              {
+                                name: "40-YARD",
+                                hasData: !!player['Workout Metrics']['40-Yard Dash'],
+                              },
+                              {
+                                name: "SPEED",
+                                hasData: !!player['Workout Metrics']['Speed Score'],
+                              },
+                              {
+                                name: "BURST",
+                                hasData: !!player['Workout Metrics']['Burst Score'],
+                              },
+                              {
+                                name: "AGILITY",
+                                hasData: !!player['Workout Metrics']['Agility Score'],
+                              },
+                              {
+                                name: "CATCH",
+                                hasData: !!player['Workout Metrics']['Catch Radius'],
+                              },
+                            ].map((entry, index) => (
+                              <Cell 
+                                key={`cell-${index}`} 
+                                fill={entry.hasData ? "#9F0712" : "#D1D5DB"} 
+                              />
+                            ))}
+                            <LabelList
+                              dataKey="displayValue"
+                              position="top"
+                              offset={8}
+                              style={{ fontSize: '11px', fontWeight: 'bold' }}
+                            />
+                            <LabelList
+                              dataKey="rank"
+                              position="insideTop"
+                              fill="white"
+                              style={{ fontSize: '10px' }}
+                            />
+                          </Bar>
+                          <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fontSize: 10, fontWeight: '600' }}
+                            height={40}
+                            interval={0}
+                          />
+                        </BarChart>
+                      </ChartContainer>
+                    </div>
+
+                    {/* Desktop Chart */}
+                    <div className="w-full hidden sm:block">
+                      <ChartContainer config={chartConfig} className="h-[450px] w-full">
+                        <BarChart
+                          data={[
                             {
                               name: "40-YARD DASH",
+                              fullName: "40-YARD DASH",
+                              value: parseFloat(player['Workout Metrics']['40-Yard Dash']) || 0,
+                              displayValue: player['Workout Metrics']['40-Yard Dash'] || 'N/A',
+                              rank: player['Workout Metrics']['40-Yard Dash Rank'] || 10,
                               hasData: !!player['Workout Metrics']['40-Yard Dash'],
                             },
                             {
                               name: "SPEED SCORE",
+                              fullName: "SPEED SCORE",
+                              value: parseFloat(player['Workout Metrics']['Speed Score']) || 0,
+                              displayValue: player['Workout Metrics']['Speed Score'] || 'N/A',
+                              rank: player['Workout Metrics']['Speed Score Rank'] || 10,
                               hasData: !!player['Workout Metrics']['Speed Score'],
                             },
                             {
                               name: "BURST SCORE",
+                              fullName: "BURST SCORE",
+                              value: parseFloat(player['Workout Metrics']['Burst Score']) || 0,
+                              displayValue: player['Workout Metrics']['Burst Score'] || 'N/A',
+                              rank: player['Workout Metrics']['Burst Score Rank'] || 10,
                               hasData: !!player['Workout Metrics']['Burst Score'],
                             },
                             {
                               name: "AGILITY SCORE",
+                              fullName: "AGILITY SCORE",
+                              value: parseFloat(player['Workout Metrics']['Agility Score']) || 0,
+                              displayValue: player['Workout Metrics']['Agility Score'] || 'N/A',
+                              rank: player['Workout Metrics']['Agility Score Rank'] || 10,
                               hasData: !!player['Workout Metrics']['Agility Score'],
                             },
                             {
                               name: "CATCH RADIUS",
+                              fullName: "CATCH RADIUS",
+                              value: parseFloat(player['Workout Metrics']['Catch Radius']) || 0,
+                              displayValue: player['Workout Metrics']['Catch Radius'] || 'N/A',
+                              rank: player['Workout Metrics']['Catch Radius Rank'] || 10,
                               hasData: !!player['Workout Metrics']['Catch Radius'],
                             },
-                          ].map((entry, index) => (
-                            <Cell 
-                              key={`cell-${index}`} 
-                              fill={entry.hasData ? "#9F0712" : "#D1D5DB"} 
+                          ]}
+                          margin={{ top: 30, right: 10, left: 10, bottom: 50 }}
+                          maxBarSize={90}
+                        >
+                          <Bar dataKey="rank" radius={[4, 4, 0, 0]}>
+                            {[
+                              {
+                                name: "40-YARD DASH",
+                                hasData: !!player['Workout Metrics']['40-Yard Dash'],
+                              },
+                              {
+                                name: "SPEED SCORE",
+                                hasData: !!player['Workout Metrics']['Speed Score'],
+                              },
+                              {
+                                name: "BURST SCORE",
+                                hasData: !!player['Workout Metrics']['Burst Score'],
+                              },
+                              {
+                                name: "AGILITY SCORE",
+                                hasData: !!player['Workout Metrics']['Agility Score'],
+                              },
+                              {
+                                name: "CATCH RADIUS",
+                                hasData: !!player['Workout Metrics']['Catch Radius'],
+                              },
+                            ].map((entry, index) => (
+                              <Cell 
+                                key={`cell-${index}`} 
+                                fill={entry.hasData ? "#9F0712" : "#D1D5DB"} 
+                              />
+                            ))}
+                            <LabelList
+                              dataKey="displayValue"
+                              position="top"
+                              offset={10}
+                              style={{ fontSize: '20px', fontWeight: 'bold' }}
                             />
-                          ))}
-                          <LabelList
-                            dataKey="displayValue"
-                            position="top"
-                            offset={10}
-                            style={{ fontSize: '20px', fontWeight: 'bold' }}
+                            <LabelList
+                              dataKey="rank"
+                              position="insideTop"
+                              offset={10}
+                              style={{ fontSize: '16px', textAlign: 'left', fill: 'white' }}
+                            />
+                          </Bar>
+                          <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            interval={0}
+                            textAnchor="middle"
+                            fontSize={16}
+                            fontWeight={600}
                           />
-                          <LabelList
-                            dataKey="rank"
-                            position="insideTop"
-                            offset={10}
-                            style={{ fontSize: '16px', textAlign: 'left', fill: 'white' }}
-                          />
-                        </Bar>
-                        <XAxis
-                          dataKey="name"
-                          axisLine={false}
-                          tickLine={false}
-                          interval={0}
-                          textAnchor="middle"
-                          fontSize={16}
-                          fontWeight={600}
-
-                        />
-                      </BarChart>
-                    </ChartContainer>
+                        </BarChart>
+                      </ChartContainer>
+                    </div>
                   </div>
 
                 </div>
@@ -391,22 +511,115 @@ export default function PlayerProfile() {
         )
 
       case 'news':
+        // Helper function to render fantasy insight HTML
+        const renderFantasyInsight = (fantasyInsight: string | null) => {
+          if (fantasyInsight) {
+            return <div dangerouslySetInnerHTML={{ __html: fantasyInsight }}></div>
+          }
+          return null
+        }
+
         return (
           <div className="space-y-8">
-            <div className="rounded-xl p-8 shadow-xl border text-center">
-              <Activity className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-600 mb-2">News & Updates</h3>
-              <p className="text-gray-500 mb-6">Player news and updates feature coming soon. Stay tuned for the latest information about {playerName}.</p>
-              <div className="bg-gray-50 rounded-lg p-4 text-left">
-                <h4 className="font-semibold text-gray-700 mb-2">Coming Soon:</h4>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Latest injury reports</li>
-                  <li>• Trade rumors and updates</li>
-                  <li>• Performance news</li>
-                  <li>• Contract information</li>
-                </ul>
+            <h2 className="text-3xl font-black mb-8">News & Updates</h2>
+            
+            {nuggetsLoading ? (
+              <div className="space-y-6">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="rounded-xl border shadow-lg overflow-hidden animate-pulse">
+                    <div className="p-6">
+                      <div className="flex gap-4 mb-4">
+                        <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+                        <div className="flex-1">
+                          <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded"></div>
+                        <div className="h-4 bg-gray-200 rounded"></div>
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
+            ) : nuggets.length > 0 ? (
+              <div className="space-y-6 container mx-auto max-w-3xl">
+                {nuggets.map((nugget, index) => (
+                  <div key={`${nugget.id}-${index}`} className="rounded-xl border-2 overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                    {/* Player Header */}
+                    <div className='flex mt-6 gap-4 ml-6 mr-6'>
+                      <div
+                        className="cursor-pointer hover:opacity-80 transition-opacity"
+                      >
+                        <Image
+                          src={getNuggetImageUrl(nugget.player.headshotPic) || '/default-player.jpg'}
+                          alt={`${nugget.player.name} headshot`}
+                          width={64}
+                          height={64}
+                          className='rounded-full object-cover bg-background'
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className='text-xl font-bold'>{nugget.player.name}</h3>
+                      </div>
+                    </div>
+
+                    {/* Nugget Content */}
+                    <div className="px-6 py-4">
+                      <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
+                    </div>
+
+                    {/* Fantasy Insight */}
+                    {nugget.fantasyInsight && (
+                      <div className='px-6 py-4 border-t border-gray-100'>
+                        <h4 className='font-semibold mb-2 text-red-800'>Fantasy Insight:</h4>
+                        <div className="text-gray-700">
+                          {renderFantasyInsight(nugget.fantasyInsight)}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Source and Date */}
+                    <div className='px-6 py-4 border-t border-gray-50'>
+                      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+                        <div className='text-sm'>
+                          <p className='text-gray-600'>
+                            <span className="font-medium">Source:</span> {nugget.sourceName}
+                          </p>
+                          {nugget.sourceUrl && (
+                            <Link 
+                              href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
+                                ? nugget.sourceUrl 
+                                : `https://${nugget.sourceUrl}`} 
+                              target='_blank'
+                              rel='noopener noreferrer' 
+                              className='text-blue-600 hover:text-blue-800 text-sm'
+                            >
+                              {nugget.sourceUrl}
+                            </Link>
+                          )}
+                        </div>
+                        <p className='text-sm text-gray-500'>
+                          {new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-xl p-8 shadow-xl border text-center">
+                <Activity className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-600 mb-2">No News Available</h3>
+                <p className="text-gray-500 mb-6">There are currently no news available for {playerName}. Check back later for updates!</p>
+              </div>
+            )}
           </div>
         )
 

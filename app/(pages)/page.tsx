@@ -3,6 +3,8 @@ import NewArticles from "../components/NewArticles";
 import BeatWritersComponent from "../components/BeatWritersComponent";
 import PodcastsComponent from "../components/PodcastsComponent";
 import FeedComponent from "../components/FeedComponent";
+import SubscriptionComponent from "../components/SubscriptionComponent";
+
 
 
 
@@ -15,7 +17,8 @@ export default function Home() {
     <div>
       <HeroSection />
       <NewArticles/>
-      <BeatWritersComponent/>
+      <SubscriptionComponent/>
+      {/* <BeatWritersComponent/> */}
       <PodcastsComponent/>
       {/* <FeedComponent/> */}
     </div>

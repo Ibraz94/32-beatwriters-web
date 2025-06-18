@@ -5,40 +5,40 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beat
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com' || 'https://www.playerprofiler.com/wp-content/uploads'
 
 /**
- * Feed interface representing a single feed item
- * Contains all the properties that define a feed in the system
+ * Nugget interface representing a single nugget item
+ * Contains all the properties that define a nugget in the system
  */
-export interface Nuggets {
-  data: {
+export interface Nugget {
   id: number
-  title: string
   content: string
   fantasyInsight: string
   playerId: number
   sourceName: string
-  sourceUrl: string
-  images: string[]
+  sourceUrl: string | null
+  images?: string[]
   createdAt: string
   updatedAt: string
   player: {
     id: number
     playerId: string
     name: string
-    team: string
+    team: string | null
     position: string
     headshotPic: string
+    rookie: boolean
   }
-}
 }
 
 
 interface PaginatedNuggets {
   data: {
-  nuggets: Nuggets[]
-  total: number
-    page: number
-    limit: number
-    totalPages: number
+    nuggets: Nugget[]
+    pagination: {
+      total: number
+      page: number
+      limit: number
+      totalPages: number
+    }
   }
 }
 
@@ -82,7 +82,7 @@ export const getImageUrl = (imagePath?: string): string | undefined => {
 export const nuggetsApi = createApi({
   reducerPath: 'nuggetsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/nuggets`,
+    baseUrl: `${API_BASE_URL}nuggets`,
     prepareHeaders: (headers, { getState }) => {
       // Add authorization token if available
       const token = (getState() as any).auth.token
@@ -119,28 +119,28 @@ export const nuggetsApi = createApi({
     }),
     
     /**
-     * Get a single feed by ID
-     * Returns detailed feed information
+     * Get nuggets by player ID
+     * Returns nuggets for a specific player
      */
-    getNugget: builder.query<{ nugget: Nuggets }, string>({
-      query: (id) => `/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Nugget', id }],
+    getNuggetsByPlayerId: builder.query<PaginatedNuggets, string>({
+      query: (playerId) => `?playerId=${playerId}`,
+      providesTags: (result, error, playerId) => [{ type: 'Nugget', id: playerId }],
     }),
     
     /**
-     * Get all feeds in a specific category
-     * Returns feeds filtered by category name
+     * Get all nuggets in a specific category
+     * Returns nuggets filtered by category name
      */       
-    getNuggetsByCategory: builder.query<{ nuggets: Nuggets[] }, string>({
+    getNuggetsByCategory: builder.query<{ nuggets: Nugget[] }, string>({
       query: (category) => `/category/${encodeURIComponent(category)}`,
       providesTags: ['Nugget'],
     }),
     
     /**
-     * Search feeds by text query
-     * Performs full-text search across feed titles and content
+     * Search nuggets by text query
+     * Performs full-text search across nugget content
      */
-    searchNuggets: builder.query<{ nuggets: Nuggets[] }, string>({
+    searchNuggets: builder.query<{ nuggets: Nugget[] }, string>({
       query: (searchTerm) => `/search?q=${encodeURIComponent(searchTerm)}`,
       providesTags: ['Nugget'],
     }),
@@ -174,7 +174,7 @@ export const nuggetsApi = createApi({
 // These hooks provide automatic data fetching, caching, and re-fetching capabilities
 export const {
   useGetNuggetsQuery,        // Hook for fetching nuggets with filters
-  useGetNuggetQuery,         // Hook for fetching a single nugget
+  useGetNuggetsByPlayerIdQuery, // Hook for fetching nuggets by player ID
   useGetNuggetsByCategoryQuery, // Hook for fetching nuggets by category
   useSearchNuggetsQuery,     // Hook for searching nuggets
   useMarkHelpfulMutation,  // Hook for marking nuggets as helpful
