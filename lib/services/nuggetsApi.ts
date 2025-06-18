@@ -51,6 +51,8 @@ interface NuggetFilters {
   limit?: number
   sortBy?: 'order' | 'createdAt'
   sortOrder?: 'asc' | 'desc'
+  rookie?: boolean
+  position?: string
 }
 
 // Helper function to construct full image URLs

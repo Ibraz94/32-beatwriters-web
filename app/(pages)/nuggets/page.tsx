@@ -25,8 +25,9 @@ import { useAuth } from '@/lib/hooks/useAuth'
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
     sortOrder?: 'asc' | 'desc'
-    teams?: string[]
     positions?: string[]
+    rookie?: boolean
+    position?: string
 }
 
 interface ImageModalData {
@@ -44,8 +45,9 @@ export default function NuggetsPage() {
     const [filters, setFilters] = useState<NuggetFilters>({
         sortBy: 'createdAt',
         sortOrder: 'desc',
-        teams: [],
-        positions: []
+        positions: [],
+        rookie: false,
+        position: ''
     })
     const [selectedDate, setSelectedDate] = useState<string>('')
     const [searchTerm, setSearchTerm] = useState('')
@@ -53,7 +55,6 @@ export default function NuggetsPage() {
     const [allNuggets, setAllNuggets] = useState<any[]>([])
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
-    const [availableTeams, setAvailableTeams] = useState<string[]>([])
     const [availablePositions, setAvailablePositions] = useState<string[]>([])
     const [filteredNuggets, setFilteredNuggets] = useState<any[]>([])
 
@@ -63,7 +64,10 @@ export default function NuggetsPage() {
         isLoading: isLoadingNuggets,
         error: nuggetsError,
         isFetching: isFetchingNuggets
-    } = useGetNuggetsQuery({}, {
+    } = useGetNuggetsQuery({
+        ...(filters.rookie && { rookie: filters.rookie }),
+        ...(filters.position && { position: filters.position })
+    }, {
         skip: false
     })
 
@@ -76,18 +80,12 @@ export default function NuggetsPage() {
             setAllNuggets(nuggetsData.data.nuggets)
             setHasMoreNuggets(false) // Since we're loading all at once
             
-            // Extract unique teams and positions
-            const teams = [...new Set(nuggetsData.data.nuggets
-                .map((nugget: any) => nugget.player.team)
-                .filter(Boolean)
-            )].sort()
-            
+            // Extract unique positions
             const positions = [...new Set(nuggetsData.data.nuggets
                 .map((nugget: any) => nugget.player.position)
                 .filter(Boolean)
             )].sort()
             
-            setAvailableTeams(teams)
             setAvailablePositions(positions)
         }
     }, [nuggetsData])
@@ -123,13 +121,6 @@ export default function NuggetsPage() {
             })
         }
         
-        // Apply team filter
-        if (filters.teams && filters.teams.length > 0) {
-            filtered = filtered.filter(nugget => 
-                filters.teams!.includes(nugget.player.team)
-            )
-        }
-        
         // Apply position filter
         if (filters.positions && filters.positions.length > 0) {
             filtered = filtered.filter(nugget => 
@@ -155,23 +146,19 @@ export default function NuggetsPage() {
         setSelectedDate('')
     }
     
-    // Handle team filter change
-    const handleTeamFilterChange = (team: string) => {
-        setFilters(prev => ({
-            ...prev,
-            teams: prev.teams!.includes(team)
-                ? prev.teams!.filter(t => t !== team)
-                : [...prev.teams!, team]
-        }))
-    }
-    
     // Handle position filter change
     const handlePositionFilterChange = (position: string) => {
         setFilters(prev => ({
             ...prev,
-            positions: prev.positions!.includes(position)
-                ? prev.positions!.filter(p => p !== position)
-                : [...prev.positions!, position]
+            position: position === 'all' ? '' : position
+        }))
+    }
+    
+    // Handle rookie filter change
+    const handleRookieFilterChange = (isRookie: boolean) => {
+        setFilters(prev => ({
+            ...prev,
+            rookie: isRookie
         }))
     }
     
@@ -179,8 +166,9 @@ export default function NuggetsPage() {
     const clearFilters = () => {
         setFilters(prev => ({
             ...prev,
-            teams: [],
-            positions: []
+            positions: [],
+            rookie: false,
+            position: ''
         }))
         setSelectedDate('')
     }
@@ -321,7 +309,7 @@ export default function NuggetsPage() {
 
                 {/* Search and Filters */}
                 <div className="mb-8 space-y-4 px-4 sm:px-0">
-                <div className="relative flex-1 max-w-2xl mx-auto items-center justify-center">
+                <div className="relative flex-1 max-w-3xl mx-auto items-center justify-center">
                             <Search className="absolute left-3 top-3 transform translate-y-1/4 text-gray-400 w-5 h-5" />
                             <input
                                 type="text"
@@ -332,7 +320,7 @@ export default function NuggetsPage() {
                             />
                         </div>
                     {/* Search Bar and Filters */}
-                    <div className="relative flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto items-center justify-center">
+                    <div className="relative flex flex-col sm:flex-row gap-3 max-w-4xl mx-auto items-center justify-center">
                        {/* Date Filter */}
                         <div className="relative w-full sm:w-48">
                             <input
@@ -342,84 +330,56 @@ export default function NuggetsPage() {
                                 className="w-full pl-4 px-4 py-3 h-12 border-2 text-gray-400 border-gray-400 rounded-lg shadow-md appearance-none"
                                 placeholder="Sort by Date"
                             />
-
                         </div>
 
-                        {/* Team Filter Dropdown */}
-                        <Select>
-                            <SelectTrigger className="w-full sm:w-48 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg">
-                                <SelectValue placeholder={
-                                    filters.teams && filters.teams.length > 0 
-                                        ? `Teams (${filters.teams.length})`
-                                        : "Filter by Team"
-                                } />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Select Teams</SelectLabel>
-                                    {availableTeams.map(team => (
-                                        <div
-                                            key={team}
-                                            className="flex items-center space-x-2 px-2 py-1.5 text-sm cursor-pointer rounded"
-                                            onClick={(e) => {
-                                                e.preventDefault()
-                                                handleTeamFilterChange(team)
-                                            }}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={filters.teams?.includes(team) || false}
-                                                onChange={() => handleTeamFilterChange(team)}
-                                                className="rounded border-gray-300"
-                                            />
-                                            <span>{team}</span>
-                                        </div>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-
                         {/* Position Filter Dropdown */}
-                        <Select>
+                        <Select onValueChange={handlePositionFilterChange}>
                             <SelectTrigger className="w-full sm:w-48 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg">
                                 <SelectValue placeholder={
-                                    filters.positions && filters.positions.length > 0 
-                                        ? `Positions (${filters.positions.length})`
+                                    filters.position 
+                                        ? filters.position
                                         : "Filter by Position"
                                 } />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Select Positions</SelectLabel>
-                                    {availablePositions.map(position => (
-                                        <div
+                                    <SelectItem value="all">
+                                        All Positions
+                                    </SelectItem>
+                                    {['QB', 'WR', 'RB', 'FB', 'TE'].map(position => (
+                                        <SelectItem
                                             key={position}
-                                            className="flex items-center space-x-2 px-2 py-1.5 text-sm cursor-pointer rounded"
-                                            onClick={(e) => {
-                                                e.preventDefault()
-                                                handlePositionFilterChange(position)
-                                            }} 
+                                            value={position}
                                         >
-                                            <input
-                                                type="checkbox"
-                                                checked={filters.positions?.includes(position) || false}
-                                                onChange={() => handlePositionFilterChange(position)}
-                                                className="rounded border-gray-300"
-                                            />
-                                            <span>{position}</span>
-                                        </div>
+                                            {position}
+                                        </SelectItem>
                                     ))}
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
 
+                        {/* Rookie Filter */}
+                        <div className="flex items-center space-x-2 px-4 py-3 border-2 border-gray-400 rounded-lg shadow-md bg-white">
+                            <input
+                                type="checkbox"
+                                id="rookie-filter"
+                                checked={filters.rookie || false}
+                                onChange={(e) => handleRookieFilterChange(e.target.checked)}
+                                className="w-4 h-4 text-red-800 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2"
+                            />
+                            <label htmlFor="rookie-filter" className="text-sm font-medium text-gray-700 cursor-pointer">
+                                Rookie
+                            </label>
+                        </div>
+
                         {/* Clear Filters Button */}
-                        <div className={`w-full sm:w-auto ${(selectedDate || (filters.teams && filters.teams.length > 0) || (filters.positions && filters.positions.length > 0)) ? 'block' : 'hidden sm:block'}`}>
+                        <div className={`w-full sm:w-auto ${(selectedDate || (filters.positions && filters.positions.length > 0) || filters.rookie || filters.position) ? 'block' : 'hidden sm:block'}`}>
                             <button
                                 onClick={clearFilters}
-                                disabled={!selectedDate && (!filters.teams || filters.teams.length === 0) && (!filters.positions || filters.positions.length === 0)}
+                                disabled={!selectedDate && (!filters.positions || filters.positions.length === 0) && !filters.rookie && !filters.position}
                                 className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                                    !selectedDate && (!filters.teams || filters.teams.length === 0) && (!filters.positions || filters.positions.length === 0)
+                                    !selectedDate && (!filters.positions || filters.positions.length === 0) && !filters.rookie && !filters.position
                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
                                 }`}
@@ -440,7 +400,7 @@ export default function NuggetsPage() {
                 )}
                 
                 {/* Filter Results Count */}
-                {!isSearching && (selectedDate || (filters.teams && filters.teams.length > 0) || (filters.positions && filters.positions.length > 0)) && (
+                {!isSearching && (selectedDate || (filters.positions && filters.positions.length > 0) || filters.rookie || filters.position) && (
                     <div className="mb-6 text-center">
                         <p className="text-gray-600">
                             {displayNuggets.length} nugget{displayNuggets.length !== 1 ? 's' : ''} found with current filters
