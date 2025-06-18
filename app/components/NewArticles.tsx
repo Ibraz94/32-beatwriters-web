@@ -2,11 +2,16 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, Clock, ArrowRight, TrendingUp } from "lucide-react";
+import { Calendar, ArrowRight, TrendingUp } from "lucide-react";
 import { useGetArticlesQuery, Article, getImageUrl } from "@/lib/services/articlesApi";
 
 export default function NewArticles() {
-    const { data: articles, isLoading, error } = useGetArticlesQuery({ page: 1, limit: 6 });
+    const { data: articles, isLoading, error } = useGetArticlesQuery({ 
+        page: 1, 
+        limit: 12,
+        sortBy: 'publishedAt',
+        sortOrder: 'desc'
+    });
 
     if (isLoading) {
         return (
@@ -33,9 +38,10 @@ export default function NewArticles() {
         );
     }
 
+    // Filter to only show free (public) articles and get the latest 3
     const publicArticles = articles?.data.articles
-        .filter((article: Article) => article.access === 'public')
-        .slice(0, 6) || [];
+        ?.filter((article: Article) => article.access === 'public')
+        ?.slice(0, 3) || [];
 
     return (
         <section className="px-4 py-16 bg-card">
@@ -45,7 +51,7 @@ export default function NewArticles() {
                     Latest <span className="text-red-800">Articles</span>
                 </h2>
                 <p className="text-xl max-w-2xl mx-auto">
-                    In-depth analysis, breaking news, and insider reports from our network of NFL beat writers.
+                    Free access to breaking news and analysis from our network of NFL beat writers.
                 </p>
             </div>
 
@@ -124,7 +130,7 @@ export default function NewArticles() {
                         </svg>
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">No Articles Available</h3>
-                    <p className="text-muted-foreground">Check back soon for new content from our beat writers.</p>
+                    <p className="text-muted-foreground">Check back soon for new content.</p>
                 </div>
             )}
 
@@ -139,7 +145,7 @@ export default function NewArticles() {
                     </Link>
                     
                     <p className="text-sm text-muted-foreground mt-4">
-                        Access exclusive content and in-depth analysis from all 32 NFL teams
+                        View more free articles and subscribe for premium in-depth analysis from all 32 NFL teams
                     </p>
                 </div>
             )}
