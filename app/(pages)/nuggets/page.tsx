@@ -484,17 +484,16 @@ export default function NuggetsPage() {
                                                 `${nugget.player.name} headshot`
                                             )}
                                         >
-                                                                        <Image
-                                src={getImageUrl(nugget.player.headshotPic) || ''}
-                                alt={`${nugget.player.name} headshot`}
-                                width={80}
-                                height={80}
-                                className='rounded-full object-cover bg-background'
-                            />
+                                            <Image
+                                                src={getImageUrl(nugget.player.headshotPic) || ''}
+                                                alt={`${nugget.player.name} headshot`}
+                                                width={80}
+                                                height={80}
+                                                className='rounded-full object-cover bg-background'
+                                            />
                                         </div>
-                                        <div className='flex items-center justify-between w-full p-2'>
+                                        <div>
                                             <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
-
                                         </div>
                                     </div>
                                     <div className="px-6 py-4">
@@ -502,35 +501,39 @@ export default function NuggetsPage() {
                                     </div>
                                     <div className='px-6 py-4'>
                                         {nugget.fantasyInsight && (
-                                        <>
-                                            <h1 className='font-semibold mt-4'>Fantasy Insight:</h1>
-                                            {fantasyInsight(nugget.fantasyInsight)}
-                                        </>
-                                    )}
+                                            <>
+                                                <h1 className='font-semibold mt-4'>Fantasy Insight:</h1>
+                                                {fantasyInsight(nugget.fantasyInsight)}
+                                            </>
+                                        )}
                                     </div>
 
-                                    <div className='flex justify-between px-6 py-1 -mb-10'>
+                                    <div className='px-6 py-4'>
                                         <div className='flex flex-col mt-1 text-sm'>
                                             <h1 className=''>Source:</h1>
                                             <h1 className='text-left'>{nugget.sourceName}</h1>
                                             {nugget.sourceUrl ? (
                                                 <Link 
-                                                href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
-                                                    ? nugget.sourceUrl 
-                                                    : `https://${nugget.sourceUrl}`} 
-                                                target='_blank'
-                                                rel='noopener noreferrer' 
-                                                className='text-left text-gray-400 hover:text-blue-800'>{nugget.sourceUrl}
+                                                    href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
+                                                        ? nugget.sourceUrl 
+                                                        : `https://${nugget.sourceUrl}`} 
+                                                    target='_blank'
+                                                    rel='noopener noreferrer' 
+                                                    className='text-left text-gray-400 hover:text-blue-800'
+                                                >
+                                                    {nugget.sourceUrl}
                                                 </Link>
                                             ) : (
                                                 <span className='text-left text-gray-400'></span>
                                             )}
                                         </div>
-                                        <h1 className='text-right text-gray-400 mt-6 text-sm'>{new Date(nugget.createdAt).toLocaleDateString('en-US', {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric'
-                                        })}</h1>
+                                        <h1 className='text-right text-gray-400 mt-6 text-sm'>
+                                            {new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric'
+                                            })}
+                                        </h1>
                                     </div>
 
                                     {/* Nugget Images */}
