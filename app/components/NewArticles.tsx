@@ -2,16 +2,51 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, ArrowRight, TrendingUp } from "lucide-react";
+import { Calendar, ArrowRight, TrendingUp, Lock } from "lucide-react";
 import { useGetArticlesQuery, Article, getImageUrl } from "@/lib/services/articlesApi";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function NewArticles() {
+    const { isAuthenticated, checkPremiumAccess, user } = useAuth();
+    const hasPremiumAccess = checkPremiumAccess();
+    
+    // Fetch all articles (public, pro, and lifetime) to show in the grid
     const { data: articles, isLoading, error } = useGetArticlesQuery({ 
         page: 1, 
-        limit: 12,
+        limit: 12, // Fetch more articles to ensure we have enough to show
         sortBy: 'publishedAt',
         sortOrder: 'desc'
     });
+
+    // Helper function to check if user can access an article (same as articles page)
+    const canAccessArticle = (articleAccess: string) => {
+        if (articleAccess === 'public') return true;
+
+        // Check if user is admin using case-insensitive comparison
+        const userRole = user?.roles.id;
+        const isAdminByRole = userRole === 1 || userRole === 2 || userRole === 3 || userRole === 4;
+        
+        // Administrators can access all articles
+        if (isAdminByRole) {
+            return true;
+        }
+        
+        if (articleAccess === 'pro' || articleAccess === 'lifetime') {
+            return hasPremiumAccess;
+        }
+        return false;
+    };
+
+    // Helper function to get the correct href based on access
+    const getArticleHref = (article: Article) => {
+        const canAccess = canAccessArticle(article.access);
+        
+        if (canAccess) {
+            return `/articles/${article.id}`;
+        } else {
+            return isAuthenticated ? '/subscribe' : '/login';
+        }
+    };
 
     if (isLoading) {
         return (
@@ -38,10 +73,8 @@ export default function NewArticles() {
         );
     }
 
-    // Filter to only show free (public) articles and get the latest 3
-    const publicArticles = articles?.data.articles
-        ?.filter((article: Article) => article.access === 'public')
-        ?.slice(0, 3) || [];
+    // Get the latest 3 articles (mix of public and premium)
+    const displayArticles = articles?.data.articles?.slice(0, 3) || [];
 
     return (
         <section className="px-4 py-16 bg-card">
@@ -57,10 +90,10 @@ export default function NewArticles() {
 
             {/* Articles Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 container mx-auto">
-                {publicArticles.map((article: Article, index: number) => (
+                {displayArticles.map((article: Article, index: number) => (
                     <Link
                         key={article.id}
-                        href={`/articles/${article.id}`}
+                        href={getArticleHref(article)}
                         className={`group rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-red-200 transition-all duration-300 overflow-hidden ${
                             index === 0 ? 'md:col-span-2 lg:col-span-1' : ''
                         }`}
@@ -82,6 +115,14 @@ export default function NewArticles() {
                                         </svg>
                                         <span className="text-sm font-medium">No Image Available</span>
                                     </div>
+                                </div>
+                            )}
+                            
+                            {/* Premium Badge */}
+                            {(article.access === 'pro' || article.access === 'lifetime') && (
+                                <div className="absolute top-4 right-4 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                                    <Lock className="h-3 w-3" />
+                                    {article.access === 'lifetime' ? 'LIFETIME' : 'PRO'}
                                 </div>
                             )}
                             
@@ -113,6 +154,20 @@ export default function NewArticles() {
                                 {article.title}
                             </h3>
 
+                            {/* Premium Content Notice */}
+                            {(article.access === 'pro' || article.access === 'lifetime') && (
+                                <div className="flex items-center gap-2 text-sm mb-3">
+                                    <Lock className="h-4 w-4 text-amber-500" />
+                                    <span className="text-amber-600 font-medium">
+                                        {!isAuthenticated 
+                                            ? 'Login required to read' 
+                                            : !hasPremiumAccess 
+                                                ? 'Premium subscription required'
+                                                : 'Premium content'
+                                        }
+                                    </span>
+                                </div>
+                            )}
 
                             {/* Footer */}
 
@@ -122,7 +177,7 @@ export default function NewArticles() {
             </div>
 
             {/* Show message if no articles */}
-            {publicArticles.length === 0 && (
+            {displayArticles.length === 0 && (
                 <div className="text-center py-12">
                     <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -135,7 +190,7 @@ export default function NewArticles() {
             )}
 
             {/* Call to Action */}
-            {publicArticles.length > 0 && (
+            {displayArticles.length > 0 && (
                 <div className="text-center mt-12">
                     <Link href="/articles">
                         <button className="group bg-red-800 hover:scale-102 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto">
