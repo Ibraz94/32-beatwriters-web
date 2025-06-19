@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Trophy, Activity, Timer, Target, ArrowLeft } from 'lucide-react'
-import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery } from '@/lib/services/playersApi'
+import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery, useGetPlayerPerformanceProfilerQuery } from '@/lib/services/playersApi'
 import { useGetNuggetsByPlayerIdQuery, getImageUrl as getNuggetImageUrl } from '@/lib/services/nuggetsApi'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ReadMore } from '@/app/components/ReadMore'
@@ -19,6 +19,9 @@ export default function PlayerProfile() {
 
   // Tab state
   const [activeTab, setActiveTab] = useState('workout')
+  
+  // Year selection state for performance metrics
+  const [selectedYear, setSelectedYear] = useState('2023')
 
   // Get the page number user came from (for back navigation)
   const fromPage = searchParams?.get('page')
@@ -33,10 +36,17 @@ export default function PlayerProfile() {
 
   // Then use the playerId from internal API to fetch detailed data from Player Profiler API
   const { data: playerResponse, isLoading: playerLoading, error: playerError } = useGetPlayerProfilerQuery(internalPlayer?.playerId || '')
+  
+  // Fetch performance data for selected year
+  const { data: performanceResponse, isLoading: performanceLoading } = useGetPlayerPerformanceProfilerQuery(
+    { playerId: internalPlayer?.playerId || '', year: selectedYear },
+    { skip: !internalPlayer?.playerId }
+  )
 
   // Extract player data from the nested response
   const player = playerResponse?.data?.Player
   const basicPlayer = internalPlayer // Data from internal API
+  const performancePlayer = performanceResponse?.data?.Player
 
   // Debug: Log the actual response structure (remove in production)
   if (process.env.NODE_ENV === 'development') {
@@ -53,19 +63,29 @@ export default function PlayerProfile() {
   const nuggets = nuggetResponse?.data?.nuggets || []
   console.log('Nuggets for player:', nuggets)
 
-  // Fetch all players for teammates
+  // Fetch all players for teammates - get more players to find teammates
   const { data: playersResponse } = useGetPlayersQuery({
     page: 1,
-    limit: 12
+    limit: 100  // Increased limit to fetch more players
   })
   const allPlayers = playersResponse?.data?.players || []
 
   // Get teammates (same team, different player)
+  const currentTeam = player?.Core?.Team?.Name || basicPlayer?.team
   const teammates = allPlayers
-    .filter(p => p.team === (player?.Core?.Team?.Name || basicPlayer?.team) && p.id !== basicPlayer?.id)
-    .slice(0, 6)
+    .filter(p => {
+      // More flexible team matching
+      const playerTeam = p.team || p.teamName || p.Team?.Name
+      return playerTeam === currentTeam && p.id !== basicPlayer?.id
+    })
 
-  const loading = playerLoading || teamLoading || authLoading || premiumLoading || internalPlayerLoading
+  // Debug logging
+  console.log('Current player team:', currentTeam)
+  console.log('All players count:', allPlayers.length)
+  console.log('Teammates found:', teammates.length)
+  console.log('Sample teammates:', teammates.slice(0, 3).map(t => ({ name: t.name, team: t.team })))
+
+  const loading = playerLoading || teamLoading || authLoading || premiumLoading || internalPlayerLoading || performanceLoading
 
   const chartConfig = {
     desktop: {
@@ -77,6 +97,13 @@ export default function PlayerProfile() {
       color: "#2563eb",
     }
   } satisfies ChartConfig
+
+  // Helper function to format numbers to 2 decimal places
+  const formatNumber = (value: string | number | undefined) => {
+    if (!value || value === 'N/A') return value
+    const num = parseFloat(value.toString())
+    return isNaN(num) ? value : num.toFixed(2)
+  }
 
   // Tab components
   const tabs = [
@@ -299,8 +326,8 @@ export default function PlayerProfile() {
                     </div>
 
                     {/* Desktop Chart */}
-                    <div className="w-full hidden sm:block">
-                      <ChartContainer config={chartConfig} className="h-[450px] w-full">
+                    <div className="max-w-3xl hidden sm:block mx-auto">
+                      <ChartContainer config={chartConfig} className="h-[450px]">
                         <BarChart
                           data={[
                             {
@@ -344,7 +371,6 @@ export default function PlayerProfile() {
                               hasData: !!player['Workout Metrics']['Catch Radius'],
                             },
                           ]}
-                          margin={{ top: 30, right: 10, left: 10, bottom: 50 }}
                           maxBarSize={90}
                         >
                           <Bar dataKey="rank" radius={[4, 4, 0, 0]}>
@@ -454,59 +480,435 @@ export default function PlayerProfile() {
         )
 
       case 'performance':
+        // Generate available years (2019 onwards)
+        const currentYear = new Date().getFullYear()
+        const availableYears = Array.from({ length: currentYear - 2018 }, (_, i) => (currentYear - i).toString())
+        
+        // Get performance data for selected year
+        const performanceData = performancePlayer?.['Performance Metrics']?.[selectedYear]
+        
         return (
           <div className="space-y-8">
-            {/* Performance Metrics - Only show if Player Profiler data is available */}
-            {player?.['College Performance'] ? (
-              <div className="rounded-xl p-8  border">
-                <h2 className="text-2xl font-black mb-8">Performance Metrics</h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="border-2 bg-card rounded-xl p-4">
-                    <div className="flex items-center mb-2">
-                        <h1>Opportunity</h1>
-                    </div>
-                    <div className="text-2xl font-bold">{player['College Performance']['Breakout Age']}</div>
-                    <div className="text-sm">Rank: {player['College Performance']['Breakout Age Rank']}</div>
-                  </div>
-
-                  <div className="border-2 bg-card rounded-xl p-4">
-                    <div className="flex items-center mb-2">
-                      <Target className="w-5 h-5 text-red-600 mr-2" />
-                      <span className="font-semibold">Dominator Rating</span>
-                    </div>
-                    <div className="text-2xl font-bold">{player['College Performance']['College Dominator Rating']}</div>
-                    <div className="text-sm">Rank: {player['College Performance']['College Dominator Rating Rank'] || 'N/A'}</div>
-                  </div>
-
-                  {player['College Performance']['College YPC'] && (
-                    <div className="border-2 bg-card rounded-xl p-4">
-                      <div className="flex items-center mb-2">
-                        <Activity className="w-5 h-5 text-red-600 mr-2" />
-                        <span className="font-semibold">Yards Per Carry</span>
-                      </div>
-                      <div className="text-2xl font-bold">{player['College Performance']['College YPC']}</div>
-                      <div className="text-sm">Rank: {player['College Performance']['College YPC Rank'] || 'N/A'}</div>
+            <div className="rounded-xl p-8 border">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                <h2 className="text-3xl font-black mb-4 sm:mb-0">Performance Metrics</h2>
+                
+                {/* Year Selector and Games Played */}
+                <div className="flex items-center gap-6">
+                  {performanceData && (
+                    <div className="text-sm">
+                      <span className="font-semibold">Games: </span>
+                      <span className="text-lg font-bold">{performanceData['Games']}</span>
                     </div>
                   )}
-
-                  <div className="border-2 bg-card rounded-xl p-4">
-                    <div className="flex items-center mb-2">
-                      <Trophy className="w-5 h-5 text-red-600 mr-2" />
-                      <span className="font-semibold">Breakout Rating</span>
-                    </div>
-                    <div className="text-2xl font-bold">{player['College Performance']['Breakout Rating']}</div>
-                    <div className="text-sm">Rank: {player['College Performance']['Breakout Rating Rank'] || 'N/A'}</div>
+                  <div className="flex items-center gap-3">
+                    <label htmlFor="year-select" className="text-sm font-semibold">Season:</label>
+                    <select
+                      id="year-select"
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="px-4 py-2 border rounded-lg bg-card text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                      {availableYears.map(year => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="rounded-xl p-8 shadow-xl border text-center">
-                <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-600 mb-2">Performance Metrics Unavailable</h3>
-                <p className="text-gray-500">Detailed performance metrics are not available for this player.</p>
-              </div>
-            )}
+
+              {/* Performance Metrics Display */}
+              {performanceData ? (
+                <div className="space-y-8">
+                  
+                  {/* Opportunity Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Opportunity</h3>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-50 dark:bg-gray-700">
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGETS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET SHARE</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET RATE</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">SNAP SHARE</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">SLOT SNAPS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">ROUTES RUN</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">ROUTE PARTICIPATION</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="bg-white dark:bg-gray-800">
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Targets']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Targets Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{parseFloat(performanceData['Target Share']).toFixed(2)}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Share Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{parseFloat(performanceData['Target Rate']).toFixed(2)}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Rate Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{parseFloat(performanceData['Snap Share']).toFixed(2)}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Snap Share Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Slot Snaps']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Slot Snaps Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Routes Run']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Routes Run Rank']}</div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{parseFloat(performanceData['Route Participation']).toFixed(2)}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Route Participation Rank']}</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Opportunity Section 2 */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Opportunity</h3>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-50 dark:bg-gray-700">
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">AIR YARDS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">AIR YARDS SHARE</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">AVERAGE TARGET DISTANCE (ADOT)</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">DEEP TARGETS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">RED ZONE TARGETS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET QUALITY RATING</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">CATCHABLE TARGET RATE</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="bg-white dark:bg-gray-800">
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Air Yards']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Air Yards Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Air Yards Share'])}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Air Yards Share Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Average Target Distance'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Average Target Distance Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Deep Targets']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Deep Targets Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Red Zone Targets']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Red Zone Targets Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Quality Rating'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Quality Rating Rank']}</div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Catchable Target Rate'])}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Catchable Target Rate Rank']}</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Productivity Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Productivity</h3>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-50 dark:bg-gray-700">
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">RECEPTIONS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">RECEIVING YARDS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">YARDS AFTER CATCH</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">UNREALIZED AIR YARDS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TOTAL TDS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">FANTASY POINTS PER GAME</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">EXPECTED FANTASY POINTS PER GAME</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="bg-white dark:bg-gray-800">
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Receptions']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Receptions Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Receiving Yards']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Receiving Yards Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Yards After Catch']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards After Catch Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Unrealized Air Yards']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Unrealized Air Yards Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Total Touchdowns']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Total Touchdowns Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Fantasy Points Per Game'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Fantasy Points Per Game Rank']}</div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Expected Fantasy Points Per Game'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Expected Fantasy Points Per Game Rank']}</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Efficiency Section 1 */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Efficiency</h3>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-50 dark:bg-gray-700">
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET ACCURACY</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">YARDS PER ROUTE RUN</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">FORMATION ADJUSTED YARDS PER ROUTE RUN</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">YARDS PER TARGET</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">YARDS PER RECEPTION</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">YARDS PER TEAM PASS ATTEMPT</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TRUE CATCH RATE</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="bg-white dark:bg-gray-800">
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Accuracy'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Accuracy Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Yards Per Route Run'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards Per Route Run Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Formation Adjusted Yards Per Route Run'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Formation Adjusted Yards Per Route Run Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Yards Per Target'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards Per Target Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Yards Per Reception'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards Per Reception Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Yards Per Team Pass Attempt'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards Per Team Pass Attempt Rank']}</div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['True Catch Rate'])}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['True Catch Rate Rank']}</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Efficiency Section 2 */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Efficiency</h3>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-50 dark:bg-gray-700">
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET SEPARATION</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET PREMIUM</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">DOMINATOR RATING</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">JUKE RATE</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">EXPLOSIVE RATING</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">DROPS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">CONTESTED CATCH RATE</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="bg-white dark:bg-gray-800">
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Separation'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Separation Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Premium'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Premium Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Dominator Rating'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Dominator Rating Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Juke Rate'])}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Juke Rate Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">N/A</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#N/A</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Drops']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Drops Rank']}</div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Contested Catch Conversion Rate'])}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Contested Catch Conversion Rate Rank']}</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Efficiency Section 3 */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Efficiency</h3>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-50 dark:bg-gray-700">
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">PRODUCTION PREMIUM</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">EXPECTED POINTS ADDED (EPA)</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">QB RATING PER TARGET</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">BEST BALL POINTS ADDED</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">FANTASY POINTS PER ROUTE RUN</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">FANTASY POINTS PER TARGET</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TOTAL FANTASY POINTS</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="bg-white dark:bg-gray-800">
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Production Premium'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Production Premium Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Expected Points Added'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Expected Points Added Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['QB Rating When Targeted'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['QB Rating When Targeted Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Best Ball Points Added'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Best Ball Points Added Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Fantasy Points Per Route Run'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Fantasy Points Per Route Run Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Fantasy Points Per Target'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Fantasy Points Per Target Rank']}</div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Total Fantasy Points'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Fantasy Points Rank']}</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Zone vs Man Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Zone vs Man</h3>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-gray-50 dark:bg-gray-700">
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TOTAL ROUTE WINS</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">ROUTE WIN RATE</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">ROUTES VS MAN</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">WIN RATE VS MAN</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET RATE VS MAN</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET SEPARATION VS MAN</th>
+                              <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">FANTASY POINTS PER TARGET VS MAN</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className="bg-white dark:bg-gray-800">
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Total Route Wins']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Total Route Wins Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Route Win Rate'])}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Route Win Rate Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Routes vs Man']}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Routes vs Man Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Win Rate vs Man'])}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Win Rate vs Man Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Rate vs Man'])}%</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Rate vs Man Rank']}</div>
+                              </td>
+                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Separation vs Man'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Separation vs Man Rank']}</div>
+                              </td>
+                              <td className="p-3">
+                                <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Fantasy Points Per Target vs Man'])}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Fantasy Points Per Target vs Man Rank']}</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-600 mb-2">No Performance Data Available</h3>
+                  <p className="text-gray-500">Performance metrics are not available for {playerName} in {selectedYear}.</p>
+                  <p className="text-gray-500 mt-2">Try selecting a different year or check back later for updates.</p>
+                </div>
+              )}
+            </div>
           </div>
         )
 
@@ -573,20 +975,20 @@ export default function PlayerProfile() {
 
                     {/* Fantasy Insight */}
                     {nugget.fantasyInsight && (
-                      <div className='px-6 py-4 border-t border-gray-100'>
+                      <div className='px-6 py-4  border-gray-100'>
                         <h4 className='font-semibold mb-2 text-red-800'>Fantasy Insight:</h4>
-                        <div className="text-gray-700">
+                        <div>
                           {renderFantasyInsight(nugget.fantasyInsight)}
                         </div>
                       </div>
                     )}
 
                     {/* Source and Date */}
-                    <div className='px-6 py-4 border-t border-gray-50'>
+                    <div className='px-6 py-4 border-gray-50'>
                       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
                         <div className='text-sm'>
-                          <p className='text-gray-600'>
-                            <span className="font-medium">Source:</span> {nugget.sourceName}
+                          <p>
+                            <span className="font-bold">Source:</span> {nugget.sourceName}
                           </p>
                           {nugget.sourceUrl && (
                             <Link 
@@ -595,7 +997,7 @@ export default function PlayerProfile() {
                                 : `https://${nugget.sourceUrl}`} 
                               target='_blank'
                               rel='noopener noreferrer' 
-                              className='text-blue-600 hover:text-blue-800 text-sm'
+                              className='hover:text-blue-800 text-sm'
                             >
                               {nugget.sourceUrl}
                             </Link>
@@ -664,9 +1066,16 @@ export default function PlayerProfile() {
             {/* Player Info */}
             <div className="flex-1 text-center lg:text-left">
               <div className="mb-4">
-                <h1 className="text-3xl lg:text-5xl font-black mb-4 leading-none">
-                  {playerName}
-                </h1>
+                <div className="flex flex-col lg:flex-row items-center lg:items-baseline gap-4 lg:gap-6 mb-4">
+                  <h1 className="text-3xl lg:text-5xl font-black leading-none">
+                    {playerName}
+                  </h1>
+                  {player?.Core?.ADP && (
+                    <div className="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold">
+                      ADP: {player.Core.ADP} ({player.Core['ADP Year']})
+                    </div>
+                  )}
+                </div>
                 <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-8">
                   <span className="text-xl lg:text-2xl">
                     {teamName || 'N/A'}
@@ -768,43 +1177,49 @@ export default function PlayerProfile() {
           </div>
 
 
-          {/* Teammates Sidebar */}
-          <div className="space-y-8">
-            {teammates.length > 0 && (
-              <div className="rounded-3xl p-6 shadow-xl border">
-                <h3 className="text-2xl font-black mb-6">Teammates</h3>
-
-                <div className="space-y-4">
-                  {teammates.slice(0, 4).map((teammate) => (
-                    <Link
-                      key={teammate.id}
-                      href={`/players/${teammate.id}`}
-                      className="flex items-center gap-4 p-4 rounded-xl transition-colors border border-gray-100"
-                    >
-                      <Image
-                        src={getImageUrl(teammate.headshotPic) || '/default-player.jpg'}
-                        alt={teammate.name}
-                        width={50}
-                        height={50}
-                        className="rounded-xl"
-                      />
-                      <div className="flex-1">
-                        <div className="font-bold">{teammate.name}</div>
-                        <div className="text-sm">{teammate.position}</div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-
+        
+        {/* Teammates Section - After Tabs */}
+        {teammates.length > 0 && (
+          <div className="mt-12">
+            <h3 className="text-3xl font-black mb-8 text-center">Teammates</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {teammates.map((teammate) => (
                 <Link
-                  href={backToPlayersUrl}
-                  className="block text-center text-red-800 hover:text-red-900 font-bold text-lg mt-6 transition-colors"
+                  key={teammate.id}
+                  href={`/players/${teammate.id}`}
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
-                  View All Players →
+                  <div className="aspect-square bg-gradient-to-br from-red-50 to-red-100 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center p-4">
+                    <Image
+                      src={getImageUrl(teammate.headshotPic) || '/default-player.jpg'}
+                      alt={teammate.name}
+                      width={120}
+                      height={120}
+                      className="rounded-full object-cover border-4 border-white shadow-lg"
+                    />
+                  </div>
+                  <div className="p-4 text-center">
+                    <h4 className="font-bold text-lg text-gray-900 dark:text-white mb-1">{teammate.name}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{teammate.position}</p>
+                    <div className="inline-block bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full">
+                      {teammate.team || teamName}
+                    </div>
+                  </div>
                 </Link>
-              </div>
-            )}
+              ))}
+            </div>
+            
+            <div className="text-center mt-8">
+              <Link
+                href={backToPlayersUrl}
+                className="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+              >
+                View All Players
+                <ArrowLeft className="w-4 h-4 rotate-180" />
+              </Link>
+            </div>
           </div>
+        )}
         </div>
       </div>
 

@@ -462,7 +462,7 @@ export default function NuggetsPage() {
                                     <div className='px-6 py-4'>
                                         {nugget.fantasyInsight && (
                                             <>
-                                                <h1 className='font-semibold mt-4'>Fantasy Insight:</h1>
+                                                <h1 className='font-semibold mt-4 text-red-800'>Fantasy Insight:</h1>
                                                 {fantasyInsight(nugget.fantasyInsight)}
                                             </>
                                         )}
@@ -470,8 +470,8 @@ export default function NuggetsPage() {
 
                                     <div className='px-6 py-4'>
                                         <div className='flex flex-col mt-1 -mb-8 text-sm'>
-                                            <h1 className=''>Source:</h1>
-                                            <h1 className='text-left'>{nugget.sourceName}</h1>
+                                            <h1 className=''>Source: <span className='text-left'>{nugget.sourceName}</span></h1>
+                                            
                                             {nugget.sourceUrl ? (
                                                 <Link 
                                                     href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 

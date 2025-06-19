@@ -120,11 +120,290 @@ export interface CollegePerformance {
   'Breakout Rating Rank': number
 }
 
+export interface SeasonPerformanceMetrics {
+  "Season": string
+  "Games": string
+  "Games Rank": string
+  "Air Yards": string
+  "Air Yards Per Game": string
+  "Air Yards Per Game Rank": string
+  "Air Yards Rank": string
+  "Air Yards Share": string
+  "Air Yards Share Rank": string
+  "Average Target Distance": string
+  "Average Target Distance Rank": string
+  "Best Ball Points Added": string
+  "Best Ball Points Added Rank": string
+  "Best Ball Points Added Per Game": string
+  "Completed Air Yards": string
+  "Completed Air Yards Per Game": string
+  "Completed Air Yards Per Reception": string
+  "Completed Air Yards Per Target": string
+  "Completed Air Yards Rank": string
+  "Average Cushion": string
+  "Average Cushion Rank": string
+  "Carries": string
+  "Carries Inside 10": string
+  "Carries Inside 10 Per Game": string
+  "Carries Inside 5": string
+  "Carries Inside 5 Per Game": string
+  "Carries Per Game": string
+  "Carries Per Game Rank": string | null
+  "Carries Rank": string | null
+  "Catchable Targets": string
+  "Catchable Targets Per Game": string
+  "Catchable Targets Rank": string
+  "Catchable Target Rate": string
+  "Catchable Target Rate Rank": string
+  "Catch Rate": string
+  "Catch Rate Rank": string
+  "Contested Catch Conversion Rate": string
+  "Contested Catch Conversion Rate Rank": string
+  "Contested Catches": string
+  "Contested Targets": string
+  "Deep Targets": string
+  "Deep Targets Per Game": string
+  "Deep Targets Rank": string
+  "Dominator Rating": string
+  "Dominator Rating Rank": string
+  "Drops": string
+  "Drops Per Game": string
+  "Drops Per Game Rank": string
+  "Drop Rate": string
+  "Drop Rate Rank": string
+  "Drops Rank": string
+  "End Zone Targets": string
+  "End Zone Target Share": string
+  "End Zone Target Share Rank": string
+  "Expected Points Added": string
+  "Expected Points Added Rank": string
+  "EPA Per Target": string
+  "EPA Per Target Rank": string
+  "Expected Fantasy Points Per Game": string
+  "Expected Fantasy Points Per Game Rank": string
+  "Expected Fantasy Points": string
+  "Expected Fantasy Points Rank": string
+  "Fantasy Points Per Game Differential": string
+  "Expected Receiving Yards": string
+  "Expected Receiving Yards Rank": string
+  "Expected Receiving Touchdowns": string
+  "Expected Receiving Touchdowns Rank": string
+  "Expected Yards Per Reception": string
+  "Expected Yards Per Reception Rank": string
+  "Expected Touchdowns": string
+  "Expected Touchdowns Rank": string
+  "Total Fantasy Points": string
+  "Fantasy Points Rank": string
+  "Fantasy Points Per Game": string
+  "Fantasy Points Per Game Rank": string
+  "Fantasy Points Per Route Run": string
+  "Fantasy Points Per Route Run Rank": string
+  "Fantasy Points Per Snap": string
+  "Fantasy Points Per Snap Rank": string
+  "Fantasy Points Per Target": string
+  "Fantasy Points Per Target Rank": string
+  "Game Script": string
+  "Game Script Rank": string
+  "Targets Per Snap": string
+  "Targets Per Snap Rank": string
+  "Pace of Play": string
+  "Pace of Play Rank": string
+  "Production Premium": string
+  "Production Premium Rank": string
+  "QB Rating When Targeted": string
+  "QB Rating When Targeted Rank": string
+  "Receiving TDs": string
+  "Receiving Yards": string
+  "Receiving Yards Per Game": string
+  "Receiving Yards Per Game Rank": string
+  "Receiving Yards Rank": string
+  "Receptions": string
+  "Receptions Per Game": string
+  "Receptions Per Game Rank": string
+  "Receptions Rank": string
+  "Red Zone Carries": string
+  "Red Zone Carries Per Game": string
+  "Red Zone Carries Per Game Rank": string | null
+  "Red Zone Carries Rank": string | null
+  "Red Zone Catch Rate": string
+  "Red Zone Catch Rate Rank": string
+  "Red Zone Receptions": string
+  "Red Zone Receptions Rank": string
+  "Red Zone Targets": string
+  "Red Zone Target Share": string
+  "Red Zone Target Share Rank": string
+  "Red Zone Targets Rank": string
+  "Red Zone Touches": string
+  "Red Zone Touches Per Game": string
+  "Route Participation": string
+  "Route Participation Rank": string
+  "Routes Run": string
+  "Routes Run Per Game": string
+  "Routes Run Rank": string
+  "Pass Snaps": string
+  "Pass Snaps Rank": string
+  "Run Snaps": string
+  "Run Snaps Rank": string
+  "Red Zone Snaps": string
+  "Red Zone Snap Share": string
+  "Red Zone Snap Share Rank": string
+  "Rushing Touchdowns": string
+  "Rushing Yards": string
+  "Rush Yards Per Game": string
+  "Rushing Yards Rank": string | null
+  "Rush Yards Per Game Rank": string | null
+  "Slot Rate": string
+  "Slot Rate Rank": string
+  "Slot YPR": string
+  "Slot YPR Rank": string
+  "Slot YPT": string
+  "Slot YPT Rank": string
+  "Slot Catch Rate": string
+  "Slot Catch Rate Rank": string
+  "Slot Fantasy Points": string
+  "Slot Fantasy Points Rank": string
+  "Slot Fantasy Points Per Game": string
+  "Slot Fantasy Points Per Game Rank": string
+  "Slot Fantasy Points Per Target": string
+  "Slot Fantasy Points Per Target Rank": string
+  "Slot Snaps": string
+  "Slot Snaps Rank": string
+  "Slot Routes": string
+  "Slot Routes Rank": string
+  "Slot Targets": string
+  "Slot Targets Rank": string
+  "Out Wide Snaps": string
+  "Out Wide Snaps Rank": string
+  "Out Wide Routes": string
+  "Out Wide Routes Rank": string
+  "Out Wide Targets": string
+  "Out Wide Targets Rank": string
+  "Snaps": string
+  "Snap Share": string
+  "Snap Share Rank": string
+  "Snaps In Motion": string
+  "Snaps In Motion Rank": string
+  "Motion Rate": string
+  "Motion Rate Rank": string
+  "Snap-weighted Game Script": string
+  "Snap-weighted Game Script Rank": string
+  "Target Premium": string
+  "Target Premium Rank": string
+  "Targets": string
+  "Target Rate": string
+  "Target Rate Rank": string
+  "Target Share": string
+  "Target Share Rank": string
+  "Targets Inside 10": string
+  "Targets Inside 10 Per Game": string
+  "Targets Inside 5": string
+  "Targets Inside 5 Per Game": string
+  "Targets Per Game": string
+  "Targets Per Game Rank": string
+  "Targets Rank": string
+  "Target Separation": string
+  "Target Separation Rank": string
+  "Team Pass Plays Per Game": string
+  "Team Pass Plays Per Game Rank": string
+  "Total Touchdowns": string
+  "Total Touchdowns Rank": string
+  "Total Touches": string
+  "Total Yards": string
+  "Total Yards Per Game": string
+  "Touchdown Rate": string
+  "Touchdown Rate Rank": string
+  "True Catch Rate": string
+  "True Catch Rate Rank": string
+  "Uncatchable Targets": string
+  "Uncatchable Targets Per Game": string
+  "Unrealized Air Yards": string
+  "Unrealized Air Yards Per Target": string
+  "Unrealized Air Yards Rank": string
+  "VOS": string
+  "VOS Rank": string
+  "Weekly Volatility": string
+  "Weekly Volatility Rank": string
+  "Yards After Catch": string
+  "Yards After Catch Per Game": string
+  "Yards After Catch Per Reception": string
+  "Yards After Catch Per Target": string
+  "Yards After Catch Rank": string
+  "Yards Per Reception": string
+  "Yards Per Reception Rank": string
+  "Yards Per Route Run": string
+  "Yards Per Route Run Rank": string
+  "Yards Per Target": string
+  "Yards Per Target Rank": string
+  "Yards Per Team Pass Attempt": string
+  "Yards Per Team Pass Attempt Rank": string
+  "Juke Rate": string
+  "Juke Rate Rank": string
+  "Formation Adjusted Yards Per Route Run": string
+  "Formation Adjusted Yards Per Route Run Rank": string
+  "Burns": string
+  "Burn Rate": string
+  "Target Quality Rating": string
+  "Target Quality Rating Rank": string
+  "Target Accuracy": string
+  "Target Accuracy Rank": string
+  "Total Route Wins": string
+  "Total Route Wins Rank": string
+  "Route Win Rate": string
+  "Route Win Rate Rank": string
+  "Win Rate vs Man": string
+  "Win Rate vs Man Rank": string
+  "Win Rate vs Zone": string
+  "Win Rate vs Zone Rank": string
+  "Routes vs Man": string
+  "Routes vs Man Rank": string
+  "Routes vs Zone": string
+  "Routes vs Zone Rank": string
+  "Wins vs Man": string
+  "Wins vs Man Rank": string
+  "Wins vs Zone": string
+  "Wins vs Zone Rank": string
+  "Average Separation": string
+  "Average Separation Rank": string
+  "Average Separation vs Man": string
+  "Average Separation vs Man Rank": string
+  "Average Separation vs Zone": string
+  "Average Separation vs Zone Rank": string
+  "Target Separation vs Man": string
+  "Target Separation vs Man Rank": string
+  "Target Separation vs Zone": string
+  "Target Separation vs Zone Rank": string
+  "Targets vs Man": string
+  "Targets vs Man Rank": string
+  "Targets vs Zone": string
+  "Targets vs Zone Rank": string
+  "Target Rate vs Man": string
+  "Target Rate vs Man Rank": string
+  "Target Rate vs Zone": string
+  "Target Rate vs Zone Rank": string
+  "Fantasy Points Per Target vs Man": string
+  "Fantasy Points Per Target vs Man Rank": string
+  "Fantasy Points Per Target vs Zone": string
+  "Fantasy Points Per Target vs Zone Rank": string
+  "Receptions vs Man": string
+  "Receptions vs Man Rank": string
+  "Receptions vs Zone": string
+  "Receptions vs Zone Rank": string
+  "Receiving Yards vs Man": string
+  "Receiving Yards vs Man Rank": string
+  "Receiving Yards vs Zone": string
+  "Receiving Yards vs Zone Rank": string
+  "Fantasy Points vs Man": string
+  "Fantasy Points vs Man Rank": string
+  "Fantasy Points vs Zone": string
+  "Fantasy Points vs Zone Rank": string
+  "Fantasy Points Per Game vs Man": string
+  "Fantasy Points Per Game vs Man Rank": string
+  "Fantasy Points Per Game vs Zone": string
+  "Fantasy Points Per Game vs Zone Rank": string
+}
+
 export interface PerformanceMetrics {
-  'Targets': number
-  'Targets Rank': number
-  'Target Shares': number
-  'Target Shares Rank': number
+  [year: string]: SeasonPerformanceMetrics
 }
 
 export interface PlayerProfilerData {
@@ -293,6 +572,19 @@ export const playerProfilerApi = createApi({
         method: 'GET'
       })
     }),
+    getPlayerPerformance: builder.query<PlayerProfilerResponse, { playerId: string; year?: string }>({
+      query: ({ playerId, year }) => {
+        const params = new URLSearchParams()
+        if (year) {
+          params.append('year', year)
+        }
+        const queryString = params.toString()
+        return {
+          url: `/${playerId}${queryString ? `?${queryString}` : ''}`,
+          method: 'GET'
+        }
+      }
+    }),
   }),
 })
 
@@ -308,4 +600,5 @@ export const {
 
 export const {
   useGetPlayerQuery: useGetPlayerProfilerQuery,
+  useGetPlayerPerformanceQuery: useGetPlayerPerformanceProfilerQuery,
 } = playerProfilerApi
