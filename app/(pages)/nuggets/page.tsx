@@ -360,7 +360,7 @@ export default function NuggetsPage() {
                         </Select>
 
                         {/* Rookie Filter */}
-                        <div className="flex items-center space-x-2 px-4 py-3 border-2 border-gray-400 rounded-lg shadow-md bg-white">
+                        <div className="flex items-center space-x-2 px-4 py-3 border-2 border-gray-400 rounded-lg shadow-md">
                             <input
                                 type="checkbox"
                                 id="rookie-filter"
@@ -469,7 +469,7 @@ export default function NuggetsPage() {
                                     </div>
 
                                     <div className='px-6 py-4'>
-                                        <div className='flex flex-col mt-1 text-sm'>
+                                        <div className='flex flex-col mt-1 -mb-8 text-sm'>
                                             <h1 className=''>Source:</h1>
                                             <h1 className='text-left'>{nugget.sourceName}</h1>
                                             {nugget.sourceUrl ? (
@@ -487,7 +487,7 @@ export default function NuggetsPage() {
                                                 <span className='text-left text-gray-400'></span>
                                             )}
                                         </div>
-                                        <h1 className='text-right text-gray-400 mt-6 text-sm'>
+                                        <h1 className='text-right text-gray-400 mt-2 text-sm'>
                                             {new Date(nugget.createdAt).toLocaleDateString('en-US', {
                                                 year: 'numeric',
                                                 month: 'short',
@@ -534,24 +534,6 @@ export default function NuggetsPage() {
                                             </div>
                                          )}
                                     </div> */}
-
-                                    {/* Nugget Content */}
-                                    <div className="p-6">
-                                        {/* Actions */}
-                                        {/* <div className="flex items-center justify-between">
-                        {nugget.sourceUrl && (
-                          <Link
-                            href={nugget.sourceUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center text-red-600 hover:text-red-800 font-semibold text-sm transition-colors"
-                          >
-                            <ExternalLink className="w-4 h-4 mr-1" />
-                            Read Source
-                          </Link>
-                        )}
-                      </div> */}
-                                    </div>
                                 </div>
                             ))}
                         </Masonry>
