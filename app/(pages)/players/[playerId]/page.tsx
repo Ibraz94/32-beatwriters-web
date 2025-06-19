@@ -75,7 +75,7 @@ export default function PlayerProfile() {
   const teammates = allPlayers
     .filter(p => {
       // More flexible team matching
-      const playerTeam = p.team || p.teamName || p.Team?.Name
+      const playerTeam = p.team
       return playerTeam === currentTeam && p.id !== basicPlayer?.id
     })
 
@@ -515,7 +515,7 @@ export default function PlayerProfile() {
                     </select>
                   </div>
                 </div>
-              </div>
+                  </div>
 
               {/* Performance Metrics Display */}
               {performanceData ? (
@@ -523,7 +523,7 @@ export default function PlayerProfile() {
                   
                   {/* Opportunity Section */}
                   <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Opportunity</h3>
+                    <h3 className="text-xl font-bold">Opportunity</h3>
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -571,13 +571,13 @@ export default function PlayerProfile() {
                             </tr>
                           </tbody>
                         </table>
-                      </div>
+                    </div>
                     </div>
                   </div>
 
                   {/* Opportunity Section 2 */}
                   <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Opportunity</h3>
+                    <h3 className="text-xl font-bold">Opportunity</h3>
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -631,7 +631,7 @@ export default function PlayerProfile() {
 
                   {/* Productivity Section */}
                   <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Productivity</h3>
+                    <h3 className="text-xl font-bold">Productivity</h3>
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -679,13 +679,13 @@ export default function PlayerProfile() {
                             </tr>
                           </tbody>
                         </table>
-                      </div>
                     </div>
                   </div>
+                </div>
 
                   {/* Efficiency Section 1 */}
                   <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Efficiency</h3>
+                    <h3 className="text-xl font-bold">Efficiency</h3>
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -739,7 +739,7 @@ export default function PlayerProfile() {
 
                   {/* Efficiency Section 2 */}
                   <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Efficiency</h3>
+                    <h3 className="text-xl font-bold">Efficiency</h3>
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -793,7 +793,7 @@ export default function PlayerProfile() {
 
                   {/* Efficiency Section 3 */}
                   <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Efficiency</h3>
+                    <h3 className="text-xl font-bold">Efficiency</h3>
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -847,7 +847,7 @@ export default function PlayerProfile() {
 
                   {/* Zone vs Man Section */}
                   <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Zone vs Man</h3>
+                    <h3 className="text-xl font-bold">Zone vs Man</h3>
                     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -899,15 +899,15 @@ export default function PlayerProfile() {
                     </div>
                   </div>
 
-                </div>
-              ) : (
+              </div>
+            ) : (
                 <div className="text-center py-12">
-                  <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-600 mb-2">No Performance Data Available</h3>
                   <p className="text-gray-500">Performance metrics are not available for {playerName} in {selectedYear}.</p>
                   <p className="text-gray-500 mt-2">Try selecting a different year or check back later for updates.</p>
-                </div>
-              )}
+              </div>
+            )}
             </div>
           </div>
         )
@@ -1068,8 +1068,8 @@ export default function PlayerProfile() {
               <div className="mb-4">
                 <div className="flex flex-col lg:flex-row items-center lg:items-baseline gap-4 lg:gap-6 mb-4">
                   <h1 className="text-3xl lg:text-5xl font-black leading-none">
-                    {playerName}
-                  </h1>
+                  {playerName}
+                </h1>
                   {player?.Core?.ADP && (
                     <div className="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold">
                       ADP: {player.Core.ADP} ({player.Core['ADP Year']})
@@ -1184,15 +1184,15 @@ export default function PlayerProfile() {
             <h3 className="text-3xl font-black mb-8 text-center">Teammates</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {teammates.map((teammate) => (
-                <Link
-                  key={teammate.id}
-                  href={`/players/${teammate.id}`}
+                    <Link
+                      key={teammate.id}
+                      href={`/players/${teammate.id}`}
                   className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
-                >
+                    >
                   <div className="aspect-square bg-gradient-to-br from-red-50 to-red-100 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center p-4">
-                    <Image
-                      src={getImageUrl(teammate.headshotPic) || '/default-player.jpg'}
-                      alt={teammate.name}
+                      <Image
+                        src={getImageUrl(teammate.headshotPic) || '/default-player.jpg'}
+                        alt={teammate.name}
                       width={120}
                       height={120}
                       className="rounded-full object-cover border-4 border-white shadow-lg"
@@ -1204,22 +1204,22 @@ export default function PlayerProfile() {
                     <div className="inline-block bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full">
                       {teammate.team || teamName}
                     </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+
             <div className="text-center mt-8">
-              <Link
-                href={backToPlayersUrl}
+                <Link
+                  href={backToPlayersUrl}
                 className="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
+                >
                 View All Players
                 <ArrowLeft className="w-4 h-4 rotate-180" />
-              </Link>
+                </Link>
             </div>
-          </div>
-        )}
+              </div>
+            )}
         </div>
       </div>
 
