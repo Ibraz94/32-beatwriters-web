@@ -59,7 +59,7 @@ export default function ContactUs() {
                     <div className="flex flex-col items-center justify-center h-full border-2 shadow-xl rounded-lg p-6 lg:p-12">
                         <CheckCircle className="w-16 h-16 text-green-600 mb-4" />
                         <h3 className="text-2xl font-bold mb-2">Thank You!</h3>
-                        <p className="text-green-700 text-center mb-4">
+                        <p className="text-gray-400 text-center mb-4">
                             Your message has been submitted successfully. We'll get back to you soon!
                         </p>
                         <button 
