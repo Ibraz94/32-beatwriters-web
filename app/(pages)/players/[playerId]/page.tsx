@@ -10,7 +10,7 @@ import { useGetNuggetsByPlayerIdQuery, getImageUrl as getNuggetImageUrl } from '
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ReadMore } from '@/app/components/ReadMore'
 import { ChartConfig, ChartContainer } from "@/components/ui/chart"
-import { Bar, BarChart, LabelList, XAxis, Cell, YAxis } from "recharts"
+import { Bar, BarChart, LabelList, XAxis, Cell } from "recharts"
 
 export default function PlayerProfile() {
   const params = useParams()
@@ -18,7 +18,7 @@ export default function PlayerProfile() {
   const playerId = params.playerId as string
 
   // Tab state
-  const [activeTab, setActiveTab] = useState('workout')
+  const [activeTab, setActiveTab] = useState('news')
   
   // Year selection state for performance metrics
   const [selectedYear, setSelectedYear] = useState('2023')
@@ -108,8 +108,9 @@ export default function PlayerProfile() {
   // Tab components
   const tabs = [
     { id: 'news', label: 'News & Updates', icon: Activity },
-    { id: 'workout', label: 'Workout Metrics', icon: Timer },
     { id: 'performance', label: 'Performance Metrics', icon: Trophy },
+    { id: 'workout', label: 'Workout Metrics', icon: Timer },
+    
     
   ]
 
