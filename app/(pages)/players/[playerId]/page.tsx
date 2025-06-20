@@ -431,7 +431,7 @@ export default function PlayerProfile() {
                 </div>
                 {player?.['College Performance'] && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-
+                  
                   <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
                     <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['College Dominator Rating']}</h1>
@@ -488,8 +488,8 @@ export default function PlayerProfile() {
         const performanceData = performancePlayer?.['Performance Metrics']?.[selectedYear]
         
         return (
-          <div className="space-y-8">
-            <div className="rounded-xl p-8 border">
+          <div className="space-y-8 w-[50%] lg:w-full">
+            <div className="rounded p-8 border">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                 <h2 className="text-3xl font-black mb-4 sm:mb-0">Performance Metrics</h2>
                 
@@ -524,7 +524,7 @@ export default function PlayerProfile() {
                   {/* Opportunity Section */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Opportunity</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
@@ -578,7 +578,7 @@ export default function PlayerProfile() {
                   {/* Opportunity Section 2 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Opportunity</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
@@ -632,7 +632,7 @@ export default function PlayerProfile() {
                   {/* Productivity Section */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Productivity</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
@@ -686,7 +686,7 @@ export default function PlayerProfile() {
                   {/* Efficiency Section 1 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Efficiency</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
@@ -740,7 +740,7 @@ export default function PlayerProfile() {
                   {/* Efficiency Section 2 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Efficiency</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
@@ -794,7 +794,7 @@ export default function PlayerProfile() {
                   {/* Efficiency Section 3 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Efficiency</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
@@ -848,7 +848,7 @@ export default function PlayerProfile() {
                   {/* Zone vs Man Section */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Zone vs Man</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead>
