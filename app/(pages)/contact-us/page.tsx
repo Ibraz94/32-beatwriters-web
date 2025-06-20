@@ -73,11 +73,10 @@ export default function ContactUs() {
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4 items-start w-full h-full border-2 shadow-xl rounded-lg p-6 lg:p-12">
                         <input type="text" name="name" placeholder="Name" className="w-full h-12 p-2 rounded-lg border-2 shadow-sm" required />
                         <input type="email" name="email" placeholder="Email" className="w-full h-12 p-2 rounded-lg border-2 shadow-sm" required />
-                        <Select name="subject" onValueChange={(value) => {
-                            console.log(value);
-                        }}>
-                            <SelectTrigger defaultValue="Subject" className="w-full p-2 rounded-lg border-2 shadow-sm">
-                                <SelectValue placeholder="Select a question" />
+                        <p className="text-sm text-gray-500 -mb-3">Please choose what best reflects what you are contacting us about</p>
+                        <Select name="subject" value="General Question">
+                            <SelectTrigger className="w-full p-2 shadow-sm">
+                                <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="General Question" defaultValue="General Question">General Question</SelectItem>
