@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Trophy, Activity, Timer, Target, ArrowLeft } from 'lucide-react'
 import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery, useGetPlayerPerformanceProfilerQuery } from '@/lib/services/playersApi'
 import { useGetNuggetsByPlayerIdQuery, getImageUrl as getNuggetImageUrl } from '@/lib/services/nuggetsApi'
+import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ReadMore } from '@/app/components/ReadMore'
 import { ChartConfig, ChartContainer } from "@/components/ui/chart"
@@ -62,6 +63,20 @@ export default function PlayerProfile() {
   const { data: nuggetResponse, isLoading: nuggetsLoading } = useGetNuggetsByPlayerIdQuery(playerId)
   const nuggets = nuggetResponse?.data?.nuggets || []
   console.log('Nuggets for player:', nuggets)
+
+  // Teams query for nuggets team logos
+  const { data: teamsData } = useGetTeamsQuery()
+
+  // Helper function to find team by abbreviation or name
+  const findTeamByKey = (teamKey: string) => {
+    if (!teamsData?.teams || !teamKey) return null
+    
+    return teamsData.teams.find(team => 
+      team.abbreviation?.toLowerCase() === teamKey.toLowerCase() ||
+      team.name?.toLowerCase() === teamKey.toLowerCase() ||
+      team.city?.toLowerCase() === teamKey.toLowerCase()
+    )
+  }
 
   // Fetch all players for teammates - get more players to find teammates
   const { data: playersResponse } = useGetPlayersQuery({
@@ -950,25 +965,46 @@ export default function PlayerProfile() {
               </div>
             ) : nuggets.length > 0 ? (
               <div className="space-y-6 container mx-auto max-w-3xl">
-                {nuggets.map((nugget, index) => (
-                  <div key={`${nugget.id}-${index}`} className="rounded-xl border-2 overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                    {/* Player Header */}
-                    <div className='flex mt-6 gap-4 ml-6 mr-6'>
-                      <div
-                        className="cursor-pointer hover:opacity-80 transition-opacity"
-                      >
-                        <Image
-                          src={getNuggetImageUrl(nugget.player.headshotPic) || '/default-player.jpg'}
-                          alt={`${nugget.player.name} headshot`}
-                          width={64}
-                          height={64}
-                          className='rounded-full object-cover bg-background'
-                        />
+                {nuggets.map((nugget, index) => {
+                  const playerTeam = findTeamByKey(nugget.player.team || '')
+                  
+                  return (
+                    <div key={`${nugget.id}-${index}`} className="rounded-xl border-2 overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                      {/* Player Header */}
+                      <div className='flex mt-6 gap-4 ml-6 mr-6'>
+                        <div
+                          className="cursor-pointer hover:opacity-80 transition-opacity"
+                        >
+                          <Image
+                            src={getNuggetImageUrl(nugget.player.headshotPic) || '/default-player.jpg'}
+                            alt={`${nugget.player.name} headshot`}
+                            width={64}
+                            height={64}
+                            className='rounded-full object-cover bg-background'
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className='text-xl font-bold'>{nugget.player.name}</h3>
+                            {playerTeam && (
+                              <div className="flex items-center">
+                                <Image
+                                  src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                  alt={`${playerTeam.name} logo`}
+                                  width={28}
+                                  height={28}
+                                  className='object-contain'
+                                />
+                              </div>
+                            )}
+                          </div>
+                          {nugget.player.team && (
+                            <p className="text-sm text-gray-600">
+                              {nugget.player.position} • {nugget.player.team}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <h3 className='text-xl font-bold'>{nugget.player.name}</h3>
-                      </div>
-                    </div>
 
                     {/* Nugget Content */}
                     <div className="px-6 py-4">
@@ -1015,7 +1051,8 @@ export default function PlayerProfile() {
                       </div>
                     </div>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             ) : (
               <div className="rounded-xl p-8 shadow-xl border text-center">

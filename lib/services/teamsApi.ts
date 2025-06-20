@@ -1,57 +1,92 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com/api/'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com'
 
-export interface Team {
+export interface Teams {
   id: string
+  wpId: number
   name: string
-  shortName: string
-  city: string
-  conference: 'Eastern' | 'Western'
-  division: string
   logo: string
-  primaryColor: string
-  secondaryColor: string
-  founded: number
-  arena: string
-  capacity: number
-  coach: string
-  generalManager?: string
-  owner?: string
-  website?: string
-  stats?: {
-    season: string
-    wins: number
-    losses: number
-    winPercentage: number
-    pointsPerGame: number
-    pointsAllowedPerGame: number
-    reboundsPerGame: number
-    assistsPerGame: number
-    stealsPerGame: number
-    blocksPerGame: number
-  }[]
-  roster?: string[] // Player IDs
+  website: string
+  teamColor: string
+  socialLinks: {
+    twitter: string
+    instagram: string
+    facebook: string
+  }
   createdAt: string
   updatedAt: string
+  city: string
+  abbreviation: string
+  conferenceDivision: string
 }
 
 interface TeamsResponse {
-  teams: Team[]
+  teams: Teams[]
   total: number
   page: number
   limit: number
   totalPages: number
+} 
+
+interface AllTeamsResponse {
+  teams: Teams[]
+  total: number
 }
 
-interface TeamFilters {
-  conference?: 'Eastern' | 'Western'
-  division?: string
-  search?: string
-  page?: number
-  limit?: number
-  sortBy?: 'name' | 'wins' | 'losses' | 'winPercentage'
-  sortOrder?: 'asc' | 'desc'
+// Helper function to construct full image URLs
+export const getTeamLogoUrl = (imagePath?: string): string | undefined => {
+  if (!imagePath) return undefined
+  
+  // If the path already includes the full URL, return as is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath
+  }
+  
+  // Handle paths that already start with /uploads
+  if (imagePath.startsWith('/uploads/')) {
+    return `${IMAGE_BASE_URL}${imagePath}`
+  }
+  
+  // Handle paths that don't start with /uploads
+  if (imagePath.startsWith('/')) {
+    return `${IMAGE_BASE_URL}/uploads${imagePath}`
+  }
+  
+  // Handle relative paths
+  return `${IMAGE_BASE_URL}/uploads/${imagePath}`
+}
+
+// Helper function to fetch all teams across all pages
+const fetchAllTeams = async (baseUrl: string, headers: Headers): Promise<AllTeamsResponse> => {
+  let allTeams: Teams[] = []
+  let currentPage = 1
+  let totalPages = 1
+  let total = 0
+
+  do {
+    const response = await fetch(`${baseUrl}?page=${currentPage}&limit=50`, {
+      headers: headers
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch teams: ${response.statusText}`)
+    }
+    
+    const data: TeamsResponse = await response.json()
+    
+    allTeams = [...allTeams, ...data.teams]
+    totalPages = data.totalPages
+    total = data.total
+    currentPage++
+    
+  } while (currentPage <= totalPages)
+
+  return {
+    teams: allTeams,
+    total: total
+  }
 }
 
 export const teamsApi = createApi({
@@ -70,87 +105,115 @@ export const teamsApi = createApi({
   }),
   tagTypes: ['Team'],
   endpoints: (builder) => ({
-    // Get all teams with filtering and pagination
-    getTeams: builder.query<TeamsResponse, TeamFilters>({
-      query: (filters) => {
-        const params = new URLSearchParams()
-        Object.entries(filters).forEach(([key, value]) => {
-          if (value !== undefined) {
-            params.append(key, value.toString())
+    // Get all teams with pagination handled automatically
+    getTeams: builder.query<AllTeamsResponse, void>({
+      queryFn: async (arg, api, extraOptions, baseQuery) => {
+        try {
+          // Get the base URL and headers from baseQuery
+          const result = await baseQuery('?page=1&limit=1')
+          if (result.error) {
+            return { error: result.error }
           }
-        })
-        return `?${params.toString()}`
+
+          // Get base URL and headers for manual fetching
+          const state = api.getState() as any
+          const token = state.auth?.token
+          const headers = new Headers()
+          if (token) {
+            headers.set('authorization', `Bearer ${token}`)
+          }
+          headers.set('content-type', 'application/json')
+
+          const baseUrl = `${API_BASE_URL}teams`
+          const allTeamsData = await fetchAllTeams(baseUrl, headers)
+          
+          return { data: allTeamsData }
+        } catch (error) {
+          return { 
+            error: { 
+              status: 'FETCH_ERROR', 
+              error: error instanceof Error ? error.message : 'Unknown error' 
+            } 
+          }
+        }
       },
+      providesTags: ['Team'],
+    }),
+
+    // Get paginated teams (keeping original functionality if needed)
+    getTeamsPaginated: builder.query<TeamsResponse, { page?: number; limit?: number }>({
+      query: ({ page = 1, limit = 20 }) => `?page=${page}&limit=${limit}`,
       providesTags: ['Team'],
     }),
     
     // Get single team by ID
-    getTeam: builder.query<{ team: Team }, string>({
-      query: (id) => `/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Team', id }],
-    }),
+    // getTeam: builder.query<{ team: Teams }, string>({
+    //   query: (id) => `/${id}`,
+    //   providesTags: (result, error, id) => [{ type: 'Team', id }],
+    // }),
      
     // Get team stats
-    getTeamStats: builder.query<{ stats: Team['stats'] }, { teamId: string; season?: string }>({
-      query: ({ teamId, season }) => {
-        const params = season ? `?season=${season}` : ''
-        return `/${teamId}/stats${params}`
-      },
-      providesTags: (result, error, { teamId }) => [{ type: 'Team', id: `${teamId}-stats` }],
-    }),
+    // getTeamStats: builder.query<{ stats: Team['stats'] }, { teamId: string; season?: string }>({
+    //   query: ({ teamId, season }) => {
+    //     const params = season ? `?season=${season}` : ''
+    //     return `/${teamId}/stats${params}`
+    //   },
+    //   providesTags: (result, error, { teamId }) => [{ type: 'Team', id: `${teamId}-stats` }],
+    // }),
     
     // Get teams by conference
-    getTeamsByConference: builder.query<{ teams: Team[] }, 'Eastern' | 'Western'>({
-      query: (conference) => `/conference/${conference}`,
-      providesTags: ['Team'],
-    }),
+    // getTeamsByConference: builder.query<{ teams: Team[] }, 'Eastern' | 'Western'>({
+    //   query: (conference) => `/conference/${conference}`,
+    //   providesTags: ['Team'],
+    // }),
     
     // Get teams by division
-    getTeamsByDivision: builder.query<{ teams: Team[] }, string>({
-      query: (division) => `/division/${encodeURIComponent(division)}`,
-      providesTags: ['Team'],
-    }),
+    // getTeamsByDivision: builder.query<{ teams: Team[] }, string>({
+    //   query: (division) => `/division/${encodeURIComponent(division)}`,
+    //   providesTags: ['Team'],
+    // }),
     
     // Search teams
-    searchTeams: builder.query<{ teams: Team[] }, string>({
-      query: (searchTerm) => `/search?q=${encodeURIComponent(searchTerm)}`,
-      providesTags: ['Team'],
-    }),
+    // searchTeams: builder.query<{ teams: Team[] }, string>({
+    //   query: (searchTerm) => `/search?q=${encodeURIComponent(searchTerm)}`,
+    //   providesTags: ['Team'],
+    // }),
     
     // Get team roster
-    getTeamRoster: builder.query<{ players: any[] }, string>({
-      query: (teamId) => `/${teamId}/roster`,
-      providesTags: (result, error, teamId) => [{ type: 'Team', id: `${teamId}-roster` }],
-    }),
+    // getTeamRoster: builder.query<{ players: any[] }, string>({
+    //   query: (teamId) => `/${teamId}/roster`,
+    //   providesTags: (result, error, teamId) => [{ type: 'Team', id: `${teamId}-roster` }],
+    // }),
     
     // Get team schedule
-    getTeamSchedule: builder.query<{ games: any[] }, { teamId: string; season?: string }>({
-      query: ({ teamId, season }) => {
-        const params = season ? `?season=${season}` : ''
-        return `/${teamId}/schedule${params}`
-      },
-      providesTags: (result, error, { teamId }) => [{ type: 'Team', id: `${teamId}-schedule` }],
-    }),
+    // getTeamSchedule: builder.query<{ games: any[] }, { teamId: string; season?: string }>({
+    //   query: ({ teamId, season }) => {
+    //     const params = season ? `?season=${season}` : ''
+    //     return `/${teamId}/schedule${params}`
+    //   },
+    //   providesTags: (result, error, { teamId }) => [{ type: 'Team', id: `${teamId}-schedule` }],
+    // }),
     
     // Get standings
-    getStandings: builder.query<{ eastern: Team[]; western: Team[] }, string | void>({
-      query: (season) => {
-        const params = season ? `?season=${season}` : ''
-        return `/standings${params}`
-      },
-      providesTags: ['Team'],
-    }),
+    // getStandings: builder.query<{ eastern: Team[]; western: Team[] }, string | void>({
+    //   query: (season) => {
+    //     const params = season ? `?season=${season}` : ''
+    //     return `/standings${params}`
+    //   },
+    //   providesTags: ['Team'],
+    // }),
   }),
 })
 
 export const {
   useGetTeamsQuery,
-  useGetTeamQuery,
-  useGetTeamStatsQuery,
-  useGetTeamsByConferenceQuery,
-  useGetTeamsByDivisionQuery,
-  useSearchTeamsQuery,
-  useGetTeamRosterQuery,
-  useGetTeamScheduleQuery,
-  useGetStandingsQuery,
+  useGetTeamsPaginatedQuery,
+  // useGetTeamQuery,
+  // useGetTeamStatsQuery,
+  // useGetTeamsByConferenceQuery,
+  // useGetTeamsByDivisionQuery,
+  // useSearchTeamsQuery,
+  // useGetTeamRosterQuery,
+  // useGetTeamScheduleQuery,
+  // useGetStandingsQuery,
 } = teamsApi 

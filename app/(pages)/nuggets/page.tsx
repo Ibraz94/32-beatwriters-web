@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 
 
 interface NuggetFilters {
@@ -28,6 +29,7 @@ interface NuggetFilters {
     positions?: string[]
     rookie?: boolean
     position?: string
+    team?: string
 }
 
 interface ImageModalData {
@@ -47,7 +49,8 @@ export default function NuggetsPage() {
         sortOrder: 'desc',
         positions: [],
         rookie: false,
-        position: ''
+        position: '',
+        team: ''
     })
     const [selectedDate, setSelectedDate] = useState<string>('')
     const [searchTerm, setSearchTerm] = useState('')
@@ -56,6 +59,7 @@ export default function NuggetsPage() {
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
     const [availablePositions, setAvailablePositions] = useState<string[]>([])
+    const [availableTeams, setAvailableTeams] = useState<string[]>([])
 
     // Main query for nuggets - simplified to just fetch all nuggets
     const {
@@ -73,6 +77,20 @@ export default function NuggetsPage() {
     // Search query - we'll handle this client-side
     const [searchResults, setSearchResults] = useState<any[]>([])
 
+    // Teams query
+    const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
+
+    // Helper function to find team by abbreviation or name
+    const findTeamByKey = (teamKey: string) => {
+        if (!teamsData?.teams || !teamKey) return null
+        
+        return teamsData.teams.find(team => 
+            team.abbreviation?.toLowerCase() === teamKey.toLowerCase() ||
+            team.name?.toLowerCase() === teamKey.toLowerCase() ||
+            team.city?.toLowerCase() === teamKey.toLowerCase()
+        )
+    }
+
     // Handle loading nuggets and extracting filter options
     useEffect(() => {
         if (nuggetsData?.data?.nuggets) {
@@ -86,6 +104,14 @@ export default function NuggetsPage() {
             )].sort()
             
             setAvailablePositions(positions)
+
+            // Extract unique teams
+            const teams = [...new Set(nuggetsData.data.nuggets
+                .map((nugget: any) => nugget.player.team)
+                .filter(Boolean)
+            )].sort()
+            
+            setAvailableTeams(teams)
         }
     }, [nuggetsData])
 
@@ -99,7 +125,8 @@ export default function NuggetsPage() {
             const filtered = allNuggets.filter(nugget =>
                 nugget.content.toLowerCase().includes(searchTermLower) ||
                 nugget.player.name.toLowerCase().includes(searchTermLower) ||
-                nugget.sourceName?.toLowerCase().includes(searchTermLower)
+                nugget.sourceName?.toLowerCase().includes(searchTermLower) ||
+                teamsData?.teams.find(team => team.name === nugget.player.team)?.name?.toLowerCase().includes(searchTermLower)
             )
             setSearchResults(filtered)
         } else {
@@ -124,6 +151,13 @@ export default function NuggetsPage() {
         if (filters.positions && filters.positions.length > 0) {
             filtered = filtered.filter(nugget => 
                 filters.positions!.includes(nugget.player.position)
+            )
+        }
+
+        // Apply team filter
+        if (filters.team) {
+            filtered = filtered.filter(nugget => 
+            teamsData?.teams.find(team => team.name === nugget.player.team)?.name?.toLowerCase() === filters.team?.toLowerCase()
             )
         }
         
@@ -152,6 +186,14 @@ export default function NuggetsPage() {
             position: position === 'all' ? '' : position
         }))
     }
+
+    // Handle team filter change
+    const handleTeamFilterChange = (team: string) => {
+        setFilters(prev => ({
+            ...prev,
+            team: team === 'all' ? '' : team
+        }))
+    }
     
     // Handle rookie filter change
     const handleRookieFilterChange = (isRookie: boolean) => {
@@ -163,13 +205,18 @@ export default function NuggetsPage() {
     
     // Clear all filters
     const clearFilters = () => {
-        setFilters(prev => ({
-            ...prev,
+        setFilters({
+            sortBy: 'createdAt',
+            sortOrder: 'desc',
             positions: [],
             rookie: false,
-            position: ''
-        }))
+            position: '',
+            team: ''
+        })
         setSelectedDate('')
+        setSearchTerm('')
+        setIsSearching(false)
+        setSearchResults([])
     }
 
     // Image modal functions
@@ -223,7 +270,7 @@ export default function NuggetsPage() {
         return () => window.removeEventListener('keydown', handleKeyPress)
     }, [imageModal])
 
-    const isLoading = isLoadingNuggets || authLoading || premiumLoading
+    const isLoading = isLoadingNuggets || authLoading || premiumLoading || isLoadingTeams
     const error = nuggetsError
     const displayNuggets = isSearching ? searchResults : getFilteredAndSortedNuggets(allNuggets)
 
@@ -319,7 +366,7 @@ export default function NuggetsPage() {
                             />
                         </div>
                     {/* Search Bar and Filters */}
-                    <div className="relative flex flex-col sm:flex-row gap-3 max-w-4xl mx-auto items-center justify-center">
+                    <div className="relative flex flex-col sm:flex-row gap-3 max-w-6xl mx-auto items-center justify-center">
                        {/* Date Filter */}
                         <div className="relative w-full sm:w-48">
                             <input
@@ -332,13 +379,13 @@ export default function NuggetsPage() {
                         </div>
 
                         {/* Position Filter Dropdown */}
-                        <Select onValueChange={handlePositionFilterChange}>
+                        <Select 
+                            key={`position-${filters.position}`}
+                            value={filters.position || "all"}
+                            onValueChange={handlePositionFilterChange}
+                        >
                             <SelectTrigger className="w-full sm:w-48 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg">
-                                <SelectValue placeholder={
-                                    filters.position 
-                                        ? filters.position
-                                        : "Filter by Position"
-                                } />
+                                <SelectValue placeholder="Filter by Position" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
@@ -352,6 +399,33 @@ export default function NuggetsPage() {
                                             value={position}
                                         >
                                             {position}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        {/* Team Filter Dropdown */}
+                        <Select 
+                            key={`team-${filters.team}`}
+                            value={filters.team || "all"}
+                            onValueChange={handleTeamFilterChange}
+                        >
+                            <SelectTrigger className="w-full sm:w-48 h-12 pl-4 pr-4 py-6 shadow-md rounded-lg">
+                                <SelectValue placeholder="Filter by Team" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Select Team</SelectLabel>
+                                    <SelectItem value="all">
+                                        All Teams
+                                    </SelectItem>
+                                    {teamsData?.teams.map(team => (
+                                        <SelectItem
+                                            key={team.name}
+                                            value={team.name}
+                                        >
+                                            {team.name}
                                         </SelectItem>
                                     ))}
                                 </SelectGroup>
@@ -373,14 +447,14 @@ export default function NuggetsPage() {
                         </div>
 
                         {/* Clear Filters Button */}
-                        <div className={`w-full sm:w-auto ${(selectedDate || (filters.positions && filters.positions.length > 0) || filters.rookie || filters.position) ? 'block' : 'hidden sm:block'}`}>
+                        <div className={`w-full sm:w-auto ${(selectedDate || (filters.positions && filters.positions.length > 0) || filters.rookie || filters.position || filters.team) ? 'block' : 'hidden sm:block'}`}>
                             <button
                                 onClick={clearFilters}
-                                disabled={!selectedDate && (!filters.positions || filters.positions.length === 0) && !filters.rookie && !filters.position}
+                                disabled={!selectedDate && (!filters.positions || filters.positions.length === 0) && !filters.rookie && !filters.position && !filters.team}
                                 className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                                    !selectedDate && (!filters.positions || filters.positions.length === 0) && !filters.rookie && !filters.position
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
+                                    !selectedDate && (!filters.positions || filters.positions.length === 0) && !filters.rookie && !filters.position && !filters.team
+                                        ? 'text-gray-400 cursor-not-allowed'
+                                        : 'text-red-800 hover:underline hover:cursor-pointer'
                                 }`}
                             >
                                 Clear Filters
@@ -424,108 +498,130 @@ export default function NuggetsPage() {
                             className="flex max-w-3xl mx-auto"
                             columnClassName="pl-0 sm:pl-6 bg-clip-padding"
                         >
-                            {displayNuggets.map((nugget, index) => (
-                                <div key={`${nugget.id}-${index}`} className="rounded-xl border-3 overflow-hidden shadow-md hover:shadow-xl transition-shadow mb-6 mx-4 sm:mx-0">
-                                    <div className='flex mt-8 gap-2 ml-4 mr-4'>
-                                        <div
-                                            className="cursor-pointer hover:opacity-80 transition-opacity"
-                                            onClick={() => openImageModal(
-                                                getImageUrl(nugget.player.headshotPic) || '',
-                                                `${nugget.player.name} headshot`
-                                            )}
-                                        >
-                                            <Image
-                                                src={getImageUrl(nugget.player.headshotPic) || ''}
-                                                alt={`${nugget.player.name} headshot`}
-                                                width={80}
-                                                height={80}
-                                                className='rounded-full object-cover bg-background'
-                                            />
-                                        </div>
-                                        <div>
-                                            <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
-                                        </div>
-                                    </div>
-                                    <div className="px-6 py-4">
-                                        <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
-                                    </div>
-                                    <div className='px-6 py-4'>
-                                        {nugget.fantasyInsight && (
-                                            <>
-                                                <h1 className='font-semibold mt-4 text-red-800'>Fantasy Insight:</h1>
-                                                {fantasyInsight(nugget.fantasyInsight)}
-                                            </>
-                                        )}
-                                    </div>
-
-                                    <div className='px-6 py-4'>
-                                        <div className='flex flex-col mt-1 -mb-8 text-sm'>
-                                            <h1 className=''>Source: <span className='text-left'>{nugget.sourceName}</span></h1>
-                                            
-                                            {nugget.sourceUrl ? (
-                                                <Link 
-                                                    href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
-                                                        ? nugget.sourceUrl 
-                                                        : `https://${nugget.sourceUrl}`} 
-                                                    target='_blank'
-                                                    rel='noopener noreferrer' 
-                                                    className='text-left text-gray-400 hover:text-blue-800'
-                                                >
-                                                    {nugget.sourceUrl}
-                                                </Link>
-                                            ) : (
-                                                <span className='text-left text-gray-400'></span>
-                                            )}
-                                        </div>
-                                        <h1 className='text-right text-gray-400 mt-2 text-sm'>
-                                            {new Date(nugget.createdAt).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric'
-                                            })}
-                                        </h1>
-                                    </div>
-
-                                    {/* Nugget Images */}
-                                    {/* <div className='p-6 -mt-8'>
-                                        {nugget.images && nugget.images.length > 0 && (
-                                            <div className={`grid gap-2 ${
-                                                nugget.images.length === 1 ? 'grid-cols-1' :
-                                                nugget.images.length === 2 ? 'grid-cols-2' :
-                                                nugget.images.length === 3 ? 'grid-cols-3' :
-                                                'grid-cols-2'
-                                            }`}>
-                                                {nugget.images.map((image: string, imageIndex: number) => (
-                                                    <div 
-                                                        key={imageIndex} 
-                                                        className={`relative w-full cursor-pointer hover:opacity-80 transition-opacity ${
-                                                            nugget.images.length === 1 ? 'h-64' :
-                                                            nugget.images.length === 2 ? 'h-48' :
-                                                            nugget.images.length === 3 ? 'h-32' :
-                                                            'h-40'
-                                                        }`}
-                                                        onClick={() => openImageModal(
-                                                            getImageUrl(image) || '',
-                                                            `${nugget.player.name} image ${imageIndex + 1}`,
-                                                            nugget.images,
-                                                            imageIndex
-                                                        )}
-                                                    >
-                                                        <Image
-                                                            src={getImageUrl(image) || ''}
-                                                            alt={`${nugget.player.name} image ${imageIndex + 1}`}
-                                                            priority={imageIndex === 0}
-                                                            fill
-                                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                            className="object-cover rounded-lg"
-                                                        />
-                                                    </div>
-                                                ))}
+                            {displayNuggets.map((nugget, index) => {
+                                const playerTeam = findTeamByKey(nugget.player.team)
+                                
+                                return (
+                                    <div key={`${nugget.id}-${index}`} className="rounded-xl border-3 overflow-hidden shadow-md hover:shadow-xl transition-shadow mb-6 mx-4 sm:mx-0">
+                                        <div className='flex mt-8 gap-2 ml-4 mr-4'>
+                                            <div
+                                                className="cursor-pointer hover:opacity-80 transition-opacity"
+                                                onClick={() => openImageModal(
+                                                    getImageUrl(nugget.player.headshotPic) || '',
+                                                    `${nugget.player.name} headshot`
+                                                )}
+                                            >
+                                                <Image
+                                                    src={getImageUrl(nugget.player.headshotPic) || ''}
+                                                    alt={`${nugget.player.name} headshot`}
+                                                    width={80}
+                                                    height={80}
+                                                    className='rounded-full object-cover bg-background'
+                                                />
                                             </div>
-                                         )}
-                                    </div> */}
-                                </div>
-                            ))}
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
+                                                    {playerTeam && (
+                                                        <div className="flex items-center">
+                                                            <Image
+                                                                src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                                                alt={`${playerTeam.name} logo`}
+                                                                width={32}
+                                                                height={24}
+                                                                className='object-contain'
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {nugget.player.team && (
+                                                    <p className="text-sm text-gray-600">
+                                                        {nugget.player.position} • {nugget.player.team}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="px-6 py-4">
+                                            <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
+                                        </div>
+                                        <div className='px-6 py-4'>
+                                            {nugget.fantasyInsight && (
+                                                <>
+                                                    <h1 className='font-semibold mt-4 text-red-800'>Fantasy Insight:</h1>
+                                                    {fantasyInsight(nugget.fantasyInsight)}
+                                                </>
+                                            )}
+                                        </div>
+
+                                        <div className='px-6 py-4'>
+                                            <div className='flex flex-col mt-1 -mb-8 text-sm'>
+                                                <h1 className=''>Source: <span className='text-left'>{nugget.sourceName}</span></h1>
+                                                
+                                                {nugget.sourceUrl ? (
+                                                    <Link 
+                                                        href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
+                                                            ? nugget.sourceUrl 
+                                                            : `https://${nugget.sourceUrl}`} 
+                                                        target='_blank'
+                                                        rel='noopener noreferrer' 
+                                                        className='text-left text-gray-400 hover:text-blue-800'
+                                                    >
+                                                        {nugget.sourceUrl}
+                                                    </Link>
+                                                ) : (
+                                                    <span className='text-left text-gray-400'></span>
+                                                )}
+                                            </div>
+                                            <h1 className='text-right text-gray-400 mt-2 text-sm'>
+                                                {new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric'
+                                                })}
+                                            </h1>
+                                        </div>
+
+                                        {/* Nugget Images */}
+                                        {/* <div className='p-6 -mt-8'>
+                                            {nugget.images && nugget.images.length > 0 && (
+                                                <div className={`grid gap-2 ${
+                                                    nugget.images.length === 1 ? 'grid-cols-1' :
+                                                    nugget.images.length === 2 ? 'grid-cols-2' :
+                                                    nugget.images.length === 3 ? 'grid-cols-3' :
+                                                    'grid-cols-2'
+                                                }`}>
+                                                    {nugget.images.map((image: string, imageIndex: number) => (
+                                                        <div 
+                                                            key={imageIndex} 
+                                                            className={`relative w-full cursor-pointer hover:opacity-80 transition-opacity ${
+                                                                nugget.images.length === 1 ? 'h-64' :
+                                                                nugget.images.length === 2 ? 'h-48' :
+                                                                nugget.images.length === 3 ? 'h-32' :
+                                                                'h-40'
+                                                            }`}
+                                                            onClick={() => openImageModal(
+                                                                getImageUrl(image) || '',
+                                                                `${nugget.player.name} image ${imageIndex + 1}`,
+                                                                nugget.images,
+                                                                imageIndex
+                                                            )}
+                                                        >
+                                                            <Image
+                                                                src={getImageUrl(image) || ''}
+                                                                alt={`${nugget.player.name} image ${imageIndex + 1}`}
+                                                                priority={imageIndex === 0}
+                                                                fill
+                                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                                className="object-cover rounded-lg"
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                             )}
+                                        </div> */}
+                                    </div>
+                                )
+                            })}
                         </Masonry>
                     </>
                 )}
