@@ -44,10 +44,9 @@ interface UpdateProfileRequest {
   avatar?: string
 }
 
-interface ChangePasswordRequest {
+interface UpdatePasswordRequest {
   currentPassword: string
   newPassword: string
-  confirmPassword: string
 }
 
 export const authApi = createApi({
@@ -111,7 +110,7 @@ export const authApi = createApi({
     resetPassword: builder.mutation<{ message: string }, ResetPasswordRequest>({
       query: (data) => ({
         url: '/forgot-password/reset',
-        method: 'PUT',
+        method: 'POST',
         body: data,
       }),
       invalidatesTags: ['User'],
@@ -131,6 +130,14 @@ export const authApi = createApi({
       }),
       invalidatesTags: ['User'],
     }),
+
+    updatePassword: builder.mutation<{ message: string }, UpdatePasswordRequest>({
+      query: (data) => ({
+        url: '/profile/password',
+        method: 'PUT',
+        body: data,
+      }),
+    }),
   })
 })
 
@@ -144,4 +151,5 @@ export const {
   useResetPasswordMutation,
   useGetProfileQuery,
   useUpdateProfileMutation,
+  useUpdatePasswordMutation,
 } = authApi 

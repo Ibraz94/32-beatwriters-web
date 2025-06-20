@@ -5,7 +5,7 @@ import { User, Mail, Lock, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, 
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { useAuth } from '../../../lib/hooks/useAuth'
-import { useUpdateProfileMutation, useResetPasswordMutation, useGetProfileQuery,  useLogoutMutation } from '../../../lib/services/authApi'
+import { useUpdateProfileMutation, useUpdatePasswordMutation, useGetProfileQuery, useLogoutMutation } from '../../../lib/services/authApi'
 import DiscordButton from '@/app/components/DiscordButton'
 
 export default function Account() {
@@ -15,7 +15,7 @@ export default function Account() {
     const [showNewPassword, setShowNewPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [editMode, setEditMode] = useState<{[key: string]: boolean}>({})
+    const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({})
     const [profileForm, setProfileForm] = useState({
         name: '',
         email: '',
@@ -27,13 +27,13 @@ export default function Account() {
         newPassword: '',
         confirmPassword: ''
     })
-    const [errors, setErrors] = useState<{[key: string]: string}>({})
+    const [errors, setErrors] = useState<{ [key: string]: string }>({})
     const [successMessage, setSuccessMessage] = useState('')
 
     const { theme } = useTheme()
     const { user, logout, updateProfile } = useAuth()
     const [updateProfileMutation] = useUpdateProfileMutation()
-    const [resetPasswordMutation] = useResetPasswordMutation()
+    const [updatePasswordMutation] = useUpdatePasswordMutation()
     const [logoutMutation] = useLogoutMutation()
 
     // Fetch fresh profile data
@@ -42,7 +42,7 @@ export default function Account() {
     // Helper function to get display name from user data
     const getDisplayName = (userData: typeof user) => {
         if (!userData) return ''
-        
+
         let displayName = userData.username || ''
         if (!displayName && (userData.firstName || userData.lastName)) {
             displayName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
@@ -55,24 +55,24 @@ export default function Account() {
 
     useEffect(() => {
         setMounted(true)
-        
+
         // Use fresh profile data if available, otherwise fall back to user from auth context
         const currentUser = profileData?.user || user
-        
+
         if (currentUser) {
             console.log('User data received:', currentUser) // Debug log
             console.log('Profile data:', profileData) // Debug log
-            
+
             // Construct name from available data
             let displayName = getDisplayName(currentUser)
-            
+
             setProfileForm({
                 name: displayName,
                 email: currentUser.email || '',
                 firstName: currentUser.firstName || '',
                 lastName: currentUser.lastName || ''
             })
-            
+
             console.log('Profile form set to:', {
                 name: displayName,
                 email: currentUser.email || '',
@@ -88,7 +88,7 @@ export default function Account() {
             ...prev,
             [name]: value
         }))
-        
+
         // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
@@ -104,7 +104,7 @@ export default function Account() {
             ...prev,
             [name]: value
         }))
-        
+
         // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
@@ -124,9 +124,9 @@ export default function Account() {
 
     const handleProfileSubmit = async (field: string) => {
         if (!user) return
-        
+
         setIsLoading(true)
-        
+
         try {
             const updateData: any = {}
             if (field === 'name') {
@@ -140,10 +140,10 @@ export default function Account() {
             }
 
             const result = await updateProfileMutation(updateData).unwrap()
-            
+
             // Update local state
             updateProfile(updateData)
-            
+
             setSuccessMessage(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`)
             setEditMode(prev => ({ ...prev, [field]: false }))
             setTimeout(() => setSuccessMessage(''), 3000)
@@ -155,55 +155,54 @@ export default function Account() {
     }
 
     const validatePasswordForm = () => {
-        const newErrors: {[key: string]: string} = {}
-        
+        const newErrors: { [key: string]: string } = {}
+
         if (!passwordForm.currentPassword) {
             newErrors.currentPassword = 'Current password is required'
         }
-        
+
         if (!passwordForm.newPassword) {
             newErrors.newPassword = 'New password is required'
         } else if (passwordForm.newPassword.length < 8) {
             newErrors.newPassword = 'Password must be at least 8 characters'
         }
-        
+
         if (!passwordForm.confirmPassword) {
             newErrors.confirmPassword = 'Please confirm your new password'
         } else if (passwordForm.newPassword !== passwordForm.confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match'
         }
-        
+
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
 
-    // const handlePasswordSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault()
-        
-    //     if (!validatePasswordForm()) return
-        
-    //     setIsLoading(true)
-        
-    //     try {
-    //         await resetPasswordMutation({
-    //             currentPassword: passwordForm.currentPassword,
-    //             newPassword: passwordForm.newPassword,
-    //             confirmPassword: passwordForm.confirmPassword
-    //         }).unwrap()
-            
-    //         setSuccessMessage('Password updated successfully!')
-    //         setPasswordForm({
-    //             currentPassword: '',
-    //             newPassword: '',
-    //             confirmPassword: ''
-    //         })
-    //         setTimeout(() => setSuccessMessage(''), 3000)
-    //     } catch (error: any) {
-    //         setErrors({ general: error?.data?.message || 'Failed to update password. Please try again.' })
-    //     } finally {
-    //         setIsLoading(false)
-    //     }
-    // }
+    const handlePasswordSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        if (!validatePasswordForm()) return
+
+        setIsLoading(true)
+
+        try {
+            await updatePasswordMutation({
+                currentPassword: passwordForm.currentPassword,
+                newPassword: passwordForm.newPassword,
+            }).unwrap()
+
+            setSuccessMessage('Password updated successfully!')
+            setPasswordForm({
+                currentPassword: '',
+                newPassword: '',
+                confirmPassword: ''
+            })
+            setTimeout(() => setSuccessMessage(''), 3000)
+        } catch (error: any) {
+            setErrors({ general: error?.data?.message || 'Failed to update password. Please try again.' })
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     const cancelEdit = (field: string) => {
         setEditMode(prev => ({ ...prev, [field]: false }))
@@ -272,11 +271,10 @@ export default function Account() {
                                 <button
                                     key={id}
                                     onClick={() => setActiveTab(id)}
-                                    className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                                        activeTab === id
+                                    className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === id
                                             ? 'border-red-800 text-red-800'
                                             : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
-                                    }`}
+                                        }`}
                                 >
                                     <div className="flex items-center space-x-2">
                                         <Icon className="h-4 w-4" />
@@ -284,11 +282,11 @@ export default function Account() {
                                     </div>
                                 </button>
                             ))}
-                        
+
                         </nav>
                         <div className='w-full sm:w-auto'>
-                                <DiscordButton />
-                            </div>
+                            <DiscordButton />
+                        </div>
                     </div>
                 </div>
 
@@ -298,7 +296,7 @@ export default function Account() {
                     {activeTab === 'profile' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-foreground">Profile Information</h2>
-                            
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Full Name */}
                                 <div>
@@ -347,7 +345,7 @@ export default function Account() {
                                         <p className="mt-1 text-sm text-destructive">{errors.name}</p>
                                     )}
                                 </div>
-                                
+
                                 {/* Email Address */}
                                 <div>
                                     <label className="block text-sm font-medium text-card-foreground mb-2">
@@ -395,7 +393,7 @@ export default function Account() {
                                         <p className="mt-1 text-sm text-destructive">{errors.email}</p>
                                     )}
                                 </div>
-                                
+
                                 {/* Member Since */}
                                 <div>
                                     <label className="block text-sm font-medium text-card-foreground mb-2">
@@ -408,7 +406,7 @@ export default function Account() {
                                         </span>
                                     </div>
                                 </div>
-                                
+
                                 {/* Account Status */}
                                 <div>
                                     <label className="block text-sm font-medium text-card-foreground mb-2">
@@ -429,11 +427,10 @@ export default function Account() {
                     {activeTab === 'update-password' && (
                         <div className="space-y-6">
                             <h2 className="text-xl font-semibold text-foreground">Update Password</h2>
-                            
-                            <form 
-                            // onSubmit={handlePasswordSubmit} 
-                            
-                            className="space-y-4">
+
+                            <form
+                                onSubmit={handlePasswordSubmit} 
+                                className="space-y-4">
                                 <div>
                                     <label htmlFor="currentPassword" className="block text-sm font-medium text-card-foreground mb-2">
                                         Current Password
@@ -448,9 +445,8 @@ export default function Account() {
                                             type={showCurrentPassword ? 'text' : 'password'}
                                             value={passwordForm.currentPassword}
                                             onChange={handlePasswordChange}
-                                            className={`w-full pl-10 pr-10 py-3 border ${
-                                                errors.currentPassword ? 'border-destructive' : 'border-input'
-                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
+                                            className={`w-full pl-10 pr-10 py-3 border ${errors.currentPassword ? 'border-destructive' : 'border-input'
+                                                } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
                                             placeholder="Enter current password"
                                         />
                                         <button
@@ -469,7 +465,7 @@ export default function Account() {
                                         <p className="mt-1 text-sm text-destructive">{errors.currentPassword}</p>
                                     )}
                                 </div>
-                                
+
                                 <div>
                                     <label htmlFor="newPassword" className="block text-sm font-medium text-card-foreground mb-2">
                                         New Password
@@ -484,9 +480,8 @@ export default function Account() {
                                             type={showNewPassword ? 'text' : 'password'}
                                             value={passwordForm.newPassword}
                                             onChange={handlePasswordChange}
-                                            className={`w-full pl-10 pr-10 py-3 border ${
-                                                errors.newPassword ? 'border-destructive' : 'border-input'
-                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
+                                            className={`w-full pl-10 pr-10 py-3 border ${errors.newPassword ? 'border-destructive' : 'border-input'
+                                                } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
                                             placeholder="Enter new password"
                                         />
                                         <button
@@ -505,7 +500,7 @@ export default function Account() {
                                         <p className="mt-1 text-sm text-destructive">{errors.newPassword}</p>
                                     )}
                                 </div>
-                                
+
                                 <div>
                                     <label htmlFor="confirmPassword" className="block text-sm font-medium text-card-foreground mb-2">
                                         Confirm New Password
@@ -520,9 +515,8 @@ export default function Account() {
                                             type={showConfirmPassword ? 'text' : 'password'}
                                             value={passwordForm.confirmPassword}
                                             onChange={handlePasswordChange}
-                                            className={`w-full pl-10 pr-10 py-3 border ${
-                                                errors.confirmPassword ? 'border-destructive' : 'border-input'
-                                            } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
+                                            className={`w-full pl-10 pr-10 py-3 border ${errors.confirmPassword ? 'border-destructive' : 'border-input'
+                                                } rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background/20`}
                                             placeholder="Confirm new password"
                                         />
                                         <button
@@ -541,11 +535,11 @@ export default function Account() {
                                         <p className="mt-1 text-sm text-destructive">{errors.confirmPassword}</p>
                                     )}
                                 </div>
-                                
+
                                 {errors.general && (
                                     <p className="text-sm text-destructive">{errors.general}</p>
                                 )}
-                                
+
                                 <button
                                     type="submit"
                                     disabled={isLoading}
@@ -564,7 +558,7 @@ export default function Account() {
                         </div>
                     )}
                 </div>
-                
+
             </div>
         </div>
     )

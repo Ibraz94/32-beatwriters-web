@@ -19,12 +19,11 @@ export default function ForgotPassword() {
     const [timer, setTimer] = useState(600) // 10 minutes in seconds
     const [isTimerActive, setIsTimerActive] = useState(false)
     const [otpToken, setOtpToken] = useState('')
-    
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [formData, setFormData] = useState({
         email: '',
         otp: ['', '', '', '', '', ''],
         newPassword: '',
-        confirmPassword: ''
     })
     const [errors, setErrors] = useState<{[key: string]: string}>({})
 
@@ -93,9 +92,9 @@ export default function ForgotPassword() {
             newErrors.newPassword = 'Password must be at least 8 characters long'
         }
         
-        if (!formData.confirmPassword) {
+        if (!confirmPassword) {
             newErrors.confirmPassword = 'Please confirm your password'
-        } else if (formData.newPassword !== formData.confirmPassword) {
+        } else if (formData.newPassword !== confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match'
         }
         
@@ -161,7 +160,7 @@ export default function ForgotPassword() {
                 email: formData.email,
                 otp: otpToken,
                 newPassword: formData.newPassword,
-                confirmPassword: formData.confirmPassword
+                confirmPassword: confirmPassword
             }).unwrap()
             console.log('Password reset successful:', result)
             setCurrentStep('success')
@@ -448,8 +447,8 @@ export default function ForgotPassword() {
                                         name="confirmPassword"
                                         type={showConfirmPassword ? 'text' : 'password'}
                                         required
-                                        value={formData.confirmPassword}
-                                        onChange={handleInputChange}
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
                                         className={`appearance-none relative block w-full pl-4 pr-10 py-3 border ${
                                             errors.confirmPassword ? 'border-destructive' : 'border-input'
                                         } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring focus:ring-ring focus:border-transparent bg-background/20 transition-colors`}
