@@ -52,7 +52,7 @@ export default function Footer() {
     return (
         <footer className="bg-background border-t">
             {/* Newsletter Section */}
-            <div className="border-b bg-card">
+            {/* <div className="border-b bg-card">
                 <div className="container mx-auto px-4 py-12">
                     <div className="max-w-4xl mx-auto text-center">
                         <h3 className="text-2xl md:text-3xl font-bold mb-3">
@@ -60,9 +60,9 @@ export default function Footer() {
                         </h3>
                         <p className="text-muted-foreground mb-8 text-lg">
                             Get breaking news, insider reports, and fantasy insights delivered straight to your inbox.
-                        </p>
+                        </p> */}
                         
-                        <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                        {/* <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                             <div className="flex-1">
                                 <input
                                     type="email"
@@ -80,14 +80,14 @@ export default function Footer() {
                                 {isSubscribed ? "Subscribed!" : "Subscribe"}
                                 <ArrowRight className="h-4 w-4" />
                             </button>
-                        </form>
+                        </form> */}
 
-                        <p className="text-sm text-muted-foreground mt-4">
+                        {/* <p className="text-sm text-muted-foreground mt-4">
                             Join 10,000+ fantasy players getting weekly insights. Unsubscribe anytime.
                         </p>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Main Footer Content */}
             <div className="container mx-auto px-4 py-12">
