@@ -56,7 +56,6 @@ export default function NuggetsPage() {
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
     const [availablePositions, setAvailablePositions] = useState<string[]>([])
-    const [filteredNuggets, setFilteredNuggets] = useState<any[]>([])
 
     // Main query for nuggets - simplified to just fetch all nuggets
     const {
@@ -395,15 +394,6 @@ export default function NuggetsPage() {
                     <div className="mb-6 text-center">
                         <p className="text-gray-600">
                             {displayNuggets.length} result{displayNuggets.length !== 1 ? 's' : ''} for "{searchTerm}"
-                        </p>
-                    </div>
-                )}
-                
-                {/* Filter Results Count */}
-                {!isSearching && (selectedDate || (filters.positions && filters.positions.length > 0) || filters.rookie || filters.position) && (
-                    <div className="mb-6 text-center">
-                        <p className="text-gray-600">
-                            {displayNuggets.length} nugget{displayNuggets.length !== 1 ? 's' : ''} found with current filters
                         </p>
                     </div>
                 )}
