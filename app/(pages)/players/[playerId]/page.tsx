@@ -107,9 +107,10 @@ export default function PlayerProfile() {
 
   // Tab components
   const tabs = [
+    { id: 'news', label: 'News & Updates', icon: Activity },
     { id: 'workout', label: 'Workout Metrics', icon: Timer },
     { id: 'performance', label: 'Performance Metrics', icon: Trophy },
-    { id: 'news', label: 'News & Updates', icon: Activity }
+    
   ]
 
   // Show authentication required message if not authenticated
