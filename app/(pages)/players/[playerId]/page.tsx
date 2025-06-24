@@ -20,7 +20,7 @@ export default function PlayerProfile() {
 
   // Tab state
   const [activeTab, setActiveTab] = useState('news')
-  
+
   // Year selection state for performance metrics
   const [selectedYear, setSelectedYear] = useState('2024')
 
@@ -37,7 +37,7 @@ export default function PlayerProfile() {
 
   // Then use the playerId from internal API to fetch detailed data from Player Profiler API
   const { data: playerResponse, isLoading: playerLoading, error: playerError } = useGetPlayerProfilerQuery(internalPlayer?.playerId || '')
-  
+
   // Fetch performance data for selected year
   const { data: performanceResponse, isLoading: performanceLoading } = useGetPlayerPerformanceProfilerQuery(
     { playerId: internalPlayer?.playerId || '', year: selectedYear },
@@ -70,8 +70,8 @@ export default function PlayerProfile() {
   // Helper function to find team by abbreviation or name
   const findTeamByKey = (teamKey: string) => {
     if (!teamsData?.teams || !teamKey) return null
-    
-    return teamsData.teams.find(team => 
+
+    return teamsData.teams.find(team =>
       team.abbreviation?.toLowerCase() === teamKey.toLowerCase() ||
       team.name?.toLowerCase() === teamKey.toLowerCase() ||
       team.city?.toLowerCase() === teamKey.toLowerCase()
@@ -125,8 +125,8 @@ export default function PlayerProfile() {
     { id: 'news', label: 'News & Updates', icon: Activity },
     { id: 'performance', label: 'Performance Metrics', icon: Trophy },
     { id: 'workout', label: 'Workout Metrics', icon: Timer },
-    
-    
+
+
   ]
 
   // Show authentication required message if not authenticated
@@ -312,9 +312,9 @@ export default function PlayerProfile() {
                                 hasData: !!player['Workout Metrics']['Catch Radius'],
                               },
                             ].map((entry, index) => (
-                              <Cell 
-                                key={`cell-${index}`} 
-                                fill={entry.hasData ? "#9F0712" : "#D1D5DB"} 
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={entry.hasData ? "#9F0712" : "#D1D5DB"}
                               />
                             ))}
                             <LabelList
@@ -413,9 +413,9 @@ export default function PlayerProfile() {
                                 hasData: !!player['Workout Metrics']['Catch Radius'],
                               },
                             ].map((entry, index) => (
-                              <Cell 
-                                key={`cell-${index}`} 
-                                fill={entry.hasData ? "#9F0712" : "#D1D5DB"} 
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={entry.hasData ? "#9F0712" : "#D1D5DB"}
                               />
                             ))}
                             <LabelList
@@ -447,44 +447,44 @@ export default function PlayerProfile() {
 
                 </div>
                 {player?.['College Performance'] && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  
-                  <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
-                    <div className="flex items-center justify-between text-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+
+                    <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                      <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['College Dominator Rating']}</h1>
                         <h2 className="mr-2">{player['College Performance']['College Dominator Rating Rank']}</h2>
+                      </div>
+                      <div className="flex items-end">
+                        <span className="text-lg font-semibold">College Dominator</span>
+                      </div>
                     </div>
-                    <div className="flex items-end">
-                      <span className="text-lg font-semibold">College Dominator</span>
-                    </div>
-                  </div>
 
-                  <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
-                    <div className="flex items-center justify-between text-lg">
+                    <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                      <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['College Target Share']}%</h1>
                         <h2 className="mr-2">{player['College Performance']['College Target Share Rank']}</h2>
+                      </div>
+                      <div className="flex items-end">
+                        <span className="text-lg font-semibold">College Target Share</span>
+                      </div>
                     </div>
-                    <div className="flex items-end">
-                      <span className="text-lg font-semibold">College Target Share</span>
-                    </div>
-                  </div>
 
 
 
-                  <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
-                    <div className="flex items-center justify-between text-lg">
+                    <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                      <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['Breakout Age']}</h1>
                         <h2 className="mr-2">{player['College Performance']['Breakout Age Rank']}</h2>
-                    </div>
-                    <div className="flex items-end">
-                      <span className="text-lg font-semibold">Breakout Age</span>
+                      </div>
+                      <div className="flex items-end">
+                        <span className="text-lg font-semibold">Breakout Age</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
               </div>
 
-              
+
 
             ) : (
               <div className="rounded-xl p-8 shadow-xl border text-center">
@@ -500,16 +500,16 @@ export default function PlayerProfile() {
         // Generate available years (2019 onwards)
         const currentYear = new Date().getFullYear()
         const availableYears = Array.from({ length: currentYear - 2018 }, (_, i) => (currentYear - i).toString())
-        
+
         // Get performance data for selected year
         const performanceData = performancePlayer?.['Performance Metrics']?.[selectedYear]
-        
+
         return (
           <div className="space-y-8">
             <div className="rounded p-8 border">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                 <h2 className="text-3xl font-black mb-4 sm:mb-0">Performance Metrics</h2>
-                
+
                 {/* Year Selector and Games Played */}
                 <div className="flex items-center gap-6">
                   {performanceData && (
@@ -532,12 +532,12 @@ export default function PlayerProfile() {
                     </select>
                   </div>
                 </div>
-                  </div>
+              </div>
 
               {/* Performance Metrics Display */}
               {performanceData ? (
                 <div className="space-y-8">
-                  
+
                   {/* Opportunity Section */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Opportunity</h3>
@@ -588,14 +588,14 @@ export default function PlayerProfile() {
                             </tr>
                           </tbody>
                         </table>
-                    </div>
+                      </div>
                     </div>
                   </div>
 
                   {/* Opportunity Section 2 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Opportunity</h3>
-                      <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
@@ -696,14 +696,14 @@ export default function PlayerProfile() {
                             </tr>
                           </tbody>
                         </table>
+                      </div>
                     </div>
                   </div>
-                </div>
 
                   {/* Efficiency Section 1 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Efficiency</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full"> 
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
@@ -916,15 +916,15 @@ export default function PlayerProfile() {
                     </div>
                   </div>
 
-              </div>
-            ) : (
+                </div>
+              ) : (
                 <div className="text-center py-12">
-                <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-600 mb-2">No Performance Data Available</h3>
                   <p className="text-gray-500">Performance metrics are not available for {playerName} in {selectedYear}.</p>
                   <p className="text-gray-500 mt-2">Try selecting a different year or check back later for updates.</p>
-              </div>
-            )}
+                </div>
+              )}
             </div>
           </div>
         )
@@ -941,7 +941,7 @@ export default function PlayerProfile() {
         return (
           <div className="space-y-8">
             <h2 className="text-3xl font-black mb-8">News & Updates</h2>
-            
+
             {nuggetsLoading ? (
               <div className="space-y-6">
                 {[...Array(3)].map((_, i) => (
@@ -967,7 +967,7 @@ export default function PlayerProfile() {
               <div className="space-y-6 container mx-auto max-w-3xl">
                 {nuggets.map((nugget, index) => {
                   const playerTeam = findTeamByKey(nugget.player.team || '')
-                  
+
                   return (
                     <div key={`${nugget.id}-${index}`} className="rounded-xl border-2 overflow-hidden shadow-md hover:shadow-xl transition-shadow">
                       {/* Player Header */}
@@ -1006,29 +1006,31 @@ export default function PlayerProfile() {
                         </div>
                       </div>
 
-                    {/* Nugget Content */}
-                    <div className="px-6 py-4">
-                      <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
-                    </div>
-
-                    {/* Fantasy Insight */}
-                    {nugget.fantasyInsight && (
-                      <div className='px-6 py-4  border-gray-100'>
-                        <h4 className='font-semibold mb-2 text-red-800'>Fantasy Insight:</h4>
-                        <div>
-                          {renderFantasyInsight(nugget.fantasyInsight)}
-                        </div>
+                      {/* Nugget Content */}
+                      <div className="px-6 py-4">
+                        <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
                       </div>
-                    )}
 
-                    {/* Source and Date */}
-                    <div className='px-6 py-4 border-gray-50'>
-                      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
-                        <div className='text-sm'>
-                          <p>
-                            <span className="font-bold">Source:</span> {nugget.sourceName}
-                          </p>
-                          {nugget.sourceUrl && (
+                      {/* Fantasy Insight */}
+                      {nugget.fantasyInsight && (
+                        <div className='px-6 py-2  border-gray-100'>
+                          <h4 className='font-semibold mb-2 text-red-800'>Fantasy Insight:</h4>
+                          <div>
+                            {renderFantasyInsight(nugget.fantasyInsight)}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Source and Date */}
+                      <div className='px-6 py-2 border-gray-50'>
+                        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+                          <div className='text-sm'>
+
+                            {nugget.sourceUrl && (
+                              <>
+                                <p>
+                                  <span className="font-bold">Source:</span> {nugget.sourceName}
+                                </p>
                             <Link 
                               href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
                                 ? nugget.sourceUrl 
@@ -1039,18 +1041,19 @@ export default function PlayerProfile() {
                             >
                               {nugget.sourceUrl}
                             </Link>
-                          )}
+                            </>
+                            )}
+                          </div>
+                          <p className='text-sm text-gray-500'>
+                            {new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </p>
                         </div>
-                        <p className='text-sm text-gray-500'>
-                          {new Date(nugget.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </p>
                       </div>
                     </div>
-                  </div>
                   )
                 })}
               </div>
@@ -1107,10 +1110,11 @@ export default function PlayerProfile() {
               <div className="mb-4">
                 <div className="flex flex-col lg:flex-row items-center lg:items-baseline gap-4 lg:gap-6 mb-4">
                   <h1 className="text-3xl lg:text-5xl font-black leading-none">
-                  {playerName}
-                </h1>
+                    {playerName}
+                  </h1>
                   {player?.Core?.ADP && (
-                    <div className="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold">
+                    <div className="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold flex items-center gap-2">
+                      <Image src="/underdog.webp" alt="ADP" width={28} height={16} />
                       ADP: {player.Core.ADP} ({player.Core['ADP Year']})
                     </div>
                   )}
@@ -1214,49 +1218,49 @@ export default function PlayerProfile() {
           </div>
 
 
-        
-        {/* Teammates Section - After Tabs */}
-        {teammates.length > 0 && (
-          <div className="mt-12">
-            <h3 className="text-3xl font-black mb-8 text-center">Teammates</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {teammates.map((teammate) => (
-                    <Link
-                      key={teammate.id}
-                      href={`/players/${teammate.id}`}
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
-                    >
-                  <div className="aspect-square bg-gradient-to-br from-red-50 to-red-100 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center p-4">
+
+          {/* Teammates Section - After Tabs */}
+          {teammates.length > 0 && (
+            <div className="mt-12">
+              <h3 className="text-3xl font-black mb-8 text-center">Teammates</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {teammates.map((teammate) => (
+                  <Link
+                    key={teammate.id}
+                    href={`/players/${teammate.id}`}
+                    className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  >
+                    <div className="aspect-square bg-gradient-to-br from-red-50 to-red-100 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center p-4">
                       <Image
                         src={getImageUrl(teammate.headshotPic) || '/default-player.jpg'}
                         alt={teammate.name}
-                      width={120}
-                      height={120}
-                      className="rounded-full object-cover border-4 border-white shadow-lg"
-                    />
-                  </div>
-                  <div className="p-4 text-center">
-                    <h4 className="font-bold text-lg text-gray-900 dark:text-white mb-1">{teammate.name}</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{teammate.position}</p>
-                    <div className="inline-block bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full">
-                      {teammate.team || teamName}
+                        width={120}
+                        height={120}
+                        className="rounded-full object-cover border-4 border-white shadow-lg"
+                      />
                     </div>
+                    <div className="p-4 text-center">
+                      <h4 className="font-bold text-lg text-gray-900 dark:text-white mb-1">{teammate.name}</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{teammate.position}</p>
+                      <div className="inline-block bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs px-2 py-1 rounded-full">
+                        {teammate.team || teamName}
                       </div>
-                    </Link>
-                  ))}
-                </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
 
-            <div className="text-center mt-8">
+              <div className="text-center mt-8">
                 <Link
                   href={backToPlayersUrl}
-                className="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="inline-flex items-center gap-2 bg-red-800 hover:bg-red-900 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
                 >
-                View All Players
-                <ArrowLeft className="w-4 h-4 rotate-180" />
+                  View All Players
+                  <ArrowLeft className="w-4 h-4 rotate-180" />
                 </Link>
-            </div>
               </div>
-            )}
+            </div>
+          )}
         </div>
       </div>
 

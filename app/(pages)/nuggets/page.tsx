@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select"
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
+import { useRouter } from 'next/navigation'
 
 
 interface NuggetFilters {
@@ -500,16 +501,13 @@ export default function NuggetsPage() {
                         >
                             {displayNuggets.map((nugget, index) => {
                                 const playerTeam = findTeamByKey(nugget.player.team)
-                                
+                                const router = useRouter()
                                 return (
                                     <div key={`${nugget.id}-${index}`} className="rounded-xl border-3 overflow-hidden shadow-md hover:shadow-xl transition-shadow mb-6 mx-4 sm:mx-0">
                                         <div className='flex mt-8 gap-2 ml-4 mr-4'>
                                             <div
                                                 className="cursor-pointer hover:opacity-80 transition-opacity"
-                                                onClick={() => openImageModal(
-                                                    getImageUrl(nugget.player.headshotPic) || '',
-                                                    `${nugget.player.name} headshot`
-                                                )}
+                                                onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
                                             >
                                                 <Image
                                                     src={getImageUrl(nugget.player.headshotPic) || ''}
@@ -521,7 +519,9 @@ export default function NuggetsPage() {
                                             </div>
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2 mb-1">
-                                                    <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
+                                                    <Link href={`/players/${nugget.player.id}`}>
+                                                        <h1 className='text-xl font-bold'>{nugget.player.name}</h1>
+                                                    </Link>
                                                     {playerTeam && (
                                                         <div className="flex items-center">
                                                             <Image
@@ -544,7 +544,7 @@ export default function NuggetsPage() {
                                         <div className="px-6 py-4">
                                             <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                         </div>
-                                        <div className='px-6 py-4'>
+                                        <div className='px-6 py-2'>
                                             {nugget.fantasyInsight && (
                                                 <>
                                                     <h1 className='font-semibold mt-4 text-red-800'>Fantasy Insight:</h1>
@@ -553,11 +553,13 @@ export default function NuggetsPage() {
                                             )}
                                         </div>
 
-                                        <div className='px-6 py-4'>
+                                        <div className='px-6 py-2'>
                                             <div className='flex flex-col mt-1 -mb-8 text-sm'>
-                                                <h1 className=''>Source: <span className='text-left'>{nugget.sourceName}</span></h1>
                                                 
-                                                {nugget.sourceUrl ? (
+                                                
+                                                {nugget.sourceUrl && (
+                                                    <>
+                                                    <h1 className=''>Source: <span className='text-left'>{nugget.sourceName}</span></h1>
                                                     <Link 
                                                         href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
                                                             ? nugget.sourceUrl 
@@ -568,8 +570,7 @@ export default function NuggetsPage() {
                                                     >
                                                         {nugget.sourceUrl}
                                                     </Link>
-                                                ) : (
-                                                    <span className='text-left text-gray-400'></span>
+                                                    </>
                                                 )}
                                             </div>
                                             <h1 className='text-right text-gray-400 mt-2 text-sm'>
