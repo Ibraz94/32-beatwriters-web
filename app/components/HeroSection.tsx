@@ -7,16 +7,10 @@ export default function HeroSection() {
             {/* Desktop Layout */}
             <div className="hidden lg:block">
                 {/* Main Content Container */}
-                <div className="container mx-auto px-4 py-12 lg:py-20 relative z-10">
+                <div className="container mx-auto px-4 py-12 lg:py-2 relative z-10">
                     <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[600px]">
                         {/* Left Content Section */}
                         <div className="space-y-8 lg:pr-8">
-                            {/* Badge */}
-                            <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border-3">
-                                <span className="w-2 h-2 bg-red-600 rounded-full mr-2 animate-pulse"></span>
-                                Latest NFL News
-                            </div>
-
                             {/* Main Heading */}
                             <div className="space-y-4">
                                 <div className="font-black ">
@@ -114,15 +108,7 @@ export default function HeroSection() {
             {/* Mobile Layout */}
             <div className="lg:hidden relative min-h-screen">
                 {/* Mobile Content */}
-                <div className="relative z-10 px-6 pt-2 pb-2">
-                    {/* Badge */}
-                    <div className="flex justify-center">
-                        <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border-2 border-red-800">
-                            <span className="w-2 h-2 bg-red-600 rounded-full mr-2 animate-pulse"></span>
-                            Latest NFL News
-                        </div>
-                    </div>
-
+                <div className="relative z-10 px-6 pt-8 pb-2">
                     {/* Main Heading */}
                     <div className="text-center space-y-3 mb-4">
                         <div className="font-black">
