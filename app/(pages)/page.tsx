@@ -4,6 +4,7 @@ import BeatWritersComponent from "../components/BeatWritersComponent";
 import PodcastsComponent from "../components/PodcastsComponent";
 import FeedComponent from "../components/FeedComponent";
 import SubscriptionComponent from "../components/SubscriptionComponent";
+import DeliveredToComponent from "../components/DeliveredToComponent";
 
 
 
@@ -20,7 +21,7 @@ export default function Home() {
      
       {/* <BeatWritersComponent/> */}
       <PodcastsComponent/>
-      {/* <FeedComponent/> */}
+      <DeliveredToComponent/>
       <SubscriptionComponent/>
     </div>
   );

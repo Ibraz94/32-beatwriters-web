@@ -21,8 +21,8 @@ export default function Footer() {
     };
 
     const toggleSection = (section: string) => {
-        setExpandedSections(prev => 
-            prev.includes(section) 
+        setExpandedSections(prev =>
+            prev.includes(section)
                 ? prev.filter(s => s !== section)
                 : [...prev, section]
         );
@@ -61,8 +61,8 @@ export default function Footer() {
                         <p className="text-muted-foreground mb-8 text-lg">
                             Get breaking news, insider reports, and fantasy insights delivered straight to your inbox.
                         </p> */}
-                        
-                        {/* <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+
+            {/* <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                             <div className="flex-1">
                                 <input
                                     type="email"
@@ -82,7 +82,7 @@ export default function Footer() {
                             </button>
                         </form> */}
 
-                        {/* <p className="text-sm text-muted-foreground mt-4">
+            {/* <p className="text-sm text-muted-foreground mt-4">
                             Join 10,000+ fantasy players getting weekly insights. Unsubscribe anytime.
                         </p>
                     </div>
@@ -90,26 +90,31 @@ export default function Footer() {
             </div> */}
 
             {/* Main Footer Content */}
-            <div className="container mx-auto px-4 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            <div className="px-4 py-12 bg-[#2C204B]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 container mx-auto">
                     {/* Brand Section */}
                     <div className="lg:col-span-2 text-center md:text-left">
-                        <Link href="/" className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                            <Image 
-                                src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} 
-                                alt="32 Beat Writers" 
-                                width={40} 
-                                height={40}
-                                className="w-10 h-10"
-                            />
-                            <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
-                                32BeatWriters
-                            </span>
-                        </Link>
-                        
-                        <p className="text-muted-foreground mb-6 leading-relaxed">
-                            The most comprehensive NFL coverage network, bringing you insider access 
-                            to all 32 teams through our dedicated beat writers.
+                        <div className="flex items-center gap-2">
+                            <Link href="/" className="flex items-center justify-center md:justify-start space-x-3 mb-4">
+                                <Image
+                                    src={"/32bw_logo_white.png"}
+                                    alt="32 Beat Writers"
+                                    width={60}
+                                    height={60}
+                                    className="w-14 h-14"
+                                />
+                            </Link>
+                            <div className="flex flex-col mb-4">
+                                <h1 className="text-white text-4xl font-bold">
+                                    32BeatWriters
+                                </h1>
+                                <p className="text-red-800 text-lg">
+                                    NFL Insider Network
+                                </p>
+                            </div>
+                        </div>
+                        <p className="text-muted-foreground mb-6 leading-relaxed line-clamp-3">
+                            Stay informed with our NFL podcast and real-time news updates. Watch highlights, get insights, and never miss a moment of the action.
                         </p>
                     </div>
 
@@ -128,14 +133,13 @@ export default function Footer() {
                                     <ChevronDown className="h-5 w-5" />
                                 )}
                             </button>
-                            
+
                             {/* Desktop: Regular Header */}
-                            <h4 className="hidden md:block text-xl font-semibold text-foreground mb-4">{category}</h4>
-                            
+                            <h4 className="hidden md:block text-3xl font-semibold text-[#DDDDDD] mb-4">{category}</h4>
+
                             {/* Links - Always visible on desktop, collapsible on mobile */}
-                            <ul className={`space-y-3 transition-all duration-200 ${
-                                expandedSections.includes(category) ? 'block' : 'hidden'
-                            } md:block`}>
+                            <ul className={`space-y-3 transition-all duration-200 ${expandedSections.includes(category) ? 'block' : 'hidden'
+                                } md:block`}>
                                 {links.map((link) => (
                                     <li key={link.label}>
                                         <Link
@@ -153,13 +157,13 @@ export default function Footer() {
             </div>
 
             {/* Bottom Section */}
-            <div className="border-t bg-muted/10">
+            <div className="border-t bg-[#2C204B]">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                         <div className="text-sm text-muted-foreground">
-                            © 2025 32BeatWriters. All rights reserved.
+                            Copyright © 2025 32BeatWriters. All rights reserved.
                         </div>
-                        
+
                         <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground">
                             <div className="flex items-center justify-center gap-1">
                                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>

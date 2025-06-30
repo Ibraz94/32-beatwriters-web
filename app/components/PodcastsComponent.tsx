@@ -15,10 +15,10 @@ const podcastCategories = [
 
 export default function PodcastsComponent() {
     // Fetch the latest 3 episodes using the regular episodes query
-    const { 
-        data: apiResponse, 
-        isLoading, 
-        error 
+    const {
+        data: apiResponse,
+        isLoading,
+        error
     } = useGetEpisodesQuery({
         page: 1,
         limit: 3,
@@ -30,32 +30,43 @@ export default function PodcastsComponent() {
         const date = new Date(dateString);
         const now = new Date();
         const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-        
+
         if (diffInHours < 1) return "Just now";
         if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
-        
+
         const diffInDays = Math.floor(diffInHours / 24);
         if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
-        
+
         return date.toLocaleDateString();
     };
 
     return (
-        <section className="bg-gradient-to-b from-gray-900 to-gray-800 rounded-3xl px-4 py-16 ">
+        <section className="bg-[#2C204B] px-4 py-16 mt-12">
             {/* Header */}
             <div className="text-center mb-12">
-                <h2 className="text-4xl text-white md:text-5xl font-bold mb-4">
-                    Our Podcasts <span className="text-red-800">Network</span>
+                <h2 className="text-4xl text-white md:text-6xl font-bold mb-4">
+                    Our Podcast Network
                 </h2>
-                <p className="text-lg text-white max-w-2xl mx-auto">
-                    In-depth analysis, insider reports, and expert commentary from our network of beat writers across all 32 teams.
+                <p className="text-lg text-white max-w-3xl mx-auto">
+                    Welcome to the NFL Network Podcast, your go-to source for everything NFL! We dive deep into game analyses, player performances, and the hottest news from around the league. Join us weekly for engaging discussions and expert commentary!
                 </p>
             </div>
 
             {/* Featured Episodes */}
-            <div className="mb-12 container mx-auto">
+            <div className="mb-12">
                 <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-3xl text-white font-bold">Latest Episodes</h3>
+                    <div className="flex items-center gap-4">
+                        <h3 className="text-3xl text-white font-bold">Latest Episodes</h3>
+                        {apiResponse?.podcasts && apiResponse.podcasts.length === 0 && (
+                            <div className="text-center py-12">
+                                <Link href="/podcasts">
+                                    <button className="bg-red-800 text-white px-6 py-2 rounded-md hover:scale-102 transition-colors hover:cursor-pointer">
+                                        View All
+                                    </button>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
                     <Link href="/podcasts" className="text-white hover:scale-102 font-medium flex items-center gap-1">
                         View All <ArrowRight className="h-4 w-4" />
                     </Link>
@@ -84,8 +95,8 @@ export default function PodcastsComponent() {
                 {error && (
                     <div className="text-center py-12">
                         <p className="text-gray-600 mb-4">Failed to load latest episodes. Please try again later.</p>
-                        <button 
-                            onClick={() => window.location.reload()} 
+                        <button
+                            onClick={() => window.location.reload()}
                             className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
                         >
                             Retry
@@ -177,26 +188,6 @@ export default function PodcastsComponent() {
                         </Link>
                     </div>
                 )}
-            </div>
-
-            {/* Call to Action */}
-            <div className="text-center border p-8 rounded-2xl shadow-md container mx-auto">
-                <h3 className="text-2xl text-white font-bold mb-2">Never Miss an Episode</h3>
-                <p className="text-white mb-6 max-w-md mx-auto">
-                    Subscribe to get the latest NFL insights, fantasy advice, and insider reports delivered to your favorite podcast app.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link href="/podcasts">
-                        <button className="bg-red-800 hover:scale-102 px-6 py-3 rounded-lg font-semibold text-white transition-colors">
-                            Browse All Episodes
-                        </button>
-                    </Link>
-                    <Link href="/subscribe">
-                        <button className="border border-gray-600 hover:border-gray-500 text-white px-6 py-3 rounded-lg font-semibold transition-colors hover:text-red-800 hover:scale-102">
-                            Subscribe Now
-                        </button>
-                    </Link>
-                </div>
             </div>
         </section>
     );
