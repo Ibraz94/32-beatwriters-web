@@ -36,37 +36,37 @@ function Header() {
 
     const getUserDisplayName = () => {
         if (!user) return null;
-        
+
         if (user.firstName && user.lastName) {
             return `${user.firstName} ${user.lastName}`;
         }
-        
+
         if (user.firstName) {
             return user.firstName;
         }
-        
+
         if (user.username) {
             return user.username;
         }
-        
+
         return 'User';
     };
 
     const getUserInitials = () => {
         if (!user) return 'U';
-        
+
         if (user.firstName && user.lastName) {
             return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
         }
-        
+
         if (user.firstName) {
             return user.firstName.charAt(0).toUpperCase();
         }
-        
+
         if (user.username) {
             return user.username.charAt(0).toUpperCase();
         }
-        
+
         return 'U';
     };
 
@@ -82,61 +82,115 @@ function Header() {
     };
 
     const navLinks = [
-        { href: "/", label: "Home" },
-        { href: "/articles", label: "Articles" },
-        { href: "/podcasts", label: "Podcasts" },
-        { href: "/players", label: "Players" },
-        { href: "/nuggets", label: "Feed" },
+        { href: "/", label: "HOME" },
+        { href: "/articles", label: "ARTICLES" },
+        { href: "/podcasts", label: "PODCASTS" },
+        { href: "/players", label: "PLAYERS" },
+        { href: "/nuggets", label: "NUGGETS" },
     ];
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-gray-100 shadow-sm bg-background/90">
-            <div className="container mx-auto px-4 lg:px-8">
-                <div className="flex h-20 items-center justify-between">
+        <header className="z-50 w-full border-gray-100 shadow-sm bg-background/90">
+            <div>
+                <div className="h-11 flex items-center justify-end space-x-2 mt-2 mb-6 px-2 border-b">
+                    <h1 className="text-right">
+                        Follow Us
+                    </h1>
+                    <div className="flex items-center space-x-2">
+                        <Link href="https://x.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
+                            <Image src={"/apple-logo.svg"} alt="Twitter" width={30} height={30} />
+                        </Link>
+                        <Link href="https://youtube.com/@32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
+                            <Image src={"/spotify-logo.svg"} alt="Youtube" width={30} height={30} />
+                        </Link>
+                    </div>
+                </div>
+                <div className="flex h-[120px] items-center justify-between ">
                     {/* Logo and Social Links */}
-                    <div className="flex items-center space-x-3">
-                        <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+                    <div className="flex items-center justify-between w-full space-x-3">
+                        <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity pl-2">
                             <div className="relative">
-                                <Image 
-                                    src={mounted && theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} 
-                                    alt="32 Beat Writers" 
-                                    width={40} 
-                                    height={40}
-                                    className="w-10 h-10"
+                                <Image
+                                    src={"/32bw_logo_white.png"}
+                                    alt="32 Beat Writers"
+                                    width={64}
+                                    height={64}
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-bold text-2xl bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
+                                <span className="font-extrabold text-[34.37px] text-white">
                                     32BeatWriters
                                 </span>
-                                <span className="text-xs text-gray-500 -mt-1 hidden sm:block">
+                                <span className="text-xl text-red-700 hidden sm:block">
                                     NFL Insider Network
                                 </span>
                             </div>
                         </Link>
 
-                        <div className="w-px h-7 bg-gray-300 sm:block hidden"></div>
+                        <div className="h-[120px] w-[55%] flex items-center bg-[#2C204B]">
+                            <div className="relative top-0 right-0 w-[400px] h-full">
+                                <Image
+                                    src={"/header-image.png"}
+                                    alt="Header Image"
+                                    fill
+                                    className="relative inset-0 object-cover flex items-center justify-center"
+                                    style={{ clipPath: 'polygon(0% 0%, 100% 0%, 68% 0%, 52% 100%, 0% 100%)' }}
+                                />
+                            </div>
+                            <div className="relative right-28">
+                                <h1 className="text-white text-2xl font-bold mb-2">
+                                    Stay Connected
+                                </h1>
+                                <p className="text-white text-xl">
+                                    Watch & Stay Updated.
+                                </p>
+                            </div>
 
-                        <div className="hidden justify-center items-center md:justify-start space-x-2 lg:flex">
-                            <Link href="https://x.com/32beatwriters" className="w-8 h-8 hover:scale-90  bg-gradient-to-r from-red-600 to-red-800 rounded-md flex items-center justify-center transition-colors">
-                                <Image src={"/x-white-logo.svg"} alt="Twitter" width={20} height={20} className="h-4 w-4" />
-                            </Link>
-                            <Link href="https://youtube.com/@32beatwriters" className="w-8 h-8  bg-gradient-to-r from-red-600 to-red-800 hover:scale-90 rounded-md flex items-center justify-center transition-colors">
-                                <Youtube className="h-5 w-5 text-white" />
-                            </Link>
+                            <div className="relative left-4">
+                                <div className="hidden justify-center items-center md:justify-start space-x-4 lg:flex">
+                                    <Link href="https://youtube.com/@32beatwriters" className="w-[200px] h-14 p-4 bg-red-700 hover:scale-98 rounded-sm flex items-center justify-center transition-colors space-x-2">
+                                        <Image src={"/youtube-logo.svg"} alt="Youtube" width={50} height={20} />
+                                        <span className="text-white text-xl">32beatwriters</span>
+                                    </Link>
+                                    <Link href="https://x.com/32beatwriters" className="w-[200px] h-14 p-4 hover:scale-98  bg-white rounded-sm flex items-center justify-center transition-colors space-x-2">
+                                        <Image src={"/x-white-logo.svg"} alt="Twitter" width={40} height={20} className="bg-black p-2 rounded-md" />
+                                        <span className="text-black text-xl">32beatwriters</span>
+                                    </Link>
+
+                                </div>
+                            </div>
                         </div>
                     </div>
 
+
+
+                    {/* Mobile Menu Button */}
+                    <div className="flex lg:hidden items-center space-x-3">
+                        <ThemeToggle />
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="p-2 rounded-lg transition-colors"
+                            aria-label="Toggle menu"
+                        >
+                            {isMobileMenuOpen ? (
+                                <X className="h-6 w-6" />
+                            ) : (
+                                <Menu className="h-6 w-6" />
+                            )}
+                        </button>
+                    </div>
+                </div>
+                <div className="h-[65px] flex items-center justify-between bg-[#2C204B] px-5 mt-6 mb-6">
                     {/* Desktop Navigation */}
-                    <nav className="hidden lg:flex items-center space-x-8">
+                    <nav className="hidden lg:flex items-center space-x-10">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="relative hover:text-red-800 font-medium text-lg transition-colors duration-200 py-2 group"
+                                className="relative hover:text-red-800 font-bold transition-colors duration-200 py-2 group"
                             >
                                 {link.label}
-                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-800 transition-all duration-300 group-hover:w-full"></span>
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                         ))}
                     </nav>
@@ -144,9 +198,7 @@ function Header() {
                     {/* Desktop Actions */}
                     <div className="hidden lg:flex items-center space-x-4">
                         <ThemeToggle />
-                        
                         <div className="w-px h-6 bg-gray-300"></div>
-                        
                         {isAuthenticated ? (
                             <div className="relative" ref={dropdownRef}>
                                 <button
@@ -178,7 +230,7 @@ function Header() {
 
                                 {/* User Dropdown Menu */}
                                 {isUserDropdownOpen && (
-                                    <div className="absolute right-0 mt-4 w-46 rounded-sm shadow-lg border bg-background/90 py-2 z-50">                                        
+                                    <div className="absolute right-0 mt-4 w-46 rounded-sm shadow-lg border bg-background/90 py-2 z-50">
                                         <div className="py-1">
                                             <Link
                                                 href="/account"
@@ -188,7 +240,7 @@ function Header() {
                                                 <User className="h-4 w-4 mr-2" />
                                                 My Account
                                             </Link>
-                                            
+
                                             <button
                                                 onClick={handleLogout}
                                                 className="flex items-center w-full px-4 py-2 text-sm text-red-800 hover:cursor-pointer"
@@ -202,45 +254,28 @@ function Header() {
                             </div>
                         ) : (
                             <div className="flex items-center space-x-3">
-                                <Link 
+                                <Link
                                     href="/login"
                                     className=" hover:text-red-800 hover:scale-102 font-medium transition-colors"
                                 >
-                                    Login
+                                    LOGIN
                                 </Link>
-                                <Link 
+                                <Link
                                     href="/subscribe"
-                                    className="bg-red-800 hover:scale-102 text-white px-6 py-2.5 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
+                                    className="bg-red-800 hover:scale-102 text-white px-6 py-2.5 rounded-md font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
                                 >
-                                    Subscribe
+                                    SUBSCRIBE
                                 </Link>
                             </div>
                         )}
                     </div>
-
-                    {/* Mobile Menu Button */}
-                    <div className="flex lg:hidden items-center space-x-3">
-                        <ThemeToggle />
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="p-2 rounded-lg transition-colors"
-                            aria-label="Toggle menu"
-                        >
-                            {isMobileMenuOpen ? (
-                                <X className="h-6 w-6" />
-                            ) : (
-                                <Menu className="h-6 w-6" />
-                            )}
-                        </button>
-                    </div>
                 </div>
 
                 {/* Mobile Menu */}
-                <div className={`lg:hidden border-t border-gray-100 bg-background/90 transition-all duration-300 ease-in-out overflow-hidden ${
-                    isMobileMenuOpen 
-                        ? 'max-h-screen opacity-100 translate-y-0' 
-                        : 'max-h-0 opacity-0 -translate-y-2'
-                }`}>
+                <div className={`lg:hidden border-t border-gray-100 bg-background/90 transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen
+                    ? 'max-h-screen opacity-100 translate-y-0'
+                    : 'max-h-0 opacity-0 -translate-y-2'
+                    }`}>
                     <div className="py-6 space-y-4">
                         {/* Navigation Links */}
                         <div className="space-y-1">
@@ -259,11 +294,8 @@ function Header() {
                             ))}
                         </div>
 
-                        {/* Divider */}
-                        <div className="border-t border-gray-200 my-4"></div>
-
                         {/* User Actions */}
-                        <div className="px-4 space-y-3">
+                        {/* <div className="px-4 space-y-3">
                             {isAuthenticated ? (
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-center space-x-3 p-3 rounded-lg">
@@ -328,19 +360,19 @@ function Header() {
                                     </Link>
                                 </div>
                             )}
-                        </div>
+                        </div> */}
 
                         {/* Mobile Footer Info */}
                         <div className="px-4 pt-4 border-t border-gray-200">
-                             <h1 className="text-center text-sm text-gray-500 mb-2">Join Us On Social Media</h1>
-                        <div className="flex justify-center items-center space-x-4">
-                            <Link href="https://x.com/32beatwriters" className="w-8 h-8 hover:scale-90  bg-gradient-to-r from-red-600 to-red-800 rounded-md flex items-center justify-center transition-colors">
-                                <Image src={"/x-white-logo.svg"} alt="Twitter" width={20} height={20} className="h-4 w-4" />
-                            </Link>
-                            <Link href="https://youtube.com/@32beatwriters" className="w-8 h-8  bg-gradient-to-r from-red-600 to-red-800 hover:scale-90 rounded-md flex items-center justify-center transition-colors">
-                                <Youtube className="h-5 w-5 text-white" />
-                            </Link>
-                        </div>
+                            <h1 className="text-center text-sm text-gray-500 mb-2">Join Us On Social Media</h1>
+                            <div className="flex justify-center items-center space-x-4">
+                                <Link href="https://x.com/32beatwriters" className="w-8 h-8 hover:scale-90  bg-gradient-to-r from-red-600 to-red-800 rounded-md flex items-center justify-center transition-colors">
+                                    <Image src={"/x-white-logo.svg"} alt="Twitter" width={20} height={20} className="h-4 w-4" />
+                                </Link>
+                                <Link href="https://youtube.com/@32beatwriters" className="w-8 h-8  bg-gradient-to-r from-red-600 to-red-800 hover:scale-90 rounded-md flex items-center justify-center transition-colors">
+                                    <Youtube className="h-5 w-5 text-white" />
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -349,4 +381,10 @@ function Header() {
     );
 }
 
+
+
+
+
 export default Header;
+
+

@@ -17,10 +17,11 @@ export default function Home() {
     <div>
       <HeroSection />
       <NewArticles/>
-      <SubscriptionComponent/>
+     
       {/* <BeatWritersComponent/> */}
       <PodcastsComponent/>
       {/* <FeedComponent/> */}
+      <SubscriptionComponent/>
     </div>
   );
 }``
