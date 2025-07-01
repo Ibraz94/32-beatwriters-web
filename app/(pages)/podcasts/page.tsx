@@ -9,38 +9,37 @@ import { useState, useEffect } from 'react'
 
 const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
   return (
-    <div className="rounded-lg space-y-2 shadow-md border-3 overflow-hidden hover:shadow-lg transition-shadow group hover:scale-101">
+    <div className="rounded-md space-y-2 shadow-md border border-white/20 overflow-hidden hover:shadow-lg transition-shadow group hover:scale-101 p-5">
       {/* Podcast Thumbnail */}
       <Link href={`/podcasts/${podcast.id}`}>
-      <div className="relative h-48 w-full">
+      <div className="relative h-72 w-full ">
         <Image 
           src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"} 
           alt={podcast.title}
           fill
-          className="object-cover w-full h-full"
+          className="object-cover w-full h-full rounded-md"
         />
         {/* Duration Badge */}
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+        <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-sm px-2 py-1 rounded">
           {podcast.duration}
         </div>
       </div>
-
       {/* Podcast Info */}
-      <div className="p-4">
+      <div className="mt-4">
         
-          <h3 className="font-bold text-lg mb-2 line-clamp-2">
+          <h3 className="font-bold text-3xl mb-2 line-clamp-2">
             {podcast.title}
           </h3>
 
-        <p className="text-sm mb-3 line-clamp-2 ">
+        <p className="text-lg mb-3 line-clamp-2 ">
           {podcast.description}
         </p>
          
         <div className="flex justify-between items-center">
-        <p className="text-xs  mb-2">
+        <p className="text-lg  mb-2">
           Hosted by: {podcast.hostedBy}
         </p>
-          <p className="text-xs">
+          <p className="text-lg">
             {new Date(podcast.podcastTime).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
@@ -105,13 +104,10 @@ export default function AllPodcastsPage() {
   const categories = ['NFL Analysis', 'Fantasy Football', 'Draft Coverage', 'Trade Analysis', 'Player Interviews']
 
   return (
-    <div className="container mx-auto max-w-7xl mt-6 mb-28 p-3">
+    <div className="container mx-auto mt-6 mb-28 p-3">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-5xl text-center font-bold mb-4">All <span className="text-red-800">Podcasts</span></h1>
-        <p className="text-center text-xl">
-          Explore our complete collection of podcast episodes featuring NFL beat writers, analysts, and exclusive interviews.
-        </p>
+
       </div>
 
       {/* Results */}
