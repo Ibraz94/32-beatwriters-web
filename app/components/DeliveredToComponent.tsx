@@ -14,35 +14,42 @@ export default function DeliveredToComponent() {
     }
 
     return (
-        <div className="relative min-h-[500px] flex items-center justify-center overflow-hidden bg-[#2C204B] mt-12">
-
-
-            <div className="bg-red-800 absolute top-0 w-[60%] h-full z-10"
-                style={{
-                    clipPath: 'polygon(0% 0%, 80% 0%, 100% 100%, 0 100%, 20% 100%)'
-                }}>
-            </div>
-
-
-            {/* Left Player Image */}
-            <div className="absolute left-0 top-0 h-full w-1/3 z-10">
+        <div className="relative pt-18">
+            {/* Left Player Image - positioned above component */}
+            <div className="absolute left-16 top-12 z-30">
                 <Image
                     src="/deliver-left.png"
                     alt="NFL Player Left"
-                    fill
-                    className="object-cover object-right"
+                    width={458}
+                    height={458}
+                    className="object-cover object-right "
                 />
             </div>
 
-            {/* Right Player Image */}
-            <div className="absolute right-0 top-0 h-full w-1/3 z-10">
+            {/* Right Player Image - positioned above component */}
+            <div className="absolute right-16 top-6 z-30">
                 <Image
                     src="/deliver-right.png"
                     alt="NFL Player Right"
-                    fill
+                    width={578}
+                    height={450}
                     className="object-cover object-left"
                 />
             </div>
+
+            <div className="relative min-h-[500px] flex items-center justify-center overflow-hidden bg-[#2C204B] mt-12">
+
+                <div className="bg-red-800 absolute top-0 w-[60%] h-full z-10"
+                    style={{
+                        clipPath: 'polygon(0% 0%, 80% 0%, 100% 100%, 0% 100%, 20% 100%)'
+                    }}>
+                </div>
+
+                <div className="bg-red-700 absolute top-0 w-[60%] h-full z-10"
+                    style={{
+                        clipPath: 'polygon(5% 0%, 80% 0%, 95% 100%, 20% 100%)'
+                    }}>
+                </div>
 
             {/* Central Content */}
             <div className="relative z-20 text-center px-8 py-16">
@@ -50,10 +57,10 @@ export default function DeliveredToComponent() {
 
 
 
-                <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 leading-tight">
-                    DELIVERED TO<br />
-                    YOUR INBOX
-                </h1>
+               <div className=''>
+                <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">DELIVERED TO</h1>
+                <h2 className="text-5xl md:text-5xl font-bold text-white mb-4 leading-tight -mt-6">YOUR INBOX</h2>
+               </div>
 
                 <p className="text-lg md:text-xl text-white mb-8 opacity-90">
                     Subscribe to get the latest NFL insight, fantasy advice<br />
@@ -79,6 +86,7 @@ export default function DeliveredToComponent() {
                         Subscribe Now
                     </button>
                 </form>
+            </div>
             </div>
         </div>
     )

@@ -22,7 +22,7 @@ export default function SubscriptionComponent() {
   const [subscriptionOptions, setSubscriptionOptions] = useState<{
     data: SubscriptionOption[]
   } | null>(null)
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly')
   const router = useRouter()
 
   useEffect(() => {
@@ -106,7 +106,7 @@ export default function SubscriptionComponent() {
                   onClick={() => setSelectedPlan('monthly')}
                   className={`px-6 py-4 rounded-full text-sm font-medium transition-all duration-300 ${
                     selectedPlan === 'monthly'
-                      ? 'bg-[#4F4078] text-white'
+                      ? 'bg-[#4F4078] text-white shadow-sm'
                       : 'text-white hover:text-gray-300'
                   }`}
                 >
@@ -114,9 +114,9 @@ export default function SubscriptionComponent() {
                 </button>
                 <button
                   onClick={() => setSelectedPlan('yearly')}
-                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
                     selectedPlan === 'yearly'
-                      ? 'bg-[#4F4078] text-white'
+                      ? 'bg-[#4F4078] text-white shadow-sm'
                       : 'text-white hover:text-gray-300'
                   }`}
                 >
@@ -129,7 +129,11 @@ export default function SubscriptionComponent() {
             {currentPlan && (
               <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
                 {/* Header Section */}
-                <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-6 text-center">
+                <div className={`p-6 text-center ${
+                  selectedPlan === 'monthly' 
+                    ? 'bg-gradient-to-r from-red-700 to-red-800' 
+                    : 'bg-gradient-to-r from-yellow-400 to-yellow-500'
+                }`}>
                   <div className="flex items-center justify-center space-x-3 mb-2">
                     <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
                       <Image 
@@ -141,8 +145,8 @@ export default function SubscriptionComponent() {
                       />
                     </div>
                     <div className="text-left">
-                      <h3 className="text-4xl font-bold ">32BeatWriters</h3>
-                      <p className="text-lg text-red-800">NFL Insider Network</p>
+                      <h3 className="text-4xl font-bold text-white">32BeatWriters</h3>
+                      <p className="text-lg text-white/90">NFL Insider Network</p>
                     </div>
                   </div>
                 </div>
@@ -168,7 +172,11 @@ export default function SubscriptionComponent() {
                   
                   <button
                     onClick={() => handleSubscribe(currentPlan.id)}
-                    className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-black hover:cursor-pointer py-4 rounded-md transition-all duration-200 text-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                    className={`w-full text-white font-bold hover:cursor-pointer py-4 rounded-md transition-all duration-200 text-xl shadow-md hover:shadow-lg transform hover:-translate-y-0.5 ${
+                      selectedPlan === 'monthly'
+                        ? 'bg-gradient-to-r from-red-700 to-red-800 hover:from-red-600 hover:to-red-700'
+                        : 'bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black'
+                    }`}
                   >
                     Join {selectedPlan === 'monthly' ? 'Monthly' : 'Yearly'}
                   </button>
