@@ -160,7 +160,7 @@ export default function Footer() {
             </div>
 
             {/* Bottom Section */}
-            <div className=" bg-[#2C204B]">
+            <div className="border-t border-white/20 bg-[#2C204B]">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                         <div className="text-lg text-muted-foreground">
