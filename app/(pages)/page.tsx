@@ -5,6 +5,8 @@ import PodcastsComponent from "../components/PodcastsComponent";
 import FeedComponent from "../components/FeedComponent";
 import SubscriptionComponent from "../components/SubscriptionComponent";
 import DeliveredToComponent from "../components/DeliveredToComponent";
+import TrendingPlayers from "../components/TrendingPlayers";
+
 
 
 
@@ -17,9 +19,8 @@ export default function Home() {
   return (
     <div>
       <HeroSection />
+      <TrendingPlayers/>
       <NewArticles/>
-     
-      {/* <BeatWritersComponent/> */}
       <PodcastsComponent/>
       <DeliveredToComponent/>
       <SubscriptionComponent/>

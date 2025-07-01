@@ -22,7 +22,7 @@ export default function SubscriptionComponent() {
   const [subscriptionOptions, setSubscriptionOptions] = useState<{
     data: SubscriptionOption[]
   } | null>(null)
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly')
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly')
   const router = useRouter()
 
   useEffect(() => {

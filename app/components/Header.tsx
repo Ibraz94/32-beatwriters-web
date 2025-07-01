@@ -92,15 +92,15 @@ function Header() {
     return (
         <header className="z-50 w-full border-gray-100 shadow-sm bg-background/90">
             <div>
-                <div className="h-11 flex items-center justify-end space-x-2 mt-2 mb-6 px-2 border-b">
-                    <h1 className="text-right">
-                        Follow Us
+                <div className="h-11 flex items-center justify-end space-x-2 mt-1 mb-1 px-2 bg-black">
+                    <h1 className="text-right text-white dark:text-white">
+                        Listen Us
                     </h1>
                     <div className="flex items-center space-x-2">
-                        <Link href="https://x.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
+                        <Link href="https://apple.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
                             <Image src={"/apple-logo.svg"} alt="Twitter" width={30} height={30} />
                         </Link>
-                        <Link href="https://youtube.com/@32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
+                        <Link href="https://spotify.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
                             <Image src={"/spotify-logo.svg"} alt="Youtube" width={30} height={30} />
                         </Link>
                     </div>
@@ -127,7 +127,7 @@ function Header() {
                             </div>
                         </Link>
 
-                        <div className="h-[120px] w-[55%] flex items-center bg-[#2C204B]">
+                        <div className="h-[110px] w-[55%] flex items-center bg-[#2C204B]">
                             <div className="relative top-0 right-0 w-[400px] h-full">
                                 <Image
                                     src={"/header-image.png"}
@@ -180,7 +180,7 @@ function Header() {
                         </button>
                     </div>
                 </div>
-                <div className="h-[65px] flex items-center justify-between bg-[#2C204B] px-5 mt-6 mb-6">
+                <div className="h-[65px] flex items-center justify-between bg-[#2C204B] px-5 mt-1 mb-2">
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-10">
                         {navLinks.map((link) => (
@@ -255,17 +255,18 @@ function Header() {
                         ) : (
                             <div className="flex items-center space-x-3">
                                 <Link
-                                    href="/login"
-                                    className=" hover:text-red-800 hover:scale-102 font-medium transition-colors"
-                                >
-                                    LOGIN
-                                </Link>
-                                <Link
                                     href="/subscribe"
                                     className="bg-red-800 hover:scale-102 text-white px-6 py-2.5 rounded-md font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
                                 >
                                     SUBSCRIBE
                                 </Link>
+                                <Link
+                                    href="/login"
+                                    className=" hover:text-red-800 hover:scale-102 font-medium transition-colors"
+                                >
+                                    LOGIN
+                                </Link>
+
                             </div>
                         )}
                     </div>

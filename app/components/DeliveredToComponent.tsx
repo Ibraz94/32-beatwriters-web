@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from "next/image"
-import { clipPath } from 'framer-motion/client'
+
 
 export default function DeliveredToComponent() {
     const [email, setEmail] = useState('')
@@ -74,14 +74,14 @@ export default function DeliveredToComponent() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Your Email Address"
-                            className="w-full px-6 py-4 rounded-lg bg-red-700/80 border border-red-500/50 text-white placeholder-red-200 focus:outline-none focus:ring-2 focus:ring-white/50 text-lg"
+                            className="w-full px-6 py-4 rounded-lg bg-red-800 border border-red-500/50 text-white placeholder-red-200 focus:outline-none focus:ring-2 focus:ring-white/50 text-lg"
                             required
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="bg-white text-black font-bold py-4 px-12 rounded-lg text-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        className="bg-white text-black font-bold py-4 px-10 rounded-lg text-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
                         Subscribe Now
                     </button>

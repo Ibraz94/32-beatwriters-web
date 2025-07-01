@@ -50,7 +50,7 @@ export default function Footer() {
     };
 
     return (
-        <footer className="bg-background border-t">
+        <footer className="bg-background ">
             {/* Newsletter Section */}
             {/* <div className="border-b bg-card">
                 <div className="container mx-auto px-4 py-12">
@@ -157,7 +157,7 @@ export default function Footer() {
             </div>
 
             {/* Bottom Section */}
-            <div className="border-t bg-[#2C204B]">
+            <div className=" bg-[#2C204B]">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                         <div className="text-sm text-muted-foreground">

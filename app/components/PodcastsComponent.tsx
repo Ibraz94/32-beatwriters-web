@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Clock, Calendar, Headphones, TrendingUp, ArrowRight } from "lucide-react";
+import { Play, Clock, Calendar, Headphones, TrendingUp, ArrowRight, ArrowLeft } from "lucide-react";
 import { useGetEpisodesQuery, getImageUrl, PodcastData, ApiResponse } from '@/lib/services/podcastApi';
 
 // Mock data for podcast categories (keeping this as it's UI-only)
@@ -41,153 +41,200 @@ export default function PodcastsComponent() {
     };
 
     return (
-        <section className="bg-[#2C204B] px-4 py-16 mt-12">
-            {/* Header */}
-            <div className="text-center mb-12">
-                <h2 className="text-4xl text-white md:text-6xl font-bold mb-4">
-                    Our Podcast Network
-                </h2>
-                <p className="text-lg text-white max-w-3xl mx-auto">
-                    Welcome to the NFL Network Podcast, your go-to source for everything NFL! We dive deep into game analyses, player performances, and the hottest news from around the league. Join us weekly for engaging discussions and expert commentary!
-                </p>
-            </div>
+        <section className="bg-[#2C204B] px-4 py-16 mt-12 mb-1">
+            <div className="">
+                {/* Header */}
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl text-white md:text-6xl font-bold mb-4">
+                        Our Podcast Network
+                    </h2>
+                    <p className="text-lg text-white max-w-3xl mx-auto">
+                        Welcome to the NFL Network Podcast, your go-to source for everything NFL! We dive deep into game analyses, player performances, and the hottest news from around the league. Join us weekly for engaging discussions and expert commentary!
+                    </p>
+                </div>
 
-            {/* Featured Episodes */}
-            <div className="mb-12">
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-4">
-                        <h3 className="text-3xl text-white font-bold">Latest Episodes</h3>
-                        {apiResponse?.podcasts && apiResponse.podcasts.length === 0 && (
-                            <div className="text-center py-12">
+                {/* Featured Episodes */}
+                <div className="mb-12">
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-4">
+                            <h3 className="text-3xl text-white font-bold">Latest Episode</h3>
+                            <div className="bg-red-800 rounded-md">
                                 <Link href="/podcasts">
-                                    <button className="bg-red-800 text-white px-6 py-2 rounded-md hover:scale-102 transition-colors hover:cursor-pointer">
+                                    <button className="text-white px-6 py-2 hover:scale-102 transition-colors">
                                         View All
                                     </button>
                                 </Link>
                             </div>
-                        )}
-                    </div>
-                    <Link href="/podcasts" className="text-white hover:scale-102 font-medium flex items-center gap-1">
-                        View All <ArrowRight className="h-4 w-4" />
-                    </Link>
-                </div>
+                        </div>
 
-                {/* Loading State */}
-                {isLoading && (
-                    <div className="space-y-6 text-white">
-                        {Array.from({ length: 3 }).map((_, index) => (
-                            <div key={index} className="animate-pulse border border-border rounded-xl p-6">
-                                <div className="flex flex-col lg:flex-row gap-6">
-                                    <div className="lg:w-32 lg:h-32 w-full h-48 bg-gray-300 rounded-xl"></div>
-                                    <div className="flex-1 space-y-4">
-                                        <div className="h-4 bg-gray-300 rounded w-1/4"></div>
-                                        <div className="h-6 bg-gray-300 rounded w-3/4"></div>
-                                        <div className="h-4 bg-gray-300 rounded"></div>
-                                        <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                        <div className="flex items-center gap-2">
+                            <button className="text-white bg-red-600 rounded-full p-3 hover:bg-red-700 transition-colors">
+                                <ArrowLeft className="h-5 w-5" />
+                            </button>
+                            <button className="text-white bg-red-600 rounded-full p-3 hover:bg-red-700 transition-colors">
+                                <ArrowRight className="h-5 w-5" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Loading State */}
+                    {isLoading && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {Array.from({ length: 3 }).map((_, index) => (
+                                <div key={index} className="animate-pulse">
+                                    <div className="bg-gray-700 rounded-xl h-48 mb-4"></div>
+                                    <div className="space-y-2">
+                                        <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+                                        <div className="h-3 bg-gray-700 rounded w-1/2"></div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
 
-                {/* Error State */}
-                {error && (
-                    <div className="text-center py-12">
-                        <p className="text-gray-600 mb-4">Failed to load latest episodes. Please try again later.</p>
-                        <button
-                            onClick={() => window.location.reload()}
-                            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                        >
-                            Retry
-                        </button>
-                    </div>
-                )}
+                    {/* Error State */}
+                    {error && (
+                        <div className="text-center py-12">
+                            <p className="text-gray-400 mb-4">Failed to load latest episodes. Please try again later.</p>
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                            >
+                                Retry
+                            </button>
+                        </div>
+                    )}
 
-                {/* Episodes List */}
-                {apiResponse?.podcasts && apiResponse.podcasts.length > 0 && (
-                    <div className="space-y-6">
-                        {apiResponse.podcasts.map((podcast, index) => (
-                            <div key={podcast.id} className={`group border shadow-md rounded-xl p-6 hover:shadow-lg hover:border-red-200 transition-all duration-300 ${index === 0 ? '' : ''}`}>
-                                <div className="flex flex-col lg:flex-row gap-6">
-                                    {/* Podcast Image */}
-                                    <div className="relative lg:w-32 lg:h-32 w-full h-48 flex-shrink-0">
-                                        <Image
-                                            src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"}
-                                            alt={podcast.title}
-                                            fill
-                                            className="object-cover rounded-xl"
-                                        />
-                                        <div className="absolute inset-0 bg-black/40 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                                                <Play className="h-6 w-6 text-red-800 ml-1" />
+                    {/* Episodes Grid */}
+                    {apiResponse?.podcasts && apiResponse.podcasts.length > 0 && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {apiResponse.podcasts.map((podcast, index) => (
+                                <div key={podcast.id} className="group cursor-pointer">
+                                    {/* Podcast Card */}
+                                    <div className="relative mb-4">
+
+                                        {/* Image Container */}
+                                        <div className="relative w-full h-96 overflow-hidden">
+                                            <Image
+                                                src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"}
+                                                alt={podcast.title}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                            
+                                            {/* Play Button Overlay */}
+                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                                    <Play className="h-6 w-6 text-gray-800 ml-1" fill="currentColor" />
+                                                </div>
                                             </div>
                                         </div>
-                                        {index === 0 && (
-                                            <div className="absolute top-2 left-2 px-2 py-1 bg-orange-500 text-white text-xs font-bold rounded-full flex items-center gap-1">
-                                                <TrendingUp className="h-3 w-3" />
-                                                Latest
-                                            </div>
-                                        )}
                                     </div>
 
                                     {/* Content */}
-                                    <div className="flex-1">
-                                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                                            <span className="text-xs text-white px-2 py-1 border-2 border-gray-100 rounded-full font-medium">
-                                                {podcast.hostedBy}
-                                            </span>
-                                            <div className="flex items-center gap-1 text-xs text-white">
-                                                <Calendar className="h-3 w-3" />
-                                                {formatTimeAgo(podcast.podcastTime)}
-                                            </div>
+                                    <div className="space-y-2">
+                                        {/* Author and Date */}
+                                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                                            <span>{podcast.hostedBy}</span>
+                                            <span>-</span>
+                                            <span>{formatTimeAgo(podcast.podcastTime)}</span>
                                         </div>
 
+                                        {/* Title */}
                                         <Link href={`/podcasts/${podcast.id}`}>
-                                            <h4 className="font-bold text-xl text-white mb-2 transition-colors cursor-pointer">
+                                            <h4 className="font-bold text-3xl text-white transition-colors line-clamp-2">
                                                 {podcast.title}
                                             </h4>
                                         </Link>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-4 text-sm text-white">
-                                                <div className="flex items-center gap-1">
-                                                    <Clock className="h-4 w-4" />
-                                                    {podcast.duration}
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Play className="h-4 w-4" />
-                                                    New Episode
-                                                </div>
-                                            </div>
+                    {/* No Data State */}
+                    {apiResponse?.podcasts && apiResponse.podcasts.length === 0 && (
+                        <div className="text-center py-12">
+                            <p className="text-gray-400 mb-4">No episodes available at the moment.</p>
+                            <Link href="/podcasts">
+                                <button className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                                    Explore All Podcasts
+                                </button>
+                            </Link>
+                        </div>
+                    )}
+                </div>
 
-                                            <div className="flex items-center gap-3">
-                                                <Link href={`/podcasts/${podcast.id}`}>
-                                                    <button className="px-4 py-2 bg-red-800 text-white rounded-lg hover:scale-102 transition-colors flex items-center gap-2">
-                                                        <Play className="h-4 w-4" />
-                                                        Play Now
-                                                    </button>
-                                                </Link>
+                {/* Recently Added Section */}
+                <div>
+                    <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center gap-4">
+                            <h3 className="text-3xl text-white font-bold">Recently Added</h3>
+                            <div className="bg-red-800 rounded-md">
+                                <Link href="/podcasts">
+                                    <button className="text-white px-6 py-2 hover:scale-102 transition-colors">
+                                        View All
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <button className="text-white bg-red-600 rounded-full p-3 hover:bg-red-700 transition-colors">
+                                <ArrowLeft className="h-5 w-5" />
+                            </button>
+                            <button className="text-white bg-red-600 rounded-full p-3 hover:bg-red-700 transition-colors">
+                                <ArrowRight className="h-5 w-5" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Recently Added Grid - Same as above but different data could be loaded */}
+                    {apiResponse?.podcasts && apiResponse.podcasts.length > 0 && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {apiResponse.podcasts.map((podcast, index) => (
+                                <div key={`recent-${podcast.id}`} className="group cursor-pointer">
+                                    {/* Podcast Card */}
+                                    <div className="relative mb-4">
+                                        {/* Image Container */}
+                                        <div className="relative w-full h-96 overflow-hidden">
+                                            <Image
+                                                src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"}
+                                                alt={podcast.title}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                            
+                                            {/* Play Button Overlay */}
+                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                                    <Play className="h-6 w-6 text-gray-800 ml-1" fill="currentColor" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
 
-                {/* No Data State */}
-                {apiResponse?.podcasts && apiResponse.podcasts.length === 0 && (
-                    <div className="text-center py-12 container mx-auto">
-                        <p className="text-white mb-4">No episodes available at the moment.</p>
-                        <Link href="/podcasts">
-                            <button className="bg-red-800 text-white px-6 py-2 rounded-lg hover:scale-102 transition-colors">
-                                Explore All Podcasts
-                            </button>
-                        </Link>
-                    </div>
-                )}
+                                    {/* Content */}
+                                    <div className="space-y-2">
+                                        {/* Author and Date */}
+                                        <div className="flex items-center gap-2 text-sm text-gray-300">
+                                            <span>{podcast.hostedBy}</span>
+                                            <span>-</span>
+                                            <span>{formatTimeAgo(podcast.podcastTime)}</span>
+                                        </div>
+
+                                        {/* Title */}
+                                        <Link href={`/podcasts/${podcast.id}`}>
+                                            <h4 className="font-bold text-3xl text-white transition-colors line-clamp-2">
+                                                {podcast.title}
+                                            </h4>
+                                        </Link>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         </section>
     );
