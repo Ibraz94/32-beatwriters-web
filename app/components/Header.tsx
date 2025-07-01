@@ -93,41 +93,43 @@ function Header() {
         <header className="z-50 w-full border-gray-100 shadow-sm bg-background/90">
             <div>
                 <div className="h-11 flex items-center justify-end space-x-2 mt-1 mb-1 px-2 bg-black">
-                    <h1 className="text-right text-white dark:text-white">
+                    <h1 className="text-right text-white dark:text-white text-sm md:text-base">
                         Listen Us
                     </h1>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1 md:space-x-2">
                         <Link href="https://apple.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
-                            <Image src={"/apple-logo.svg"} alt="Twitter" width={30} height={30} />
+                            <Image src={"/apple-logo.svg"} alt="Apple Podcasts" width={24} height={24} className="md:w-[30px] md:h-[30px]" />
                         </Link>
                         <Link href="https://spotify.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
-                            <Image src={"/spotify-logo.svg"} alt="Youtube" width={30} height={30} />
+                            <Image src={"/spotify-logo.svg"} alt="Spotify" width={24} height={24} className="md:w-[30px] md:h-[30px]" />
                         </Link>
                     </div>
                 </div>
-                <div className="flex h-[120px] items-center justify-between ">
+                <div className="flex h-[80px] md:h-[120px] items-center justify-between px-2 md:px-0">
                     {/* Logo and Social Links */}
                     <div className="flex items-center justify-between w-full space-x-3">
-                        <Link href="/" className="flex items-center space-x-3 hover:opacity-90 transition-opacity pl-2">
+                        <Link href="/" className="flex items-center space-x-2 md:space-x-3 hover:opacity-90 transition-opacity pl-2">
                             <div className="relative">
                                 <Image
                                     src={"/32bw_logo_white.png"}
                                     alt="32 Beat Writers"
-                                    width={64}
-                                    height={64}
+                                    width={48}
+                                    height={48}
+                                    className="md:w-16 md:h-16"
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-extrabold text-[34.37px] text-white">
+                                <span className="font-extrabold text-lg md:text-[34.37px] text-white">
                                     32BeatWriters
                                 </span>
-                                <span className="text-xl text-red-700 hidden sm:block">
+                                <span className="text-sm md:text-xl text-red-700 hidden sm:block">
                                     NFL Insider Network
                                 </span>
                             </div>
                         </Link>
 
-                        <div className="h-[110px] w-[55%] flex items-center bg-[#2C204B]">
+                        {/* Header Image Section - Hidden on mobile */}
+                        <div className="hidden lg:block h-[110px] w-[55%] flex items-center bg-[#2C204B]">
                             <div className="relative top-0 right-0 w-[400px] h-full">
                                 <Image
                                     src={"/header-image.png"}
@@ -160,12 +162,20 @@ function Header() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Mobile Social Links - Only visible on smaller screens */}
+                        <div className="flex lg:hidden items-center space-x-2">
+                            <Link href="https://youtube.com/@32beatwriters" className="w-8 h-8 bg-red-700 hover:scale-95 rounded-sm flex items-center justify-center transition-colors">
+                                <Youtube className="h-4 w-4 text-white" />
+                            </Link>
+                            <Link href="https://x.com/32beatwriters" className="w-8 h-8 bg-white hover:scale-95 rounded-sm flex items-center justify-center transition-colors">
+                                <Image src={"/x-black-logo.svg"} alt="Twitter" width={16} height={16} />
+                            </Link>
+                        </div>
                     </div>
 
-
-
                     {/* Mobile Menu Button */}
-                    <div className="flex lg:hidden items-center space-x-3">
+                    <div className="flex lg:hidden items-center space-x-3 ml-2">
                         <ThemeToggle />
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -180,7 +190,7 @@ function Header() {
                         </button>
                     </div>
                 </div>
-                <div className="h-[65px] flex items-center justify-between bg-[#2C204B] px-5 mt-1 mb-2">
+                <div className="h-[50px] md:h-[65px] flex items-center justify-between bg-[#2C204B] px-2 md:px-5 mt-1 mb-2">
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-10">
                         {navLinks.map((link) => (
@@ -296,10 +306,10 @@ function Header() {
                         </div>
 
                         {/* User Actions */}
-                        {/* <div className="px-4 space-y-3">
+                        <div className="px-4 space-y-3">
                             {isAuthenticated ? (
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-center space-x-3 p-3 rounded-lg">
+                                    <div className="flex items-center justify-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                                         {user?.profilePicture ? (
                                             <Image
                                                 src={user.profilePicture}
@@ -319,14 +329,14 @@ function Header() {
                                             <div className="font-medium">
                                                 {getUserDisplayName()}
                                             </div>
-                                            <div className="text-sm text-gray-400">
+                                            <div className="text-sm text-gray-500">
                                                 {user?.memberships?.type || 'Subscriber'}
                                             </div>
                                         </div>
                                     </div>
                                     <Link 
                                         href="/account"
-                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center hover:text-red-800 transform hover:scale-105"
+                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 font-medium rounded-lg transition-all duration-200 text-center hover:text-red-800 transform hover:scale-105"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         <User className="h-4 w-4" />
@@ -337,7 +347,7 @@ function Header() {
                                             setIsMobileMenuOpen(false);
                                             handleLogout();
                                         }}
-                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 transform hover:scale-105"
+                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-800 transform hover:scale-105"
                                     >
                                         <LogOut className="h-4 w-4" />
                                         <span>Log out</span>
@@ -347,21 +357,21 @@ function Header() {
                                 <div className="space-y-3">
                                     <Link 
                                         href="/login"
-                                        className="block w-full py-3 px-4 hover:bg-gray-200 text-gray-700 font-medium text-lg rounded-lg transition-all duration-200 text-center transform hover:scale-105"
+                                        className="block w-full py-3 px-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Login
                                     </Link>
                                     <Link 
                                         href="/subscribe"
-                                        className="block w-full py-3 px-4 bg-red-800 text-white font-semibold rounded-lg transition-all duration-200 text-center transform hover:scale-102"
+                                        className="block w-full py-3 px-4 bg-red-800 text-white font-semibold rounded-lg transition-all duration-200 text-center transform hover:scale-102 hover:bg-red-900"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Subscribe Now
                                     </Link>
                                 </div>
                             )}
-                        </div> */}
+                        </div>
 
                         {/* Mobile Footer Info */}
                         <div className="px-4 pt-4 border-t border-gray-200">
@@ -381,10 +391,6 @@ function Header() {
         </header>
     );
 }
-
-
-
-
 
 export default Header;
 
