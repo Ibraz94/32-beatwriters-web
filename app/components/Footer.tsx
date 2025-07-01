@@ -29,23 +29,26 @@ export default function Footer() {
     };
 
     const footerLinks = {
-        Company: [
-            { label: "About Us", href: "/about" },
-            // { label: "Our Writers", href: "/beat-writers" },
-            // { label: "Careers", href: "/" },
-            { label: "Contact", href: "/contact-us" }
-        ],
-        Content: [
+        Navigation: [
+            { label: "Home", href: "/" },
             { label: "Articles", href: "/articles" },
-            { label: "Podcasts", href: "/podcasts" },
-            { label: "Live Feed", href: "/nuggets" },
-            { label: "Player Analysis", href: "/players" }
+            { label: "Benefits", href: "" },
+
+
         ],
-        Support: [
-            // { label: "Help Center", href: "/" },
-            { label: "Privacy Policy", href: "/privacy-policy" },
-            { label: "Terms of Service", href: "/terms-and-conditions" },
-            // { label: "Cookie Policy", href: "/" }
+        Information: [
+            { label: "Analysis", href: "" },
+            { label: "Scale", href: "" },
+            { label: "Developer", href: "" },
+            { label: "About Us", href: "/about-us" },
+
+        ],
+        Socials: [
+            { label: "Facebook", href: "" },
+            { label: "Youtube", href: "" },
+            { label: "Apple", href: "" },
+            { label: "Twitter", href: "" },
+            { label: "Spotify", href: "" }
         ]
     };
 
@@ -113,7 +116,7 @@ export default function Footer() {
                                 </p>
                             </div>
                         </div>
-                        <p className="text-muted-foreground mb-6 leading-relaxed line-clamp-3">
+                        <p className="text-muted-foreground mb-6 leading-relaxed w-96 text-lg">
                             Stay informed with our NFL podcast and real-time news updates. Watch highlights, get insights, and never miss a moment of the action.
                         </p>
                     </div>
@@ -160,14 +163,15 @@ export default function Footer() {
             <div className=" bg-[#2C204B]">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-lg text-muted-foreground">
                             Copyright © 2025 32BeatWriters. All rights reserved.
                         </div>
 
                         <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground">
-                            <div className="flex items-center justify-center gap-1">
-                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span>All systems operational</span>
+                            <div className="flex items-center justify-center gap-4 text-lg">
+                                <Link href="/privacy-policy" className="hover:text-red-600 transition-colors text-md">Privacy Policy</Link>
+                                <div className="w-2 h-2 bg-white rounded-full"></div>
+                                <Link href="/terms-and-conditions" className="hover:text-red-600 transition-colors text-md">Terms & Conditions</Link>
                             </div>
                         </div>
                     </div>

@@ -163,15 +163,7 @@ function Header() {
                             </div>
                         </div>
 
-                        {/* Mobile Social Links - Only visible on smaller screens */}
-                        <div className="flex lg:hidden items-center space-x-2">
-                            <Link href="https://youtube.com/@32beatwriters" className="w-8 h-8 bg-red-700 hover:scale-95 rounded-sm flex items-center justify-center transition-colors">
-                                <Youtube className="h-4 w-4 text-white" />
-                            </Link>
-                            <Link href="https://x.com/32beatwriters" className="w-8 h-8 bg-white hover:scale-95 rounded-sm flex items-center justify-center transition-colors">
-                                <Image src={"/x-black-logo.svg"} alt="Twitter" width={16} height={16} />
-                            </Link>
-                        </div>
+
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -191,6 +183,27 @@ function Header() {
                     </div>
                 </div>
                 <div className="h-[50px] lg:h-[65px] flex items-center justify-between bg-[#2C204B] px-2 lg:px-5 mt-1 mb-2">
+                    {/* Mobile Social Links - Only visible on mobile */}
+                    <div className="flex lg:hidden items-center justify-center w-full space-x-4">
+                        <h1 className="text-white text-xl font-bold">Social Links</h1>
+                        <div className="flex items-center space-x-4">
+                            <Link href="https://youtube.com/@32beatwriters">
+                                <Image src={"/icons-youtube.svg"} alt="Youtube" width={36} height={28} />
+                            </Link>
+                            <Link href="https://x.com/32beatwriters">
+                                <Image src={"/icons-twitter.svg"} alt="Twitter" width={34} height={28} />
+                            </Link>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <Link href="https://spotify.com/32beatwriters">
+                                <Image src={"/icons-spotify.svg"} alt="Spotify" width={34} height={28} />
+                            </Link>
+                            <Link href="https://apple.com/32beatwriters"    >
+                                <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={34} height={28} />
+                            </Link>
+                        </div>
+                    </div>
+
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-10">
                         {navLinks.map((link) => (
@@ -283,7 +296,7 @@ function Header() {
                 </div>
 
                 {/* Mobile Menu */}
-                <div className={`lg:hidden border-t border-gray-100 bg-background/90 transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen
+                <div className={`lg:hidden bg-background/90 transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen
                     ? 'max-h-screen opacity-100 translate-y-0'
                     : 'max-h-0 opacity-0 -translate-y-2'
                     }`}>
@@ -357,7 +370,7 @@ function Header() {
                                 <div className="space-y-3">
                                     <Link
                                         href="/login"
-                                        className="block w-full py-3 px-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
+                                        className="block w-full py-3 px-4 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Login
@@ -373,18 +386,7 @@ function Header() {
                             )}
                         </div>
 
-                        {/* Mobile Footer Info */}
-                        <div className="px-4 pt-4 border-t border-gray-200">
-                            <h1 className="text-center text-sm text-gray-500 mb-2">Listen Us</h1>
-                            <div className="flex justify-center items-center space-x-4">
-                                <Link href="https://apple.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
-                                    <Image src={"/apple-logo.svg"} alt="Apple Podcasts" width={24} height={24} className="lg:w-[30px] lg:h-[30px]" />
-                                </Link>
-                                <Link href="https://spotify.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
-                                    <Image src={"/spotify-logo.svg"} alt="Spotify" width={24} height={24} className="lg:w-[30px] lg:h-[30px]" />
-                                </Link>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>

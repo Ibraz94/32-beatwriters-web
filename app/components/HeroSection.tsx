@@ -71,7 +71,7 @@ export default function HeroSection() {
             </div>
 
             {/* Mobile Layout */}
-            <div className="lg:hidden relative min-h-screen">
+            <div className="lg:hidden relative min-h-[500px] sm:min-h-[600px] md:min-h-[650px]">
                 {/* Background Image */}
                 <div className="absolute inset-0 w-full h-full">
                     <Image 
@@ -84,7 +84,7 @@ export default function HeroSection() {
                 </div>
 
                 {/* Mobile Content */}
-                <div className="relative z-10 px-6 pt-8 pb-6">
+                <div className="relative z-10 px-6 pt-6 pb-8 flex flex-col justify-center h-full">
                     {/* Latest NFL News Badge */}
                     <div className="flex justify-center mb-6">
                         <div className="px-6 py-3 rounded-full border-2 border-white bg-background/40 backdrop-blur-sm">
