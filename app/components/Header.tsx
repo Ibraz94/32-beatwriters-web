@@ -92,7 +92,7 @@ function Header() {
     return (
         <header className="z-50 w-full border-gray-100 shadow-sm bg-background/90">
             <div>
-                <div className="h-11 flex items-center justify-end space-x-2 mt-1 mb-1 px-2 bg-black">
+                <div className="h-11 lg:flex items-center justify-end space-x-2 mt-1 mb-1 px-2 bg-black hidden">
                     <h1 className="text-right text-white dark:text-white text-sm lg:text-base">
                         Listen Us
                     </h1>
@@ -176,7 +176,7 @@ function Header() {
 
                     {/* Mobile Menu Button */}
                     <div className="flex lg:hidden items-center space-x-3 ml-2">
-                        <ThemeToggle />
+                        {/* <ThemeToggle /> */}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="p-2 rounded-lg transition-colors"
@@ -334,7 +334,7 @@ function Header() {
                                             </div>
                                         </div>
                                     </div>
-                                    <Link 
+                                    <Link
                                         href="/account"
                                         className="flex items-center justify-center space-x-2 w-full py-3 px-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 font-medium rounded-lg transition-all duration-200 text-center hover:text-red-800 transform hover:scale-105"
                                         onClick={() => setIsMobileMenuOpen(false)}
@@ -355,14 +355,14 @@ function Header() {
                                 </div>
                             ) : (
                                 <div className="space-y-3">
-                                    <Link 
+                                    <Link
                                         href="/login"
                                         className="block w-full py-3 px-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Login
                                     </Link>
-                                    <Link 
+                                    <Link
                                         href="/subscribe"
                                         className="block w-full py-3 px-4 bg-red-800 text-white font-semibold rounded-lg transition-all duration-200 text-center transform hover:scale-102 hover:bg-red-900"
                                         onClick={() => setIsMobileMenuOpen(false)}
@@ -375,13 +375,13 @@ function Header() {
 
                         {/* Mobile Footer Info */}
                         <div className="px-4 pt-4 border-t border-gray-200">
-                            <h1 className="text-center text-sm text-gray-500 mb-2">Join Us On Social Media</h1>
+                            <h1 className="text-center text-sm text-gray-500 mb-2">Listen Us</h1>
                             <div className="flex justify-center items-center space-x-4">
-                                <Link href="https://x.com/32beatwriters" className="w-8 h-8 hover:scale-90  bg-gradient-to-r from-red-600 to-red-800 rounded-md flex items-center justify-center transition-colors">
-                                    <Image src={"/x-white-logo.svg"} alt="Twitter" width={20} height={20} className="h-4 w-4" />
+                                <Link href="https://apple.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
+                                    <Image src={"/apple-logo.svg"} alt="Apple Podcasts" width={24} height={24} className="lg:w-[30px] lg:h-[30px]" />
                                 </Link>
-                                <Link href="https://youtube.com/@32beatwriters" className="w-8 h-8  bg-gradient-to-r from-red-600 to-red-800 hover:scale-90 rounded-md flex items-center justify-center transition-colors">
-                                    <Youtube className="h-5 w-5 text-white" />
+                                <Link href="https://spotify.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
+                                    <Image src={"/spotify-logo.svg"} alt="Spotify" width={24} height={24} className="lg:w-[30px] lg:h-[30px]" />
                                 </Link>
                             </div>
                         </div>
