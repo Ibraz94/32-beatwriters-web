@@ -93,43 +93,43 @@ function Header() {
         <header className="z-50 w-full border-gray-100 shadow-sm bg-background/90">
             <div>
                 <div className="h-11 flex items-center justify-end space-x-2 mt-1 mb-1 px-2 bg-black">
-                    <h1 className="text-right text-white dark:text-white text-sm md:text-base">
+                    <h1 className="text-right text-white dark:text-white text-sm lg:text-base">
                         Listen Us
                     </h1>
-                    <div className="flex items-center space-x-1 md:space-x-2">
+                    <div className="flex items-center space-x-1 lg:space-x-2">
                         <Link href="https://apple.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
-                            <Image src={"/apple-logo.svg"} alt="Apple Podcasts" width={24} height={24} className="md:w-[30px] md:h-[30px]" />
+                            <Image src={"/apple-logo.svg"} alt="Apple Podcasts" width={24} height={24} className="lg:w-[30px] lg:h-[30px]" />
                         </Link>
                         <Link href="https://spotify.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
-                            <Image src={"/spotify-logo.svg"} alt="Spotify" width={24} height={24} className="md:w-[30px] md:h-[30px]" />
+                            <Image src={"/spotify-logo.svg"} alt="Spotify" width={24} height={24} className="lg:w-[30px] lg:h-[30px]" />
                         </Link>
                     </div>
                 </div>
-                <div className="flex h-[80px] md:h-[120px] items-center justify-between px-2 md:px-0">
+                <div className="flex h-[80px] lg:h-[120px] items-center justify-between px-2 lg:px-0">
                     {/* Logo and Social Links */}
                     <div className="flex items-center justify-between w-full space-x-3">
-                        <Link href="/" className="flex items-center space-x-2 md:space-x-3 hover:opacity-90 transition-opacity pl-2">
+                        <Link href="/" className="flex items-center space-x-2 lg:space-x-3 hover:opacity-90 transition-opacity pl-2">
                             <div className="relative">
                                 <Image
                                     src={"/32bw_logo_white.png"}
                                     alt="32 Beat Writers"
                                     width={48}
                                     height={48}
-                                    className="md:w-16 md:h-16"
+                                    className="lg:w-16 lg:h-16"
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-extrabold text-lg md:text-[34.37px] text-white">
+                                <span className="font-extrabold text-lg lg:text-[34.37px] text-white">
                                     32BeatWriters
                                 </span>
-                                <span className="text-sm md:text-xl text-red-700 hidden sm:block">
+                                <span className="text-sm lg:text-xl text-red-700 hidden sm:block">
                                     NFL Insider Network
                                 </span>
                             </div>
                         </Link>
 
                         {/* Header Image Section - Hidden on mobile */}
-                        <div className="hidden lg:block h-[110px] w-[55%] flex items-center bg-[#2C204B]">
+                        <div className="hidden lg:flex h-[110px] w-[55%] items-center bg-[#2C204B]">
                             <div className="relative top-0 right-0 w-[400px] h-full">
                                 <Image
                                     src={"/header-image.png"}
@@ -190,7 +190,7 @@ function Header() {
                         </button>
                     </div>
                 </div>
-                <div className="h-[50px] md:h-[65px] flex items-center justify-between bg-[#2C204B] px-2 md:px-5 mt-1 mb-2">
+                <div className="h-[50px] lg:h-[65px] flex items-center justify-between bg-[#2C204B] px-2 lg:px-5 mt-1 mb-2">
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-10">
                         {navLinks.map((link) => (
