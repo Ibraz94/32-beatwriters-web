@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Shield } from 'lucide-react'
+import { Gem, Shield } from 'lucide-react'
 import Image from 'next/image'
 import { useGetArticlesQuery, getImageUrl } from '@/lib/services/articlesApi'
 import { useState, useEffect } from 'react'
@@ -12,11 +12,11 @@ export default function ArticlesPage() {
   const [allArticles, setAllArticles] = useState<any[]>([])
   const [hasMoreArticles, setHasMoreArticles] = useState(true)
   const [isAccessible, setIsAccessible] = useState(false)
-  
+
   // Get user authentication status and premium access  
   const { checkPremiumAccess, isAuthenticated, user } = useAuth()
   const hasPremiumAccess = checkPremiumAccess()
-  
+
   // Simplified query - fetch all published articles with basic pagination
   const { data: articles, isLoading, error, isFetching } = useGetArticlesQuery({
     page: page,
@@ -39,7 +39,7 @@ export default function ArticlesPage() {
   }, [articles, page])
 
   useEffect(() => {
-      if (articles?.data.articles) {
+    if (articles?.data.articles) {
       setIsAccessible(articles.data.articles.some(article => article.access === 'public' || article.access === 'pro' || article.access === 'lifetime'))
     }
   }, [articles])
@@ -51,13 +51,13 @@ export default function ArticlesPage() {
     // Check if user is admin using case-insensitive comparison
     const userRole = user?.roles.id
     const isAdminByRole = userRole === 1 || userRole === 2 || userRole === 3 || userRole === 4
-    
+
     // Administrators can access all articles
     if (isAdminByRole) {
       console.log('✅ Administrator access granted for article:', articleAccess)
       return true
     }
-    
+
     if (articleAccess === 'premium' || articleAccess === 'lifetime') {
       return hasPremiumAccess
     }
@@ -75,30 +75,29 @@ export default function ArticlesPage() {
   // Helper function to get button configuration
   const getButtonConfig = (article: any) => {
     const canAccess = canAccessArticle(article.access)
-    
+
     if (canAccess) {
       return {
         text: 'Read Article',
         href: `/articles/${article.id}`,
-        className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
+        className: 'w-full py-3 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }
     } else {
       return {
         text: isAuthenticated ? 'Upgrade to Premium' : 'Login for Premium',
         href: isAuthenticated ? '/subscribe' : '/login',
-        className: 'w-full py-2 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
+        className: 'w-full py-3 px-4 rounded-lg font-semibold text-center block transition-colors hover:scale-102 hover:cursor-pointer bg-red-800 text-white',
         isClickable: true
       }
     }
   }
-  
+
   // Loading state (only show skeleton on initial load)
   if (isLoading && page === 1) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Articles</h1>
           <p className="text-xl max-w-4xl mx-auto">Loading articles...</p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -124,7 +123,6 @@ export default function ArticlesPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Articles</h1>
           <p className="text-xl text-red-600 mb-4">Failed to load articles</p>
           <p className="text-gray-600">Error details: {JSON.stringify(error)}</p>
           <p className="text-gray-600">Please try again later.</p>
@@ -138,7 +136,6 @@ export default function ArticlesPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Articles</h1>
           <p className="text-xl mb-4">No articles found</p>
           <p className="text-gray-600">Check back later for new content.</p>
         </div>
@@ -147,136 +144,137 @@ export default function ArticlesPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Articles
-        </h1>
-        <p className="text-xl max-w-4xl mx-auto">
-          In-depth analysis, breaking news, and expert insights from the world of professional football
-        </p>
-      </div>
-
+    <div className="container mx-auto px-4 py-8">
       {/* Articles Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {allArticles.map((article, index) => {
           const buttonConfig = getButtonConfig(article)
           const canAccess = canAccessArticle(article.access)
-          
+
           return (
-            <article key={index} className="rounded-xl border-3 shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer">
+            <article key={index} className="rounded-md shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer bg-[#2C204B] p-4">
               {/* Article Image */}
               <Link href={buttonConfig.href}>
-              <div className="relative h-48">
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                  {article.featuredImage ? (
-                    <Image 
-                      src={getImageUrl(article.featuredImage) || ''} 
-                      alt={article.title} 
-                      fill 
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover" 
-                      priority
-                    />
-                  ) : (
-                    <span className="text-gray-500 text-sm">No Image</span>
-                  )}
-                </div>
-                
-                {/* Access Badge */}
-                {article.access !== 'public' && (
-                  <div className="absolute top-3 right-3 bg-red-800 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center">
-                    {article.access === 'pro' || article.access === 'lifetime' ? (
-                      <>
-                        <Shield className="w-3 h-3 mr-1" />
-                        Premium
-                      </>
+                <div className="relative h-72">
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    {article.featuredImage ? (
+                      <Image
+                        src={getImageUrl(article.featuredImage) || ''}
+                        alt={article.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover"
+                        priority
+                      />
                     ) : (
-                      <>
-                        <Shield className="w-3 h-3 mr-1" />
-                        Premium
-                      </>
+                      <span className="text-gray-500 text-sm">No Image</span>
                     )}
                   </div>
-                )}
 
-                {/* Overlay for locked content */}
-                {!canAccess && (
-                  <div className="flex items-center justify-center">
-                    <Image src={getImageUrl(article.featuredImage) || ''} 
-                    alt="Locked" width={100} height={100} className="object-cover" />
-                  </div>
-                )}
-              </div>
-
-              {/* Article Content */}
-              <div className="p-6">
-                <h2 className="text-lg font-bold mb-3 line-clamp-2 text-nowrap">
-                  {canAccess ? (
-                    <div>
-                      {article.title}
+                  {/* Access Badge */}
+                  {article.access !== 'public' && (
+                    <div className="absolute top-3 right-3 bg-red-800 text-white px-2 py-1 rounded-full font-semibold flex items-center">
+                      {article.access === 'pro' || article.access === 'lifetime' ? (
+                        <>
+                          <Gem className="w-4 h-4 mr-1" />
+                          Premium
+                        </>
+                      ) : (
+                        <>
+                          <Gem className="w-4 h-4 mr-1" />
+                          Premium
+                        </>
+                      )}
                     </div>
-                  ) : (
-                    <span className="cursor-default">{article.title}</span>
                   )}
-                </h2>
-                
-                {/* Access Status */}
-                <div className="flex items-center justify-between text-sm mb-4">
-                  <div className="flex items-center text-gray-500">
-                      {new Date(article.publishedAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                  </div>
+
+                  {/* Overlay for locked content */}
+                  {!canAccess && (
+                    <div className="flex items-center justify-center">
+                      <Image src={getImageUrl(article.featuredImage) || ''}
+                        alt="Locked" width={100} height={100} className="object-cover" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Article Content */}
+                <div className="mt-6">
+                  <h2 className="text-2xl text-left font-bold mb-3 line-clamp-1 text-white">
+                    {canAccess ? (
+                      <div>
+                        {article.title}
+                      </div>
+                    ) : (
+                      <span className="cursor-default">{article.title}</span>
+                    )}
+                  </h2>
+
+                  {/* Access Status */}
+                  <div className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 md:line-clamp-2 mb-1 md:mb-4">
+                  {(() => {
+                    try {
+                      // Check if content starts with '{' and try to parse it as JSON
+                      if (article.content.trim().startsWith('{')) {
+                        const contentObj = JSON.parse(article.content);
+                        return <div dangerouslySetInnerHTML={{ __html: contentObj.content || article.content }} />;
+                      }
+                      // If not JSON or parsing fails, return original content
+                      return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
+                    } catch (error) {
+                      // If JSON parsing fails, return original content
+                      console.error('Error parsing content:', error);
+                      return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
+                    }
+                  })()}
                 </div>
 
                 {/* Action Button */}
-                <div 
-                  
+                <div
+
                   className={buttonConfig.className}
                 >
                   {buttonConfig.text}
                 </div>
               </div>
-              </Link>
+            </Link>
             </article>
-          )
+      )
         })}
-      </div>
-
-      {/* Load More Section */}
-      {hasMoreArticles && (
-        <div className="text-center mt-12">
-          <button 
-            onClick={() => {
-              if (!isFetching) {
-                setPage(page + 1)
-              }
-            }}
-            disabled={isFetching}
-            className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
-              isFetching 
-                ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
-                : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
-            }`}
-          >
-            {isFetching ? 'Loading...' : 'Load More Articles'}
-          </button>
-        </div>
-      )}
-      
-      {/* No More Articles Message */}
-      {!hasMoreArticles && allArticles.length > 0 && (
-        <div className="text-center mt-12">
-          <p className="text-gray-600 text-lg">
-            You've reached the end of our articles. Check back later for new content!
-          </p>
-        </div>
-      )}
     </div>
+
+      {/* Load More Section */ }
+  {
+    hasMoreArticles && (
+      <div className="text-center mt-12">
+        <button
+          onClick={() => {
+            if (!isFetching) {
+              setPage(page + 1)
+            }
+          }}
+          disabled={isFetching}
+          className={`px-8 py-3 rounded-lg font-semibold transition-colors ${isFetching
+              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+              : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
+            }`}
+        >
+          {isFetching ? 'Loading...' : 'Load More Articles'}
+        </button>
+      </div>
+    )
+  }
+
+  {/* No More Articles Message */ }
+  {
+    !hasMoreArticles && allArticles.length > 0 && (
+      <div className="text-center mt-12">
+        <p className="text-gray-600 text-lg">
+          You've reached the end of our articles. Check back later for new content!
+        </p>
+      </div>
+    )
+  }
+    </div >
   )
 }
 
