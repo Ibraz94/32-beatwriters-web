@@ -86,7 +86,7 @@ function Header() {
         { href: "/articles", label: "ARTICLES" },
         { href: "/podcasts", label: "PODCASTS" },
         { href: "/players", label: "PLAYERS" },
-        { href: "/nuggets", label: "NUGGETS" },
+        { href: "/nuggets", label: "FEEDS" },
     ];
 
     return (

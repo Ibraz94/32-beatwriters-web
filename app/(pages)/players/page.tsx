@@ -3,21 +3,35 @@
 import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Search, Users, MapPin, GraduationCap } from "lucide-react"
+import { Users} from "lucide-react"
 import { useGetPlayersQuery, getImageUrl, Player } from '@/lib/services/playersApi'
+import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useSearchParams, useRouter } from "next/navigation"
 
 // PlayerCard component to handle individual player rendering with hooks
-function PlayerCard({ player, currentPage }: { player: Player; currentPage: number }) {
+function PlayerCard({ player, currentPage, teamsData }: { player: Player; currentPage: number; teamsData: any }) {
     const imageUrl = getImageUrl(player.headshotPic)
+    
+    // Helper function to find team by abbreviation or name
+    const findTeamByKey = (teamKey: string) => {
+        if (!teamsData?.teams || !teamKey) return null
+        
+        return teamsData.teams.find((team: any) => 
+            team.abbreviation?.toLowerCase() === teamKey.toLowerCase() ||
+            team.name?.toLowerCase() === teamKey.toLowerCase() ||
+            team.city?.toLowerCase() === teamKey.toLowerCase()
+        )
+    }
+
+    const playerTeam = findTeamByKey(player.team)
     
     return (
         <Link 
             href={`/players/${player.id}?page=${currentPage}`} 
-            className="rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden"
+            className="rounded-md shadow-md border-white/20 hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden p-1"
         >
             {/* Player Image */}
-            <div className="relative h-48">
+            <div className="relative h-48 bg-[#2C204B]">
                 <Image 
                     src={imageUrl || '/default-player.jpg'}
                     alt={player.name}
@@ -31,24 +45,31 @@ function PlayerCard({ player, currentPage }: { player: Player; currentPage: numb
             </div>
 
             {/* Player Info */}
-            <div className="p-4">
-                <div className="flex items-start justify-center mb-2">
-                    <h3 className="font-bold text-xl leading-tight hover:text-red-800 transition-colors">
+            <div className="p-2">
+                <div className="flex justify-between">
+                    <h3 className="font-bold text-2xl leading-tight">
                         {player.name}
                     </h3>
+                    <button className="text-white text-xs border border-red-800 px-5 rounded-sm hover:bg-red-800 hover:cursor-pointer transition-colors">
+                        FOLLOW
+                    </button>
                 </div>
 
-                <div className="space-y-2 text-sm">
-                    <div className="flex flex-col items-start justify-center">
-                        <h1 className="font-bold text-sm">Position: <span className="text-sm font-normal">{player.position}</span></h1>
-                        <h1 className="font-bold text-sm">Draft Pick: <span className="text-sm font-normal">{player.draftPick}</span></h1>
-                        <h1 className="font-bold text-sm">College: <span className="text-sm font-normal">{player.college}</span></h1>
-                        <h1 className="font-bold text-sm">Team: <span className="text-sm font-normal">{player.team || 'N/A'}</span></h1>
-                    </div>
-                    
-                    <div className="flex flex-col items-center justify-center">
-                       
-                        
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                        {playerTeam && (
+                                <Image
+                                    src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                    alt={`${playerTeam.name} logo`}
+                                    width={24}
+                                    height={18}
+                                    className='object-contain'
+                                />
+                            )}
+                            <h1 className="text-sm">{player.team}  {player.position}</h1>
+  
+                        </div>
                     </div>
                 </div>
             </div>
@@ -68,6 +89,9 @@ function PlayersContent() {
         const pageFromUrl = searchParams?.get('page')
         return pageFromUrl ? parseInt(pageFromUrl, 10) : 1
     })
+
+    // Teams query
+    const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
 
     const updateURL = (newPage?: number, newSearch?: string, newPosition?: string, newConference?: string) => {
         const params = new URLSearchParams()
@@ -158,12 +182,12 @@ function PlayersContent() {
     }
 
     // Loading state
-    if (playersLoading) {
+    if (playersLoading || isLoadingTeams) {
         return (
             <section className="container mx-auto max-w-7xl px-4 py-8">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        All <span className="text-red-800">Players</span>
+                        All Players
                     </h1>
                     <p className="text-xl max-w-4xl mx-auto mb-6">
                         Loading players...
@@ -189,7 +213,7 @@ function PlayersContent() {
             <section className="container mx-auto max-w-7xl px-4 py-8">
                 <div className="text-center">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        All <span className="text-red-800">Players</span>
+                        All Players
                     </h1>
                     <p className="text-xl text-red-600 mb-4">Failed to load players</p>
                     <p className="text-gray-600">Please try again later.</p>
@@ -210,30 +234,12 @@ function PlayersContent() {
             {/* Header */}
             <div className="text-center mb-8">
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                    All <span className="text-red-800">Players</span>
+                    All Players
                 </h1>
-                <p className="text-xl max-w-4xl mx-auto mb-6">
-                    Comprehensive player profiles featuring detailed stats, team information, and career highlights. 
-                    Explore every key player across all NFL teams.
-                </p>
             </div>
 
             {/* Search and Filters */}
-            <div className="rounded-xl shadow-md p-6 mb-8 border">
-                <div className="flex flex-col md:flex-row gap-4">
-                    {/* Search */}
-                    <div className="flex-1 relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                        <input
-                            type="text"
-                            placeholder="Search players by name..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-800 focus:border-transparent"
-                        />
-                    </div>
-                </div>
-
+            <div>
                 {/* Active Filters Display */}
                 {(searchTerm || selectedPosition !== "all" || selectedConference !== "all") && (
                     <div className="mt-4 flex flex-wrap gap-2">
@@ -263,18 +269,10 @@ function PlayersContent() {
                 )}
             </div>
 
-            {/* Results Count */}
-            <div className="mb-6">
-                <p className="text-gray-600">
-                    Showing <span className="font-semibold">{players.length}</span> of <span className="font-semibold">{totalPlayers}</span> players
-                    {page > 1 && <span> (Page {page} of {totalPages})</span>}
-                </p>
-            </div>
-
             {/* Players Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {players.map((player) => (
-                    <PlayerCard key={player.id} player={player} currentPage={page} />
+                    <PlayerCard key={player.id} player={player} currentPage={page} teamsData={teamsData} />
                 ))}
             </div>
 
@@ -302,7 +300,7 @@ function PlayersContent() {
                         <button
                             onClick={() => handlePageChange(Math.max(1, page - 1))}
                             disabled={page === 1}
-                            className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
+                            className="px-4 py-2 rounded-sm border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
                         >
                             Previous
                         </button>
@@ -313,7 +311,7 @@ function PlayersContent() {
                                 <button
                                     key={pageNum}
                                     onClick={() => handlePageChange(pageNum)}
-                                    className={`px-4 py-2 rounded-lg border transition-colors ${
+                                    className={`px-4 py-2 rounded-sm border transition-colors ${
                                         pageNum === page
                                             ? 'bg-red-800 text-white border-red-800'
                                             : 'hover:scale-105 transition-all'
@@ -327,7 +325,7 @@ function PlayersContent() {
                         <button
                             onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
                             disabled={page === totalPages}
-                            className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
+                            className="px-4 py-2 rounded-sm border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
                         >
                             Next
                         </button>

@@ -4,7 +4,7 @@ import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Trophy, Activity, Timer, Target, ArrowLeft } from 'lucide-react'
+import { CircleGauge, Newspaper, Dumbbell, ArrowLeft } from 'lucide-react'
 import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery, useGetPlayerPerformanceProfilerQuery } from '@/lib/services/playersApi'
 import { useGetNuggetsByPlayerIdQuery, getImageUrl as getNuggetImageUrl } from '@/lib/services/nuggetsApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
@@ -78,6 +78,8 @@ export default function PlayerProfile() {
     )
   }
 
+  const playerTeam = findTeamByKey(player?.Core?.Team?.Name || '')
+
   // Fetch all players for teammates - get more players to find teammates
   const { data: playersResponse } = useGetPlayersQuery({
     page: 1,
@@ -122,11 +124,9 @@ export default function PlayerProfile() {
 
   // Tab components
   const tabs = [
-    { id: 'news', label: 'News & Updates', icon: Activity },
-    { id: 'performance', label: 'Performance Metrics', icon: Trophy },
-    { id: 'workout', label: 'Workout Metrics', icon: Timer },
-
-
+    { id: 'news', label: 'News & Updates', icon: Newspaper },
+    { id: 'performance', label: 'Performance Metrics', icon: CircleGauge },
+    { id: 'workout', label: 'Workout Metrics', icon: Dumbbell },
   ]
 
   // Show authentication required message if not authenticated
@@ -140,7 +140,7 @@ export default function PlayerProfile() {
             <Link href="/login" className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
           </p>
           <Link
-            href="/subscribe"
+            href="/subscribe" 
             className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
           >
             Subscribe
@@ -234,7 +234,7 @@ export default function PlayerProfile() {
           <div className="space-y-8">
             {/* Workout Metrics - Only show if Player Profiler data is available */}
             {player?.['Workout Metrics'] ? (
-              <div className="p-8 border rounded-xl">
+              <div className="p-8 border border-white/20 rounded-sm">
                 <h2 className="text-3xl font-black mb-8">Workout Metrics</h2>
 
                 <div className="text-white">
@@ -447,9 +447,9 @@ export default function PlayerProfile() {
 
                 </div>
                 {player?.['College Performance'] && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 md:grid-cols-3 items-center justify-center gap-2">
 
-                    <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="border border-white/20 bg-card rounded p-2 flex flex-col justify-around">
                       <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['College Dominator Rating']}</h1>
                         <h2 className="mr-2">{player['College Performance']['College Dominator Rating Rank']}</h2>
@@ -459,7 +459,7 @@ export default function PlayerProfile() {
                       </div>
                     </div>
 
-                    <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="border border-white/20 bg-card rounded p-2 flex flex-col justify-around">
                       <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['College Target Share']}%</h1>
                         <h2 className="mr-2">{player['College Performance']['College Target Share Rank']}</h2>
@@ -471,7 +471,7 @@ export default function PlayerProfile() {
 
 
 
-                    <div className="border-2 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="border border-white/20 bg-card rounded p-2 flex flex-col justify-around">
                       <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['Breakout Age']}</h1>
                         <h2 className="mr-2">{player['College Performance']['Breakout Age Rank']}</h2>
@@ -488,7 +488,7 @@ export default function PlayerProfile() {
 
             ) : (
               <div className="rounded-xl p-8 shadow-xl border text-center">
-                <Timer className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <Dumbbell className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-600 mb-2">Workout Metrics Unavailable</h3>
                 <p className="text-gray-500">Detailed workout metrics are not available for this player.</p>
               </div>
@@ -506,7 +506,7 @@ export default function PlayerProfile() {
 
         return (
           <div className="space-y-8">
-            <div className="rounded p-8 border">
+            <div className="rounded p-8 border border-white/20">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                 <h2 className="text-3xl font-black mb-4 sm:mb-0">Performance Metrics</h2>
 
@@ -524,7 +524,7 @@ export default function PlayerProfile() {
                       id="year-select"
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(e.target.value)}
-                      className="px-4 py-2 border rounded-lg bg-card text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="px-4 py-2 border rounded border-white/20 bg-card text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
                     >
                       {availableYears.map(year => (
                         <option key={year} value={year}>{year}</option>
@@ -541,11 +541,11 @@ export default function PlayerProfile() {
                   {/* Opportunity Section */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Opportunity</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[300px] lg:w-full">
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700">
+                            <tr className="bg-[#0F0724]">
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGETS</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET SHARE</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET RATE</th>
@@ -556,28 +556,28 @@ export default function PlayerProfile() {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="bg-white dark:bg-gray-800">
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                            <tr className="bg-[#2C204B]">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Targets']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Targets Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{parseFloat(performanceData['Target Share']).toFixed(2)}%</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Share Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{parseFloat(performanceData['Target Rate']).toFixed(2)}%</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Rate Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{parseFloat(performanceData['Snap Share']).toFixed(2)}%</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Snap Share Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Slot Snaps']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Slot Snaps Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Routes Run']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Routes Run Rank']}</div>
                               </td>
@@ -599,7 +599,7 @@ export default function PlayerProfile() {
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700">
+                            <tr className="bg-[#0F0724]">
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">AIR YARDS</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">AIR YARDS SHARE</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">AVERAGE TARGET DISTANCE (ADOT)</th>
@@ -610,28 +610,28 @@ export default function PlayerProfile() {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="bg-white dark:bg-gray-800">
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                            <tr className="bg-[#2C204B]">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Air Yards']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Air Yards Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Air Yards Share'])}%</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Air Yards Share Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Average Target Distance'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Average Target Distance Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Deep Targets']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Deep Targets Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Red Zone Targets']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Red Zone Targets Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Quality Rating'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Quality Rating Rank']}</div>
                               </td>
@@ -649,11 +649,11 @@ export default function PlayerProfile() {
                   {/* Productivity Section */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Productivity</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[300px] lg:w-full">
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700">
+                            <tr className="bg-[#0F0724]">
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">RECEPTIONS</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">RECEIVING YARDS</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">YARDS AFTER CATCH</th>
@@ -664,28 +664,28 @@ export default function PlayerProfile() {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="bg-white dark:bg-gray-800">
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                            <tr className="bg-[#2C204B]">
+                              <td className="p-3 ">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Receptions']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Receptions Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Receiving Yards']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Receiving Yards Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Yards After Catch']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards After Catch Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Unrealized Air Yards']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Unrealized Air Yards Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Total Touchdowns']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Total Touchdowns Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Fantasy Points Per Game'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Fantasy Points Per Game Rank']}</div>
                               </td>
@@ -703,11 +703,11 @@ export default function PlayerProfile() {
                   {/* Efficiency Section 1 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Efficiency</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[300px] lg:w-full">
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700">
+                            <tr className="bg-[#0F0724]">
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET ACCURACY</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">YARDS PER ROUTE RUN</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">FORMATION ADJUSTED YARDS PER ROUTE RUN</th>
@@ -718,28 +718,28 @@ export default function PlayerProfile() {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="bg-white dark:bg-gray-800">
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                            <tr className="bg-[#2C204B]">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Accuracy'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Accuracy Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Yards Per Route Run'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards Per Route Run Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Formation Adjusted Yards Per Route Run'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Formation Adjusted Yards Per Route Run Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Yards Per Target'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards Per Target Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Yards Per Reception'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards Per Reception Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Yards Per Team Pass Attempt'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Yards Per Team Pass Attempt Rank']}</div>
                               </td>
@@ -757,11 +757,11 @@ export default function PlayerProfile() {
                   {/* Efficiency Section 2 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Efficiency</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[300px] lg:w-full">
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700">
+                            <tr className="bg-[#0F0724]">
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET SEPARATION</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TARGET PREMIUM</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">DOMINATOR RATING</th>
@@ -772,28 +772,28 @@ export default function PlayerProfile() {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="bg-white dark:bg-gray-800">
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                            <tr className="bg-[#2C204B]">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Separation'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Separation Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Premium'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Premium Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Dominator Rating'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Dominator Rating Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Juke Rate'])}%</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Juke Rate Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">N/A</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#N/A</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Drops']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Drops Rank']}</div>
                               </td>
@@ -811,11 +811,11 @@ export default function PlayerProfile() {
                   {/* Efficiency Section 3 */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Efficiency</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[300px] lg:w-full">
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700">
+                            <tr className="bg-[#0F0724]">
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">PRODUCTION PREMIUM</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">EXPECTED POINTS ADDED (EPA)</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">QB RATING PER TARGET</th>
@@ -826,28 +826,28 @@ export default function PlayerProfile() {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="bg-white dark:bg-gray-800">
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                            <tr className="bg-[#2C204B]">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Production Premium'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Production Premium Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Expected Points Added'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Expected Points Added Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['QB Rating When Targeted'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['QB Rating When Targeted Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Best Ball Points Added'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Best Ball Points Added Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Fantasy Points Per Route Run'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Fantasy Points Per Route Run Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Fantasy Points Per Target'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Fantasy Points Per Target Rank']}</div>
                               </td>
@@ -865,11 +865,11 @@ export default function PlayerProfile() {
                   {/* Zone vs Man Section */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-bold">Zone vs Man</h3>
-                    <div className="bg-white dark:bg-gray-800 rounded shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden w-[300px] lg:w-full">
+                    <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[300px] lg:w-full">
                       <div className="overflow-x-auto w-[300px] lg:w-full">
                         <table className="w-full">
                           <thead>
-                            <tr className="bg-gray-50 dark:bg-gray-700">
+                            <tr className="bg-[#0F0724]">
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">TOTAL ROUTE WINS</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">ROUTE WIN RATE</th>
                               <th className="text-xs font-semibold p-3 text-left text-gray-700 dark:text-gray-300">ROUTES VS MAN</th>
@@ -880,28 +880,28 @@ export default function PlayerProfile() {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className="bg-white dark:bg-gray-800">
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                            <tr className="bg-[#2C204B]">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Total Route Wins']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Total Route Wins Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Route Win Rate'])}%</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Route Win Rate Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{performanceData['Routes vs Man']}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Routes vs Man Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Win Rate vs Man'])}%</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Win Rate vs Man Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Rate vs Man'])}%</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Rate vs Man Rank']}</div>
                               </td>
-                              <td className="p-3 border-r border-gray-200 dark:border-gray-600">
+                              <td className="p-3">
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{formatNumber(performanceData['Target Separation vs Man'])}</div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">#{performanceData['Target Separation vs Man Rank']}</div>
                               </td>
@@ -919,7 +919,7 @@ export default function PlayerProfile() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <CircleGauge className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-600 mb-2">No Performance Data Available</h3>
                   <p className="text-gray-500">Performance metrics are not available for {playerName} in {selectedYear}.</p>
                   <p className="text-gray-500 mt-2">Try selecting a different year or check back later for updates.</p>
@@ -945,7 +945,7 @@ export default function PlayerProfile() {
             {nuggetsLoading ? (
               <div className="space-y-6">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="rounded-xl border shadow-lg overflow-hidden animate-pulse">
+                  <div key={i} className="rounded border shadow-lg overflow-hidden animate-pulse">
                     <div className="p-6">
                       <div className="flex gap-4 mb-4">
                         <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
@@ -964,12 +964,12 @@ export default function PlayerProfile() {
                 ))}
               </div>
             ) : nuggets.length > 0 ? (
-              <div className="space-y-6 container mx-auto max-w-3xl">
+              <div className="space-y-6 container mx-auto max-w-6xl">
                 {nuggets.map((nugget, index) => {
                   const playerTeam = findTeamByKey(nugget.player.team || '')
 
                   return (
-                    <div key={`${nugget.id}-${index}`} className="rounded-xl border-2 overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                    <div key={`${nugget.id}-${index}`} className="rounded border border-white/20 overflow-hidden shadow-md hover:shadow-xl transition-shadow">
                       {/* Player Header */}
                       <div className='flex mt-6 gap-4 ml-6 mr-6'>
                         <div
@@ -1031,17 +1031,17 @@ export default function PlayerProfile() {
                                 <p>
                                   <span className="font-bold">Source:</span> {nugget.sourceName}
                                 </p>
-                            <Link 
-                              href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://') 
-                                ? nugget.sourceUrl 
-                                : `https://${nugget.sourceUrl}`} 
-                              target='_blank'
-                              rel='noopener noreferrer' 
-                              className='hover:text-blue-800 text-sm'
-                            >
-                              {nugget.sourceUrl}
-                            </Link>
-                            </>
+                                <Link
+                                  href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
+                                    ? nugget.sourceUrl
+                                    : `https://${nugget.sourceUrl}`}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='hover:text-blue-800 text-sm'
+                                >
+                                  {nugget.sourceUrl}
+                                </Link>
+                              </>
                             )}
                           </div>
                           <p className='text-sm text-gray-500'>
@@ -1058,8 +1058,8 @@ export default function PlayerProfile() {
                 })}
               </div>
             ) : (
-              <div className="rounded-xl p-8 shadow-xl border text-center">
-                <Activity className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <div className="rounded-sm p-8 shadow-xl border border-white/20 text-center">
+                <Newspaper className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-600 mb-2">No News Available</h3>
                 <p className="text-gray-500 mb-6">There are currently no news available for {playerName}. Check back later for updates!</p>
               </div>
@@ -1072,124 +1072,179 @@ export default function PlayerProfile() {
     }
   }
 
-  return (
-    <div className="min-h-screen">
-      {/* Back Navigation */}
-      <div className="container mx-auto px-4 pt-6">
-        <Link
-          href={backToPlayersUrl}
-          className="inline-flex items-center hover:text-red-800 transition-colors mb-6"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          <span className="text-lg font-medium">
-            Back to Players
-          </span>
-        </Link>
-      </div>
 
+  return (
+    <div>
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container mx-auto px-4 py-16 relative z-10">
+      <div className="relative bg-[#2C204B] text-white overflow-hidden">
+        <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             {/* Player Image */}
-            <div className="relative pl-6 pb-4">
-              <div className="w-80 h-80 lg:w-80 lg:h-60 rounded border-2 border-white/90 overflow-hidden">
+            <div className="relative pl-6 ">
+
+              <div className="bg-[#413278] absolute h-full w-[450px] top-0 left-0"
+                style={{
+                  clipPath: 'polygon(20% 0%, 100% 0%, 80% 100%, 0% 100%)'
+                }}>
+
+              </div>
+
+              <div className="bg-[#2F2140] absolute h-full w-[450px] top-0 left-0"
+                style={{
+                  clipPath: 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)'
+                }}>
+              </div>
+
+              <div className="absolute top-0 -right-12">
+                  {playerTeam && (
+                  <Image
+                    src={getTeamLogoUrl(playerTeam.logo) || '/default-player.jpg'}
+                    alt={playerName}
+                    width={230}
+                    height={230}
+                    className="object-cover"
+                  />
+                  )}
+              </div>
+
+              <div className="w-80 h-80 lg:w-80 lg:h-60 overflow-hidden relative">
                 <Image
                   src={playerImage}
                   alt={playerName}
                   width={400}
                   height={400}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover "
                 />
               </div>
             </div>
 
             {/* Player Info */}
-            <div className="flex-1 text-center lg:text-left">
-              <div className="mb-4">
+            <div className="flex-1 text-center lg:text-left ml-12">
+              <div className="mb-4 w-72">
                 <div className="flex flex-col lg:flex-row items-center lg:items-baseline gap-4 lg:gap-6 mb-4">
-                  <h1 className="text-3xl lg:text-5xl font-black leading-none">
+                  <h1 className="text-xl lg:text-2xl">
                     {playerName}
                   </h1>
                   {player?.Core?.ADP && (
-                    <div className="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-bold flex items-center gap-2">
-                      <Image src="/underdog.webp" alt="ADP" width={28} height={16} />
-                      ADP: {player.Core.ADP} ({player.Core['ADP Year']})
+                    <div className="bg-yellow-500 text-black px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                      <Image src="/underdog.webp" alt="ADP" width={24} height={16} />
+                      ADP: {player.Core.ADP}
                     </div>
                   )}
                 </div>
                 <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-8">
-                  <span className="text-xl lg:text-2xl">
+                  <span className="text-md lg:text-lg">
                     {teamName || 'N/A'}
                   </span>
+                  <span className="text-md lg:text-md">
+                    {player?.Core['ADP Year']}
+                  </span>
+
+                  <span className="text-md lg:text-md">
+                    {player?.Core?.Position}
+                  </span>
+                </div>
+                <div className="flex flex-col lg:flex-row items-center lg:items-center gap-4 lg:gap-8 mt-4">
+                  <button className="text-white text-sm border border-red-800 px-4 py-1 rounded-sm hover:bg-red-800 hover:cursor-pointer transition-colors">
+                    FOLLOW
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Stats Grid */}
-      <div className="container mx-auto px-4 -mt-16 relative z-20 mb-12">
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="bg-card rounded p-6 shadow-xl border-2">
-            <div className="flex items-center mb-3">
-              <span className="text-sm font-medium">Height</span>
+
+            <div className="flex-1 flex gap-8 text-center lg:text-left space-y-3">
+              <div className="flex flex-col gap-3 w-28">
+              <div className="flex flex-col items-start leading-tight">
+                <h1 className="text-[#796D97]">
+                  HT/WT
+                </h1>
+                <h1>
+                  {player?.Core?.Height} , {player?.Core?.Weight}
+                </h1>
+              </div>
+              <div className="flex flex-col items-start leading-tight">
+                <h1 className="text-[#796D97]">
+                  Age
+                </h1>
+                <h1>
+                  {player?.Core?.Age}
+                </h1>
+              </div>
+              <div className="flex flex-col items-start leading-tight">
+                <h1 className=" text-[#796D97]">
+                  College
+                </h1>
+                <h1>
+                  {player?.Core?.College}
+                </h1>
+              </div>
+              </div>
+
+              <div className="h-36 w-px bg-white/20"></div>
+
+              <div className="flex flex-col gap-3">
+              <div className="flex flex-col items-start leading-tight">
+                <h1 className="text-[#796D97]">
+                  Draft Info
+                </h1>
+                <h1>
+                  {player?.Core?.['Draft Pick']} ({player?.Core?.['Draft Year']})
+                </h1>
+              </div>
+              <div className="flex flex-col items-start leading-tight">
+                <h1 className="text-[#796D97]">
+                  Status
+                </h1>
+                <h1>
+                  {player?.Core?.Active ? 'Active' : 'Inactive'}
+                </h1>
+              </div>
             </div>
-            <div className="text-2xl">{basicPlayer?.height}</div>
-          </div>
+                
 
-          <div className="bg-card rounded p-6 shadow-xl border-2">
-            <div className="flex items-center mb-3">
-
-              <span className="text-sm font-medium">Weight</span>
-            </div>
-            <div className="text-2xl">{player?.Core?.Weight || basicPlayer?.weight || 'N/A'}</div>
-          </div>
-
-          {/* <div className="bg-card rounded p-6 shadow-xl border-2">
-            <div className="flex items-center mb-3">
-              <span className="text-sm font-medium">Arm Length</span>
-            </div>
-            <div className="text-2xl">{player?.Core['Arm Length']} <span className="text-sm">({player?.Core['Arm Length Rank']})</span></div>
-          </div> */}
-
-          <div className="bg-card rounded p-6 shadow-xl border-2">
-            <div className="flex items-center mb-3">
-
-              <span className="text-sm font-medium">Draft Pick</span>
-            </div>
-            <div className="text-2xl">{player?.Core?.['Draft Pick']} <span className="text-sm">({player?.Core?.['Draft Year']})</span>
 
             </div>
-          </div>
-          <div className="bg-card rounded p-6 shadow-xl border-2">
-            <div className="flex items-center mb-3">
-
-              <span className="text-sm font-medium">Age</span>
-            </div>
-            <div className="text-2xl">{basicPlayer?.age}</div>
-          </div>
-          <div className="bg-card rounded p-6 shadow-xl border-2 col-span-2 lg:col-span-1">
-            <div className="flex items-center mb-3">
-
-              <span className="text-sm font-medium">College</span>
-            </div>
-            <div className="text-2xl">{basicPlayer?.college}</div>
+            <div className='border border-white/20 rounded-md w-[50%]'>
+                  <div className='flex flex-col items-center justify-center gap-3 bg-red-800 h-12'>
+                    <h1>SEASON STATS</h1>
+                  </div>
+                  <div className='grid grid-cols-4 gap-6 p-4'>
+                    <div className='flex flex-col items-center justify-center bg-[#45366B] p-2'>
+                      <h1 className='text-xs'>YDS</h1>
+                      <p className='text-lg font-bold'>{player?.Core?.['Draft Year']}</p>
+                      <p className='text-xs'>{player?.Core?.['Draft Pick']}</p>
+                    </div>
+                    <div className='flex flex-col items-center justify-center bg-[#45366B]'>
+                      <h1 className='text-xs'>TD</h1>
+                      <p className='text-lg font-bold'></p>
+                      <p className='text-xs'>{player?.Core?.['Draft Pick']}</p>
+                    </div>
+                    <div className='flex flex-col items-center justify-center bg-[#45366B]'>
+                      <h1 className='text-xs'>INT</h1>
+                      <p className='text-lg font-bold'>{player?.Core?.['Draft Year']}</p>
+                      <p className='text-xs'>{player?.Core?.['Draft Pick']}</p>
+                    </div>
+                    <div className='flex flex-col items-center justify-center bg-[#45366B]'>
+                      <h1 className='text-xs'>QBR</h1>
+                      <p className='text-lg font-bold'>{player?.Core?.['Draft Year']}</p>
+                      <p className='text-xs'>{player?.Core?.['Draft Pick']}</p>
+                    </div>
+                  </div>
+                </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 pb-16">
+      <div className="container mx-auto px-4 pb-16 pt-16">
         <div className="grid lg:grid-cols-1 gap-8">
           {/* Player Details and Tabs */}
           <div className="lg:col-span-2 space-y-8">
             {/* Tabs Section */}
-            <div className="rounded shadow-xl border overflow-hidden">
+            <div className="rounded border border-white/20 shadow-xl overflow-hidden">
               {/* Tab Navigation */}
-              <div className="border-b">
+              <div className="border-b border-white/20">
                 <nav className="flex space-x-0">
                   {tabs.map((tab) => {
                     const IconComponent = tab.icon
