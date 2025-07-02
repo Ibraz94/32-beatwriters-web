@@ -1028,19 +1028,15 @@ export default function PlayerProfile() {
 
                             {nugget.sourceUrl && (
                               <>
-                                <p>
-                                  <span className="font-bold">Source:</span> {nugget.sourceName}
-                                </p>
-                                <Link
-                                  href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
+                                <div className="font-bold">Source:
+                                  <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
                                     ? nugget.sourceUrl
                                     : `https://${nugget.sourceUrl}`}
                                   target='_blank'
                                   rel='noopener noreferrer'
-                                  className='hover:text-blue-800 text-sm'
-                                >
-                                  {nugget.sourceUrl}
-                                </Link>
+                                  className='hover:text-red-800 text-sm'
+                                > {nugget.sourceName}</Link> 
+                                </div>
                               </>
                             )}
                           </div>

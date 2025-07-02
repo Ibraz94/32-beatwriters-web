@@ -70,11 +70,52 @@
   --font-inter: var(--font-inter);
 }
 
-
-
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: "Cabin";
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4A3B6B #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4A3B6B;
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #3d2f5a;
+}
+
+/* Dark mode scrollbar */
+.dark .custom-scrollbar {
+  scrollbar-color: #4A3B6B #2a2a2a;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #4A3B6B;
+  border: 2px solid #2a2a2a;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #5d4b7c;
 }
