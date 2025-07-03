@@ -27,13 +27,27 @@ const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
       {/* Podcast Info */}
       <div className="mt-4">
         
-          <h3 className="font-bold text-3xl mb-2 line-clamp-2">
+          <h3 className="font-bold text-2xl mb-2 line-clamp-2">
             {podcast.title}
           </h3>
 
-        <p className="text-lg mb-3 line-clamp-2 ">
-          {podcast.description}
-        </p>
+        <div className="text-lg mb-3 line-clamp-2 ">
+        {(() => {
+                  try {
+                    // Check if content starts with '{' and try to parse it as JSON
+                    if (podcast.description.trim().startsWith('{')) {
+                      const contentObj = JSON.parse(podcast.description);
+                      return <div dangerouslySetInnerHTML={{ __html: contentObj.content || podcast.description }} />;
+                    }
+                    // If not JSON or parsing fails, return original content
+                    return <div dangerouslySetInnerHTML={{ __html: podcast.description }} />;
+                  } catch (error) {
+                    // If JSON parsing fails, return original content
+                    console.error('Error parsing content:', error);
+                    return <div dangerouslySetInnerHTML={{ __html: podcast.description }} />;
+                  }
+                })()}
+        </div>
          
         <div className="flex justify-between items-center">
         <p className="text-lg  mb-2">

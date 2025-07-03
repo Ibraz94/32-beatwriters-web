@@ -88,7 +88,7 @@ export default function NewArticles() {
     const sidebarArticles = displayArticles.slice(1, 11); // Show 10 articles in sidebar
 
     return (
-        <section className="mt-8 md:mt-16 px-4 md:px-0">
+        <section className="mt-2 md:mt-12 px-4 md:px-0 container mx-auto">
             <div className="bg-[#2C204B] rounded-lg">
                 <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
                     
@@ -166,7 +166,7 @@ export default function NewArticles() {
                                     className="flex flex-col sm:flex-row gap-3 md:gap-4 hover:opacity-90 transition-opacity duration-300 group"
                                 >
                                     {/* Article Image */}
-                                    <div className="relative h-40 sm:h-32 md:h-40 lg:h-52 w-full sm:w-32 md:w-48 lg:w-96 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <div className="relative h-40 sm:h-32 md:h-40 lg:h-48 w-full sm:w-32 md:w-48 lg:w-80 flex-shrink-0 overflow-hidden rounded-lg">
                                         {article.featuredImage ? (
                                             <Image
                                                 src={getImageUrl(article.featuredImage) || ''}
@@ -192,10 +192,10 @@ export default function NewArticles() {
 
                                     {/* Article Content */}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-1 md:mb-2 line-clamp-2 leading-tight">
+                                        <h3 className="font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl mb-1 md:mb-2 line-clamp-2 leading-tight">
                                             {article.title}
                                         </h3>
-                                        <div className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 md:line-clamp-3 mb-1 md:mb-2">
+                                        <div className="text-gray-300 text-sm sm:text-base md:text-lg line-clamp-2 md:line-clamp-3 mb-1 md:mb-2">
                                             {(() => {
                                                 try {
                                                     // Check if content starts with '{' and try to parse it as JSON

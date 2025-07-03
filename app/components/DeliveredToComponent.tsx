@@ -14,7 +14,7 @@ export default function DeliveredToComponent() {
     }
 
     return (
-        <div className="relative pt-18">
+        <div className="relative pt-18 container mx-auto">
             {/* Left Player Image - hidden on mobile, visible on larger screens */}
             <div className="hidden lg:block absolute left-8 xl:left-16 top-12 z-30">
                 <Image

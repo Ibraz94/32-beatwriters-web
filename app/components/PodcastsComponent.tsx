@@ -41,14 +41,14 @@ export default function PodcastsComponent() {
     };
 
     return (
-        <section className="bg-[#2C204B] px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 mb-1">
+        <section className="bg-[#2C204B] px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 mb-1 container mx-auto">
             <div className="">
                 {/* Header */}
                 <div className="text-center mb-8 md:mb-12">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-white font-bold mb-3 md:mb-4">
                         Our Podcast Network
                     </h2>
-                    <p className="text-sm sm:text-base md:text-lg text-white max-w-3xl mx-auto px-2">
+                    <p className="text-sm sm:text-base md:text-lg text-white max-w-5xl mx-auto px-2">
                         Welcome to the NFL Network Podcast, your go-to source for everything NFL! We dive deep into game analyses, player performances, and the hottest news from around the league. Join us weekly for engaging discussions and expert commentary!
                     </p>
                 </div>
@@ -115,12 +115,12 @@ export default function PodcastsComponent() {
                                     <div className="relative mb-3 md:mb-4">
 
                                         {/* Image Container */}
-                                        <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-80 xl:h-96 overflow-hidden rounded-lg">
+                                        <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-80 overflow-hidden rounded-lg">
                                             <Image
                                                 src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"}
                                                 alt={podcast.title}
                                                 fill
-                                                className="object-cover"
+                                                className="object-contain"
                                             />
                                             
                                             {/* Play Button Overlay */}
@@ -143,7 +143,7 @@ export default function PodcastsComponent() {
 
                                         {/* Title */}
                                         <Link href={`/podcasts/${podcast.id}`}>
-                                            <h4 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-white transition-colors line-clamp-2">
+                                            <h4 className="font-bold text-lg sm:text-xl md:text-2xl text-white transition-colors line-clamp-2">
                                                 {podcast.title}
                                             </h4>
                                         </Link>
@@ -199,12 +199,12 @@ export default function PodcastsComponent() {
                                     {/* Podcast Card */}
                                     <div className="relative mb-3 md:mb-4">
                                         {/* Image Container */}
-                                        <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-80 xl:h-96 overflow-hidden rounded-lg">
+                                        <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-80 overflow-hidden rounded-lg">
                                             <Image
                                                 src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"}
                                                 alt={podcast.title}
                                                 fill
-                                                className="object-cover"
+                                                className="object-contain"
                                             />
                                             
                                             {/* Play Button Overlay */}
@@ -227,7 +227,7 @@ export default function PodcastsComponent() {
 
                                         {/* Title */}
                                         <Link href={`/podcasts/${podcast.id}`}>
-                                            <h4 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-white transition-colors line-clamp-2">
+                                            <h4 className="font-bold text-lg sm:text-xl md:text-2xl text-white transition-colors line-clamp-2">
                                                 {podcast.title}
                                             </h4>
                                         </Link>

@@ -3,39 +3,39 @@ import Link from "next/link";
 
 export default function HeroSection() {
     return (
-        <section className="relative overflow-hidden">
+        <section className="relative overflow-hidden container mx-auto">
             {/* Desktop Layout */}
             <div className="hidden lg:block">
                 {/* Main Content Container */}
                 <div className="px-4 py-12 lg:py-2 relative z-10">
-                    <div className="grid lg:grid-cols-2 items-center min-h-[678px]">
+                    <div className="grid lg:grid-cols-2 items-center min-h-[600px]">
                         {/* Left Content Section */}
-                        <div className="space-y-8 lg:pr-8 -mt-16">
+                        <div className="space-y-8 lg:pr-8">
                             {/* Latest NFL News */}
-                            <div className="ml-12 w-48 px-4 py-4 rounded-full border-2 border-white bg-background/40">
-                                <h1 className="text-center text-white">Latest NFL News</h1>
+                            <div className="ml-24 w-36 px-3 py-3 rounded-full border border-white/20 bg-background/90">
+                                <h1 className="text-center text-md text-white">Latest NFL News</h1>
                             </div>
                             {/* Date */}
-                            <div className="ml-12 -mb-1">
-                                <h1 className="text-2xl text-gray-300">CRAIG BATOR - 27 DEC 2025</h1>
+                            <div className="ml-24 mb-2">
+                                <h1 className="text-gray-300 text-xl">CRAIG BATOR - 27 DEC 2025</h1>
                             </div>
 
                             {/* Main Heading */}
-                            <div className="space-y-4 ml-12">
+                            <div className="space-y-4 ml-24">
                                 <div className="font-black ">
-                                    <h1 className="text-4xl sm:text-5xl lg:text-8xl leading-tight">
+                                    <h1 className="text-4xl sm:text-xl lg:text-7xl leading-tight">
                                         League Winning
                                     </h1>
-                                    <h2 className="text-xl sm:text-3xl lg:text-6xl font-light mt-2">
+                                    <h2 className="text-xl sm:text-xl lg:text-5xl font-light mt-2">
                                         Intel From Beat Writers
                                     </h2>
                                 </div>
                             </div>
 
                             {/* CTA Button */}
-                            <div className="ml-12">
+                            <div className="ml-24">
                                 <Link href="/subscribe">
-                                    <button className="px-12 py-4 bg-red-800 text-white rounded-sm text-lg font-semibold hover:scale-102 hover:cursor-pointer transition-colors duration-300 shadow-lg hover:shadow-xl">
+                                    <button className="px-5 py-3 bg-red-800 text-white text-lg rounded font-semibold hover:scale-102 hover:cursor-pointer transition-colors duration-300 shadow-lg hover:shadow-xl">
                                         Get Started Today
                                     </button>
                                 </Link>
@@ -49,25 +49,12 @@ export default function HeroSection() {
                     </div>
                 </div>
 
-                {/* Diagonal Red Section with Clip Path */}
                 <div
                     className="absolute bottom-0 left-0 w-full h-full"
                 >
                     <Image src="/background-image.png" alt="NFL Player" fill className="relative inset-0 object-cover flex items-center justify-center" />
 
                 </div>
-                {/* NFL Player Image */}
-                {/* <div className="absolute inset-0  flex items-center justify-center">
-                    <div className="relative w-full h-full -right-96 max-w-4xl">
-                        <Image
-                            src="/hero-main.png"
-                            alt="NFL Player"
-                            fill
-                            className="object-contain object-center"
-                            priority
-                        />
-                    </div>
-                </div> */}
             </div>
 
             {/* Mobile Layout */}

@@ -141,9 +141,11 @@ export default function ArticlePage() {
       <div className="max-w-6xl mx-auto">
         {/* Article Header */}
         <div key={article.id}>
-        <h1 className="text-4xl font-bold mb-10">{article.title}</h1>
+          <div className="flex justify-center">
           <Image src={getImageUrl(article.featuredImage) || ''} 
-          alt={article.title} width={1000} height={1000} className="rounded-lg mb-12 shadow-lg" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+          alt={article.title} width={1000} height={1000} className="rounded mb-12 shadow-lg" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+          </div>
+           <h1 className="text-4xl font-bold mb-10">{article.title}</h1>
           
           <div className="prose max-w-none prose"/>
           {(() => {
