@@ -40,7 +40,7 @@ export default function Footer() {
             { label: "Analysis", href: "" },
             { label: "Scale", href: "" },
             { label: "Developer", href: "" },
-            { label: "About Us", href: "/about-us" },
+            { label: "About Us", href: "/about" },
 
         ],
         Socials: [
