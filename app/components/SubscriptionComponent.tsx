@@ -28,7 +28,7 @@ export default function SubscriptionComponent() {
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
       try {
-        const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/stripe/subscription-options')
+        const response = await fetch('https://api.32beatwriters.com/api/stripe/subscription-options')
         const data = await response.json()
         setSubscriptionOptions(data)
       } catch (error) {
