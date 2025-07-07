@@ -77,7 +77,7 @@ export default function Login() {
             // If it's a username, we'll try direct API call to handle both cases
             if (!isEmail) {
                 // Make a direct API call for username login since the useAuth login expects email
-                const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/users/login', {
+                const response = await fetch('https://api.32beatwriters.com/api/users/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

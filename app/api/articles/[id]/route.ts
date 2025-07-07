@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const EXTERNAL_API_BASE = 'https://api.32beatwriters.staging.pegasync.com/api'
+const EXTERNAL_API_BASE = 'https://api.32beatwriters.com/api'
 
 export async function GET(
   request: NextRequest,
