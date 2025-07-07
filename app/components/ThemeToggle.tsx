@@ -22,12 +22,12 @@ export function ThemeToggle() {
   }
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light")
+    setTheme(theme === "dark" ? "dark" :  "dark")
   }
 
   const getCurrentIcon = () => {
     switch (theme) {
-      case "light":
+      case "dark":
         return <Sun className="h-[1.2rem] w-[1.2rem]" />
       case "dark":
         return <Moon className="h-[1.2rem] w-[1.2rem]" />
@@ -37,7 +37,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer disabled:opacity-50 border-input hover:scale-108 hover:text-red-900 h-10 w-10"
+          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer disabled:opacity-50 border-input hover:scale-108 hover:text-red-900 h-10 w-10"
     >
       {getCurrentIcon()}
       <span className="sr-only">Toggle theme</span>
