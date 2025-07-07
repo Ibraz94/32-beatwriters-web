@@ -8,7 +8,7 @@ const DiscordButton = () => {
     const handleDiscordConnect = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/discord/login-url', {
+            const response = await fetch('https://api.32beatwriters.com/api/discord/login-url', {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
