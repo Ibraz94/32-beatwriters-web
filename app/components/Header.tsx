@@ -113,14 +113,14 @@ function Header() {
                                 <Image
                                     src={"/32bw_logo_white.png"}
                                     alt="32 Beat Writers"
-                                    width={100}
-                                    height={100}
-                                    className="lg:w-14 lg:h-14"
+                                    width={50}
+                                    height={50}
+                                    className=""
                                 />
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-extrabold text-2xl -mb-1">
-                                    32BeatWriters
+                                    32BeatWriter
                                 </span>
                                 <span className="text-lg text-red-800 hidden sm:block">
                                     NFL Insider Network
@@ -186,18 +186,18 @@ function Header() {
                         <h1 className="text-white text-xl font-bold">Social Links</h1>
                         <div className="flex items-center space-x-4">
                             <Link href="https://youtube.com/@32beatwriters">
-                                <Image src={"/icons-youtube.svg"} alt="Youtube" width={36} height={28} />
+                                <Image src={"/icons-youtube.svg"} alt="Youtube" width={24} height={24} />
                             </Link>
                             <Link href="https://x.com/32beatwriters">
-                                <Image src={"/icons-twitter.svg"} alt="Twitter" width={34} height={28} />
+                                <Image src={"/icons-twitter.svg"} alt="Twitter" width={24} height={24} />
                             </Link>
                         </div>
                         <div className="flex items-center space-x-4">
                             <Link href="https://spotify.com/32beatwriters">
-                                <Image src={"/icons-spotify.svg"} alt="Spotify" width={34} height={28} />
+                                <Image src={"/icons-spotify.svg"} alt="Spotify" width={24} height={24} />
                             </Link>
                             <Link href="https://apple.com/32beatwriters"    >
-                                <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={34} height={28} />
+                                <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={24} height={24} />
                             </Link>
                         </div>
                     </div>

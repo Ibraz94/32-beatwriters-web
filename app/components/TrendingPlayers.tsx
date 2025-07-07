@@ -42,7 +42,7 @@ function PlayerCard({ player }: PlayerCardProps) {
                     
                     {/* Player Image */}
                     <div className="relative z-10 mb-4">
-                        <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden border-4 border-white/20 group-hover:border-red-500/50 transition-all duration-300">
+                        <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden border-white/20 group-hover:border-red-500/50 transition-all duration-300">
                             <Image
                                 src={imageUrl || ''}
                                 alt={player.name}
