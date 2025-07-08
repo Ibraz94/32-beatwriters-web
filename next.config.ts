@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
         hostname: 'images.unsplash.com',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'beatwriters.s3.us-east-2.amazonaws.com',
+        port: '',
+      },
     ],
   },
 };

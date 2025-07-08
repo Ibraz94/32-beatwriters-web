@@ -8,16 +8,12 @@ export default function HeroSection() {
             <div className="hidden lg:block">
                 {/* Main Content Container */}
                 <div className="px-4 py-12 lg:py-2 relative z-10">
-                    <div className="grid lg:grid-cols-2 items-center min-h-[600px]">
+                    <div className="grid lg:grid-cols-2 items-center min-h-[500px]">
                         {/* Left Content Section */}
                         <div className="space-y-8 lg:pr-8">
                             {/* Latest NFL News */}
                             <div className="ml-24 w-36 px-3 py-3 rounded-full border border-white/20 bg-background/90">
                                 <h1 className="text-center text-md text-white">Latest NFL News</h1>
-                            </div>
-                            {/* Date */}
-                            <div className="ml-24 mb-2">
-                                <h1 className="text-gray-300 text-xl">CRAIG BATOR - 27 DEC 2025</h1>
                             </div>
 
                             {/* Main Heading */}

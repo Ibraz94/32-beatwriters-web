@@ -140,7 +140,7 @@ function Header() {
                                 />
                             </div>
                             <div className="relative right-12 w-1/3">
-                                <h1 className="text-white font-bold text-xl">
+                                <h1 className="text-white font-bold text-sm">
                                     Stay Connected
                                 </h1>
                                 <p className="text-white text-md">

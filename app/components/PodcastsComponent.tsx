@@ -165,78 +165,8 @@ export default function PodcastsComponent() {
                         </div>
                     )}
                 </div>
-
-                {/* Recently Added Section */}
-                <div>
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4">
-                            <h3 className="text-xl sm:text-2xl md:text-3xl text-white font-bold">Recently Added</h3>
-                            <div className="bg-red-800 rounded-md">
-                                <Link href="/podcasts">
-                                    <button className="text-white px-4 md:px-6 py-2 hover:scale-102 transition-colors text-sm md:text-base">
-                                        View All
-                                    </button>
-                                </Link>
-                            </div>
-                        </div>
-
-                        {/* Navigation arrows - hidden on mobile */}
-                        <div className="hidden md:flex items-center gap-2">
-                            <button className="text-white bg-red-600 rounded-full p-2 md:p-3 hover:bg-red-700 transition-colors">
-                                <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
-                            </button>
-                            <button className="text-white bg-red-600 rounded-full p-2 md:p-3 hover:bg-red-700 transition-colors">
-                                <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Recently Added Grid - Same as above but different data could be loaded */}
-                    {apiResponse?.podcasts && apiResponse.podcasts.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                            {apiResponse.podcasts.map((podcast, index) => (
-                                <div key={`recent-${podcast.id}`} className="group cursor-pointer">
-                                    {/* Podcast Card */}
-                                    <div className="relative mb-3 md:mb-4">
-                                        {/* Image Container */}
-                                        <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-80 overflow-hidden rounded-lg">
-                                            <Image
-                                                src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"}
-                                                alt={podcast.title}
-                                                fill
-                                                className="object-contain"
-                                            />
-                                            
-                                            {/* Play Button Overlay */}
-                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                                                    <Play className="h-4 w-4 md:h-6 md:w-6 text-gray-800 ml-0.5 md:ml-1" fill="currentColor" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="space-y-1 md:space-y-2">
-                                        {/* Author and Date */}
-                                        <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
-                                            <span>{podcast.hostedBy}</span>
-                                            <span>-</span>
-                                            <span>{formatTimeAgo(podcast.podcastTime)}</span>
-                                        </div>
-
-                                        {/* Title */}
-                                        <Link href={`/podcasts/${podcast.id}`}>
-                                            <h4 className="font-bold text-lg sm:text-xl md:text-2xl text-white transition-colors line-clamp-2">
-                                                {podcast.title}
-                                            </h4>
-                                        </Link>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                
+                
             </div>
         </section>
     );

@@ -17,38 +17,33 @@ import {
 
 interface PlayerCardProps {
     player: Player
+    isActive?: boolean
 }
 
-function PlayerCard({ player }: PlayerCardProps) {
+function PlayerCard({ player, isActive }: PlayerCardProps) {
     const imageUrl = getImageUrl(player.headshotPic)
     const team = getTeamByName(player.team)
 
     return (
         <div className="transition-all duration-300 hover:scale-105">
             <Link href={`/players/${player.id}`}>
-                <div className="bg-[#2C204B] rounded p-6 h-[350px] md:h-[400px] flex flex-col items-center justify-center relative overflow-hidden group">
-                    {/* Background Team Logo - Subtle */}
-                    {team?.logo && (
-                        <div className="absolute inset-0 flex items-center justify-center opacity-5 group-hover:opacity-10 transition-opacity duration-300">
-                            <Image
-                                src={team.logo}
-                                alt={team.name}
-                                width={200}
-                                height={200}
-                                className="object-contain"
-                            />
-                        </div>
-                    )}
+                <div className={`rounded-lg p-6 h-[350px] md:h-[245px] relative overflow-hidden group ${
+                    isActive 
+                        ? 'bg-[#43278C]' 
+                        : 'bg-[#2C204B]'
+                }`}>
+
+                    <div className="absolute bottom-[-40%] left-0 w-56 h-56 bg-[#9F0712] rounded-full"></div>
                     
-                    {/* Player Image */}
-                    <div className="relative z-10 mb-4">
-                        <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden border-white/20 group-hover:border-red-500/50 transition-all duration-300">
+                    {/* Player Image - positioned at bottom left */}
+                    <div className="absolute bottom-0 left-0 w-56 h-56">
+                        <div className="w-full h-full overflow-hidden">
                             <Image
-                                src={imageUrl || ''}
+                                src={imageUrl || '/default-player.jpg'}
                                 alt={player.name}
-                                width={160}
-                                height={160}
-                                className="w-full h-full object-cover"
+                                width={192}
+                                height={192}
+                                className="object-cover w-full h-full"
                                 onError={(e) => {
                                     const target = e.target as HTMLImageElement;
                                     target.src = '/default-player.jpg';
@@ -56,23 +51,18 @@ function PlayerCard({ player }: PlayerCardProps) {
                             />
                         </div>
                     </div>
-                    
-                    {/* Player Name */}
-                    <h3 className="text-white text-xl md:text-2xl font-bold text-center mb-2 z-10 relative">
-                        {player.name}
-                    </h3>
-                    
-                    {/* Player Details */}
-                    <div className="text-center z-10 relative">
-                        <p className="text-gray-300 text-sm md:text-base mb-1">
-                            {player.position} • {player.team}
-                        </p>
-                    </div>
-                    
-                    {/* Team Logo - Small */}
-                    {team?.logo && (
-                        <div className="absolute top-4 right-4 z-10">
-                            <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 backdrop-blur-sm flex items-center justify-center">
+
+                    {/* Player Info - positioned on the right side */}
+                    <div className="absolute top-[30%] right-6 text-right text-white">
+                        {/* Player Name */}
+                        <h3 className="text-xl md:text-3xl font-bold mb-2 tracking-wide relative px-2">
+                            <span className='absolute top-3 left-0 w-full h-3 bg-[#9F0712] z-10'></span>
+                            <span className='relative z-20'>{player.name}</span>
+                        </h3>
+
+                        {/* Team Info */}
+                        <div className="flex items-center justify-end gap-2">
+                            {team?.logo && (
                                 <Image
                                     src={team.logo}
                                     alt={team.name}
@@ -80,12 +70,10 @@ function PlayerCard({ player }: PlayerCardProps) {
                                     height={24}
                                     className="object-contain"
                                 />
-                            </div>
+                            )}
+                            <span className="text-sm md:text-[18px] font-medium">{player.team}</span>
                         </div>
-                    )}
-                    
-                    {/* Hover Effect Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-red-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-5"></div>
+                    </div>
                 </div>
             </Link>
         </div>
@@ -94,6 +82,18 @@ function PlayerCard({ player }: PlayerCardProps) {
 
 export default function TrendingPlayers() {
     const [api, setApi] = useState<CarouselApi>()
+    const [current, setCurrent] = useState(0)
+    
+    // Track current slide for determining active (center) player
+    useEffect(() => {
+        if (!api) return
+
+        setCurrent(api.selectedScrollSnap())
+
+        api.on("select", () => {
+            setCurrent(api.selectedScrollSnap())
+        })
+    }, [api])
     
     // Specified players to display
     const targetPlayerNames = [
@@ -167,7 +167,7 @@ export default function TrendingPlayers() {
     const players = allFoundPlayers
 
     // Auto-play functionality with 2-second interval
-    useEffect(() => {
+    /* useEffect(() => {
         if (!api || players.length === 0) return
 
         const interval = setInterval(() => {
@@ -175,7 +175,7 @@ export default function TrendingPlayers() {
         }, 2000) // 2 seconds
 
         return () => clearInterval(interval)
-    }, [api, players.length])
+    }, [api, players.length]) */
 
     if (isLoading) {
         return (
@@ -218,20 +218,35 @@ export default function TrendingPlayers() {
                     className="w-full"
                 >
                     <CarouselContent className="-ml-2 md:-ml-4">
-                        {players.map((player) => (
+                        {players.map((player, index) => (
                             <CarouselItem 
                                 key={player.id} 
                                 className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3"
                             >
-                                <PlayerCard player={player} />
+                                <PlayerCard 
+                                    player={player} 
+                                    isActive={index === current} 
+                                />
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    
-                    {/* Custom Navigation Buttons */}
-                    <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 border-2 border-white bg-transparent hover:bg-white hover:text-black text-white h-12 w-12" />
-                    <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 border-2 border-white bg-transparent hover:bg-white hover:text-black text-white h-12 w-12" />
                 </Carousel>
+                
+                {/* Navigation Buttons - Bottom Center */}
+                <div className="flex items-center justify-center gap-4 mt-6">
+                    <button
+                        onClick={() => api?.scrollPrev()}
+                        className="border-2 border-gray-600 hover:bg-gray-700 text-white rounded-full p-3 transition-colors"
+                    >
+                        <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                        onClick={() => api?.scrollNext()}
+                        className="border-2 border-red-600 hover:bg-red-700 text-white rounded-full p-3 transition-colors"
+                    >
+                        <ChevronRight className="w-6 h-6 text-red-600" />
+                    </button>
+                </div>
             </div>
         </div>
     )
