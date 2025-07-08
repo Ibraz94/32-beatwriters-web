@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api'
-const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://beatwriters.s3.us-east-2.amazonaws.com/32beatwriters/podcasts'
 
 export interface PodcastData {
   id: number
@@ -61,18 +61,13 @@ export const getImageUrl = (imagePath?: string): string | undefined => {
     return imagePath
   }
   
-  // Handle paths that already start with /uploads
-  if (imagePath.startsWith('/uploads/podcasts')) {
+  // Handle paths that start with a slash - append directly to base URL
+  if (imagePath.startsWith('/')) {
     return `${IMAGE_BASE_URL}${imagePath}`
   }
   
-  // Handle paths that don't start with /uploads
-  if (imagePath.startsWith('/')) {
-    return `${IMAGE_BASE_URL}/uploads/podcasts${imagePath}`
-  }
-  
-  // Handle relative paths
-  return `${IMAGE_BASE_URL}/uploads/podcasts/${imagePath}`
+  // Handle relative paths - add a slash between base URL and path
+  return `${IMAGE_BASE_URL}/${imagePath}`
 }
 
 export const podcastApi = createApi({

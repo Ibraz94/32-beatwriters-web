@@ -61,16 +61,32 @@ export default function PremiumSignup() {
     confirmPassword: ''
   })
 
+  // Specific plan IDs to display
+  const allowedPlanIds = ['price_1RiJQQAToc8YZruPj77d8vzO', 'plan_SP4eIOlEaiqOH0']
+
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
       try {
         const response = await fetch('https://api.32beatwriters.com/api/stripe/subscription-options')
         const data = await response.json()
-        setSubscriptionOptions(data)
-        // Set default selected price to monthly
-        const monthlyPrice = data.data.find((price: SubscriptionOption) => price.recurring.interval === 'month')
+        
+        // Filter to only show the specific plans
+        const filteredData = {
+          ...data,
+          data: data.data.filter((price: SubscriptionOption) => allowedPlanIds.includes(price.id))
+        }
+        
+        setSubscriptionOptions(filteredData)
+        
+        // Set default selected price to monthly plan
+        const monthlyPrice = filteredData.data.find((price: SubscriptionOption) => 
+          price.id === 'price_1RiJQQAToc8YZruPj77d8vzO'
+        )
         if (monthlyPrice) {
           setSelectedPriceId(monthlyPrice.id)
+        } else if (filteredData.data.length > 0) {
+          // Fallback to first available plan if monthly not found
+          setSelectedPriceId(filteredData.data[0].id)
         }
       } catch (error) {
         console.error('Error fetching subscription options:', error)
@@ -139,7 +155,7 @@ export default function PremiumSignup() {
     if (!validateForm() || !selectedPriceId) return
     setIsLoading(true)
     try {
-      const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/stripe/create-checkout-session', {
+      const response = await fetch('https://api.32beatwriters.com/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +176,7 @@ export default function PremiumSignup() {
   }
 
   const checkEmail = async (email: string) => {
-    const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/users/check-email', {
+          const response = await fetch('https://api.32beatwriters.com/api/users/check-email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -172,7 +188,7 @@ export default function PremiumSignup() {
   }
 
   const checkUsername = async (username: string) => {
-    const response = await fetch('https://api.32beatwriters.staging.pegasync.com/api/users/check-username', {
+          const response = await fetch('https://api.32beatwriters.com/api/users/check-username', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

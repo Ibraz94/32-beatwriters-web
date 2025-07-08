@@ -1208,23 +1208,23 @@ export default function PlayerProfile() {
                   <div className='grid grid-cols-4 gap-6 p-4'>
                     <div className='flex flex-col items-center justify-center bg-[#45366B] p-2'>
                       <h1 className='text-xs'>YDS</h1>
-                      <p className='text-lg font-bold'>{player?.Core?.['Draft Year']}</p>
-                      <p className='text-xs'>{player?.Core?.['Draft Pick']}</p>
+                      <p className='text-lg font-bold'>{player?.['Workout Metrics']['40-Yard Dash']}</p>
+                      <p className='text-xs'>{player?.['Workout Metrics']['40-Yard Dash Rank']}</p>
                     </div>
                     <div className='flex flex-col items-center justify-center bg-[#45366B]'>
                       <h1 className='text-xs'>TD</h1>
-                      <p className='text-lg font-bold'></p>
-                      <p className='text-xs'>{player?.Core?.['Draft Pick']}</p>
+                      <p className='text-lg font-bold'>{player?.['Workout Metrics']['Bench Press']}</p>
+                      <p className='text-xs'>{player?.['Workout Metrics']['Bench Press Rank']}</p>
                     </div>
                     <div className='flex flex-col items-center justify-center bg-[#45366B]'>
                       <h1 className='text-xs'>INT</h1>
-                      <p className='text-lg font-bold'>{player?.Core?.['Draft Year']}</p>
-                      <p className='text-xs'>{player?.Core?.['Draft Pick']}</p>
+                      <p className='text-lg font-bold'>{player?.['Workout Metrics']['Broad Jump']}</p>
+                      <p className='text-xs'>{player?.['Workout Metrics']['Broad Jump Rank']}</p>
                     </div>
                     <div className='flex flex-col items-center justify-center bg-[#45366B]'>
                       <h1 className='text-xs'>QBR</h1>
-                      <p className='text-lg font-bold'>{player?.Core?.['Draft Year']}</p>
-                      <p className='text-xs'>{player?.Core?.['Draft Pick']}</p>
+                      <p className='text-lg font-bold'>{player?.['Workout Metrics']['3-Cone Drill']}</p>
+                      <p className='text-xs'>{player?.['Workout Metrics']['3-Cone Drill Rank']}</p>
                     </div>
                   </div>
                 </div>
