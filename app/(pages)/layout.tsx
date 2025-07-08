@@ -15,7 +15,7 @@ const cabin = Cabin({
 
 export const metadata: Metadata = {
   title: "32BeatWriters",
-  description: "32BeatWriters is a platform for beat writers to create and share their beats.",
+  description: "Your Home For all NFL, Prospect and Fantasy Football News.",
 };
 
 export default function RootLayout({

@@ -16,24 +16,24 @@ export default function DeliveredToComponent() {
     return (
         <div className="relative pt-18 container mx-auto">
             {/* Left Player Image - hidden on mobile, visible on larger screens */}
-            <div className="hidden lg:block absolute left-8 xl:left-16 top-12 z-30">
+            <div className="hidden lg:block absolute left-8 lg:left-[-5%] xl:left-[-0%] 2xl:left-4  top-12 lg:top-auto lg:bottom-0 z-30">
                 <Image
                     src="/deliver-left.png"
                     alt="NFL Player Left"
                     width={358}
                     height={358}
-                    className="object-cover object-right w-[300px] lg:w-[358px] xl:w-[458px] h-auto"
+                    className="object-cover object-right w-[200px] lg:w-[258px] xl:w-[358px] h-auto"
                 />
             </div>
 
             {/* Right Player Image - hidden on mobile, visible on larger screens */}
-            <div className="hidden lg:block absolute right-8 xl:right-16 top-6 z-30">
+            <div className="hidden lg:block absolute right-8 lg:right-[-5%] xl:right-[-0%] 2xl:right-4 top-6 lg:top-auto lg:bottom-0 z-30">
                 <Image
                     src="/deliver-right.png"
                     alt="NFL Player Right"
                     width={478}
                     height={350}
-                    className="object-cover object-left w-[350px] lg:w-[478px] xl:w-[578px] h-auto"
+                    className="object-cover object-left w-[250px] lg:w-[378px] xl:w-[478px] h-auto"
                 />
             </div>
 
