@@ -78,6 +78,7 @@ export default function SubscriptionComponent() {
       </div>
       
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
           
           {/* Benefits Section */}
           <div className="space-y-8">
