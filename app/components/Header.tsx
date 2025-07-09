@@ -129,8 +129,8 @@ function Header() {
                         </Link>
 
                         {/* Header Image Section - Hidden on mobile */}
-                        <div className="hidden lg:flex h-[75px] w-[50%] items-center bg-[#2C204B] mt-2">
-                            <div className="relative top-0 right-0 w-[400px] h-full">
+                        <div className="hidden lg:flex h-[75px] w-[60%] items-center bg-[#2C204B] mt-2">
+                            <div className="relative top-0 right-0 w-[350px] h-full">
                                 <Image
                                     src={"/header-image.png"}
                                     alt="Header Image"
@@ -139,11 +139,11 @@ function Header() {
                                     style={{ clipPath: 'polygon(0% 0%, 100% 0%, 68% 0%, 52% 100%, 0% 100%)' }}
                                 />
                             </div>
-                            <div className="relative right-12 w-1/3">
-                                <h1 className="text-white font-bold text-sm">
+                            <div className="relative left-[-40px] w-1/2 md:w-1/2 xl:w-1/2">
+                                <h1 className="text-white font-bold text-xl xl:text-md tracking-wide font-oswald">
                                     Stay Connected
                                 </h1>
-                                <p className="text-white text-md">
+                                <p className="text-white text-md 1280:text-sm">
                                     Watch & Stay Updated.
                                 </p>
                             </div>
@@ -152,11 +152,11 @@ function Header() {
                                 <div className="hidden justify-center items-center md:justify-start space-x-4 lg:flex">
                                     <Link href="https://youtube.com/@32beatwriters" className="w-[150px] h-10 p-4 bg-red-700 hover:scale-98 rounded flex items-center justify-center transition-colors space-x-1">
                                         <Image src={"/youtube-logo.svg"} alt="Youtube" width={25} height={25} />
-                                        <span className="text-white text-lg">32BeatWriters</span>
+                                        <span className="text-white text-md font-oswald">32BeatWriters</span>
                                     </Link>
                                     <Link href="https://x.com/32beatwriters" className="w-[150px] h-10 p-4 hover:scale-98  bg-white rounded flex items-center justify-center transition-colors space-x-1">
                                         <Image src={"/x-black-logo.svg"} alt="Twitter" width={25} height={25}  />
-                                        <span className="text-black text-lg">32BeatWriters</span>
+                                        <span className="text-black text-md font-oswald">32BeatWriters</span>
                                     </Link>
 
                                 </div>

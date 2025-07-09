@@ -27,7 +27,7 @@ function PlayerCard({ player, isActive }: PlayerCardProps) {
     return (
         <div className="transition-all duration-300 hover:scale-105">
             <Link href={`/players/${player.id}`}>
-                <div className={`rounded-lg p-6 h-[350px] md:h-[245px] relative overflow-hidden group ${
+                <div className={`rounded-lg p-6 h-[245px] md:h-[245px] relative overflow-hidden group ${
                     isActive 
                         ? 'bg-[#43278C]' 
                         : 'bg-[#2C204B]'
