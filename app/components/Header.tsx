@@ -84,9 +84,9 @@ function Header() {
     const navLinks = [
         { href: "/", label: "HOME" },
         { href: "/articles", label: "ARTICLES" },
-        { href: "/podcasts", label: "PODCASTS" },
+        { href: "/podcasts", label: "PODCAST" },
         { href: "/players", label: "PLAYERS" },
-        { href: "/nuggets", label: "FEEDS" },
+        { href: "/nuggets", label: "FEED" },
     ];
 
     return (
@@ -120,9 +120,9 @@ function Header() {
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-extrabold text-2xl -mb-1">
-                                    32BeatWriter
+                                    32BeatWriters
                                 </span>
-                                <span className="text-lg text-red-800 hidden sm:block">
+                                <span className="text-lg text-red-800 ">
                                     NFL Insider Network
                                 </span>
                             </div>
@@ -144,7 +144,7 @@ function Header() {
                                     Stay Connected
                                 </h1>
                                 <p className="text-white text-md 1280:text-sm">
-                                    Watch & Stay Updated.
+                                    Watch, Listen & Stay Updated.
                                 </p>
                             </div>
 
@@ -180,24 +180,24 @@ function Header() {
                         </button>
                     </div>
                 </div>
-                <div className="h-[25px] lg:h-[50px] flex items-center justify-between bg-[#2C204B] px-2 lg:px-5 mb-1 mt-2">
+                <div className="h-[32px] lg:h-[50px] flex items-center justify-between bg-[#2C204B] px-2 lg:px-5 mb-1 mt-2">
                     {/* Mobile Social Links - Only visible on mobile */}
                     <div className="flex lg:hidden items-center justify-center w-full space-x-4">
-                        <h1 className="text-white text-xl font-bold">Social Links</h1>
+                        {/* <h1 className="text-white text-xl font-bold">Social Links</h1> */}
                         <div className="flex items-center space-x-4">
                             <Link href="https://youtube.com/@32beatwriters">
-                                <Image src={"/icons-youtube.svg"} alt="Youtube" width={24} height={24} />
+                                <Image src={"/icons-youtube.svg"} alt="Youtube" width={20} height={20} />
                             </Link>
                             <Link href="https://x.com/32beatwriters">
-                                <Image src={"/icons-twitter.svg"} alt="Twitter" width={24} height={24} />
+                                <Image src={"/icons-twitter.svg"} alt="Twitter" width={20} height={20} />
                             </Link>
                         </div>
                         <div className="flex items-center space-x-4">
                             <Link href="https://spotify.com/32beatwriters">
-                                <Image src={"/icons-spotify.svg"} alt="Spotify" width={24} height={24} />
+                                <Image src={"/icons-spotify.svg"} alt="Spotify" width={20} height={20} />
                             </Link>
                             <Link href="https://apple.com/32beatwriters"    >
-                                <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={24} height={24} />
+                                <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={20} height={20} />
                             </Link>
                         </div>
                     </div>

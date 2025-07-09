@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
 import Masonry from 'react-masonry-css'
 import { ReadMore } from '@/app/components/ReadMore'
 import {
     useGetNuggetsQuery,
-    getImageUrl
+    getImageUrl,
+    useSearchNuggetsQuery
 } from '@/lib/services/nuggetsApi'
 import {
     Select,
@@ -19,9 +20,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 
 
 interface NuggetFilters {
@@ -44,6 +52,8 @@ export default function NuggetsPage() {
     // Add authentication check
     const { isAuthenticated, isLoading: authLoading } = useAuth()
     const { user, isLoading: premiumLoading } = useAuth()
+    const [open, setOpen] = useState(false)
+    const [date, setDate] = useState<Date | undefined>(undefined)
 
     const [filters, setFilters] = useState<NuggetFilters>({
         sortBy: 'createdAt',
@@ -61,8 +71,11 @@ export default function NuggetsPage() {
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
     const [availablePositions, setAvailablePositions] = useState<string[]>([])
     const [availableTeams, setAvailableTeams] = useState<string[]>([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [isLoadingMore, setIsLoadingMore] = useState(false)
+    const ITEMS_PER_PAGE = 10
 
-    // Main query for nuggets - simplified to just fetch all nuggets
+    // Main query for nuggets - with pagination
     const {
         data: nuggetsData,
         isLoading: isLoadingNuggets,
@@ -70,7 +83,9 @@ export default function NuggetsPage() {
         isFetching: isFetchingNuggets
     } = useGetNuggetsQuery({
         ...(filters.rookie && { rookie: filters.rookie }),
-        ...(filters.position && { position: filters.position })
+        ...(filters.position && { position: filters.position }),
+        page: currentPage,
+        limit: ITEMS_PER_PAGE
     }, {
         skip: false
     })
@@ -95,26 +110,39 @@ export default function NuggetsPage() {
     // Handle loading nuggets and extracting filter options
     useEffect(() => {
         if (nuggetsData?.data?.nuggets) {
-            setAllNuggets(nuggetsData.data.nuggets)
-            setHasMoreNuggets(false) // Since we're loading all at once
+            const newNuggets = nuggetsData.data.nuggets
 
-            // Extract unique positions
-            const positions = [...new Set(nuggetsData.data.nuggets
-                .map((nugget: any) => nugget.player.position)
-                .filter(Boolean)
-            )].sort()
+            if (currentPage === 1) {
+                // First page - replace all nuggets
+                setAllNuggets(newNuggets)
+            } else {
+                // Additional pages - append to existing nuggets
+                setAllNuggets(prev => [...prev, ...newNuggets])
+            }
 
-            setAvailablePositions(positions)
+            // Check if there are more nuggets to load
+            setHasMoreNuggets(newNuggets.length === ITEMS_PER_PAGE)
+            setIsLoadingMore(false)
 
-            // Extract unique teams
-            const teams = [...new Set(nuggetsData.data.nuggets
-                .map((nugget: any) => nugget.player.team)
-                .filter(Boolean)
-            )].sort()
+            // Extract unique positions from all nuggets (only on first page)
+            if (currentPage === 1) {
+                const positions = [...new Set(newNuggets
+                    .map((nugget: any) => nugget.player.position)
+                    .filter(Boolean)
+                )].sort()
 
-            setAvailableTeams(teams)
+                setAvailablePositions(positions)
+
+                // Extract unique teams from all nuggets (only on first page)
+                const teams = [...new Set(newNuggets
+                    .map((nugget: any) => nugget.player.team)
+                    .filter(Boolean)
+                )].sort()
+
+                setAvailableTeams(teams)
+            }
         }
-    }, [nuggetsData])
+    }, [nuggetsData, currentPage])
 
     // Client-side search functionality
     const handleSearch = (term: string) => {
@@ -178,6 +206,7 @@ export default function NuggetsPage() {
     // Clear date filter
     const clearDateFilter = () => {
         setSelectedDate('')
+        setDate(undefined)
     }
 
     // Handle position filter change
@@ -215,10 +244,29 @@ export default function NuggetsPage() {
             team: ''
         })
         setSelectedDate('')
+        setDate(undefined)
         setSearchTerm('')
         setIsSearching(false)
         setSearchResults([])
+        setCurrentPage(1)
+        setAllNuggets([])
+        setHasMoreNuggets(true)
     }
+
+    // Load more nuggets
+    const loadMoreNuggets = () => {
+        if (!isLoadingMore && hasMoreNuggets) {
+            setIsLoadingMore(true)
+            setCurrentPage(prev => prev + 1)
+        }
+    }
+
+    // Reset pagination when filters change
+    useEffect(() => {
+        setCurrentPage(1)
+        setAllNuggets([])
+        setHasMoreNuggets(true)
+    }, [filters.position, filters.team, filters.rookie, selectedDate])
 
     // Image modal functions
     const openImageModal = (src: string, alt: string, images?: string[], currentIndex?: number) => {
@@ -290,7 +338,7 @@ export default function NuggetsPage() {
         return (
             <div className="rounded-lg border border-[#2C204B]">
                 <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
-                    <h2 className="text-white text-center text-xl">TRENDING PLAYER</h2>
+                    <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
                 </div>
                 <div className="space-y-3">
                     {trendingPlayers.map((player, index) => (
@@ -412,7 +460,7 @@ export default function NuggetsPage() {
             <div className="container mx-auto px-4 py-8">
                 {/* Filters in One Line */}
                 <div className="mb-6">
-                    <div className="flex gap-3 items-center justify-center w-full">
+                    <div className="flex gap-3 items-center justify-center w-full flex-col lg:flex-row">
                         {/* Search Bar */}
                         <div className="relative w-full">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -427,22 +475,41 @@ export default function NuggetsPage() {
 
 
                         {/* Date Filter */}
-                        <div className="relative">
-                            <input
-                                type="date"
-                                value={selectedDate}
-                                onChange={(e) => handleDateChange(e.target.value)}
-                                className="px-10 py-3 border border-white/20 rounded"
-                                placeholder="MM/DD/YYYY"
-                            />
-                        </div>
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild className='h-10 w-full lg:w-42'>
+                                <Button
+                                    variant="outline"
+                                    className="justify-between text-left font-normal h-12"
+                                >
+                                    {date ? date.toLocaleDateString() : <span>Select By Date</span>}
+                                    <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start" side='bottom'>
+                                <Calendar
+                                    mode="single"
+                                    selected={date}
+                                    onSelect={selectedCalendarDate => {
+                                        setDate(selectedCalendarDate)
+                                        if (selectedCalendarDate) {
+                                            setSelectedDate(selectedCalendarDate.toISOString().split('T')[0])
+                                        } else {
+                                            setSelectedDate('')
+                                        }
+                                        setOpen(false)
+                                    }}
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
+
 
                         {/* Position Filter Dropdown */}
                         <Select
                             value={filters.position || "all"}
                             onValueChange={handlePositionFilterChange}
                         >
-                            <SelectTrigger className="h-10 w-1/3">
+                            <SelectTrigger className="h-10 w-full lg:w-1/3">
                                 <SelectValue placeholder="All Positions" />
                             </SelectTrigger>
                             <SelectContent className='border-none'>
@@ -462,7 +529,7 @@ export default function NuggetsPage() {
                             value={filters.team || "all"}
                             onValueChange={handleTeamFilterChange}
                         >
-                            <SelectTrigger className="w-1/2 h-10 text-sm">
+                            <SelectTrigger className="w-full lg:w-1/2 h-10 text-sm">
                                 <SelectValue placeholder="All Teams" />
                             </SelectTrigger>
                             <SelectContent className='border-none'>
@@ -492,7 +559,7 @@ export default function NuggetsPage() {
                         </div>
 
                         {/* Clear Filters Button */}
-                        <div className="w-1/5">
+                        <div className="w-full lg:w-1/5 text-center">
                             <button
                                 onClick={clearFilters}
                                 className="px-4 py-2 text-sm font-medium hover:cursor-pointer hover:text-red-800"
@@ -504,7 +571,7 @@ export default function NuggetsPage() {
                 </div>
 
                 {/* Main Content Area - Two Column Layout */}
-                <div className="flex gap-6">
+                <div className="flex gap-6 flex-col lg:flex-row">
                     {/* Feed Column - Scrollable */}
                     <div className="flex-1">
                         {displayNuggets.length === 0 && !isLoading ? (
@@ -601,12 +668,26 @@ export default function NuggetsPage() {
                                         )
                                     })}
                                 </div>
+                                {/* Load More Button */}
+                                {!isSearching && hasMoreNuggets && displayNuggets.length > 0 && (
+                                    <div className="text-center py-6">
+                                        <button
+                                            onClick={loadMoreNuggets}
+                                            disabled={isLoadingMore}
+                                            className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                                        >
+                                            {isLoadingMore ? 'Loading...' : 'Load More'}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         )}
+
+
                     </div>
 
                     {/* Trending Players Sidebar */}
-                    <div className="w-96 hidden lg:block">
+                    <div className="w-96 ">
                         <TrendingPlayers />
                     </div>
                 </div>

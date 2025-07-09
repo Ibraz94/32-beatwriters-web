@@ -32,13 +32,13 @@ export default function Footer() {
         Navigation: [
             { label: "Home", href: "/" },
             { label: "Articles", href: "/articles" },
-            { label: "Feeds", href: "/nuggets" },
+            { label: "Feed", href: "/nuggets" },
 
 
         ],
         Information: [
             { label: "Players", href: "/players" },
-            { label: "Podcasts", href: "/podcasts" },
+            { label: "Podcast", href: "/podcasts" },
             { label: "About Us", href: "/about" },
 
         ],
@@ -106,16 +106,14 @@ export default function Footer() {
                                 />
                             </Link>
                             <div className="flex flex-col mb-4">
-                                <h1 className="text-white text-4xl font-bold">
+                                <h1 className="text-white text-3xl font-bold">
                                     32BeatWriters
                                 </h1>
-                                <p className="text-red-800 text-lg">
-                                    NFL Insider Network
-                                </p>
+                                <p className="text-red-800 text-lg mr-6">NFL Insider Network</p>
                             </div>
                         </div>
                         <p className="text-muted-foreground mb-6 leading-relaxed w-96 text-lg">
-                            Stay informed with our NFL podcast and real-time news updates. Watch highlights, get insights, and never miss a moment of the action.
+                        Unrivaled NFL Insights. Follow the Beat.
                         </p>
                     </div>
 

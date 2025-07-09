@@ -240,6 +240,9 @@ function PlayersContent() {
 
             {/* Search and Filters */}
             <div>
+                
+            </div>
+            <div>
                 {/* Active Filters Display */}
                 {(searchTerm || selectedPosition !== "all" || selectedConference !== "all") && (
                     <div className="mt-4 flex flex-wrap gap-2">

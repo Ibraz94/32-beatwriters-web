@@ -54,7 +54,7 @@ export default function HeroSection() {
             </div>
 
             {/* Mobile Layout */}
-            <div className="lg:hidden relative min-h-[500px] sm:min-h-[600px] md:min-h-[650px]">
+            <div className="lg:hidden relative min-h-[400px] sm:min-h-[600px] md:min-h-[650px]">
                 {/* Background Image */}
                 <div className="absolute inset-0 w-full h-full">
                     <Image 
@@ -69,16 +69,16 @@ export default function HeroSection() {
                 {/* Mobile Content */}
                 <div className="relative z-10 px-6 pt-6 pb-8 flex flex-col justify-center h-full">
                     {/* Latest NFL News Badge */}
-                    <div className="flex justify-center mb-6">
+                    {/* <div className="flex justify-center mb-6">
                         <div className="px-6 py-3 rounded-full border-2 border-white bg-background/40 backdrop-blur-sm">
                             <h1 className="text-center text-white text-sm font-medium">Latest NFL News</h1>
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Date */}
-                    <div className="text-center mb-6">
+                    {/* <div className="text-center mb-6">
                         <h2 className="text-lg text-gray-300">CRAIG BATOR - 27 DEC 2025</h2>
-                    </div>
+                    </div> */}
 
                     {/* Main Heading */}
                     <div className="text-center space-y-4 mb-8">
@@ -87,7 +87,7 @@ export default function HeroSection() {
                                 League Winning
                             </h1>
                             <h2 className="text-2xl sm:text-3xl font-light mt-2 text-white">
-                                Intel From Beat Writer
+                                Intel From Beat Writers
                             </h2>
                         </div>
                     </div>
@@ -102,7 +102,7 @@ export default function HeroSection() {
                     {/* CTA Button */}
                     <div className="flex justify-center">
                         <Link href="/subscribe">
-                            <button className="px-12 py-4 bg-red-800 text-white rounded-sm text-lg font-semibold hover:scale-102 transition-colors duration-300 shadow-lg">
+                            <button className="px-5 py-3 bg-red-800 text-white rounded-sm font-semibold hover:scale-102 transition-colors duration-300 shadow-lg">
                                 Get Started Today
                             </button>
                         </Link>
