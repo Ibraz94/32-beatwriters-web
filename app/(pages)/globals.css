@@ -73,8 +73,40 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: "Cabin";
+  font-family: var(--font-cabin);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Oswald Font Utility Class */
+.font-oswald {
+  font-family: var(--font-oswald), sans-serif !important;
+}
+
+/* Date Input Calendar Icon Styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
+/* Date Input Text Color */
+input[type="date"] {
+  color: white;
+}
+
+input[type="date"]::-webkit-datetime-edit-text {
+  color: white;
+}
+
+input[type="date"]::-webkit-datetime-edit-month-field {
+  color: white;
+}
+
+input[type="date"]::-webkit-datetime-edit-day-field {
+  color: white;
+}
+
+input[type="date"]::-webkit-datetime-edit-year-field {
+  color: white;
 }
 
 /* Custom Scrollbar Styles */

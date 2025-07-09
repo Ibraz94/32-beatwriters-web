@@ -56,11 +56,13 @@ const config: Config = {
 			md: '768px',
 			lg: '960px',
 			xl: '1200px',
+			'1280': '1280px',
 			'2xl': '1400px',
 
 		},
 		fontFamily: {
-			primary: "var(--font-cabin)",
+			primary: ["var(--font-cabin)", "sans-serif"],
+			oswald: ["var(--font-oswald)", "sans-serif"],
 		},
 
   	}

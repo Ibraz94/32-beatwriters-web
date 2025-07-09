@@ -32,23 +32,21 @@ export default function Footer() {
         Navigation: [
             { label: "Home", href: "/" },
             { label: "Articles", href: "/articles" },
-            { label: "Benefits", href: "" },
+            { label: "Feeds", href: "/nuggets" },
 
 
         ],
         Information: [
-            { label: "Analysis", href: "" },
-            { label: "Scale", href: "" },
-            { label: "Developer", href: "" },
+            { label: "Players", href: "/players" },
+            { label: "Podcasts", href: "/podcasts" },
             { label: "About Us", href: "/about" },
 
         ],
         Socials: [
-            { label: "Facebook", href: "" },
-            { label: "Youtube", href: "" },
-            { label: "Apple", href: "" },
-            { label: "Twitter", href: "" },
-            { label: "Spotify", href: "" }
+            { label: "Youtube", href: "https://www.youtube.com/@32beatwriters" },
+            { label: "Apple", href: "https://podcasts.apple.com/us/podcast/32-beat-writers/id1715000000" },
+            { label: "Twitter", href: "https://x.com/32beatwriters" },
+            { label: "Spotify", href: "https://open.spotify.com/show/00000000000000000000000000000000" }
         ]
     };
 
