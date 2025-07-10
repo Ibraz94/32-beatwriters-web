@@ -58,11 +58,11 @@ export const useAuth = () => {
   }, [])
 
   // Login function
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (emailOrUsername: string, password: string) => {
     try {
       dispatch(loginStart())
       
-      const result = await loginMutation({ email, password }).unwrap()
+      const result = await loginMutation({ emailOrUsername, password }).unwrap()
       
       // Store tokens and user data
       setAuthTokens(result.token, result.refreshToken)

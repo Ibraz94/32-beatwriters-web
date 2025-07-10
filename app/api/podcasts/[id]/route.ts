@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api'
+import { buildApiUrl, API_CONFIG } from '../../../../lib/config/api'
 
 export async function GET(
   request: NextRequest,
@@ -17,7 +16,7 @@ export async function GET(
     }
 
     // Fetch episode from external API
-    const response = await fetch(`${API_BASE_URL}/podcasts/${id}`, {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.PODCASTS)}/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -54,8 +54,7 @@ interface ImageModalData {
 
 export default function NuggetsPage() {
     // Add authentication check
-    const { isAuthenticated, isLoading: authLoading } = useAuth()
-    const { user, isLoading: premiumLoading } = useAuth()
+    const { isAuthenticated, isLoading: authLoading, user } = useAuth()
     const [open, setOpen] = useState(false)
     const [date, setDate] = useState<Date | undefined>(undefined)
 
@@ -331,7 +330,8 @@ export default function NuggetsPage() {
         )
     }
 
-    const isLoading = isLoadingNuggets || authLoading || premiumLoading || isLoadingTeams
+    // Combined loading states
+    const isLoading = isLoadingNuggets || authLoading || isLoadingTeams
     const error = nuggetsError
     const displayNuggets = allNuggets
     const hasActiveFilters = debouncedSearchTerm || filters.position || filters.team || selectedDate || filters.rookie

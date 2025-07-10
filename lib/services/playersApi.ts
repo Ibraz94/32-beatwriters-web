@@ -1,7 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const PLAYER_PROFILER_API_BASE_URL = 'https://api.playerprofiler.com/v1/player'
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api'
+import { API_CONFIG, buildApiUrl, EXTERNAL_APIS } from '../config/api'
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://www.playerprofiler.com/wp-content/uploads'
 
 // Original Player interface for internal API
@@ -494,7 +492,7 @@ export const getImageUrl = (imagePath?: string): string | undefined => {
 export const playersApi = createApi({
   reducerPath: 'playersApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/players`,
+    baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.PLAYERS),
     prepareHeaders: (headers, { getState }) => {
       // Make auth token optional for public player data
       const token = (getState() as any).auth?.token
@@ -563,7 +561,7 @@ export const playersApi = createApi({
 export const playerProfilerApi = createApi({
   reducerPath: 'playerProfilerApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: PLAYER_PROFILER_API_BASE_URL,
+    baseUrl: EXTERNAL_APIS.PLAYER_PROFILER,
   }),
   endpoints: (builder) => ({
     getPlayer: builder.query<PlayerProfilerResponse, string>({

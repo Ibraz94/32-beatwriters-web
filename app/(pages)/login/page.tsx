@@ -70,37 +70,8 @@ export default function Login() {
         if (!validateForm()) return
         
         try {
-            // Determine if input is email or username and convert to email if needed
-            let emailToUse = formData.emailOrUsername
-            const isEmail = /\S+@\S+\.\S+/.test(formData.emailOrUsername)
-            
-            // If it's a username, we'll try direct API call to handle both cases
-            if (!isEmail) {
-                // Make a direct API call for username login since the useAuth login expects email
-                const response = await fetch('https://api.32beatwriters.com/api/users/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        username: formData.emailOrUsername, 
-                        password: formData.password 
-                    }),
-                })
-
-                if (!response.ok) {
-                    const errorData = await response.json()
-                    throw new Error(errorData.message || 'Login failed')
-                }
-
-                const data = await response.json()
-                
-                // Use the email from the response for the main auth system
-                emailToUse = data.user.email
-            }
-
-            // Now use the main auth system with the email
-            const result = await login(emailToUse, formData.password)
+            // Use the auth system with email or username - let the backend handle both
+            const result = await login(formData.emailOrUsername, formData.password)
             
             if (result.success) {
                 // Set token storage based on remember me preference

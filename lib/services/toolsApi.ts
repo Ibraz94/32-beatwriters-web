@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api'
+import { API_CONFIG, buildApiUrl } from '../config/api'
 
 export interface Tool {
   id: string
@@ -74,7 +73,7 @@ interface SalaryCapCalculation {
 export const toolsApi = createApi({
   reducerPath: 'toolsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/tools`,
+    baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.TOOLS),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as any).auth.token
       if (token) {

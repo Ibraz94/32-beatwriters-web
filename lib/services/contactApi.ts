@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api'
+import { API_CONFIG, buildApiUrl } from '../config/api'
 
 export interface ContactMessage {
   id: string
@@ -21,7 +20,7 @@ export interface ContactRequest {
 export const contactApi = createApi({
   reducerPath: 'contactApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/contact`,
+    baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.CONTACT),
     prepareHeaders: (headers) => {
       headers.set('content-type', 'application/json')
       return headers

@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api/'
+import { API_CONFIG, buildApiUrl } from '../config/api'
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://beatwriters.s3.us-east-2.amazonaws.com/32beatwriters/teams'
 
 export interface Teams {
@@ -87,7 +86,7 @@ const fetchAllTeams = async (baseUrl: string, headers: Headers): Promise<AllTeam
 export const teamsApi = createApi({
   reducerPath: 'teamsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}teams`,
+    baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.TEAMS),
     prepareHeaders: (headers, { getState }) => {
       // Make auth token optional for public team data
       const token = (getState() as any).auth?.token
@@ -119,7 +118,7 @@ export const teamsApi = createApi({
           }
           headers.set('content-type', 'application/json')
 
-          const baseUrl = `${API_BASE_URL}teams`
+          const baseUrl = buildApiUrl(API_CONFIG.ENDPOINTS.TEAMS)
           const allTeamsData = await fetchAllTeams(baseUrl, headers)
           
           return { data: allTeamsData }

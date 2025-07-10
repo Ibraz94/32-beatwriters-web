@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { User } from '../features/authSlice'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api/users'
+import { API_CONFIG, buildApiUrl } from '../config/api'
 
 interface LoginRequest {
   email: string
@@ -52,7 +51,7 @@ interface UpdatePasswordRequest {
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}`,
+    baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.AUTH),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as any).auth.token
       if (token) {
@@ -65,12 +64,21 @@ export const authApi = createApi({
   tagTypes: ['User', 'Auth'],
   endpoints: (builder) => ({
     // Authentication endpoints
-    login: builder.mutation<AuthResponse, LoginRequest>({ 
-      query: (credentials) => ({
-        url: '/login',
-        method: 'POST',
-        body: credentials,
-      }),
+    login: builder.mutation<AuthResponse, { emailOrUsername: string; password: string }>({ 
+      query: ({ emailOrUsername, password }) => {
+        // Detect if input is email or username
+        const isEmail = /\S+@\S+\.\S+/.test(emailOrUsername)
+        
+        const body = isEmail 
+          ? { email: emailOrUsername, password }
+          : { username: emailOrUsername, password }
+        
+        return {
+          url: '/login',
+          method: 'POST',
+          body,
+        }
+      },
       invalidatesTags: ['User', 'Auth'],
     }),
     

@@ -29,8 +29,7 @@ export default function PlayerProfile() {
   const backToPlayersUrl = fromPage ? `/players?page=${fromPage}` : '/players'
 
   // Add authentication check
-  const { isAuthenticated, isLoading: authLoading } = useAuth()
-  const { user, isLoading: premiumLoading } = useAuth()
+      const { isAuthenticated, isLoading: authLoading, user } = useAuth()
 
   // First, fetch the player from internal API to get the playerId
   const { data: internalPlayer, isLoading: internalPlayerLoading, error: internalPlayerError } = useGetPlayerQuery(playerId)
@@ -102,7 +101,7 @@ export default function PlayerProfile() {
   console.log('Teammates found:', teammates.length)
   console.log('Sample teammates:', teammates.slice(0, 3).map(t => ({ name: t.name, team: t.team })))
 
-  const loading = playerLoading || teamLoading || authLoading || premiumLoading || internalPlayerLoading || performanceLoading
+      const loading = playerLoading || teamLoading || authLoading || internalPlayerLoading || performanceLoading
 
   const chartConfig = {
     desktop: {

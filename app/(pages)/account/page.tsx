@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { User, Mail, Lock, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, Check, X } from 'lucide-react'
+import { User, Mail, Lock, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, Check, X, CreditCard, AlertTriangle } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { useAuth } from '../../../lib/hooks/useAuth'
 import { useUpdateProfileMutation, useUpdatePasswordMutation, useGetProfileQuery, useLogoutMutation } from '../../../lib/services/authApi'
 import DiscordButton from '@/app/components/DiscordButton'
+import { buildApiUrl, API_CONFIG } from '../../../lib/config/api'
 
 export default function Account() {
     const [mounted, setMounted] = useState(false)
@@ -29,9 +30,13 @@ export default function Account() {
     })
     const [errors, setErrors] = useState<{ [key: string]: string }>({})
     const [successMessage, setSuccessMessage] = useState('')
+    const [subscription, setSubscription] = useState<any>(null)
+    const [loadingSubscription, setLoadingSubscription] = useState(false)
+    const [cancellingSubscription, setCancellingSubscription] = useState(false)
+    const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 
     const { theme } = useTheme()
-    const { user, logout, updateProfile } = useAuth()
+    const { user, logout, updateProfile, token } = useAuth()
     const [updateProfileMutation] = useUpdateProfileMutation()
     const [updatePasswordMutation] = useUpdatePasswordMutation()
     const [logoutMutation] = useLogoutMutation()
@@ -204,6 +209,92 @@ export default function Account() {
         }
     }
 
+    // Fetch subscription information
+    const fetchSubscription = async () => {
+        setLoadingSubscription(true)
+            try {
+      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.MY_SUBSCRIPTION), {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                credentials: 'include'
+            })
+
+            if (response.ok) {
+                const data = await response.json()
+                
+                if (data.success && data.data?.subscription) {
+                    const stripeSubscription = data.data.subscription
+                    const userData = data.data.user
+                    
+                    // Map the Stripe subscription data to the expected format
+                    const mappedSubscription = {
+                        subscriptionId: stripeSubscription.id,
+                        status: stripeSubscription.status,
+                        planName: stripeSubscription.items?.data?.[0]?.price?.product?.name || userData.membershipType || 'Premium Plan',
+                        amount: stripeSubscription.plan?.amount || stripeSubscription.items?.data?.[0]?.price?.unit_amount,
+                        interval: stripeSubscription.plan?.interval || stripeSubscription.items?.data?.[0]?.price?.recurring?.interval,
+                        currentPeriodEnd: stripeSubscription.current_period_end,
+                        // Additional useful data
+                        customerEmail: stripeSubscription.customer?.email,
+                        nextBillingDate: stripeSubscription.current_period_end,
+                        membershipType: userData.membershipType,
+                        subscriptionEndDate: userData.subscriptionEndDate
+                    }
+                    
+                    setSubscription(mappedSubscription)
+                } else {
+                    setSubscription(null)
+                }
+            } else {
+                const errorData = await response.json()
+                setErrors({ subscription: errorData.message || 'Failed to fetch subscription data' })
+            }
+        } catch (error) {
+            setErrors({ subscription: 'Failed to fetch subscription data' })
+        } finally {
+            setLoadingSubscription(false)
+        }
+    }
+
+    // Cancel subscription
+    const handleCancelSubscription = async () => {
+        setCancellingSubscription(true)
+            try {
+      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CANCEL_SUBSCRIPTION), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                credentials: 'include'
+            })
+
+            if (response.ok) {
+                setSuccessMessage('Subscription cancelled successfully. You will retain access until the end of your billing period.')
+                setShowCancelConfirm(false)
+                fetchSubscription() // Refresh subscription data
+                setTimeout(() => setSuccessMessage(''), 5000)
+            } else {
+                const errorData = await response.json()
+                setErrors({ subscription: errorData.message || 'Failed to cancel subscription' })
+            }
+        } catch (error) {
+            setErrors({ subscription: 'Failed to cancel subscription' })
+        } finally {
+            setCancellingSubscription(false)
+        }
+    }
+
+    // Fetch subscription data when subscription tab is active
+    useEffect(() => {
+        if (activeTab === 'subscription' && !subscription && !loadingSubscription) {
+            fetchSubscription()
+        }
+    }, [activeTab])
+
     const cancelEdit = (field: string) => {
         setEditMode(prev => ({ ...prev, [field]: false }))
         if (user) {
@@ -266,7 +357,8 @@ export default function Account() {
                         <nav className="-mb-px flex space-x-8">
                             {[
                                 { id: 'profile', label: 'Profile', icon: User },
-                                { id: 'update-password', label: 'Update Password', icon: Shield }
+                                { id: 'update-password', label: 'Update Password', icon: Shield },
+                                { id: 'subscription', label: 'Subscription', icon: CreditCard }
                             ].map(({ id, label, icon: Icon }) => (
                                 <button
                                     key={id}
@@ -555,6 +647,179 @@ export default function Account() {
                                     )}
                                 </button>
                             </form>
+                        </div>
+                    )}
+
+                    {/* Subscription Tab */}
+                    {activeTab === 'subscription' && (
+                        <div className="space-y-6">
+                            <h2 className="text-xl font-semibold text-foreground">Subscription Management</h2>
+
+                            {loadingSubscription ? (
+                                <div className="flex justify-center items-center py-12">
+                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-800"></div>
+                                </div>
+                            ) : subscription ? (
+                                <div className="space-y-6">
+                                    {/* Subscription Status */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-card-foreground mb-2">
+                                                Plan
+                                            </label>
+                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                                <CreditCard className="h-5 w-5 text-muted-foreground" />
+                                                <span className="text-foreground font-medium">
+                                                    {subscription.planName || 'Premium Plan'}
+                                                </span>
+                                                <span className={`px-2 py-1 rounded-full text-xs ${
+                                                    subscription.status === 'active' 
+                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                                                        : subscription.status === 'canceled'
+                                                        ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                                                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                                                }`}>
+                                                    {subscription.status?.charAt(0).toUpperCase() + subscription.status?.slice(1)}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-card-foreground mb-2">
+                                                Amount
+                                            </label>
+                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                                <CreditCard className="h-5 w-5 text-muted-foreground" />
+                                                <span className="text-foreground">
+                                                    ${subscription.amount ? (subscription.amount / 100).toFixed(2) : '0.00'} / {subscription.interval || 'month'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-card-foreground mb-2">
+                                                Next Billing Date
+                                            </label>
+                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                                <Calendar className="h-5 w-5 text-muted-foreground" />
+                                                <span className="text-foreground">
+                                                    {subscription.currentPeriodEnd 
+                                                        ? new Date(subscription.currentPeriodEnd * 1000).toLocaleDateString()
+                                                        : 'N/A'
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-card-foreground mb-2">
+                                                Subscription ID
+                                            </label>
+                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                                <Shield className="h-5 w-5 text-muted-foreground" />
+                                                <span className="text-foreground text-sm font-mono">
+                                                    {subscription.subscriptionId ? subscription.subscriptionId.slice(-8) : 'N/A'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Cancel Subscription Section */}
+                                    {subscription.status === 'active' && (
+                                        <div className="border border-red-200 dark:border-red-800 rounded-lg p-6 bg-red-50 dark:bg-red-900/10">
+                                            <div className="flex items-start space-x-3">
+                                                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
+                                                <div className="flex-1">
+                                                    <h3 className="text-lg font-medium text-red-900 dark:text-red-200">
+                                                        Cancel Subscription
+                                                    </h3>
+                                                    <p className="mt-2 text-sm text-red-700 dark:text-red-300">
+                                                        Cancelling your subscription will stop all future charges. You will retain access to premium features until the end of your current billing period.
+                                                    </p>
+                                                    
+                                                    {!showCancelConfirm ? (
+                                                        <button
+                                                            onClick={() => setShowCancelConfirm(true)}
+                                                            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                                        >
+                                                            Cancel Subscription
+                                                        </button>
+                                                    ) : (
+                                                        <div className="mt-4 space-y-3">
+                                                            <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                                                                Are you sure you want to cancel your subscription?
+                                                            </p>
+                                                            <div className="flex space-x-3">
+                                                                <button
+                                                                    onClick={handleCancelSubscription}
+                                                                    disabled={cancellingSubscription}
+                                                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                >
+                                                                    {cancellingSubscription ? (
+                                                                        <div className="flex items-center">
+                                                                            <div className="animate-spin -ml-1 mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                                                                            Cancelling...
+                                                                        </div>
+                                                                    ) : (
+                                                                        'Yes, Cancel'
+                                                                    )}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => setShowCancelConfirm(false)}
+                                                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                                                                >
+                                                                    Keep Subscription
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {subscription.status === 'canceled' && (
+                                        <div className="border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 bg-yellow-50 dark:bg-yellow-900/10">
+                                            <div className="flex items-start space-x-3">
+                                                <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+                                                <div>
+                                                    <h3 className="text-lg font-medium text-yellow-900 dark:text-yellow-200">
+                                                        Subscription Cancelled
+                                                    </h3>
+                                                    <p className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                                                        Your subscription has been cancelled. You will retain access to premium features until{' '}
+                                                        {subscription.currentPeriodEnd 
+                                                            ? new Date(subscription.currentPeriodEnd * 1000).toLocaleDateString()
+                                                            : 'the end of your billing period'
+                                                        }.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {errors.subscription && (
+                                        <div className="border border-red-200 dark:border-red-800 rounded-lg p-4 bg-red-50 dark:bg-red-900/10">
+                                            <p className="text-sm text-red-700 dark:text-red-300">{errors.subscription}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="text-center py-12">
+                                    <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                                    <h3 className="text-lg font-medium text-foreground mb-2">No Active Subscription</h3>
+                                    <p className="text-muted-foreground mb-4">
+                                        You don't have an active subscription. Subscribe to access premium features.
+                                    </p>
+                                    <a
+                                        href="/subscribe"
+                                        className="inline-flex items-center px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                    >
+                                        <CreditCard className="h-4 w-4 mr-2" />
+                                        Subscribe Now
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

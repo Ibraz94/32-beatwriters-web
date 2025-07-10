@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api'
+import { API_CONFIG, buildApiUrl } from '../config/api'
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://beatwriters.s3.us-east-2.amazonaws.com/32beatwriters/podcasts'
 
 export interface PodcastData {
@@ -73,7 +72,7 @@ export const getImageUrl = (imagePath?: string): string | undefined => {
 export const podcastApi = createApi({
   reducerPath: 'podcastApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}/podcasts`,
+    baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.PODCASTS),
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as any).auth.token
       if (token) {

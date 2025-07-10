@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api'
+import { API_CONFIG, buildApiUrl } from '../config/api'
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://beatwriters.s3.us-east-2.amazonaws.com/32beatwriters/articles/featuredImage'
 
 // Helper function to construct full image URLs
@@ -73,7 +72,7 @@ export const articlesApi = createApi({
   baseQuery: async (args, api, extraOptions) => {
     try {
       const result = await fetchBaseQuery({
-        baseUrl: `${API_BASE_URL}/articles`,
+        baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.ARTICLES),
         prepareHeaders: (headers, { getState }) => {
           const token = (getState() as any).auth.token
           if (token) {

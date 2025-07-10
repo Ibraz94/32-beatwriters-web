@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { API_CONFIG, buildApiUrl } from '../config/api'
 
 // Base API URL - defaults to localhost for development
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com/api/'
 const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://beatwriters.s3.us-east-2.amazonaws.com/32beatwriters/nuggets'
 
 /**
@@ -77,7 +77,7 @@ export const getImageUrl = (imagePath?: string): string | undefined => {
 export const nuggetsApi = createApi({
   reducerPath: 'nuggetsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${API_BASE_URL}nuggets`,
+    baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.NUGGETS),
     prepareHeaders: (headers, { getState }) => {
       // Add authorization token if available
       const token = (getState() as any).auth.token
