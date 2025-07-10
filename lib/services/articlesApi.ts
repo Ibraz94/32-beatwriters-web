@@ -15,7 +15,7 @@ export const getImageUrl = (imagePath?: string): string | undefined => {
   // Handle paths that start with a slash - append directly to base URL
   if (imagePath.startsWith('/')) {
     return `${IMAGE_BASE_URL}${imagePath}`
-  }
+  } 
   
   // Handle relative paths - add a slash between base URL and path
   return `${IMAGE_BASE_URL}/${imagePath}`
