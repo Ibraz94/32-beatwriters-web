@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Search, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
@@ -39,6 +39,10 @@ interface NuggetFilters {
     rookie?: boolean
     position?: string
     team?: string
+    search?: string
+    startDate?: string
+    page?: number
+    limit?: number
 }
 
 interface ImageModalData {
@@ -65,33 +69,52 @@ export default function NuggetsPage() {
     })
     const [selectedDate, setSelectedDate] = useState<string>('')
     const [searchTerm, setSearchTerm] = useState('')
-    const [isSearching, setIsSearching] = useState(false)
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
     const [allNuggets, setAllNuggets] = useState<any[]>([])
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
-    const [availablePositions, setAvailablePositions] = useState<string[]>([])
-    const [availableTeams, setAvailableTeams] = useState<string[]>([])
     const [currentPage, setCurrentPage] = useState(1)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
-    const ITEMS_PER_PAGE = 10
+    const ITEMS_PER_PAGE = 15
 
-    // Main query for nuggets - with pagination
+    // Debounce search term
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm)
+        }, 500)
+
+        return () => clearTimeout(timer)
+    }, [searchTerm])
+
+    // Synchronize date states
+    useEffect(() => {
+        if (!selectedDate && date) {
+            setDate(undefined)
+        } else if (selectedDate && !date) {
+            setDate(new Date(selectedDate))
+        }
+    }, [selectedDate, date])
+
+    // Build query parameters
+    const queryParams = useMemo(() => ({
+        ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
+        ...(filters.position && { position: filters.position }),
+        ...(filters.team && { team: filters.team }),
+        ...(selectedDate && { startDate: selectedDate }),
+        ...(filters.rookie && { rookie: filters.rookie }),
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+        sortBy: 'createdAt' as const,
+        sortOrder: 'desc' as const
+    }), [debouncedSearchTerm, filters.position, filters.team, selectedDate, filters.rookie, currentPage])
+
+    // Main query for nuggets - with all filters
     const {
         data: nuggetsData,
         isLoading: isLoadingNuggets,
         error: nuggetsError,
         isFetching: isFetchingNuggets
-    } = useGetNuggetsQuery({
-        ...(filters.rookie && { rookie: filters.rookie }),
-        ...(filters.position && { position: filters.position }),
-        page: currentPage,
-        limit: ITEMS_PER_PAGE
-    }, {
-        skip: false
-    })
-
-    // Search query - we'll handle this client-side
-    const [searchResults, setSearchResults] = useState<any[]>([])
+    } = useGetNuggetsQuery(queryParams)
 
     // Teams query
     const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
@@ -107,7 +130,7 @@ export default function NuggetsPage() {
         )
     }
 
-    // Handle loading nuggets and extracting filter options
+    // Handle loading nuggets
     useEffect(() => {
         if (nuggetsData?.data?.nuggets) {
             const newNuggets = nuggetsData.data.nuggets
@@ -123,90 +146,22 @@ export default function NuggetsPage() {
             // Check if there are more nuggets to load
             setHasMoreNuggets(newNuggets.length === ITEMS_PER_PAGE)
             setIsLoadingMore(false)
-
-            // Extract unique positions from all nuggets (only on first page)
-            if (currentPage === 1) {
-                const positions = [...new Set(newNuggets
-                    .map((nugget: any) => nugget.player.position)
-                    .filter(Boolean)
-                )].sort()
-
-                setAvailablePositions(positions)
-
-                // Extract unique teams from all nuggets (only on first page)
-                const teams = [...new Set(newNuggets
-                    .map((nugget: any) => nugget.player.team)
-                    .filter(Boolean)
-                )].sort()
-
-                setAvailableTeams(teams)
-            }
         }
     }, [nuggetsData, currentPage])
 
-    // Client-side search functionality
+    // Search functionality
     const handleSearch = (term: string) => {
         setSearchTerm(term)
-        setIsSearching(!!term)
-
-        if (term) {
-            const searchTermLower = term.toLowerCase()
-            const filtered = allNuggets.filter(nugget =>
-                nugget.content.toLowerCase().includes(searchTermLower) ||
-                nugget.player.name.toLowerCase().includes(searchTermLower) ||
-                nugget.sourceName?.toLowerCase().includes(searchTermLower) ||
-                teamsData?.teams.find(team => team.name === nugget.player.team)?.name?.toLowerCase().includes(searchTermLower)
-            )
-            setSearchResults(filtered)
-        } else {
-            setSearchResults([])
-        }
-    }
-
-    // Client-side filtering and sorting
-    const getFilteredAndSortedNuggets = (nuggets: any[]) => {
-        let filtered = [...nuggets]
-
-        // Apply date filter if selected
-        if (selectedDate) {
-            const selectedDateObj = new Date(selectedDate)
-            filtered = filtered.filter(nugget => {
-                const nuggetDate = new Date(nugget.createdAt)
-                return nuggetDate.toDateString() === selectedDateObj.toDateString()
-            })
-        }
-
-        // Apply position filter
-        if (filters.positions && filters.positions.length > 0) {
-            filtered = filtered.filter(nugget =>
-                filters.positions!.includes(nugget.player.position)
-            )
-        }
-
-        // Apply team filter
-        if (filters.team) {
-            filtered = filtered.filter(nugget =>
-                teamsData?.teams.find(team => team.name === nugget.player.team)?.name?.toLowerCase() === filters.team?.toLowerCase()
-            )
-        }
-
-        // Apply sorting (always sort by date, newest first)
-        return filtered.sort((a, b) => {
-            const dateA = new Date(a.createdAt).getTime()
-            const dateB = new Date(b.createdAt).getTime()
-            return dateB - dateA // Newest first
-        })
-    }
-
-    // Handle date change
-    const handleDateChange = (date: string) => {
-        setSelectedDate(date)
+        setCurrentPage(1) // Reset to first page when searching
+        setAllNuggets([]) // Clear current results
     }
 
     // Clear date filter
     const clearDateFilter = () => {
         setSelectedDate('')
         setDate(undefined)
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Handle position filter change
@@ -215,6 +170,8 @@ export default function NuggetsPage() {
             ...prev,
             position: position === 'all' ? '' : position
         }))
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Handle team filter change
@@ -223,6 +180,8 @@ export default function NuggetsPage() {
             ...prev,
             team: team === 'all' ? '' : team
         }))
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Handle rookie filter change
@@ -231,6 +190,8 @@ export default function NuggetsPage() {
             ...prev,
             rookie: isRookie
         }))
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Clear all filters
@@ -246,8 +207,7 @@ export default function NuggetsPage() {
         setSelectedDate('')
         setDate(undefined)
         setSearchTerm('')
-        setIsSearching(false)
-        setSearchResults([])
+        setDebouncedSearchTerm('')
         setCurrentPage(1)
         setAllNuggets([])
         setHasMoreNuggets(true)
@@ -260,13 +220,6 @@ export default function NuggetsPage() {
             setCurrentPage(prev => prev + 1)
         }
     }
-
-    // Reset pagination when filters change
-    useEffect(() => {
-        setCurrentPage(1)
-        setAllNuggets([])
-        setHasMoreNuggets(true)
-    }, [filters.position, filters.team, filters.rookie, selectedDate])
 
     // Image modal functions
     const openImageModal = (src: string, alt: string, images?: string[], currentIndex?: number) => {
@@ -380,7 +333,8 @@ export default function NuggetsPage() {
 
     const isLoading = isLoadingNuggets || authLoading || premiumLoading || isLoadingTeams
     const error = nuggetsError
-    const displayNuggets = isSearching ? searchResults : getFilteredAndSortedNuggets(allNuggets)
+    const displayNuggets = allNuggets
+    const hasActiveFilters = debouncedSearchTerm || filters.position || filters.team || selectedDate || filters.rookie
 
     // Show authentication required message if not authenticated
     if (!authLoading && !isAuthenticated && !user?.memberships) {
@@ -475,33 +429,50 @@ export default function NuggetsPage() {
 
 
                         {/* Date Filter */}
-                        <Popover open={open} onOpenChange={setOpen}>
-                            <PopoverTrigger asChild className='h-10 w-full lg:w-42'>
+                        <div className="flex gap-2 w-full lg:w-auto">
+                            <Popover open={open} onOpenChange={setOpen}>
+                                <PopoverTrigger asChild className='h-10 flex-1 lg:w-42'>
+                                    <Button
+                                        variant="outline"
+                                        className="justify-between text-left font-normal h-12"
+                                    >
+                                        {date ? date.toLocaleDateString() : <span>Select By Date</span>}
+                                        <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start" side='bottom'>
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
+                                        onSelect={(selectedCalendarDate: Date | undefined) => {
+                                            setDate(selectedCalendarDate)
+                                            if (selectedCalendarDate) {
+                                                const dateString = selectedCalendarDate.toISOString().split('T')[0]
+                                                setSelectedDate(dateString)
+                                                setCurrentPage(1)
+                                                setAllNuggets([])
+                                            } else {
+                                                setSelectedDate('')
+                                                setCurrentPage(1)
+                                                setAllNuggets([])
+                                            }
+                                            setOpen(false)
+                                        }}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                            {date && (
                                 <Button
                                     variant="outline"
-                                    className="justify-between text-left font-normal h-12"
+                                    onClick={clearDateFilter}
+                                    className="h-12 px-3"
+                                    title="Clear date filter"
                                 >
-                                    {date ? date.toLocaleDateString() : <span>Select By Date</span>}
-                                    <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
+                                    <X className="h-4 w-4" />
                                 </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start" side='bottom'>
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={selectedCalendarDate => {
-                                        setDate(selectedCalendarDate)
-                                        if (selectedCalendarDate) {
-                                            setSelectedDate(selectedCalendarDate.toISOString().split('T')[0])
-                                        } else {
-                                            setSelectedDate('')
-                                        }
-                                        setOpen(false)
-                                    }}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
+                            )}
+                        </div>
 
 
                         {/* Position Filter Dropdown */}
@@ -577,14 +548,14 @@ export default function NuggetsPage() {
                         {displayNuggets.length === 0 && !isLoading ? (
                             <div className="text-center py-12">
                                 <p className="text-xl text-gray-600 mb-4">
-                                    {isSearching ? 'No nuggets found for your search.' : 'No nuggets available.'}
+                                    {hasActiveFilters ? 'No nuggets found for your filters.' : 'No nuggets available.'}
                                 </p>
-                                {isSearching && (
+                                {hasActiveFilters && (
                                     <button
-                                        onClick={() => handleSearch('')}
+                                        onClick={clearFilters}
                                         className="text-red-800 hover:cursor-pointer font-semibold"
                                     >
-                                        Clear search
+                                        Clear filters
                                     </button>
                                 )}
                             </div>
@@ -669,7 +640,7 @@ export default function NuggetsPage() {
                                     })}
                                 </div>
                                 {/* Load More Button */}
-                                {!isSearching && hasMoreNuggets && displayNuggets.length > 0 && (
+                                {hasMoreNuggets && displayNuggets.length > 0 && (
                                     <div className="text-center py-6">
                                         <button
                                             onClick={loadMoreNuggets}
