@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
   --card: 222.2 84% 4.9%;
   --card-foreground: 210 40% 98%;
   --popover: 222.2 84% 4.9%;
@@ -75,6 +75,56 @@ body {
   color: hsl(var(--foreground));
   font-family: var(--font-cabin);
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom theme-aware classes */
+.podcast-section {
+  background-color: transparent;
+}
+
+.dark .podcast-section {
+  background-color: #2C204B;
+}
+
+.subscription-gradient {
+  display: none;
+}
+
+.dark .subscription-gradient {
+  display: block;
+  background: linear-gradient(to bottom right, #2C204B, rgba(44, 32, 75, 0.2), #2C204B);
+}
+
+.check-circle {
+  background-color: white;
+}
+
+.dark .check-circle {
+  background-color: #9F0712;
+}
+
+.check-icon {
+  color: #9F0712;
+}
+
+.dark .check-icon {
+  color: white;
+}
+
+.theme-text {
+  color: #374151;
+}
+
+.dark .theme-text {
+  color: white;
+}
+
+.theme-muted {
+  color: #6B7280;
+}
+
+.dark .theme-muted {
+  color: #D1D5DB;
 }
 
 /* Oswald Font Utility Class */

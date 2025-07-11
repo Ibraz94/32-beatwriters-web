@@ -90,20 +90,22 @@ function Header() {
     ];
 
     return (
-        <header className="z-50 w-full border-gray-100 shadow-sm bg-background/90 container mx-auto">
+        <header className={`z-50 w-full border-gray-100 shadow-sm transition-colors duration-300 ${theme === 'light' ? 'bg-white text-black' : 'bg-[#18122B] text-white'} container mx-auto`}>
             <div>
                 <div className="flex h-[80px] lg:h-[80px] items-center justify-between px-2 lg:px-0">
                     {/* Logo and Social Links */}
                     <div className="flex items-center justify-between w-full space-x-3">
                         <Link href="/" className="flex items-center space-x-2 lg:space-x-2 hover:opacity-90 transition-opacity pl-2">
                             <div className="relative">
-                                <Image
-                                    src={"/32bw_logo_white.png"}
-                                    alt="32 Beat Writers"
-                                    width={50}
-                                    height={50}
-                                    className=""
-                                />
+                                {mounted && (
+                                    <Image
+                                        src={theme === 'light' ? '/logo-small.webp' : '/32bw_logo_white.png'}
+                                        alt="32 Beat Writers"
+                                        width={50}
+                                        height={50}
+                                        className=""
+                                    />
+                                )}
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-extrabold text-2xl -mb-1 font-oswald">
@@ -183,10 +185,10 @@ function Header() {
                             </Link>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <Link href="https://spotify.com/32beatwriters">
+                            <Link href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c">
                                 <Image src={"/icons-spotify.svg"} alt="Spotify" width={20} height={20} />
                             </Link>
-                            <Link href="https://apple.com/32beatwriters"    >
+                            <Link href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292"    >
                                 <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={20} height={20} />
                             </Link>
                         </div>
@@ -198,7 +200,7 @@ function Header() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald"
+                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white"
                             >
                                 {link.label}
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
@@ -208,7 +210,7 @@ function Header() {
 
                     {/* Desktop Actions */}
                     <div className="hidden lg:flex items-center space-x-4">
-                        {/* <ThemeToggle /> */}
+                        <ThemeToggle />
                         {/* <div className="w-px h-7 bg-gray-300"></div> */}
                         {isAuthenticated ? (
                             <div className="relative" ref={dropdownRef}>
@@ -295,7 +297,7 @@ function Header() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="block px-4 py-3 hover:text-red-800 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105"
+                                    className="block px-4 py-3 hover:text-red-800 text-white rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     style={{
                                         animationDelay: isMobileMenuOpen ? `${index * 50}ms` : '0ms'

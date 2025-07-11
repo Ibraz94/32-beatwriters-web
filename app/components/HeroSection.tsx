@@ -19,10 +19,10 @@ export default function HeroSection() {
                             {/* Main Heading */}
                             <div className="space-y-4 ml-24">
                                 <div className="font-black ">
-                                    <h1 className="text-4xl sm:text-xl lg:text-7xl leading-tight font-oswald">
+                                    <h1 className="text-4xl sm:text-xl lg:text-7xl leading-tight font-oswald text-white">
                                         League Winning
                                     </h1>
-                                    <h2 className="text-xl sm:text-xl lg:text-5xl font-light mt-2 font-oswald">
+                                    <h2 className="text-xl sm:text-xl lg:text-5xl font-light mt-2 font-oswald text-white">
                                         Intel From Beat Writers
                                     </h2>
                                 </div>
@@ -82,11 +82,11 @@ export default function HeroSection() {
 
                     {/* Main Heading */}
                     <div className="text-center space-y-4 mb-8">
-                        <div className="font-black">
-                            <h1 className="text-4xl sm:text-5xl leading-tight text-white">
+                        <div className="">
+                            <h1 className="text-4xl sm:text-5xl leading-tight text-white font-oswald">
                                 League Winning
                             </h1>
-                            <h2 className="text-2xl sm:text-3xl font-light mt-2 text-white">
+                            <h2 className="text-2xl sm:text-3xl font-light mt-2 text-white font-oswald">
                                 Intel From Beat Writers
                             </h2>
                         </div>

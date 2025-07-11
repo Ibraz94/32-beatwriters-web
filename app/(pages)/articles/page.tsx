@@ -166,7 +166,7 @@ export default function ArticlesPage() {
             placeholder="Search articles..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-10 py-3 border border-white/20 rounded shadow-sm bg-[#2C204B] text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+            className="w-full pl-10 pr-10 py-3 border border-white/20 rounded shadow-sm bg-white dark:bg-[#2C204B] text-black dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
           />
           {searchTerm && (
             <button
@@ -187,7 +187,7 @@ export default function ArticlesPage() {
           const canAccess = canAccessArticle(article.access)
 
           return (
-            <article key={index} className="rounded-md shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer bg-[#2C204B] p-4">
+            <article key={index} className="rounded-md shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer bg-white light:bg-white dark:bg-[#2C204B] p-4 dark:border dark:border-white/10">
               {/* Article Image */}
               <Link href={buttonConfig.href}>
                 <div className="relative aspect-video">
