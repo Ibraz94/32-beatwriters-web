@@ -203,7 +203,7 @@ export default function TrendingPlayers() {
 
     return (
         <div className="px-4 md:px-0 container mx-auto mt-8">
-            <h1 className="text-center text-4xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-8">
+            <h1 className="text-center text-4xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-8 font-oswald">
                 Trending Players
             </h1>
 

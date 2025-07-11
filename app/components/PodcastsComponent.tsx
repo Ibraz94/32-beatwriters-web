@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Play, Clock, Calendar, Headphones, TrendingUp, ArrowRight, ArrowLeft } from "lucide-react";
 import { useGetEpisodesQuery, getImageUrl, PodcastData, ApiResponse } from '@/lib/services/podcastApi';
-
 // Mock data for podcast categories (keeping this as it's UI-only)
 const podcastCategories = [
     { name: "Fantasy Focus", count: 24, color: "bg-blue-500" },
@@ -41,14 +40,14 @@ export default function PodcastsComponent() {
     };
 
     return (
-        <section className="bg-[#2C204B] px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 mb-1 container mx-auto">
+        <section className="podcast-section px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 mb-1 container mx-auto">
             <div className="">
                 {/* Header */}
                 <div className="text-center mb-8 md:mb-12">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-white font-bold mb-3 md:mb-4">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl  font-bold mb-3 md:mb-4">
                         Our Podcast Network
                     </h2>
-                    <p className="text-sm sm:text-base md:text-lg text-white max-w-5xl mx-auto px-2">
+                    <p className="text-sm sm:text-base md:text-lg max-w-5xl mx-auto px-2">
                         Welcome to the NFL Network Podcast, your go-to source for everything NFL! We dive deep into game analyses, player performances, and the hottest news from around the league. Join us weekly for engaging discussions and expert commentary!
                     </p>
                 </div>
@@ -57,7 +56,7 @@ export default function PodcastsComponent() {
                 <div className="mb-8 md:mb-12">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4">
-                            <h3 className="text-xl sm:text-2xl md:text-3xl text-white font-bold">Latest Episode</h3>
+                            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold font-oswald">Latest Episode</h3>
                             <div className="bg-red-800 rounded-md">
                                 <Link href="/podcasts">
                                     <button className="text-white px-4 md:px-6 py-2 hover:scale-102 transition-colors text-sm md:text-base">
@@ -83,7 +82,7 @@ export default function PodcastsComponent() {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                             {Array.from({ length: 3 }).map((_, index) => (
                                 <div key={index} className="animate-pulse">
-                                    <div className="bg-gray-700 rounded-xl h-48 md:h-64 mb-4"></div>
+                                    <div className="bg-gray-700 rounded-xl aspect-video mb-4"></div>
                                     <div className="space-y-2">
                                         <div className="h-4 bg-gray-700 rounded w-3/4"></div>
                                         <div className="h-3 bg-gray-700 rounded w-1/2"></div>
@@ -115,12 +114,12 @@ export default function PodcastsComponent() {
                                     <div className="relative mb-3 md:mb-4">
 
                                         {/* Image Container */}
-                                        <div className="relative w-full h-48 sm:h-56 md:h-64 lg:h-80 overflow-hidden rounded-lg">
+                                        <div className="relative w-full aspect-video overflow-hidden rounded-lg">
                                             <Image
                                                 src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"}
                                                 alt={podcast.title}
                                                 fill
-                                                className="object-contain"
+                                                className="object-cover"
                                             />
                                             
                                             {/* Play Button Overlay */}
@@ -135,7 +134,7 @@ export default function PodcastsComponent() {
                                     {/* Content */}
                                     <div className="space-y-1 md:space-y-2">
                                         {/* Author and Date */}
-                                        <div className="flex items-center gap-2 text-xs md:text-sm text-gray-300">
+                                        <div className="flex items-center gap-2 text-xs md:text-sm theme-muted">
                                             <span>{podcast.hostedBy}</span>
                                             <span>-</span>
                                             <span>{formatTimeAgo(podcast.podcastTime)}</span>
@@ -143,7 +142,7 @@ export default function PodcastsComponent() {
 
                                         {/* Title */}
                                         <Link href={`/podcasts/${podcast.id}`}>
-                                            <h4 className="font-bold text-lg sm:text-xl md:text-2xl text-white transition-colors line-clamp-2">
+                                            <h4 className="font-bold text-lg sm:text-xl md:text-2xl theme-text transition-colors line-clamp-2">
                                                 {podcast.title}
                                             </h4>
                                         </Link>

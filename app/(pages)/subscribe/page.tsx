@@ -261,8 +261,8 @@ export default function PremiumSignup() {
     <div className="container mx-auto max-w-8xl flex items-center justify-center px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12 lg:mt-12 mb-16 sm:mb-20 lg:mb-24">
       <div>
         <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
-            Gain Your Competitive  <span className="text-red-800">Edge</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight font-oswald">
+            Gain Your Competitive Edge
           </h1>
           <p className="text-lg sm:text-xl max-w-3xl mx-auto px-2 sm:px-0">
             Tools and insights specifically designed to give you an advantage over your league-mates
@@ -289,12 +289,22 @@ export default function PremiumSignup() {
                   <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div>
+                  <h4 className="font-semibold text-sm sm:text-base">Feed Access</h4>
+                  <p className="text-gray-500 text-sm sm:text-base">A feed of all the most important NFL and player news.  This can replace social media if you want.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                </div>
+                <div>
                   <h4 className="font-semibold text-sm sm:text-base">Early Access</h4>
                   <p className="text-gray-500 text-sm sm:text-base">Ability to search insight and updates. Access to all our Premium articles.</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3">
+              {/* <div className="flex items-start space-x-3">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                   <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
@@ -302,7 +312,7 @@ export default function PremiumSignup() {
                   <h4 className="font-semibold text-sm sm:text-base">Special</h4>
                   <p className="text-gray-500 text-sm sm:text-base">Exclusive podcast episodes. Playing in our Fantasy Football Leagues. Our Undying Love and Appreciation </p>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex items-start space-x-3">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
@@ -310,7 +320,17 @@ export default function PremiumSignup() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm sm:text-base">Community Access</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">Join our exclusive community of subscribers and connect with like-minded people.</p>
+                  <p className="text-gray-500 text-sm sm:text-base">Join our exclusive Discord community of subscribers and connect with like-minded people.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm sm:text-base">Player Pages</h4>
+                  <p className="text-gray-500 text-sm sm:text-base">Complete player breakdown from their news to their stats to their key fantasy metrics.</p>
                 </div>
               </div>
             </div>

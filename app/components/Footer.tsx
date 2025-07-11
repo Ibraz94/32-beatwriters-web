@@ -39,14 +39,14 @@ export default function Footer() {
         Information: [
             { label: "Players", href: "/players" },
             { label: "Podcast", href: "/podcasts" },
-            { label: "About Us", href: "/about" },
+            /* { label: "About Us", href: "/about" }, */
 
         ],
         Socials: [
-            { label: "Youtube", href: "https://www.youtube.com/@32beatwriters" },
-            { label: "Apple", href: "https://podcasts.apple.com/us/podcast/32-beat-writers/id1715000000" },
-            { label: "Twitter", href: "https://x.com/32beatwriters" },
-            { label: "Spotify", href: "https://open.spotify.com/show/00000000000000000000000000000000" }
+            { label: "Youtube", target: "_blank", href: "https://www.youtube.com/@32beatwriters" },
+            { label: "Apple", target: "_blank", href: "https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292" },
+            { label: "Twitter", target: "_blank", href: "https://x.com/32beatwriters" },
+            { label: "Spotify", target: "_blank", href: "https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c" }
         ]
     };
 
@@ -143,6 +143,7 @@ export default function Footer() {
                                     <li key={link.label}>
                                         <Link
                                             href={link.href}
+                                            {...('target' in link && { target: (link as any).target })}
                                             className="text-muted-foreground hover:text-red-600 transition-colors text-md"
                                         >
                                             {link.label}

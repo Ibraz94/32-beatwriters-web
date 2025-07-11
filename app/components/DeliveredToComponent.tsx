@@ -6,11 +6,14 @@ import Image from "next/image"
 
 export default function DeliveredToComponent() {
     const [email, setEmail] = useState('')
+    const [isSubscribed, setIsSubscribed] = useState(false)
 
     const handleSubscribe = (e: React.FormEvent) => {
         e.preventDefault()
         // Handle subscription logic here
         console.log('Subscribing email:', email)
+        setIsSubscribed(true)
+        setEmail('') // Clear the email input
     }
 
     return (
@@ -65,25 +68,34 @@ export default function DeliveredToComponent() {
                     <span className="sm:hidden"> </span>and insider reports delivered to your inbox
                 </p>
 
-                <form onSubmit={handleSubscribe} className="space-y-4 max-w-md mx-auto">
-                    <div className="relative">
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Your Email Address"
-                            className="w-full px-4 md:px-6 py-3 md:py-4 rounded-lg bg-red-800 border border-red-500/50 text-white placeholder-red-200 focus:outline-none focus:ring-2 focus:ring-white/50 text-base md:text-lg"
-                            required
-                        />
+                {isSubscribed ? (
+                    <div className="max-w-md mx-auto">
+                        <div className="text-white bg-white/20 px-6 py-4 rounded shadow">
+                            <p className="text-lg font-semibold">You are successfully subscribed!</p>
+                            <p className="text-sm mt-1">Thank you for subscribing to our newsletter.</p>
+                        </div>
                     </div>
+                ) : (
+                    <form onSubmit={handleSubscribe} className="space-y-4 max-w-md mx-auto">
+                        <div className="relative">
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Your Email Address"
+                                className="w-full px-4 md:px-6 py-3 md:py-4 rounded-lg bg-red-800 border border-red-500/50 text-white placeholder-red-200 focus:outline-none focus:ring-2 focus:ring-white/50 text-base md:text-lg"
+                                required
+                            />
+                        </div>
 
-                    <button
-                        type="submit"
-                        className="w-full md:w-auto bg-white text-black font-bold py-3 md:py-4 px-8 md:px-10 rounded-lg text-base md:text-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    >
-                        Subscribe Now
-                    </button>
-                </form>
+                        <button
+                            type="submit"
+                            className="w-full md:w-auto bg-white text-black font-bold py-3 md:py-4 px-8 md:px-10 rounded-lg text-base md:text-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        >
+                            Subscribe Now
+                        </button>
+                    </form>
+                )}
             </div>
             </div>
         </div>

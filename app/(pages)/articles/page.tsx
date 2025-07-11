@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Gem, Shield } from 'lucide-react'
+import { Gem, Shield, Search, X } from 'lucide-react'
 import Image from 'next/image'
 import { useGetArticlesQuery, getImageUrl } from '@/lib/services/articlesApi'
 import { useState, useEffect } from 'react'
@@ -12,16 +12,28 @@ export default function ArticlesPage() {
   const [allArticles, setAllArticles] = useState<any[]>([])
   const [hasMoreArticles, setHasMoreArticles] = useState(true)
   const [isAccessible, setIsAccessible] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
 
   // Get user authentication status and premium access  
   const { checkPremiumAccess, isAuthenticated, user } = useAuth()
   const hasPremiumAccess = checkPremiumAccess()
 
-  // Simplified query - fetch all published articles with basic pagination
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+      setPage(1)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
+
+  // Fetch articles with search
   const { data: articles, isLoading, error, isFetching } = useGetArticlesQuery({
     page: page,
     limit: 12,
     status: 'published',
+    ...(debouncedSearchTerm && { search: debouncedSearchTerm })
   })
 
   // Handle loading more articles
@@ -104,7 +116,7 @@ export default function ArticlesPage() {
           {/* Loading skeleton */}
           {[...Array(6)].map((_, i) => (
             <div key={i} className="rounded-xl border shadow-lg overflow-hidden animate-pulse">
-              <div className="h-48 bg-gray-200"></div>
+              <div className="aspect-video bg-gray-200"></div>
               <div className="p-6">
                 <div className="h-6 bg-gray-200 rounded mb-3"></div>
                 <div className="h-4 bg-gray-200 rounded mb-2"></div>
@@ -145,6 +157,29 @@ export default function ArticlesPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Search Bar */}
+      <div className="mb-8 flex w-full">
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Search articles..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-10 py-3 border border-white/20 rounded shadow-sm bg-white dark:bg-[#2C204B] text-black dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+          />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-600 focus:outline-none"
+              aria-label="Clear search"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+      </div>
       {/* Articles Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {allArticles.map((article, index) => {
@@ -152,10 +187,10 @@ export default function ArticlesPage() {
           const canAccess = canAccessArticle(article.access)
 
           return (
-            <article key={index} className="rounded-md shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer bg-[#2C204B] p-4">
+            <article key={index} className="rounded-md shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer bg-white light:bg-white dark:bg-[#2C204B] p-4 dark:border dark:border-white/10">
               {/* Article Image */}
               <Link href={buttonConfig.href}>
-                <div className="relative h-72">
+                <div className="relative aspect-video">
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
                     {article.featuredImage ? (
                       <Image

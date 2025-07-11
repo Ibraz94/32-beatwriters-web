@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
         hostname: 'www.playerprofiler.com',
         port: '',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.32beatwriters.staging.pegasync.com',
+        port: '',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4004',
+      },
     ],
   },
 };

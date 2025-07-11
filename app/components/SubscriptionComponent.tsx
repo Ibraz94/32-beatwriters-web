@@ -44,12 +44,13 @@ export default function SubscriptionComponent() {
 
   const benefits = [
     "Summaries All Offseason – The Best, Complete Reports in the Industry That's Used By Industry Leaders",
-    "Ability to search insight and updates",
+    "Ability to search insight and updates on our News Feed",
     "Access to all our Premium articles", 
     "Exclusive podcast episodes",
     "Playing in our Fantasy Football Leagues",
     "Our Undying Love and Appreciation",
-    "Secure Payment By Stripe - No Hidden Fees"
+    "Secure Payment By Stripe - No Hidden Fees",
+    "Access to all additional features as they roll out for no additional cost"
   ]
 
   if (!subscriptionOptions) {
@@ -67,12 +68,12 @@ export default function SubscriptionComponent() {
   const currentPlan = selectedPlan === 'monthly' ? monthlyPlan : annualPlan
 
   return (
-    <div className="bg-background py-16 relative overflow-hidden border-t border-border mb-10">
+    <div className="bg-transparent py-16 relative overflow-hidden">
       {/* Background decoration for dark mode */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-muted/20 to-background"></div>
+      <div className="subscription-gradient absolute inset-0"></div>
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
-      <div className="text-center text-white mb-16">
+      <div className="text-center mb-16">
         <h1 className="text-6xl font-bold">Our Pricing Plan</h1>
         <p className="text-xl mt-6">Signs up for exclusive access to all our reports, tools</p>
       </div>
@@ -89,8 +90,8 @@ export default function SubscriptionComponent() {
               
               {benefits.map((benefit, index) => (
                 <div key={index} className="flex items-start space-x-4">
-                  <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 mt-1">
-                    <Check className="w-4 h-4 text-white dark:text-black" />
+                  <div className="check-circle w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <Check className="check-icon w-4 h-4" />
                   </div>
                   <p className="text-lg leading-relaxed text-foreground">{benefit}</p>
                 </div>

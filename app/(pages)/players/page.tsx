@@ -3,13 +3,19 @@
 import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Users} from "lucide-react"
+import { Users, Search, X } from "lucide-react"
 import { useGetPlayersQuery, getImageUrl, Player } from '@/lib/services/playersApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useSearchParams, useRouter } from "next/navigation"
 
 // PlayerCard component to handle individual player rendering with hooks
-function PlayerCard({ player, currentPage, teamsData }: { player: Player; currentPage: number; teamsData: any }) {
+function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollow }: {
+  player: Player;
+  currentPage: number;
+  teamsData: any;
+  isFollowing: boolean;
+  onToggleFollow: () => void;
+}) {
     const imageUrl = getImageUrl(player.headshotPic)
     
     // Helper function to find team by abbreviation or name
@@ -50,8 +56,14 @@ function PlayerCard({ player, currentPage, teamsData }: { player: Player; curren
                     <h3 className="font-bold text-2xl leading-tight">
                         {player.name}
                     </h3>
-                    <button className="text-white text-xs border border-red-800 px-5 rounded-sm hover:bg-red-800 hover:cursor-pointer transition-colors">
-                        FOLLOW
+                    <button
+                      className={`text-white text-xs border px-5 rounded-sm transition-colors hover:cursor-pointer ${isFollowing ? 'bg-red-800 border-red-800' : 'border-red-800 hover:bg-red-800'}`}
+                      onClick={e => {
+                        e.preventDefault(); // Prevent Link navigation
+                        onToggleFollow();
+                      }}
+                    >
+                      {isFollowing ? 'FOLLOWING' : 'FOLLOW'}
                     </button>
                 </div>
 
@@ -89,6 +101,16 @@ function PlayersContent() {
         const pageFromUrl = searchParams?.get('page')
         return pageFromUrl ? parseInt(pageFromUrl, 10) : 1
     })
+
+    // Track follow state for each player
+    const [followedPlayers, setFollowedPlayers] = useState<{ [id: string]: boolean }>({})
+
+    const toggleFollow = (playerId: string) => {
+        setFollowedPlayers(prev => ({
+            ...prev,
+            [playerId]: !prev[playerId]
+        }))
+    }
 
     // Teams query
     const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
@@ -233,9 +255,33 @@ function PlayersContent() {
         <section className="container mx-auto max-w-7xl px-4 py-8">
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 font-oswald">
                     All Players
                 </h1>
+            </div>
+
+            {/* Search Bar */}
+            <div className="mb-8 flex w-full">
+                <div className="relative w-full">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                        type="text"
+                        placeholder="Search players..."
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-10 py-3 border border-white/20 rounded shadow-sm bg-[#2C204B] text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                    />
+                    {searchTerm && (
+                        <button
+                            type="button"
+                            onClick={() => setSearchTerm("")}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-600 focus:outline-none"
+                            aria-label="Clear search"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Search and Filters */}
@@ -275,7 +321,14 @@ function PlayersContent() {
             {/* Players Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {players.map((player) => (
-                    <PlayerCard key={player.id} player={player} currentPage={page} teamsData={teamsData} />
+                    <PlayerCard
+                      key={player.id}
+                      player={player}
+                      currentPage={page}
+                      teamsData={teamsData}
+                      isFollowing={!!followedPlayers[player.id]}
+                      onToggleFollow={() => toggleFollow(player.id.toString())}
+                    />
                 ))}
             </div>
 
