@@ -42,7 +42,7 @@ interface PaginatedNuggets {
   }
 }
 
-interface NuggetFilters {
+export interface NuggetFilters {
   playerId?: number
   sourceName?: string
   sourceUrl?: string
@@ -53,6 +53,7 @@ interface NuggetFilters {
   sortOrder?: 'asc' | 'desc'
   rookie?: boolean
   position?: string
+  search?: string
 }
 
 // Helper function to construct full image URLs
