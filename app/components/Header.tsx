@@ -97,10 +97,10 @@ function Header() {
                         Listen Us
                     </h1>
                     <div className="flex items-center space-x-1 lg:space-x-2">
-                        <Link href="https://apple.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
+                        <Link href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
                             <Image src={"/apple-logo.svg"} alt="Apple Podcasts" width={24} height={24} className="lg:w-[28px] lg:h-[26px]" />
                         </Link>
-                        <Link href="https://spotify.com/32beatwriters" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
+                        <Link href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
                             <Image src={"/spotify-logo.svg"} alt="Spotify" width={24} height={24} className="lg:w-[28px] lg:h-[26px]" />
                         </Link>
                     </div>
@@ -144,7 +144,7 @@ function Header() {
                                     Stay Connected
                                 </h1>
                                 <p className="text-white text-md 1280:text-sm">
-                                    Watch, Listen & Stay Updated.
+                                    Watch, Listen, and Stay Updated.
                                 </p>
                             </div>
 
@@ -208,7 +208,7 @@ function Header() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md"
+                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald"
                             >
                                 {link.label}
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>

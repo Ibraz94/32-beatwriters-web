@@ -261,8 +261,8 @@ export default function PremiumSignup() {
     <div className="container mx-auto max-w-8xl flex items-center justify-center px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12 lg:mt-12 mb-16 sm:mb-20 lg:mb-24">
       <div>
         <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
-            Gain Your Competitive  <span className="text-red-800">Edge</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight font-oswald">
+            Gain Your Competitive Edge
           </h1>
           <p className="text-lg sm:text-xl max-w-3xl mx-auto px-2 sm:px-0">
             Tools and insights specifically designed to give you an advantage over your league-mates
