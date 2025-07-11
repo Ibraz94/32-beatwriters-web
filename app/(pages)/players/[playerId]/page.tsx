@@ -32,6 +32,9 @@ export default function PlayerProfile() {
 
   const queryParams = useMemo(() => ({
     ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
+    playerId: parseInt(playerId),
+    sortBy: 'createdAt' as const,
+    sortOrder: 'desc' as const
   }), [debouncedSearchTerm, playerId])
 
   // Main query for nuggets - with all filters
@@ -40,7 +43,7 @@ export default function PlayerProfile() {
     isLoading: isLoadingNuggets,
     error: nuggetsError,
     isFetching: isFetchingNuggets
-  } = useGetNuggetsQuery(queryParams)
+  } = useGetNuggetsQuery(queryParams as NuggetFilters)
 
 
   useEffect(() => {
