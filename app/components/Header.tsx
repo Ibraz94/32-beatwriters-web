@@ -92,19 +92,6 @@ function Header() {
     return (
         <header className="z-50 w-full border-gray-100 shadow-sm bg-background/90 container mx-auto">
             <div>
-                <div className="h-12 lg:flex items-center justify-end space-x-2 px-2 py-2 bg-black hidden">
-                    <h1 className="text-right text-white dark:text-white text-sm lg:text-lg">
-                        Listen Us
-                    </h1>
-                    <div className="flex items-center space-x-1 lg:space-x-2">
-                        <Link href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
-                            <Image src={"/apple-logo.svg"} alt="Apple Podcasts" width={24} height={24} className="lg:w-[28px] lg:h-[26px]" />
-                        </Link>
-                        <Link href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c" className="hover:scale-102 rounded-md flex items-center justify-center transition-colors">
-                            <Image src={"/spotify-logo.svg"} alt="Spotify" width={24} height={24} className="lg:w-[28px] lg:h-[26px]" />
-                        </Link>
-                    </div>
-                </div>
                 <div className="flex h-[80px] lg:h-[80px] items-center justify-between px-2 lg:px-0">
                     {/* Logo and Social Links */}
                     <div className="flex items-center justify-between w-full space-x-3">
@@ -119,7 +106,7 @@ function Header() {
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-extrabold text-2xl -mb-1">
+                                <span className="font-extrabold text-2xl -mb-1 font-oswald">
                                     32BeatWriters
                                 </span>
                                 <span className="text-lg text-red-800 ">
@@ -150,15 +137,18 @@ function Header() {
 
                             <div className="relative right-2">
                                 <div className="hidden justify-center items-center md:justify-start space-x-4 lg:flex">
-                                    <Link href="https://youtube.com/@32beatwriters" className="w-[150px] h-10 p-4 bg-red-700 hover:scale-98 rounded flex items-center justify-center transition-colors space-x-1">
+                                    <Link href="https://youtube.com/@32beatwriters" target="_blank" className="w-10 h-10 bg-red-700 hover:scale-98 rounded flex items-center justify-center transition-colors">
                                         <Image src={"/youtube-logo.svg"} alt="Youtube" width={25} height={25} />
-                                        <span className="text-white text-md font-oswald">32BeatWriters</span>
                                     </Link>
-                                    <Link href="https://x.com/32beatwriters" className="w-[150px] h-10 p-4 hover:scale-98  bg-white rounded flex items-center justify-center transition-colors space-x-1">
+                                    <Link href="https://x.com/32beatwriters" target="_blank" className="w-10 h-10 hover:scale-98  bg-white rounded flex items-center justify-center transition-colors">
                                         <Image src={"/x-black-logo.svg"} alt="Twitter" width={25} height={25}  />
-                                        <span className="text-black text-md font-oswald">32BeatWriters</span>
                                     </Link>
-
+                                    <Link href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292" target="_blank" className="w-10 h-10 hover:scale-98  bg-white rounded flex items-center justify-center transition-colors">
+                                        <Image src={"/apple-icon.svg"} alt="Apple Podcasts" width={25} height={25} />
+                                    </Link>
+                                    <Link href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c" target="_blank" className="w-10 h-10 hover:scale-98  bg-white rounded flex items-center justify-center transition-colors">
+                                        <Image src={"/spotify-icon.svg"} alt="Spotify" width={25} height={25} />
+                                    </Link>
                                 </div>
                             </div>
                         </div>

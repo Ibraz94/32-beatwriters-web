@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_CONFIG, buildApiUrl } from '../config/api'
-const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://beatwriters.s3.us-east-2.amazonaws.com/32beatwriters/articles/featuredImage'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'http://localhost:4004'
 
 // Helper function to construct full image URLs
 export const getImageUrl = (imagePath?: string): string | undefined => {
@@ -13,11 +13,11 @@ export const getImageUrl = (imagePath?: string): string | undefined => {
   
   // Handle paths that start with a slash - append directly to base URL
   if (imagePath.startsWith('/')) {
-    return `${IMAGE_BASE_URL}${imagePath}`
+    return `${IMAGE_BASE_URL}/${imagePath}`
   } 
   
   // Handle relative paths - add a slash between base URL and path
-  return `${IMAGE_BASE_URL}/${imagePath}`
+  return `${imagePath}`
 }
 
 export interface Article {

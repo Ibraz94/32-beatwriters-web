@@ -15,8 +15,13 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '32beatwriters.staging.pegasync.com',
+        hostname: 'api.32beatwriters.staging.pegasync.com',
         port: '',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4004',
       },
     ],
   },

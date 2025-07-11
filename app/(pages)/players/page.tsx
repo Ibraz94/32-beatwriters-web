@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Users} from "lucide-react"
+import { Users, Search, X } from "lucide-react"
 import { useGetPlayersQuery, getImageUrl, Player } from '@/lib/services/playersApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useSearchParams, useRouter } from "next/navigation"
@@ -255,9 +255,33 @@ function PlayersContent() {
         <section className="container mx-auto max-w-7xl px-4 py-8">
             {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 font-oswald">
                     All Players
                 </h1>
+            </div>
+
+            {/* Search Bar */}
+            <div className="mb-8 flex w-full">
+                <div className="relative w-full">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                        type="text"
+                        placeholder="Search players..."
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        className="w-full pl-10 pr-10 py-3 border border-white/20 rounded shadow-sm bg-[#2C204B] text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                    />
+                    {searchTerm && (
+                        <button
+                            type="button"
+                            onClick={() => setSearchTerm("")}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-600 focus:outline-none"
+                            aria-label="Clear search"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* Search and Filters */}

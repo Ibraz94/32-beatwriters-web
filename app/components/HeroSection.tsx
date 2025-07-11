@@ -12,9 +12,9 @@ export default function HeroSection() {
                         {/* Left Content Section */}
                         <div className="space-y-8 ">
                             {/* Latest NFL News */}
-                            <div className="ml-24 w-36 px-3 py-3 rounded-full border border-white/20 bg-background/90">
+                            {/* <div className="ml-24 w-36 px-3 py-3 rounded-full border border-white/20 bg-background/90">
                                 <h1 className="text-center text-md text-white">Latest NFL News</h1>
-                            </div>
+                            </div> */}
 
                             {/* Main Heading */}
                             <div className="space-y-4 ml-24">

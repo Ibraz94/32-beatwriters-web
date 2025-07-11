@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_CONFIG, buildApiUrl } from '../config/api'
 
 // Base API URL - defaults to localhost for development
-const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://beatwriters.s3.us-east-2.amazonaws.com/32beatwriters/nuggets'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'http://localhost:4004'
 
 /**
  * Nugget interface representing a single nugget item
@@ -53,7 +53,9 @@ export interface NuggetFilters {
   sortOrder?: 'asc' | 'desc'
   rookie?: boolean
   position?: string
+  team?: string
   search?: string
+  startDate?: string
 }
 
 // Helper function to construct full image URLs
@@ -109,6 +111,14 @@ export const nuggetsApi = createApi({
             }
           }
         })
+        
+        // Debug logging for startDate
+        if (filters.startDate) {
+          console.log('🔍 Nuggets API - startDate received:', filters.startDate)
+          console.log('🔍 Nuggets API - Full filters:', filters)
+          console.log('🔍 Nuggets API - Final URL params:', params.toString())
+        }
+        
         return `?${params.toString()}`
       },
       providesTags: ['Nugget'],

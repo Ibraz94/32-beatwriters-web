@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_CONFIG, buildApiUrl } from '../config/api'
-const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'https://beatwriters.s3.us-east-2.amazonaws.com/32beatwriters/teams'
+const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL || 'http://localhost:4004'
 
 export interface Teams {
   id: string
@@ -49,7 +49,7 @@ export const getTeamLogoUrl = (imagePath?: string): string | undefined => {
   }
   
   // Handle relative paths - add a slash between base URL and path
-  return `${IMAGE_BASE_URL}/${imagePath}`
+  return `${imagePath}`
 }
 
 // Helper function to fetch all teams across all pages

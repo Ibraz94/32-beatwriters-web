@@ -12,7 +12,7 @@ const termsAndConditions = [
     },
     {
         title: "Intellectual Property",
-        content: "The Site and its original content, features, and functionality are owned by [Your Company Name] and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws. All provisions of the Terms which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity, and limitations of liability."
+        content: "The Site and its original content, features, and functionality are owned by 32BeatWriters LLC and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws. All provisions of the Terms which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity, and limitations of liability."
     },
     {
         title: "Termination",
@@ -25,10 +25,6 @@ const termsAndConditions = [
     {
         title: "Changes to These Terms and Conditions",
         content: "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days’ notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion. By continuing to access or use our Site after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the Site."
-    },
-    {
-        title: "Contact Us",
-        content: <Link href='/terms-and-conditions'>If you have any questions about this Privacy Policy, contact us <span className="text-red-800">here.</span></Link>
     }
 ]
 
