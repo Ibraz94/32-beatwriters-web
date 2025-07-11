@@ -95,17 +95,27 @@ export default function NuggetsPage() {
     }, [selectedDate, date])
 
     // Build query parameters
-    const queryParams = useMemo(() => ({
-        ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
-        ...(filters.position && { position: filters.position }),
-        ...(filters.team && { team: filters.team }),
-        ...(selectedDate && { startDate: selectedDate }),
-        ...(filters.rookie && { rookie: filters.rookie }),
-        page: currentPage,
-        limit: ITEMS_PER_PAGE,
-        sortBy: 'createdAt' as const,
-        sortOrder: 'desc' as const
-    }), [debouncedSearchTerm, filters.position, filters.team, selectedDate, filters.rookie, currentPage])
+    const queryParams = useMemo(() => {
+        const params = {
+            ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
+            ...(filters.position && { position: filters.position }),
+            ...(filters.team && { team: filters.team }),
+            ...(selectedDate && { startDate: selectedDate }),
+            ...(filters.rookie && { rookie: filters.rookie }),
+            page: currentPage,
+            limit: ITEMS_PER_PAGE,
+            sortBy: 'createdAt' as const,
+            sortOrder: 'desc' as const
+        }
+        
+        // Debug logging for startDate
+        if (selectedDate) {
+            console.log('🔍 startDate being sent:', selectedDate)
+            console.log('🔍 Full query params:', params)
+        }
+        
+        return params
+    }, [debouncedSearchTerm, filters.position, filters.team, selectedDate, filters.rookie, currentPage])
 
     // Main query for nuggets - with all filters
     const {
@@ -133,20 +143,26 @@ export default function NuggetsPage() {
     useEffect(() => {
         if (nuggetsData?.data?.nuggets) {
             const newNuggets = nuggetsData.data.nuggets
-
             if (currentPage === 1) {
-                // First page - replace all nuggets
                 setAllNuggets(newNuggets)
             } else {
-                // Additional pages - append to existing nuggets
-                setAllNuggets(prev => [...prev, ...newNuggets])
+                setAllNuggets(prev => {
+                    const existingIds = new Set(prev.map(n => n.id))
+                    const filteredNew = newNuggets.filter(n => !existingIds.has(n.id))
+                    return [...prev, ...filteredNew]
+                })
             }
-
-            // Check if there are more nuggets to load
             setHasMoreNuggets(newNuggets.length === ITEMS_PER_PAGE)
             setIsLoadingMore(false)
         }
     }, [nuggetsData, currentPage])
+
+    // After the useEffect that loads nuggets, add:
+    useEffect(() => {
+        if (!isLoadingNuggets && allNuggets.length === 0) {
+            setCurrentPage(1)
+        }
+    }, [isLoadingNuggets, allNuggets])
 
     // Search functionality
     const handleSearch = (term: string) => {
@@ -208,7 +224,6 @@ export default function NuggetsPage() {
         setSearchTerm('')
         setDebouncedSearchTerm('')
         setCurrentPage(1)
-        setAllNuggets([])
         setHasMoreNuggets(true)
     }
 
@@ -447,7 +462,15 @@ export default function NuggetsPage() {
                                         onSelect={(selectedCalendarDate: Date | undefined) => {
                                             setDate(selectedCalendarDate)
                                             if (selectedCalendarDate) {
-                                                const dateString = selectedCalendarDate.toISOString().split('T')[0]
+                                                // Format date as YYYY-MM-DD, handling timezone correctly
+                                                const year = selectedCalendarDate.getFullYear()
+                                                const month = String(selectedCalendarDate.getMonth() + 1).padStart(2, '0')
+                                                const day = String(selectedCalendarDate.getDate()).padStart(2, '0')
+                                                const dateString = `${year}-${month}-${day}`
+                                                
+                                                console.log('📅 Original date:', selectedCalendarDate)
+                                                console.log('📅 Formatted date string:', dateString)
+                                                
                                                 setSelectedDate(dateString)
                                                 setCurrentPage(1)
                                                 setAllNuggets([])

@@ -44,12 +44,13 @@ export default function SubscriptionComponent() {
 
   const benefits = [
     "Summaries All Offseason – The Best, Complete Reports in the Industry That's Used By Industry Leaders",
-    "Ability to search insight and updates",
+    "Ability to search insight and updates on our News Feed",
     "Access to all our Premium articles", 
     "Exclusive podcast episodes",
     "Playing in our Fantasy Football Leagues",
     "Our Undying Love and Appreciation",
-    "Secure Payment By Stripe - No Hidden Fees"
+    "Secure Payment By Stripe - No Hidden Fees",
+    "Access to all additional features as they roll out for no additional cost"
   ]
 
   if (!subscriptionOptions) {
