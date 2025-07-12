@@ -143,18 +143,6 @@ export default function ArticlesPage() {
     )
   }
 
-  // No articles found
-  if (!isLoading && allArticles.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <p className="text-xl mb-4">No articles found</p>
-          <p className="text-gray-600">Check back later for new content.</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Search Bar */}
@@ -180,8 +168,21 @@ export default function ArticlesPage() {
           )}
         </div>
       </div>
-      {/* Articles Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      
+      {/* Content Area */}
+      {!isLoading && allArticles.length === 0 ? (
+        // No articles found
+        <div className="text-center">
+          <p className="text-xl mb-4">
+            {debouncedSearchTerm ? `No articles found for "${debouncedSearchTerm}"` : 'No articles found'}
+          </p>
+          <p className="text-gray-600">
+            {debouncedSearchTerm ? 'Try a different search term.' : 'Check back later for new content.'}
+          </p>
+        </div>
+      ) : (
+        // Articles Grid
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {allArticles.map((article, index) => {
           const buttonConfig = getButtonConfig(article)
           const canAccess = canAccessArticle(article.access)
@@ -390,41 +391,38 @@ export default function ArticlesPage() {
             </article>
       )
         })}
+        
+        {/* Load More Section */}
+        {hasMoreArticles && (
+          <div className="text-center mt-12">
+            <button
+              onClick={() => {
+                if (!isFetching) {
+                  setPage(page + 1)
+                }
+              }}
+              disabled={isFetching}
+              className={`px-8 py-3 rounded-lg font-semibold transition-colors ${isFetching
+                  ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                  : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
+                }`}
+            >
+              {isFetching ? 'Loading...' : 'Load More Articles'}
+            </button>
+          </div>
+        )}
+
+        {/* No More Articles Message */}
+        {!hasMoreArticles && allArticles.length > 0 && (
+          <div className="text-center mt-12">
+            <p className="text-gray-600 text-lg">
+              You've reached the end of our articles. Check back later for new content!
+            </p>
+          </div>
+        )}
+      </div>
+      )}
     </div>
-
-      {/* Load More Section */ }
-  {
-    hasMoreArticles && (
-      <div className="text-center mt-12">
-        <button
-          onClick={() => {
-            if (!isFetching) {
-              setPage(page + 1)
-            }
-          }}
-          disabled={isFetching}
-          className={`px-8 py-3 rounded-lg font-semibold transition-colors ${isFetching
-              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-              : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
-            }`}
-        >
-          {isFetching ? 'Loading...' : 'Load More Articles'}
-        </button>
-      </div>
-    )
-  }
-
-  {/* No More Articles Message */ }
-  {
-    !hasMoreArticles && allArticles.length > 0 && (
-      <div className="text-center mt-12">
-        <p className="text-gray-600 text-lg">
-          You've reached the end of our articles. Check back later for new content!
-        </p>
-      </div>
-    )
-  }
-    </div >
   )
 }
 
