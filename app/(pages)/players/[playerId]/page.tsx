@@ -1009,7 +1009,7 @@ export default function PlayerProfile() {
                 placeholder="Search news for this player"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-white/20 rounded shadow-sm"
+                className="filter-input w-full pl-10 pr-4 py-3 rounded shadow-sm"
               />
             </div>
             {isLoadingNuggets ? (
