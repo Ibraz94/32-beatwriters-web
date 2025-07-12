@@ -510,7 +510,7 @@ export default function PlayerProfile() {
                 {player?.['College Performance'] && (
                   <div className="grid grid-cols-1 md:grid-cols-3 items-center justify-center gap-2">
 
-                    <div className="border border-white/20 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="border border-gray-400 rounded p-2 flex flex-col justify-around">
                       <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['College Dominator Rating']}</h1>
                         <h2 className="mr-2">{player['College Performance']['College Dominator Rating Rank']}</h2>
@@ -520,7 +520,7 @@ export default function PlayerProfile() {
                       </div>
                     </div>
 
-                    <div className="border border-white/20 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="border border-gray-400 rounded p-2 flex flex-col justify-around">
                       <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['College Target Share']}%</h1>
                         <h2 className="mr-2">{player['College Performance']['College Target Share Rank']}</h2>
@@ -532,7 +532,7 @@ export default function PlayerProfile() {
 
 
 
-                    <div className="border border-white/20 bg-card rounded p-2 flex flex-col justify-around">
+                    <div className="border border-gray-400 rounded p-2 flex flex-col justify-around">
                       <div className="flex items-center justify-between text-lg">
                         <h1>{player['College Performance']['Breakout Age']}</h1>
                         <h2 className="mr-2">{player['College Performance']['Breakout Age Rank']}</h2>
