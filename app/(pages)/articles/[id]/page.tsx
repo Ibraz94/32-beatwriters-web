@@ -7,6 +7,7 @@ import { ArrowLeft, Clock, User, Shield, Lock, Calendar, Eye } from 'lucide-reac
 import { useAuth } from '../hooks/useAuth'
 import Image from 'next/image'
 import { useGetArticleQuery, getImageUrl, Article, useGetArticlesQuery } from '@/lib/services/articlesApi'
+import { renderRichTextContent } from '@/lib/utils/contentParser'
 
 
 type Props = {
@@ -141,9 +142,9 @@ export default function ArticlePage() {
       <div className="max-w-6xl mx-auto">
         {/* Article Header */}
         <div key={article.id}>
-          <div className="flex justify-center">
+          <div className="flex justify-center ">
           <Image src={getImageUrl(article.featuredImage) || ''} 
-          alt={article.title} width={1000} height={1000} className="rounded mb-12 shadow-lg" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+          alt={article.title} width={1000} height={1000} className="rounded mb-12 shadow-lg max-w-4xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
           </div>
            <h1 className="text-4xl font-bold mb-10">{article.title}</h1>
           
@@ -184,7 +185,7 @@ export default function ArticlePage() {
                     href={`/articles/${recentArticle.id}`}
                     className="rounded-lg shadow-md border overflow-hidden hover:shadow-lg transition-shadow"
                   >
-                    <div className="relative h-32">
+                    <div className="relative h-42">
                       <div className="absolute inset-0 flex items-center justify-center">
                         <Image 
                           src={getImageUrl(recentArticle.featuredImage) || ''} 

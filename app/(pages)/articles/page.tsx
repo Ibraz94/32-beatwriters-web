@@ -143,18 +143,6 @@ export default function ArticlesPage() {
     )
   }
 
-  // No articles found
-  if (!isLoading && allArticles.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <p className="text-xl mb-4">No articles found</p>
-          <p className="text-gray-600">Check back later for new content.</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Search Bar */}
@@ -166,7 +154,7 @@ export default function ArticlesPage() {
             placeholder="Search articles..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-10 py-3 border border-white/20 rounded shadow-sm bg-white dark:bg-[#2C204B] text-black dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+            className="filter-input w-full pl-10 pr-10 py-3 rounded shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
           />
           {searchTerm && (
             <button
@@ -180,14 +168,27 @@ export default function ArticlesPage() {
           )}
         </div>
       </div>
-      {/* Articles Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      
+      {/* Content Area */}
+      {!isLoading && allArticles.length === 0 ? (
+        // No articles found
+        <div className="text-center">
+          <p className="text-xl mb-4">
+            {debouncedSearchTerm ? `No articles found for "${debouncedSearchTerm}"` : 'No articles found'}
+          </p>
+          <p className="text-gray-600">
+            {debouncedSearchTerm ? 'Try a different search term.' : 'Check back later for new content.'}
+          </p>
+        </div>
+      ) : (
+        // Articles Grid
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {allArticles.map((article, index) => {
           const buttonConfig = getButtonConfig(article)
           const canAccess = canAccessArticle(article.access)
 
           return (
-            <article key={index} className="rounded-md shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer bg-white light:bg-white dark:bg-[#2C204B] p-4 dark:border dark:border-white/10">
+            <article key={index} className="rounded shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer articles-card p-4 dark:border dark:border-white/10">
               {/* Article Image */}
               <Link href={buttonConfig.href}>
                 <div className="relative aspect-video">
@@ -234,7 +235,7 @@ export default function ArticlesPage() {
 
                 {/* Article Content */}
                 <div className="mt-6">
-                  <h2 className="text-2xl text-left font-bold mb-3 line-clamp-1 text-white">
+                  <h2 className="text-2xl text-left font-bold mb-3 line-clamp-1 font-oswald">
                     {canAccess ? (
                       <div>
                         {article.title}
@@ -245,18 +246,133 @@ export default function ArticlesPage() {
                   </h2>
 
                   {/* Access Status */}
-                  <div className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 md:line-clamp-2 mb-1 md:mb-4">
+                  <div className="text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 md:line-clamp-2 mb-1 md:mb-4">
                   {(() => {
                     try {
+                      let contentToRender = article.content;
+                      
                       // Check if content starts with '{' and try to parse it as JSON
                       if (article.content.trim().startsWith('{')) {
                         const contentObj = JSON.parse(article.content);
-                        return <div dangerouslySetInnerHTML={{ __html: contentObj.content || article.content }} />;
+                        contentToRender = contentObj.content || article.content;
                       }
-                      // If not JSON or parsing fails, return original content
-                      return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
+                      
+                      // Helper function to detect table-like content
+                      const isTableContent = (content: string) => {
+                        const contentLower = content.toLowerCase();
+                        
+                        // Check for HTML table tags
+                        if (contentLower.includes('<table') || contentLower.includes('<tr') || contentLower.includes('<td')) {
+                          return true;
+                        }
+                        
+                        // Check for pipe-separated table format (|)
+                        const lines = content.split('\n');
+                        const pipeLines = lines.filter(line => line.includes('|'));
+                        if (pipeLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for CSV-like format with commas and consistent structure
+                        const commaLines = lines.filter(line => line.includes(',') && line.split(',').length >= 3);
+                        if (commaLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for tab-separated values
+                        const tabLines = lines.filter(line => line.includes('\t'));
+                        if (tabLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for structured data patterns (common table indicators)
+                        const tableIndicators = [
+                          'player', 'team', 'position', 'stats', 'rank', 'yards', 'touchdowns',
+                          'receptions', 'targets', 'snaps', 'percentage', 'rating', 'score'
+                        ];
+                        
+                        const hasTableIndicators = tableIndicators.some(indicator => 
+                          contentLower.includes(indicator)
+                        );
+                        
+                        // If content has table indicators and is structured (multiple lines with similar patterns)
+                        if (hasTableIndicators && lines.length >= 3) {
+                          return true;
+                        }
+                        
+                        return false;
+                      };
+                      
+                      // Check if content is table-like
+                      if (isTableContent(contentToRender)) {
+                        // If content contains table, show creation date instead
+                        const createdDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        }) : 'Date not available';
+                        return <span>Published on {createdDate}</span>;
+                      }
+                      
+                      // If no table, render the content normally
+                      return <div dangerouslySetInnerHTML={{ __html: contentToRender }} />;
                     } catch (error) {
-                      // If JSON parsing fails, return original content
+                      // If JSON parsing fails, check if original content has table
+                      const isTableContent = (content: string) => {
+                        const contentLower = content.toLowerCase();
+                        
+                        // Check for HTML table tags
+                        if (contentLower.includes('<table') || contentLower.includes('<tr') || contentLower.includes('<td')) {
+                          return true;
+                        }
+                        
+                        // Check for pipe-separated table format (|)
+                        const lines = content.split('\n');
+                        const pipeLines = lines.filter(line => line.includes('|'));
+                        if (pipeLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for CSV-like format with commas and consistent structure
+                        const commaLines = lines.filter(line => line.includes(',') && line.split(',').length >= 3);
+                        if (commaLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for tab-separated values
+                        const tabLines = lines.filter(line => line.includes('\t'));
+                        if (tabLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for structured data patterns (common table indicators)
+                        const tableIndicators = [
+                          'player', 'team', 'position', 'stats', 'rank', 'yards', 'touchdowns',
+                          'receptions', 'targets', 'snaps', 'percentage', 'rating', 'score'
+                        ];
+                        
+                        const hasTableIndicators = tableIndicators.some(indicator => 
+                          contentLower.includes(indicator)
+                        );
+                        
+                        // If content has table indicators and is structured (multiple lines with similar patterns)
+                        if (hasTableIndicators && lines.length >= 3) {
+                          return true;
+                        }
+                        
+                        return false;
+                      };
+                      
+                      if (isTableContent(article.content)) {
+                        const createdDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        }) : 'Date not available';
+                        return <span>Published on {createdDate}</span>;
+                      }
+                      
+                      // If no table and parsing failed, return original content
                       console.error('Error parsing content:', error);
                       return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
                     }
@@ -275,41 +391,38 @@ export default function ArticlesPage() {
             </article>
       )
         })}
+        
+        {/* Load More Section */}
+        {hasMoreArticles && (
+          <div className="text-center mt-12">
+            <button
+              onClick={() => {
+                if (!isFetching) {
+                  setPage(page + 1)
+                }
+              }}
+              disabled={isFetching}
+              className={`px-8 py-3 rounded-lg font-semibold transition-colors ${isFetching
+                  ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                  : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
+                }`}
+            >
+              {isFetching ? 'Loading...' : 'Load More Articles'}
+            </button>
+          </div>
+        )}
+
+        {/* No More Articles Message */}
+        {!hasMoreArticles && allArticles.length > 0 && (
+          <div className="text-center mt-12">
+            <p className="text-gray-600 text-lg">
+              You've reached the end of our articles. Check back later for new content!
+            </p>
+          </div>
+        )}
+      </div>
+      )}
     </div>
-
-      {/* Load More Section */ }
-  {
-    hasMoreArticles && (
-      <div className="text-center mt-12">
-        <button
-          onClick={() => {
-            if (!isFetching) {
-              setPage(page + 1)
-            }
-          }}
-          disabled={isFetching}
-          className={`px-8 py-3 rounded-lg font-semibold transition-colors ${isFetching
-              ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-              : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
-            }`}
-        >
-          {isFetching ? 'Loading...' : 'Load More Articles'}
-        </button>
-      </div>
-    )
-  }
-
-  {/* No More Articles Message */ }
-  {
-    !hasMoreArticles && allArticles.length > 0 && (
-      <div className="text-center mt-12">
-        <p className="text-gray-600 text-lg">
-          You've reached the end of our articles. Check back later for new content!
-        </p>
-      </div>
-    )
-  }
-    </div >
   )
 }
 

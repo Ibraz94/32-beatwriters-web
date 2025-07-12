@@ -236,15 +236,15 @@ export default function TrendingPlayers() {
                 <div className="flex items-center justify-center gap-4 mt-6">
                     <button
                         onClick={() => api?.scrollPrev()}
-                        className="border-2 border-gray-600 hover:bg-gray-700 text-white rounded-full p-3 transition-colors"
+                        className="border-2 border-gray-600 hover:bg-gray-700 hover:text-white rounded-full p-3 transition-colors"
                     >
                         <ChevronLeft className="w-6 h-6" />
                     </button>
                     <button
                         onClick={() => api?.scrollNext()}
-                        className="border-2 border-red-600 hover:bg-red-700 text-white rounded-full p-3 transition-colors"
+                        className="border-2 border-red-600 hover:bg-red-700 text-red-600 hover:text-white rounded-full p-3 transition-colors"
                     >
-                        <ChevronRight className="w-6 h-6 text-red-600" />
+                        <ChevronRight className="w-6 h-6" />
                     </button>
                 </div>
             </div>

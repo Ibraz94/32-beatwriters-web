@@ -4,12 +4,11 @@ import { useGetEpisodesQuery, getImageUrl, PodcastData, ApiResponse } from '@/li
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-
-
+import { renderRichTextContent } from '@/lib/utils/contentParser'
 
 const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
   return (
-    <div className="rounded-md space-y-2 shadow-md border border-white/20 overflow-hidden hover:shadow-lg transition-shadow group hover:scale-101 p-5">
+    <div className="rounded-md space-y-2 shadow-md player-card  overflow-hidden hover:shadow-lg transition-shadow group hover:scale-101 p-5 font-oswald">
       {/* Podcast Thumbnail */}
       <Link href={`/podcasts/${podcast.id}`}>
       <div className="relative h-72 w-full ">
@@ -31,23 +30,9 @@ const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
             {podcast.title}
           </h3>
 
-        <div className="text-lg mb-3 line-clamp-2 ">
-        {(() => {
-                  try {
-                    // Check if content starts with '{' and try to parse it as JSON
-                    if (podcast.description.trim().startsWith('{')) {
-                      const contentObj = JSON.parse(podcast.description);
-                      return <div dangerouslySetInnerHTML={{ __html: contentObj.content || podcast.description }} />;
-                    }
-                    // If not JSON or parsing fails, return original content
-                    return <div dangerouslySetInnerHTML={{ __html: podcast.description }} />;
-                  } catch (error) {
-                    // If JSON parsing fails, return original content
-                    console.error('Error parsing content:', error);
-                    return <div dangerouslySetInnerHTML={{ __html: podcast.description }} />;
-                  }
-                })()}
-        </div>
+        {/* <div className="text-lg mb-3 line-clamp-2 ">
+        {renderRichTextContent(podcast.description, true)}
+        </div> */}
          
         <div className="flex justify-between items-center">
         <p className="text-lg  mb-2">

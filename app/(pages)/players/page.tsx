@@ -34,10 +34,10 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
     return (
         <Link 
             href={`/players/${player.id}?page=${currentPage}`} 
-            className="rounded-md shadow-md border-white/20 hover:shadow-lg transition-all duration-200 hover:scale-102 border overflow-hidden p-1"
+            className="player-card rounded hover:shadow-lg transition-all duration-200 hover:scale-101 overflow-hidden p-1"
         >
             {/* Player Image */}
-            <div className="relative h-48 bg-[#2C204B]">
+            <div className="relative h-48 bg-linear-to-t from-[#876AD1] to-[#45366B]">
                 <Image 
                     src={imageUrl || '/default-player.jpg'}
                     alt={player.name}
@@ -53,11 +53,11 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
             {/* Player Info */}
             <div className="p-2">
                 <div className="flex justify-between">
-                    <h3 className="font-bold text-2xl leading-tight">
+                    <h3 className="text-2xl leading-tight font-oswald">
                         {player.name}
                     </h3>
                     <button
-                      className={`text-white text-xs border px-5 rounded-sm transition-colors hover:cursor-pointer ${isFollowing ? 'bg-red-800 border-red-800' : 'border-red-800 hover:bg-red-800'}`}
+                      className={`text-foreground font-oswald text-xs border px-5 rounded-sm transition-colors hover:cursor-pointer ${isFollowing ? 'bg-red-800 border-red-800' : 'border-red-800 hover:bg-red-800'}`}
                       onClick={e => {
                         e.preventDefault(); // Prevent Link navigation
                         onToggleFollow();
@@ -79,7 +79,7 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                                     className='object-contain'
                                 />
                             )}
-                            <h1 className="text-sm">{player.team}  {player.position}</h1>
+                            <h1 className="text-sm font-oswald">{player.team}  {player.position}</h1>
   
                         </div>
                     </div>
@@ -269,7 +269,7 @@ function PlayersContent() {
                         placeholder="Search players..."
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-10 py-3 border border-white/20 rounded shadow-sm bg-[#2C204B] text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                        className="filter-input w-full pl-10 pr-10 py-3 rounded shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                     />
                     {searchTerm && (
                         <button
@@ -284,10 +284,6 @@ function PlayersContent() {
                 </div>
             </div>
 
-            {/* Search and Filters */}
-            <div>
-                
-            </div>
             <div>
                 {/* Active Filters Display */}
                 {(searchTerm || selectedPosition !== "all" || selectedConference !== "all") && (

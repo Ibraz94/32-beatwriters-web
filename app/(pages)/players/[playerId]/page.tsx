@@ -296,7 +296,7 @@ export default function PlayerProfile() {
             {/* Workout Metrics - Only show if Player Profiler data is available */}
             {player?.['Workout Metrics'] ? (
               <div>
-                <h2 className="text-3xl font-black mb-8">Workout Metrics</h2>
+                <h2 className="text-3xl mb-8">Workout Metrics</h2>
 
                 <div className="text-white">
                   {/* Primary Metrics Chart */}
@@ -585,7 +585,7 @@ export default function PlayerProfile() {
                       id="year-select"
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(e.target.value)}
-                      className="px-4 py-2 border rounded border-white/20 bg-card text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="px-4 py-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
                     >
                       {availableYears.map(year => (
                         <option key={year} value={year}>{year}</option>
@@ -1009,7 +1009,7 @@ export default function PlayerProfile() {
                 placeholder="Search news for this player"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-white/20 rounded shadow-sm"
+                className="filter-input w-full pl-10 pr-4 py-3 rounded shadow-sm"
               />
             </div>
             {isLoadingNuggets ? (
@@ -1279,7 +1279,19 @@ export default function PlayerProfile() {
 
         <div className="flex flex-col gap-4 md:hidden">
           <div className='flex items-center'>
-            <div className="relative w-full max-w-xs mx-auto">
+            <div className="relative w-full max-w-xs mx-auto ">
+              {playerTeam && (
+                <div className="absolute top-0 right-6">
+                  <Image
+                    src={getTeamLogoUrl(playerTeam.logo) || '/default-player.jpg'}
+                    alt={playerName}
+                    width={100}
+                    height={100}
+                    className="object-cover overflow-hidden"
+                  />
+                </div>
+              )}
+              <div className='relative'>
               <Image
                 src={playerImage}
                 alt={playerName}
@@ -1287,22 +1299,12 @@ export default function PlayerProfile() {
                 height={300}
                 className="w-full h-full object-cover rounded-lg"
               />
-              {playerTeam && (
-                <div className="absolute -top-6 -right-6">
-                  <Image
-                    src={getTeamLogoUrl(playerTeam.logo) || '/default-player.jpg'}
-                    alt={playerName}
-                    width={100}
-                    height={100}
-                    className="object-cover"
-                  />
-                </div>
-              )}
+              </div>
             </div>
 
             <div className="w-full mt-4">
               <div className="flex flex-col mb-2">
-                <div className="flex gap-2">
+                <div className="flex gap-1">
                   <h1 className="font-bold mb-1">
                     {playerName}
                   </h1>
@@ -1313,10 +1315,11 @@ export default function PlayerProfile() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-4 text-sm text-gray-300">
+                <div className="flex flex-col items-start gap-1 text-sm text-gray-300">
                   <span>{teamName || 'N/A'}</span>
-                  <span>{player?.Core['ADP Year']}</span>
-                  <span>{player?.Core?.Position}</span>
+                  <div>
+                  <p><span>{player?.Core['ADP Year']}</span> - <span>{player?.Core?.Position}</span></p>
+                  </div>
                 </div>
               </div>
               <button
@@ -1406,7 +1409,7 @@ export default function PlayerProfile() {
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition-all bg-card ${activeTab === tab.id
                           ? 'bg-red-800 text-white border-b-2 border-red-600'
-                          : 'text-gray-600 hover:text-red-800'
+                          : 'text-white hover:text-red-800'
                           }`}
                       >
                         <IconComponent className="w-4 h-4" />
