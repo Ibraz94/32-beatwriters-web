@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight, ChevronDown, Filter } from 'lucide-react'
 import Masonry from 'react-masonry-css'
 import { ReadMore } from '@/app/components/ReadMore'
 import {
@@ -74,6 +74,7 @@ export default function NuggetsPage() {
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
+    const [showMobileFilters, setShowMobileFilters] = useState(false)
     const ITEMS_PER_PAGE = 15
 
     // Debounce search term
@@ -427,8 +428,24 @@ export default function NuggetsPage() {
     return (
         <>
             <div className="container mx-auto px-4 py-8">
+                {/* Mobile Filter Toggle Button */}
+                <div className="lg:hidden mb-4">
+                    <button
+                        onClick={() => setShowMobileFilters(!showMobileFilters)}
+                        className="flex items-center gap-2 px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                        <Filter className="w-4 h-4" />
+                        <span>Filters</span>
+                        {(filters.position || filters.team || selectedDate || filters.rookie || searchTerm) && (
+                            <span className="bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                                {[filters.position, filters.team, selectedDate, filters.rookie, searchTerm].filter(Boolean).length}
+                            </span>
+                        )}
+                    </button>
+                </div>
+
                 {/* Filters in One Line */}
-                <div className="mb-6">
+                <div className={`mb-6 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
                     <div className="flex gap-3 items-center justify-center w-full flex-col lg:flex-row">
                         {/* Search Bar */}
                         <div className="relative w-full">
@@ -438,30 +455,30 @@ export default function NuggetsPage() {
                                 placeholder="Search"
                                 value={searchTerm}
                                 onChange={(e) => handleSearch(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 px-12 border border-white/20 rounded shadow-sm"
+                                className="filter-input w-full pl-10 pr-4 py-3 px-12 rounded shadow-sm"
                             />
                         </div>
 
 
                         {/* Date Filter */}
                         <div className="flex gap-2 w-full lg:w-auto">
-                            <Popover open={open} onOpenChange={setOpen}>
+                        <Popover open={open} onOpenChange={setOpen}>
                                 <PopoverTrigger asChild className='h-10 flex-1 lg:w-42'>
-                                    <Button
-                                        variant="outline"
-                                        className="justify-between text-left font-normal h-12"
-                                    >
-                                        {date ? date.toLocaleDateString() : <span>Select By Date</span>}
-                                        <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start" side='bottom'>
-                                    <Calendar
-                                        mode="single"
-                                        selected={date}
+                                <Button
+                                    variant="outline"
+                                    className="filter-button justify-between text-left font-normal h-12"
+                                >
+                                    {date ? date.toLocaleDateString() : <span>Select By Date</span>}
+                                    <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start" side='bottom'>
+                                <Calendar
+                                    mode="single"
+                                    selected={date}
                                         onSelect={(selectedCalendarDate: Date | undefined) => {
-                                            setDate(selectedCalendarDate)
-                                            if (selectedCalendarDate) {
+                                        setDate(selectedCalendarDate)
+                                        if (selectedCalendarDate) {
                                                 // Format date as YYYY-MM-DD, handling timezone correctly
                                                 const year = selectedCalendarDate.getFullYear()
                                                 const month = String(selectedCalendarDate.getMonth() + 1).padStart(2, '0')
@@ -474,22 +491,22 @@ export default function NuggetsPage() {
                                                 setSelectedDate(dateString)
                                                 setCurrentPage(1)
                                                 setAllNuggets([])
-                                            } else {
-                                                setSelectedDate('')
+                                        } else {
+                                            setSelectedDate('')
                                                 setCurrentPage(1)
                                                 setAllNuggets([])
-                                            }
-                                            setOpen(false)
-                                        }}
-                                        initialFocus
-                                    />
-                                </PopoverContent>
-                            </Popover>
+                                        }
+                                        setOpen(false)
+                                    }}
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
                             {date && (
                                 <Button
                                     variant="outline"
                                     onClick={clearDateFilter}
-                                    className="h-12 px-3"
+                                    className="filter-button h-12 px-3"
                                     title="Clear date filter"
                                 >
                                     <X className="h-4 w-4" />
@@ -503,7 +520,7 @@ export default function NuggetsPage() {
                             value={filters.position || "all"}
                             onValueChange={handlePositionFilterChange}
                         >
-                            <SelectTrigger className="h-10 w-full lg:w-1/3">
+                            <SelectTrigger className="filter-select h-10 w-full lg:w-1/3">
                                 <SelectValue placeholder="All Positions" />
                             </SelectTrigger>
                             <SelectContent className='border-none'>
@@ -523,7 +540,7 @@ export default function NuggetsPage() {
                             value={filters.team || "all"}
                             onValueChange={handleTeamFilterChange}
                         >
-                            <SelectTrigger className="w-full lg:w-1/2 h-10 text-sm">
+                            <SelectTrigger className="filter-select w-full lg:w-1/2 h-10 text-sm">
                                 <SelectValue placeholder="All Teams" />
                             </SelectTrigger>
                             <SelectContent className='border-none'>
@@ -539,7 +556,7 @@ export default function NuggetsPage() {
                         </Select>
 
                         {/* Rookie Filter */}
-                        <div className="flex items-center space-x-2 px-6 py-3 border border-white/20 rounded">
+                        <div className="filter-checkbox-container flex items-center space-x-2 px-6 py-3 rounded">
                             <input
                                 type="checkbox"
                                 id="rookie-filter"
@@ -547,7 +564,7 @@ export default function NuggetsPage() {
                                 onChange={(e) => handleRookieFilterChange(e.target.checked)}
                                 className="w-4 h-4 hover:cursor-pointer"
                             />
-                            <label htmlFor="rookie-filter" className="text-sm font-medium text-gray-700 hover:cursor-pointer">
+                            <label htmlFor="rookie-filter" className="text-sm font-medium text-black hover:cursor-pointer">
                                 Rookie
                             </label>
                         </div>
@@ -565,7 +582,7 @@ export default function NuggetsPage() {
                 </div>
 
                 {/* Main Content Area - Two Column Layout */}
-                <div className="flex gap-6 flex-col lg:flex-row">
+                <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0">
                     {/* Feed Column - Scrollable */}
                     <div className="flex-1">
                         {displayNuggets.length === 0 && !isLoading ? (
@@ -681,7 +698,7 @@ export default function NuggetsPage() {
                     </div>
 
                     {/* Trending Players Sidebar */}
-                    <div className="w-96 ">
+                    <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
                         <TrendingPlayers />
                     </div>
                 </div>
