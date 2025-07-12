@@ -37,7 +37,7 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
             className="player-card rounded hover:shadow-lg transition-all duration-200 hover:scale-101 overflow-hidden p-1"
         >
             {/* Player Image */}
-            <div className="relative h-48 bg-[#2C204B]">
+            <div className="relative h-48 bg-linear-to-t from-[#876AD1] to-[#45366B]">
                 <Image 
                     src={imageUrl || '/default-player.jpg'}
                     alt={player.name}

@@ -73,8 +73,8 @@ export default function SubscriptionComponent() {
       <div className="subscription-gradient absolute inset-0"></div>
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
-      <div className="text-center mb-16">
-        <h1 className="text-6xl font-bold">Our Pricing Plan</h1>
+      <div className="text-center font-oswald mb-16">
+        <h1 className="text-6xl font-bold ">Our Pricing Plan</h1>
         <p className="text-xl mt-6">Signs up for exclusive access to all our reports, tools</p>
       </div>
       

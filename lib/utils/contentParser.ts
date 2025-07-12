@@ -55,19 +55,19 @@ export const sanitizeAndStyleContent = (htmlContent: string): string => {
     // Add CSS classes for better styling
     const styledContent = htmlContent
         // Style headings
-        .replace(/<h1>/g, '<h1 class="text-3xl font-bold mb-4 mt-6 text-gray-900">')
-        .replace(/<h2>/g, '<h2 class="text-2xl font-bold mb-3 mt-5 text-gray-900">')
-        .replace(/<h3>/g, '<h3 class="text-xl font-bold mb-2 mt-4 text-gray-900">')
-        .replace(/<h4>/g, '<h4 class="text-lg font-bold mb-2 mt-3 text-gray-900">')
-        .replace(/<h5>/g, '<h5 class="text-base font-bold mb-1 mt-2 text-gray-900">')
-        .replace(/<h6>/g, '<h6 class="text-sm font-bold mb-1 mt-2 text-gray-900">')
+        .replace(/<h1>/g, '<h1 class="text-3xl font-bold mb-4 mt-6 ">')
+        .replace(/<h2>/g, '<h2 class="text-2xl font-bold mb-3 mt-5 ">')
+        .replace(/<h3>/g, '<h3 class="text-xl font-bold mb-2 mt-4 ">')
+        .replace(/<h4>/g, '<h4 class="text-lg font-bold mb-2 mt-3 ">')
+        .replace(/<h5>/g, '<h5 class="text-base font-bold mb-1 mt-2 ">')
+        .replace(/<h6>/g, '<h6 class="text-sm font-bold mb-1 mt-2 ">')
         
         // Style paragraphs
-        .replace(/<p>/g, '<p class="mb-4 leading-relaxed text-gray-700">')
+        .replace(/<p>/g, '<p class="mb-4 leading-relaxed ">')
         
         // Style lists
-        .replace(/<ul>/g, '<ul class="mb-4 ml-6 list-disc text-gray-700">')
-        .replace(/<ol>/g, '<ol class="mb-4 ml-6 list-decimal text-gray-700">')
+        .replace(/<ul>/g, '<ul class="mb-4 ml-6 list-disc ">')
+        .replace(/<ol>/g, '<ol class="mb-4 ml-6 list-decimal ">')
         .replace(/<li>/g, '<li class="mb-1">')
         
         // Style links
@@ -78,7 +78,7 @@ export const sanitizeAndStyleContent = (htmlContent: string): string => {
         .replace(/<em>/g, '<em class="italic">')
         
         // Style blockquotes
-        .replace(/<blockquote>/g, '<blockquote class="border-l-4 border-red-600 pl-4 my-4 italic text-gray-600">')
+        .replace(/<blockquote>/g, '<blockquote class="border-l-4 border-red-600 pl-4 my-4 italic ">')
         
         // Style code blocks
         .replace(/<code>/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">')
@@ -127,7 +127,7 @@ export const renderRichTextContent = (content: string, isPreview: boolean = fals
     const styledContent = sanitizeAndStyleContent(parsedContent);
     
     return React.createElement('div', {
-        className: 'prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-a:text-red-600 prose-a:hover:text-red-800 prose-blockquote:border-red-600 prose-code:bg-gray-100 prose-pre:bg-gray-100',
+        
         dangerouslySetInnerHTML: { __html: styledContent }
     });
 }; 

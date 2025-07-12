@@ -216,7 +216,7 @@ function Header() {
                             <div className="relative" ref={dropdownRef}>
                                 <button
                                     onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                                    className="flex items-center space-x-3 px-4 py-2 hover:cursor-pointer"
+                                    className="flex items-center space-x-3 px-4 py-2 hover:cursor-pointer text-white"
                                 >
                                     <div className="flex items-center space-x-2">
                                         {user?.profilePicture ? (
