@@ -86,6 +86,16 @@ body {
   background-color: #2C204B;
 }
 
+.player-card {
+  background-color: #f6f6f6;
+  border: 1px solid #d1d1d1
+}
+
+.dark .player-card {
+    background-color: transparent;
+    border: 1px solid #36383b
+}
+
 .subscription-gradient {
   display: none;
 }

@@ -1279,7 +1279,19 @@ export default function PlayerProfile() {
 
         <div className="flex flex-col gap-4 md:hidden">
           <div className='flex items-center'>
-            <div className="relative w-full max-w-xs mx-auto">
+            <div className="relative w-full max-w-xs mx-auto ">
+              {playerTeam && (
+                <div className="absolute top-0 right-6">
+                  <Image
+                    src={getTeamLogoUrl(playerTeam.logo) || '/default-player.jpg'}
+                    alt={playerName}
+                    width={100}
+                    height={100}
+                    className="object-cover overflow-hidden"
+                  />
+                </div>
+              )}
+              <div className='relative'>
               <Image
                 src={playerImage}
                 alt={playerName}
@@ -1287,22 +1299,12 @@ export default function PlayerProfile() {
                 height={300}
                 className="w-full h-full object-cover rounded-lg"
               />
-              {playerTeam && (
-                <div className="absolute -top-6 -right-6">
-                  <Image
-                    src={getTeamLogoUrl(playerTeam.logo) || '/default-player.jpg'}
-                    alt={playerName}
-                    width={100}
-                    height={100}
-                    className="object-cover"
-                  />
-                </div>
-              )}
+              </div>
             </div>
 
             <div className="w-full mt-4">
               <div className="flex flex-col mb-2">
-                <div className="flex gap-2">
+                <div className="flex gap-1">
                   <h1 className="font-bold mb-1">
                     {playerName}
                   </h1>
@@ -1313,10 +1315,11 @@ export default function PlayerProfile() {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-4 text-sm text-gray-300">
+                <div className="flex flex-col items-start gap-1 text-sm text-gray-300">
                   <span>{teamName || 'N/A'}</span>
-                  <span>{player?.Core['ADP Year']}</span>
-                  <span>{player?.Core?.Position}</span>
+                  <div>
+                  <p><span>{player?.Core['ADP Year']}</span> - <span>{player?.Core?.Position}</span></p>
+                  </div>
                 </div>
               </div>
               <button

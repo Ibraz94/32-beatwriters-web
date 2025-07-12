@@ -248,15 +248,130 @@ export default function ArticlesPage() {
                   <div className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 md:line-clamp-2 mb-1 md:mb-4">
                   {(() => {
                     try {
+                      let contentToRender = article.content;
+                      
                       // Check if content starts with '{' and try to parse it as JSON
                       if (article.content.trim().startsWith('{')) {
                         const contentObj = JSON.parse(article.content);
-                        return <div dangerouslySetInnerHTML={{ __html: contentObj.content || article.content }} />;
+                        contentToRender = contentObj.content || article.content;
                       }
-                      // If not JSON or parsing fails, return original content
-                      return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
+                      
+                      // Helper function to detect table-like content
+                      const isTableContent = (content: string) => {
+                        const contentLower = content.toLowerCase();
+                        
+                        // Check for HTML table tags
+                        if (contentLower.includes('<table') || contentLower.includes('<tr') || contentLower.includes('<td')) {
+                          return true;
+                        }
+                        
+                        // Check for pipe-separated table format (|)
+                        const lines = content.split('\n');
+                        const pipeLines = lines.filter(line => line.includes('|'));
+                        if (pipeLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for CSV-like format with commas and consistent structure
+                        const commaLines = lines.filter(line => line.includes(',') && line.split(',').length >= 3);
+                        if (commaLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for tab-separated values
+                        const tabLines = lines.filter(line => line.includes('\t'));
+                        if (tabLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for structured data patterns (common table indicators)
+                        const tableIndicators = [
+                          'player', 'team', 'position', 'stats', 'rank', 'yards', 'touchdowns',
+                          'receptions', 'targets', 'snaps', 'percentage', 'rating', 'score'
+                        ];
+                        
+                        const hasTableIndicators = tableIndicators.some(indicator => 
+                          contentLower.includes(indicator)
+                        );
+                        
+                        // If content has table indicators and is structured (multiple lines with similar patterns)
+                        if (hasTableIndicators && lines.length >= 3) {
+                          return true;
+                        }
+                        
+                        return false;
+                      };
+                      
+                      // Check if content is table-like
+                      if (isTableContent(contentToRender)) {
+                        // If content contains table, show creation date instead
+                        const createdDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        }) : 'Date not available';
+                        return <span>Published on {createdDate}</span>;
+                      }
+                      
+                      // If no table, render the content normally
+                      return <div dangerouslySetInnerHTML={{ __html: contentToRender }} />;
                     } catch (error) {
-                      // If JSON parsing fails, return original content
+                      // If JSON parsing fails, check if original content has table
+                      const isTableContent = (content: string) => {
+                        const contentLower = content.toLowerCase();
+                        
+                        // Check for HTML table tags
+                        if (contentLower.includes('<table') || contentLower.includes('<tr') || contentLower.includes('<td')) {
+                          return true;
+                        }
+                        
+                        // Check for pipe-separated table format (|)
+                        const lines = content.split('\n');
+                        const pipeLines = lines.filter(line => line.includes('|'));
+                        if (pipeLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for CSV-like format with commas and consistent structure
+                        const commaLines = lines.filter(line => line.includes(',') && line.split(',').length >= 3);
+                        if (commaLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for tab-separated values
+                        const tabLines = lines.filter(line => line.includes('\t'));
+                        if (tabLines.length >= 2) {
+                          return true;
+                        }
+                        
+                        // Check for structured data patterns (common table indicators)
+                        const tableIndicators = [
+                          'player', 'team', 'position', 'stats', 'rank', 'yards', 'touchdowns',
+                          'receptions', 'targets', 'snaps', 'percentage', 'rating', 'score'
+                        ];
+                        
+                        const hasTableIndicators = tableIndicators.some(indicator => 
+                          contentLower.includes(indicator)
+                        );
+                        
+                        // If content has table indicators and is structured (multiple lines with similar patterns)
+                        if (hasTableIndicators && lines.length >= 3) {
+                          return true;
+                        }
+                        
+                        return false;
+                      };
+                      
+                      if (isTableContent(article.content)) {
+                        const createdDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        }) : 'Date not available';
+                        return <span>Published on {createdDate}</span>;
+                      }
+                      
+                      // If no table and parsing failed, return original content
                       console.error('Error parsing content:', error);
                       return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
                     }

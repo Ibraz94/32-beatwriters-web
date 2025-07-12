@@ -62,7 +62,7 @@ export default function PremiumSignup() {
   })
 
   // Specific plan IDs to display
-  const allowedPlanIds = ['price_1RiJQQAToc8YZruPj77d8vzO', 'plan_SP4eIOlEaiqOH0']
+  const allowedPlanIds = ['price_1RjqjDAToc8YZruPtwMypo5C', 'plan_SP4eIOlEaiqOH0']
 
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {

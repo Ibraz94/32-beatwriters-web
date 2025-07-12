@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import { renderRichTextContent } from '@/lib/utils/contentParser'
 
 // Utility function to convert YouTube URLs to embed format
 const convertToEmbedUrl = (url: string): string => {
@@ -27,6 +28,8 @@ const convertToEmbedUrl = (url: string): string => {
     // If no match found, return original URL
     return url;
 };
+
+
 
 export default function PodcastDetailPage() {
     const params = useParams()
@@ -179,21 +182,7 @@ export default function PodcastDetailPage() {
                 </h1>
 
                 <div className="leading-relaxed whitespace-pre-line mb-4 mt-6">
-                {(() => {
-                  try {
-                    // Check if content starts with '{' and try to parse it as JSON
-                    if (podcast.description.trim().startsWith('{')) {
-                      const contentObj = JSON.parse(podcast.description);
-                      return <div dangerouslySetInnerHTML={{ __html: contentObj.content || podcast.description }} />;
-                    }
-                    // If not JSON or parsing fails, return original content
-                    return <div dangerouslySetInnerHTML={{ __html: podcast.description }} />;
-                  } catch (error) {
-                    // If JSON parsing fails, return original content
-                    console.error('Error parsing content:', error);
-                    return <div dangerouslySetInnerHTML={{ __html: podcast.description }} />;
-                  }
-                })()}
+                {renderRichTextContent(podcast.description)}
                 </div>
                 <div className="flex items-center justify-center lg:justify-start gap-4 text-sm mb-4">
                     <h1 className="font-medium">Hosted by: {podcast.hostedBy}</h1>
