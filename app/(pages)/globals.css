@@ -127,6 +127,209 @@ body {
   color: #D1D5DB;
 }
 
+/* Header theme classes */
+.header-main {
+  background-color: white;
+  color: black;
+}
+
+.dark .header-main {
+  background-color: #18122B;
+  color: white;
+}
+
+.header-secondary {
+  background-color: #2C204B;
+}
+
+/* Mobile menu login link styles */
+.mobile-menu-link {
+  background-color: transparent;
+  color: #374151 !important;
+  border: 1px solid #D1D5DB;
+}
+
+.mobile-menu-link:hover {
+  background-color: #F9FAFB;
+  color: #9F0712 !important;
+}
+
+.dark .mobile-menu-link {
+  background-color: transparent;
+  color: white !important;
+  border: 1px solid #4B5563;
+}
+
+.dark .mobile-menu-link:hover {
+  background-color: #4B5563;
+  color: #9F0712 !important;
+}
+
+/* Desktop login link styles */
+.desktop-login-link {
+  color: white !important;
+}
+
+.desktop-login-link:hover {
+  color: #9F0712 !important;
+}
+
+/* Nuggets page filter input styles */
+.filter-input {
+  background-color: white;
+  color: black;
+  border: 1px solid #45366B;
+}
+
+.filter-input:focus {
+  border-color: #45366B;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(69, 54, 107, 0.2);
+}
+
+.dark .filter-input {
+  background-color: #05102C;
+  color: white;
+  border: 1px solid #45366B;
+}
+
+.dark .filter-input:focus {
+  border-color: #45366B;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(69, 54, 107, 0.2);
+}
+
+.filter-select {
+  background-color: white;
+  color: black;
+  border: 1px solid #45366B;
+}
+
+.filter-select:focus {
+  border-color: #45366B;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(69, 54, 107, 0.2);
+}
+
+.dark .filter-select {
+  background-color: #05102C;
+  color: white;
+  border: 1px solid #45366B;
+}
+
+.dark .filter-select:focus {
+  border-color: #45366B;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(69, 54, 107, 0.2);
+}
+
+.filter-button {
+  background-color: white;
+  color: black;
+  border: 1px solid #45366B;
+}
+
+.filter-button:hover {
+  background-color: #f8f9fa;
+}
+
+.dark .filter-button {
+  background-color: #05102C;
+  color: white;
+  border: 1px solid #45366B;
+}
+
+.dark .filter-button:hover {
+  background-color: #0a1a3a;
+}
+
+.filter-checkbox-container {
+  background-color: white;
+  border: 1px solid #45366B;
+}
+
+.dark .filter-checkbox-container {
+  background-color: #05102C;
+  border: 1px solid #45366B;
+}
+
+/* Mobile menu styles */
+.mobile-menu-container {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.dark .mobile-menu-container {
+  background-color: rgba(24, 18, 43, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.mobile-menu-nav-link {
+  color: #374151;
+}
+
+.mobile-menu-nav-link:hover {
+  color: #9F0712;
+}
+
+.dark .mobile-menu-nav-link {
+  color: white;
+}
+
+.dark .mobile-menu-nav-link:hover {
+  color: #9F0712;
+}
+
+.mobile-menu-user-info {
+  background-color: #F9FAFB;
+  color: #374151;
+}
+
+.dark .mobile-menu-user-info {
+  background-color: #374151;
+  color: white;
+}
+
+.mobile-menu-account-link {
+  background-color: white;
+  color: #374151;
+  border: 1px solid #E5E7EB;
+}
+
+.mobile-menu-account-link:hover {
+  color: #9F0712;
+}
+
+.dark .mobile-menu-account-link {
+  background-color: #374151;
+  color: white;
+  border: 1px solid #4B5563;
+}
+
+.dark .mobile-menu-account-link:hover {
+  color: #9F0712;
+}
+
+.mobile-menu-logout-button {
+  background-color: transparent;
+  color: #9F0712;
+  border: 1px solid #FCA5A5;
+}
+
+.mobile-menu-logout-button:hover {
+  background-color: #FEF2F2;
+}
+
+.dark .mobile-menu-logout-button {
+  background-color: transparent;
+  color: #9F0712;
+  border: 1px solid #9F0712;
+}
+
+.dark .mobile-menu-logout-button:hover {
+  background-color: rgba(159, 7, 18, 0.1);
+}
+
 /* Oswald Font Utility Class */
 .font-oswald {
   font-family: var(--font-oswald), sans-serif !important;

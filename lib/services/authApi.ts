@@ -74,8 +74,8 @@ export const authApi = createApi({
           : { username: emailOrUsername, password }
         
         return {
-          url: '/login',
-          method: 'POST',
+        url: '/login',
+        method: 'POST',
           body,
         }
       },

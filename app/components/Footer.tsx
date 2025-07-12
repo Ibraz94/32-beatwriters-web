@@ -125,11 +125,11 @@ export default function Footer() {
                                 onClick={() => toggleSection(category)}
                                 className="md:hidden w-full flex items-center justify-between text-xl font-semibold text-foreground mb-4 py-2 border-b border-muted-foreground/20"
                             >
-                                <span>{category}</span>
+                                <span className="text-white">{category}</span>
                                 {expandedSections.includes(category) ? (
-                                    <ChevronUp className="h-5 w-5" />
+                                    <ChevronUp className="h-5 w-5 text-white" />
                                 ) : (
-                                    <ChevronDown className="h-5 w-5" />
+                                    <ChevronDown className="h-5 w-5 text-white" />
                                 )}
                             </button>
 

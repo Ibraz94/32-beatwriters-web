@@ -90,7 +90,7 @@ function Header() {
     ];
 
     return (
-        <header className={`z-50 w-full border-gray-100 shadow-sm transition-colors duration-300 ${theme === 'light' ? 'bg-white text-black' : 'bg-[#18122B] text-white'} container mx-auto`}>
+        <header className="header-main z-50 w-full border-gray-100 shadow-sm transition-colors duration-300 container mx-auto">
             <div>
                 <div className="flex h-[80px] lg:h-[80px] items-center justify-between px-2 lg:px-0">
                     {/* Logo and Social Links */}
@@ -172,7 +172,7 @@ function Header() {
                         </button>
                     </div>
                 </div>
-                <div className="h-[32px] lg:h-[50px] flex items-center justify-between bg-[#2C204B] px-2 lg:px-5 mb-1 mt-2">
+                <div className="header-secondary h-[32px] lg:h-[50px] flex items-center justify-between px-2 lg:px-5 mb-1 mt-2">
                     {/* Mobile Social Links - Only visible on mobile */}
                     <div className="flex lg:hidden items-center justify-center w-full space-x-4">
                         {/* <h1 className="text-white text-xl font-bold">Social Links</h1> */}
@@ -275,7 +275,7 @@ function Header() {
                                 </Link>
                                 <Link
                                     href="/login"
-                                    className=" hover:text-red-800 hover:scale-102 transition-colors text-md"
+                                    className="desktop-login-link hover:scale-102 transition-colors text-md"
                                 >
                                     LOGIN
                                 </Link>
@@ -286,7 +286,7 @@ function Header() {
                 </div>
 
                 {/* Mobile Menu */}
-                <div className={`lg:hidden bg-background/90 transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen
+                <div className={`mobile-menu-container lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen
                     ? 'max-h-screen opacity-100 translate-y-0'
                     : 'max-h-0 opacity-0 -translate-y-2'
                     }`}>
@@ -297,7 +297,7 @@ function Header() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="block px-4 py-3 hover:text-red-800 text-white rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105"
+                                    className="mobile-menu-nav-link block px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105"
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     style={{
                                         animationDelay: isMobileMenuOpen ? `${index * 50}ms` : '0ms'
@@ -308,11 +308,16 @@ function Header() {
                             ))}
                         </div>
 
+                        {/* Theme Toggle - Mobile */}
+                        <div className="px-4 flex justify-center">
+                            <ThemeToggle />
+                        </div>
+
                         {/* User Actions */}
                         <div className="px-4 space-y-3">
                             {isAuthenticated ? (
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                    <div className="mobile-menu-user-info flex items-center justify-center space-x-3 p-3 rounded-lg">
                                         {user?.profilePicture ? (
                                             <Image
                                                 src={user.profilePicture}
@@ -332,14 +337,14 @@ function Header() {
                                             <div className="font-medium">
                                                 {getUserDisplayName()}
                                             </div>
-                                            <div className="text-sm text-gray-500">
+                                            <div className="text-sm opacity-75">
                                                 {user?.memberships?.type || 'Subscriber'}
                                             </div>
                                         </div>
                                     </div>
                                     <Link
                                         href="/account"
-                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 font-medium rounded-lg transition-all duration-200 text-center hover:text-red-800 transform hover:scale-105"
+                                        className="mobile-menu-account-link flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         <User className="h-4 w-4" />
@@ -350,7 +355,7 @@ function Header() {
                                             setIsMobileMenuOpen(false);
                                             handleLogout();
                                         }}
-                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center text-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-800 transform hover:scale-105"
+                                        className="mobile-menu-logout-button flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
                                     >
                                         <LogOut className="h-4 w-4" />
                                         <span>Log out</span>
@@ -360,7 +365,7 @@ function Header() {
                                 <div className="space-y-3">
                                     <Link
                                         href="/login"
-                                        className="block w-full py-3 px-4 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
+                                        className="mobile-menu-link block w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Login
