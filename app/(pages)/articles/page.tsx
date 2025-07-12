@@ -166,7 +166,7 @@ export default function ArticlesPage() {
             placeholder="Search articles..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-10 py-3 border border-white/20 rounded shadow-sm bg-white dark:bg-[#2C204B] text-black dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+            className="filter-input w-full pl-10 pr-10 py-3 rounded shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
           />
           {searchTerm && (
             <button
