@@ -84,7 +84,7 @@ export default function SubscriptionComponent() {
           {/* Benefits Section */}
           <div className="space-y-8">
             <div className="space-y-6">
-              <h2 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
+              <h2 className="text-3xl font-oswald lg:text-5xl font-bold text-foreground leading-tight">
                 What you'll get with your subscription:
               </h2>
               

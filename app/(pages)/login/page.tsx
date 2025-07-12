@@ -140,7 +140,7 @@ export default function Login() {
                 </div>
 
                 {/* Login Form */}
-                <div className="bg-card rounded-lg shadow-lg border border-border p-8 pt-12 pb-12">
+                <div className="bg-car rounded-lg shadow-lg border border-border p-8 pt-12 pb-12">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {/* General Error Message */}
                         {errors.general && (
@@ -176,7 +176,7 @@ export default function Login() {
 
                         {/* Password Field */}
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-card-foreground mb-2">
+                            <label htmlFor="password" className="block text-sm font-medium mb-2">
                                 Password
                             </label>
                             <div className="relative">
@@ -298,7 +298,7 @@ export default function Login() {
                 <div className="text-center">
                     <p className="text-sm text-muted-foreground">
                     Don't have an account?{'  '}
-                            <Link href="/subscribe" className="font-medium text-primary hover:text-red-800 transition-colors">
+                            <Link href="/subscribe" className="font-medium text-red-800 hover:underline transition-colors">
                                  Subscribe now
                             </Link>
                     </p>

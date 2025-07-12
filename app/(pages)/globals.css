@@ -89,11 +89,24 @@ body {
 /* Custom theme-aware classes */
 .articles-card {
   background-color: transparent;
+  border: 1px solid #d1d1d1 
 }
 
 .dark .articles-card {
   background-color: #2C204B;
+  border: 1px solid #3a3a3a 
 }
+
+.select {
+  background-color: transparent;
+  border: 1px solid #d1d1d1 
+}
+
+.dark .select {
+  background-color: #2C204B;
+  border: 1px solid #3a3a3a 
+}
+
 
 .player-card {
   background-color: #f6f6f6;

@@ -564,7 +564,7 @@ export default function NuggetsPage() {
                                 onChange={(e) => handleRookieFilterChange(e.target.checked)}
                                 className="w-4 h-4 hover:cursor-pointer"
                             />
-                            <label htmlFor="rookie-filter" className="text-sm font-medium text-black hover:cursor-pointer">
+                            <label htmlFor="rookie-filter" className="text-sm font-medium hover:cursor-pointer">
                                 Rookie
                             </label>
                         </div>

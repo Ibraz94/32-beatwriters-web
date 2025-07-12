@@ -296,7 +296,7 @@ export default function PlayerProfile() {
             {/* Workout Metrics - Only show if Player Profiler data is available */}
             {player?.['Workout Metrics'] ? (
               <div>
-                <h2 className="text-3xl font-black mb-8">Workout Metrics</h2>
+                <h2 className="text-3xl mb-8">Workout Metrics</h2>
 
                 <div className="text-white">
                   {/* Primary Metrics Chart */}
@@ -585,7 +585,7 @@ export default function PlayerProfile() {
                       id="year-select"
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(e.target.value)}
-                      className="px-4 py-2 border rounded border-white/20 bg-card text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="px-4 py-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
                     >
                       {availableYears.map(year => (
                         <option key={year} value={year}>{year}</option>
@@ -1409,7 +1409,7 @@ export default function PlayerProfile() {
                         onClick={() => setActiveTab(tab.id)}
                         className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-semibold transition-all bg-card ${activeTab === tab.id
                           ? 'bg-red-800 text-white border-b-2 border-red-600'
-                          : 'text-gray-600 hover:text-red-800'
+                          : 'text-white hover:text-red-800'
                           }`}
                       >
                         <IconComponent className="w-4 h-4" />

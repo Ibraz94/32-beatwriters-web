@@ -188,7 +188,7 @@ export default function ArticlesPage() {
           const canAccess = canAccessArticle(article.access)
 
           return (
-            <article key={index} className="rounded-md shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer bg-white light:bg-white dark:bg-[#2C204B] p-4 dark:border dark:border-white/10">
+            <article key={index} className="rounded shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer articles-card p-4 dark:border dark:border-white/10">
               {/* Article Image */}
               <Link href={buttonConfig.href}>
                 <div className="relative aspect-video">
@@ -235,7 +235,7 @@ export default function ArticlesPage() {
 
                 {/* Article Content */}
                 <div className="mt-6">
-                  <h2 className="text-2xl text-left font-bold mb-3 line-clamp-1 text-white">
+                  <h2 className="text-2xl text-left font-bold mb-3 line-clamp-1 font-oswald">
                     {canAccess ? (
                       <div>
                         {article.title}
@@ -246,7 +246,7 @@ export default function ArticlesPage() {
                   </h2>
 
                   {/* Access Status */}
-                  <div className="text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 md:line-clamp-2 mb-1 md:mb-4">
+                  <div className="text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 md:line-clamp-2 mb-1 md:mb-4">
                   {(() => {
                     try {
                       let contentToRender = article.content;

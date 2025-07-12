@@ -337,7 +337,7 @@ export default function PremiumSignup() {
           </div>
 
           <div>
-            <div className="bg-card rounded-lg shadow-lg border border-border p-8">
+            <div className="rounded-lg shadow-lg border border-border p-8">
               <form onSubmit={handleSubscribe} className="space-y-6">
                 {errors.general && (
                   <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3">
@@ -345,20 +345,20 @@ export default function PremiumSignup() {
                   </div>
                 )}
                 <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-foreground">Choose Your Plan</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h2 className="text-2xl font-semibold text-foreground font-oswald">Choose Your Plan</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                     {subscriptionOptions?.data.map((price) => (
                       <div
                         key={price.id}
                         className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPriceId === price.id
-                          ? 'border-primary bg-primary/5'
-                          : 'border-border hover:border-primary/50'
+                          ? 'border-2 border-gray-400 scale-105 bg-[#2c204b]'
+                          : 'border-border hover:border-primary/50 bg-accent '
                           }`}
                         onClick={() => setSelectedPriceId(price.id)}
                       >
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center gap-2">
                           <div>
-                            <h3 className="font-semibold text-foreground">
+                            <h3 className="font-semibold text-white">
                               {price.recurring.interval === 'month' ? 'Monthly' : 'Annual'}
                             </h3>
                             <p className="text-muted-foreground">
@@ -366,7 +366,7 @@ export default function PremiumSignup() {
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="text-2xl font-bold text-foreground">
+                            <p className="text-2xl font-bold text-white">
                               ${(price.unit_amount / 100).toFixed(2)}
                             </p>
                             <p className="text-sm text-muted-foreground">
