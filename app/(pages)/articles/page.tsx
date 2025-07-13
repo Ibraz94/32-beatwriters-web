@@ -40,15 +40,20 @@ export default function ArticlesPage() {
   useEffect(() => {
     if (articles?.data.articles) {
       if (page === 1) {
-        // First load - replace all articles
+        // First load or search - replace all articles
         setAllArticles(articles.data.articles)
       } else {
-        // Load more - append new articles
-        setAllArticles(prev => [...prev, ...articles.data.articles])
+        // Load more - append new articles only if they're not already present
+        setAllArticles(prev => {
+          const newArticles = articles.data.articles.filter(newArticle => 
+            !prev.some(existingArticle => existingArticle.id === newArticle.id)
+          )
+          return [...prev, ...newArticles]
+        })
       }
       setHasMoreArticles(articles.data.articles.length === 12)
     }
-  }, [articles, page])
+  }, [articles])
 
   useEffect(() => {
     if (articles?.data.articles) {
@@ -181,8 +186,9 @@ export default function ArticlesPage() {
           </p>
         </div>
       ) : (
-        // Articles Grid
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <>
+          {/* Articles Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {allArticles.map((article, index) => {
           const buttonConfig = getButtonConfig(article)
           const canAccess = canAccessArticle(article.access)
@@ -387,14 +393,15 @@ export default function ArticlesPage() {
                   {buttonConfig.text}
                 </div>
               </div>
-            </Link>
+              </Link>
             </article>
-      )
+          )
         })}
-        
+        </div>
+
         {/* Load More Section */}
         {hasMoreArticles && (
-          <div className="text-center mt-12">
+          <div className="w-full flex justify-center mt-12">
             <button
               onClick={() => {
                 if (!isFetching) {
@@ -414,13 +421,13 @@ export default function ArticlesPage() {
 
         {/* No More Articles Message */}
         {!hasMoreArticles && allArticles.length > 0 && (
-          <div className="text-center mt-12">
+          <div className="w-full flex justify-center mt-12">
             <p className="text-gray-600 text-lg">
               You've reached the end of our articles. Check back later for new content!
             </p>
           </div>
         )}
-      </div>
+        </>
       )}
     </div>
   )
