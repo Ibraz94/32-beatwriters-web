@@ -20,6 +20,30 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/our-blog',
+        destination: '/articles',
+        permanent: true,
+      },
+      {
+        source: '/our-blog/',
+        destination: '/articles',
+        permanent: true,
+      },
+      {
+        source: '/about-us',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/about-us/',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
