@@ -12,6 +12,8 @@ export const API_CONFIG = {
     TEAMS: '/api/teams',
     TOOLS: '/api/tools',
     STRIPE: {
+      SUBSCRIPTION_OPTIONS: '/api/stripe/subscription-options',
+      CREATE_CHECKOUT_SESSION: '/api/stripe/create-checkout-session',
       MY_SUBSCRIPTION: '/api/stripe/my-subscription',
       CANCEL_SUBSCRIPTION: '/api/stripe/my-subscription/cancel'
     }

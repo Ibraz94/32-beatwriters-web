@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check } from 'lucide-react'
+import { API_CONFIG, buildApiUrl } from '../../../lib/config/api'
 
 interface SubscriptionOption {
   id: string
@@ -67,7 +68,7 @@ export default function PremiumSignup() {
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
       try {
-        const response = await fetch('https://api.32beatwriters.com/api/stripe/subscription-options')
+        const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.SUBSCRIPTION_OPTIONS))
         const data = await response.json()
         
         // Filter to only show the specific plans
@@ -155,7 +156,7 @@ export default function PremiumSignup() {
     if (!validateForm() || !selectedPriceId) return
     setIsLoading(true)
     try {
-      const response = await fetch('https://api.32beatwriters.com/api/stripe/create-checkout-session', {
+      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CREATE_CHECKOUT_SESSION), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -176,7 +177,7 @@ export default function PremiumSignup() {
   }
 
   const checkEmail = async (email: string) => {
-          const response = await fetch('https://api.32beatwriters.com/api/users/check-email', {
+          const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.AUTH + '/check-email'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -188,7 +189,7 @@ export default function PremiumSignup() {
   }
 
   const checkUsername = async (username: string) => {
-          const response = await fetch('https://api.32beatwriters.com/api/users/check-username', {
+          const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.AUTH + '/check-username'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
