@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cabin, Oswald } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
@@ -22,6 +22,11 @@ const oswald = Oswald({
 export const metadata: Metadata = {
   title: "32BeatWriters",
   description: "Your Home For all NFL, Prospect and Fantasy Football News.",
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({
