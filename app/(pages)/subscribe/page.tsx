@@ -63,7 +63,7 @@ export default function PremiumSignup() {
   })
 
   // Specific plan IDs to display
-  const allowedPlanIds = ['price_1RjqjDAToc8YZruPtwMypo5C', 'plan_SP4eIOlEaiqOH0']
+  const allowedPlanIds = ['price_1RZZFRAToc8YZruPw5uzOh1n', 'price_1RltPxAToc8YZruP4TJLGvPR']
 
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
@@ -263,7 +263,7 @@ export default function PremiumSignup() {
       <div>
         <div className="text-center mb-8 sm:mb-10 lg:mb-12">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight font-oswald">
-            Gain Your Competitive Edge
+            Gain Your Competitive Edge
           </h1>
           <p className="text-lg sm:text-xl max-w-3xl mx-auto px-2 sm:px-0">
             Tools and insights specifically designed to give you an advantage over your league-mates
@@ -281,7 +281,7 @@ export default function PremiumSignup() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm sm:text-base">Exclusive Content</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">Summaries All Offseason – The Best, Complete Reports in the Industry That's Used By Industry Leaders.</p>
+                  <p className="text-gray-500 text-sm sm:text-base">Summaries All Offseason - The Best, Complete Reports in the Industry That's Used By Industry Leaders.</p>
                 </div>
               </div>
 
