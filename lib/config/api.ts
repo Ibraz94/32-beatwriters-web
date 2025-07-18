@@ -6,6 +6,7 @@ export const API_CONFIG = {
     BEAT_WRITERS: '/api/beat-writers',
     CONTACT: '/api/contact',
     NUGGETS: '/api/nuggets',
+    SAVED_NUGGETS: '/api/nuggets/saved/list',
     PLAYERS: '/api/players',
     PODCASTS: '/api/podcasts',
     SUBSCRIPTION: '/api/subscription',

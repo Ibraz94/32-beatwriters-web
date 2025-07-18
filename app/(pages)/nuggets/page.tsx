@@ -3,13 +3,15 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, X, ChevronLeft, ChevronRight, ChevronDown, Filter } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight, ChevronDown, Filter, Bookmark } from 'lucide-react'
 import Masonry from 'react-masonry-css'
 import { ReadMore } from '@/app/components/ReadMore'
 import {
     useGetNuggetsQuery,
     getImageUrl,
-    useSearchNuggetsQuery
+    useSearchNuggetsQuery,
+    useSaveNuggetMutation,
+    useUnsaveNuggetMutation
 } from '@/lib/services/nuggetsApi'
 import {
     Select,
@@ -129,6 +131,10 @@ export default function NuggetsPage() {
     // Teams query
     const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
 
+    // Save/Unsave mutations
+    const [saveNugget] = useSaveNuggetMutation()
+    const [unsaveNugget] = useUnsaveNuggetMutation()
+
     // Helper function to find team by abbreviation or name
     const findTeamByKey = (teamKey: string) => {
         if (!teamsData?.teams || !teamKey) return null
@@ -138,6 +144,28 @@ export default function NuggetsPage() {
             team.name?.toLowerCase() === teamKey.toLowerCase() ||
             team.city?.toLowerCase() === teamKey.toLowerCase()
         )
+    }
+
+    // Handle save/unsave nugget
+    const handleBookmarkClick = async (nuggetId: number, isSaved: boolean) => {
+        try {
+            if (isSaved) {
+                await unsaveNugget(nuggetId).unwrap()
+            } else {
+                await saveNugget(nuggetId).unwrap()
+            }
+            
+            // Update local state to reflect the change immediately
+            setAllNuggets(prevNuggets => 
+                prevNuggets.map(nugget => 
+                    nugget.id === nuggetId 
+                        ? { ...nugget, isSaved: !isSaved }
+                        : nugget
+                )
+            )
+        } catch (error) {
+            console.error('Error saving/unsaving nugget:', error)
+        }
     }
 
     // Handle loading nuggets
@@ -607,43 +635,59 @@ export default function NuggetsPage() {
                                         const router = useRouter()
                                         return (
                                             <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                                                <div className='flex mt-8 gap-2 ml-4 mr-4'>
-                                                    <div
-                                                        className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
-                                                        onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
-                                                    >
-                                                        <Image
-                                                            src={getImageUrl(nugget.player.headshotPic) || ''}
-                                                            alt={`${nugget.player.name} headshot`}
-                                                            width={50}
-                                                            height={50}
-                                                            className='rounded-full object-cover bg-background overflow-hidden'
-                                                        />
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <Link href={`/players/${nugget.player.id}`}>
-                                                                <h1 className='text-xl'>{nugget.player.name}</h1>
-                                                            </Link>
-                                                            {playerTeam && (
-                                                                <div className="flex items-center">
-                                                                    <Image
-                                                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
-                                                                        alt={`${playerTeam.name} logo`}
-                                                                        width={32}
-                                                                        height={24}
-                                                                        className='object-contain '
-                                                                    />
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        {nugget.player.team && (
-                                                            <p className="text-sm text-gray-500">
-                                                                {nugget.player.position} • {nugget.player.team}
-                                                            </p>
-                                                        )}
-                                                    </div>
+                                                                                <div className='flex mt-8 gap-2 ml-4 mr-4'>
+                                    <div
+                                        className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
+                                        onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
+                                    >
+                                        <Image
+                                            src={getImageUrl(nugget.player.headshotPic) || ''}
+                                            alt={`${nugget.player.name} headshot`}
+                                            width={50}
+                                            height={50}
+                                            className='rounded-full object-cover bg-background overflow-hidden'
+                                        />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <Link href={`/players/${nugget.player.id}`}>
+                                                <h1 className='text-xl'>{nugget.player.name}</h1>
+                                            </Link>
+                                            {playerTeam && (
+                                                <div className="flex items-center">
+                                                    <Image
+                                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                                        alt={`${playerTeam.name} logo`}
+                                                        width={32}
+                                                        height={24}
+                                                        className='object-contain '
+                                                    />
                                                 </div>
+                                            )}
+                                        </div>
+                                        {nugget.player.team && (
+                                            <p className="text-sm text-gray-500">
+                                                {nugget.player.position} • {nugget.player.team}
+                                            </p>
+                                        )}
+                                    </div>
+                                    {/* Bookmark Button */}
+                                    <div className="flex items-center">
+                                        <button
+                                            onClick={() => handleBookmarkClick(nugget.id, nugget.isSaved || false)}
+                                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                            title={nugget.isSaved ? 'Remove from saved' : 'Save nugget'}
+                                        >
+                                            <Bookmark 
+                                                className={`w-5 h-5 ${
+                                                    nugget.isSaved 
+                                                        ? 'fill-red-800 text-red-800' 
+                                                        : 'text-gray-500 hover:text-red-800'
+                                                }`} 
+                                            />
+                                        </button>
+                                    </div>
+                                </div>
                                                 <div className="px-6 py-4 border-t border-white/20 mt-3">
                                                     <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
