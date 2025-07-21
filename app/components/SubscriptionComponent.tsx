@@ -122,7 +122,7 @@ export default function SubscriptionComponent() {
                       : 'text-white hover:text-gray-300'
                   }`}
                 >
-                  Yearly (save 20%)
+                  Yearly (Save Over 15%)
                 </button>
               </div>
             </div>
@@ -157,11 +157,9 @@ export default function SubscriptionComponent() {
                 <div className="bg-[#2C204B] p-8 text-center text-white">
                   <h4 className="text-3xl font-bold mb-2">
                     {selectedPlan === 'monthly' ? 'Monthly Plan' : 'Yearly Plan'} 
-                    {selectedPlan === 'yearly' && <span className="text-lg"> (save 20%)</span>}
+                    {selectedPlan === 'yearly' && <span className="text-lg"> (Save Over 15%)</span>}
                   </h4>
-                  <p className="text-slate-300 mb-8">
-                    Perfect for trying out our premium content
-                  </p>
+                  <p className='mb-6'></p>
                   
                   <div className="mb-8">
                     <span className="text-5xl font-bold">
