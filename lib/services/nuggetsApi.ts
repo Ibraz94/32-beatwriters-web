@@ -57,6 +57,7 @@ export interface NuggetFilters {
   team?: string
   search?: string
   startDate?: string
+  saved?: boolean
 }
 
 // Helper function to construct full image URLs
@@ -203,7 +204,7 @@ export const nuggetsApi = createApi({
      * Get user's saved nuggets
      * Returns a list of nuggets saved by the authenticated user
      */
-    getSavedNuggets: builder.query<{ nuggets: Nugget[] }, void>({
+    getSavedNuggets: builder.query<{ success: boolean; data: { nuggets: Nugget[]; pagination: any } }, void>({
       query: () => '/saved/list',
       providesTags: ['SavedNugget'],
     }),

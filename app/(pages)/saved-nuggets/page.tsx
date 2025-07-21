@@ -7,11 +7,11 @@ import { Search, X, ChevronLeft, ChevronRight, ChevronDown, Filter, Bookmark, Lo
 import Masonry from 'react-masonry-css'
 import { ReadMore } from '@/app/components/ReadMore'
 import {
-    useGetNuggetsQuery,
+    useGetSavedNuggetsQuery,
     getImageUrl,
-    useSearchNuggetsQuery,
     useSaveNuggetMutation,
-    useUnsaveNuggetMutation
+    useUnsaveNuggetMutation,
+    Nugget
 } from '@/lib/services/nuggetsApi'
 import {
     Select,
@@ -33,7 +33,6 @@ import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
-
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
     sortOrder?: 'asc' | 'desc'
@@ -54,7 +53,7 @@ interface ImageModalData {
     currentIndex?: number
 }
 
-export default function NuggetsPage() {
+export default function SavedNuggetsPage() {
     // Add authentication check
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
     const [open, setOpen] = useState(false)
@@ -71,7 +70,7 @@ export default function NuggetsPage() {
     const [selectedDate, setSelectedDate] = useState<string>('')
     const [searchTerm, setSearchTerm] = useState('')
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
-    const [allNuggets, setAllNuggets] = useState<any[]>([])
+    const [allNuggets, setAllNuggets] = useState<Nugget[]>([])
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
@@ -79,6 +78,16 @@ export default function NuggetsPage() {
     const [showMobileFilters, setShowMobileFilters] = useState(false)
     const [bookmarkLoading, setBookmarkLoading] = useState<number | null>(null)
     const ITEMS_PER_PAGE = 15
+
+    // Get saved nuggets (calls /api/nuggets/saved/list with auth)
+    const { data: savedNuggetsData, isLoading: isLoadingSavedNuggets, error: savedNuggetsError, isFetching: isFetchingSavedNuggets } = useGetSavedNuggetsQuery()
+
+    // Teams query
+    const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
+
+    // Save/Unsave mutations
+    const [saveNugget] = useSaveNuggetMutation()
+    const [unsaveNugget] = useUnsaveNuggetMutation()
 
     // Debounce search term
     useEffect(() => {
@@ -98,44 +107,6 @@ export default function NuggetsPage() {
         }
     }, [selectedDate, date])
 
-    // Build query parameters
-    const queryParams = useMemo(() => {
-        const params = {
-            ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
-            ...(filters.position && { position: filters.position }),
-            ...(filters.team && { team: filters.team }),
-            ...(selectedDate && { startDate: selectedDate }),
-            ...(filters.rookie && { rookie: filters.rookie }),
-            page: currentPage,
-            limit: ITEMS_PER_PAGE,
-            sortBy: 'createdAt' as const,
-            sortOrder: 'desc' as const
-        }
-        
-        // Debug logging for startDate
-        if (selectedDate) {
-            console.log('🔍 startDate being sent:', selectedDate)
-            console.log('🔍 Full query params:', params)
-        }
-        
-        return params
-    }, [debouncedSearchTerm, filters.position, filters.team, selectedDate, filters.rookie, currentPage])
-
-    // Main query for nuggets - with all filters
-    const {
-        data: nuggetsData,
-        isLoading: isLoadingNuggets,
-        error: nuggetsError,
-        isFetching: isFetchingNuggets
-    } = useGetNuggetsQuery(queryParams)
-
-    // Teams query
-    const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
-
-    // Save/Unsave mutations
-    const [saveNugget] = useSaveNuggetMutation()
-    const [unsaveNugget] = useUnsaveNuggetMutation()
-
     // Helper function to find team by abbreviation or name
     const findTeamByKey = (teamKey: string) => {
         if (!teamsData?.teams || !teamKey) return null
@@ -149,7 +120,6 @@ export default function NuggetsPage() {
 
     // Handle save/unsave nugget
     const handleBookmarkClick = async (nuggetId: number, isSaved: boolean) => {
-        // Set loading state for this specific nugget
         setBookmarkLoading(nuggetId)
         
         try {
@@ -170,65 +140,29 @@ export default function NuggetsPage() {
         } catch (error) {
             console.error('Error saving/unsaving nugget:', error)
         } finally {
-            // Clear loading state
             setBookmarkLoading(null)
         }
     }
 
-    // Handle loading nuggets
+    // Handle loading saved nuggets
     useEffect(() => {
-        if (nuggetsData?.data?.nuggets) {
-            const newNuggets = nuggetsData.data.nuggets
-            if (currentPage === 1) {
-                setAllNuggets(newNuggets)
-            } else {
-                setAllNuggets(prev => {
-                    const existingIds = new Set(prev.map(n => n.id))
-                    const filteredNew = newNuggets.filter(n => !existingIds.has(n.id))
-                    return [...prev, ...filteredNew]
-                })
-            }
-            setHasMoreNuggets(newNuggets.length === ITEMS_PER_PAGE)
-            console.log('Data loaded, setting isLoadingMore to false')
+        if (savedNuggetsData?.data?.nuggets) {
+            const newNuggets = savedNuggetsData.data.nuggets
+            setAllNuggets(newNuggets)
+            setHasMoreNuggets(false) // Saved nuggets don't have pagination
             setIsLoadingMore(false)
         }
-    }, [nuggetsData, currentPage])
-
-    // Debug RTK Query states
-    useEffect(() => {
-        if (currentPage > 1) {
-            console.log('RTK Query states - isFetching:', isFetchingNuggets, 'isLoading:', isLoadingNuggets, 'local isLoadingMore:', isLoadingMore)
-        }
-    }, [isFetchingNuggets, isLoadingNuggets, isLoadingMore, currentPage])
-
-    // Reset loading state on error
-    useEffect(() => {
-        if (nuggetsError) {
-            console.log('Error occurred, setting isLoadingMore to false')
-            setIsLoadingMore(false)
-        }
-    }, [nuggetsError])
-
-    // After the useEffect that loads nuggets, add:
-    useEffect(() => {
-        if (!isLoadingNuggets && allNuggets.length === 0) {
-            setCurrentPage(1)
-        }
-    }, [isLoadingNuggets, allNuggets])
+    }, [savedNuggetsData])
 
     // Search functionality
     const handleSearch = (term: string) => {
         setSearchTerm(term)
-        setCurrentPage(1) // Reset to first page when searching
-        setAllNuggets([]) // Clear current results
     }
 
     // Clear date filter
     const clearDateFilter = () => {
         setSelectedDate('')
         setDate(undefined)
-        setCurrentPage(1)
-        setAllNuggets([])
     }
 
     // Handle position filter change
@@ -237,8 +171,6 @@ export default function NuggetsPage() {
             ...prev,
             position: position === 'all' ? '' : position
         }))
-        setCurrentPage(1)
-        setAllNuggets([])
     }
 
     // Handle team filter change
@@ -247,8 +179,6 @@ export default function NuggetsPage() {
             ...prev,
             team: team === 'all' ? '' : team
         }))
-        setCurrentPage(1)
-        setAllNuggets([])
     }
 
     // Handle rookie filter change
@@ -257,8 +187,6 @@ export default function NuggetsPage() {
             ...prev,
             rookie: isRookie
         }))
-        setCurrentPage(1)
-        setAllNuggets([])
     }
 
     // Clear all filters
@@ -275,18 +203,46 @@ export default function NuggetsPage() {
         setDate(undefined)
         setSearchTerm('')
         setDebouncedSearchTerm('')
-        setCurrentPage(1)
-        setHasMoreNuggets(true)
     }
 
-    // Load more nuggets
-    const loadMoreNuggets = () => {
-        if (!isLoadingMore && hasMoreNuggets) {
-            console.log('Setting isLoadingMore to true')
-            setIsLoadingMore(true)
-            setCurrentPage(prev => prev + 1)
+    // Filter nuggets based on search and filters
+    const filteredNuggets = useMemo(() => {
+        let filtered = allNuggets
+
+        // Search filter
+        if (debouncedSearchTerm) {
+            filtered = filtered.filter(nugget =>
+                nugget.content.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                nugget.player.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+            )
         }
-    }
+
+        // Position filter
+        if (filters.position) {
+            filtered = filtered.filter(nugget => nugget.player.position === filters.position)
+        }
+
+        // Team filter
+        if (filters.team) {
+            filtered = filtered.filter(nugget => nugget.player.team === filters.team)
+        }
+
+        // Date filter
+        if (selectedDate) {
+            const filterDate = new Date(selectedDate)
+            filtered = filtered.filter(nugget => {
+                const nuggetDate = new Date(nugget.createdAt)
+                return nuggetDate.toDateString() === filterDate.toDateString()
+            })
+        }
+
+        // Rookie filter
+        if (filters.rookie) {
+            filtered = filtered.filter(nugget => nugget.player.rookie)
+        }
+
+        return filtered
+    }, [allNuggets, debouncedSearchTerm, filters.position, filters.team, selectedDate, filters.rookie])
 
     // Image modal functions
     const openImageModal = (src: string, alt: string, images?: string[], currentIndex?: number) => {
@@ -340,7 +296,7 @@ export default function NuggetsPage() {
 
     // Trending Players Component
     const TrendingPlayers = () => {
-        // Get top 5 players from recent nuggets
+        // Get top 5 players from saved nuggets
         const trendingPlayers = allNuggets
             .slice(0, 10)
             .reduce((acc: any[], nugget) => {
@@ -348,7 +304,7 @@ export default function NuggetsPage() {
                 if (!existingPlayer) {
                     acc.push({
                         ...nugget.player,
-                        team: findTeamByKey(nugget.player.team)
+                        team: findTeamByKey(nugget.player.team || '')
                     })
                 }
                 return acc
@@ -399,27 +355,23 @@ export default function NuggetsPage() {
     }
 
     // Combined loading states
-    const isLoading = isLoadingNuggets || authLoading || isLoadingTeams
-    const error = nuggetsError
-    const displayNuggets = allNuggets
+    const isLoading = isLoadingSavedNuggets || authLoading || isLoadingTeams
+    const error = savedNuggetsError
+    const displayNuggets = filteredNuggets
     const hasActiveFilters = debouncedSearchTerm || filters.position || filters.team || selectedDate || filters.rookie
 
     // Show authentication required message if not authenticated
-    if (!authLoading && !isAuthenticated && !user?.memberships) {
+    if (!authLoading && !isAuthenticated) {
         return (
             <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
                 <div className="max-w-6xl mx-auto text-center">
-                    <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
-                    <p className="text-gray-600 mb-8">Please upgrade to a premium subscription to view the feed. Already have a subscription? Please login to your account.</p>
-
-                    <p className="text-gray-600 mb-8">
-                        <Link href="/login" className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
-                    </p>
+                    <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
+                    <p className="text-gray-600 mb-8">Please login to view your saved nuggets.</p>
                     <Link
-                        href="/subscribe"
+                        href="/login"
                         className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
                     >
-                        Subscribe
+                        Login
                     </Link>
                 </div>
             </div>
@@ -431,7 +383,8 @@ export default function NuggetsPage() {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="text-center mb-12">
-                    <p className="text-xl max-w-4xl mx-auto">Loading feed...</p>
+                    <h1 className="text-3xl font-bold mb-4">Saved Nuggets</h1>
+                    <p className="text-xl max-w-4xl mx-auto">Loading your saved nuggets...</p>
                 </div>
                 <div className="flex gap-6">
                     <div className="flex-1">
@@ -470,7 +423,8 @@ export default function NuggetsPage() {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="text-center">
-                    <p className="text-xl text-red-600 mb-4">Failed to load feed</p>
+                    <h1 className="text-3xl font-bold mb-4">Saved Nuggets</h1>
+                    <p className="text-xl text-red-600 mb-4">Failed to load saved nuggets</p>
                     <p className="text-gray-600">Please try again later.</p>
                 </div>
             </div>
@@ -511,49 +465,39 @@ export default function NuggetsPage() {
                             />
                         </div>
 
-
                         {/* Date Filter */}
                         <div className="flex gap-2 w-full lg:w-auto">
-                        <Popover open={open} onOpenChange={setOpen}>
+                            <Popover open={open} onOpenChange={setOpen}>
                                 <PopoverTrigger asChild className='h-10 flex-1 lg:w-42'>
-                                <Button
-                                    variant="outline"
-                                    className="filter-button justify-between text-left font-normal h-12"
-                                >
-                                    {date ? date.toLocaleDateString() : <span>Select By Date</span>}
-                                    <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start" side='bottom'>
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
+                                    <Button
+                                        variant="outline"
+                                        className="filter-button justify-between text-left font-normal h-12"
+                                    >
+                                        {date ? date.toLocaleDateString() : <span>Select By Date</span>}
+                                        <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start" side='bottom'>
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
                                         onSelect={(selectedCalendarDate: Date | undefined) => {
-                                        setDate(selectedCalendarDate)
-                                        if (selectedCalendarDate) {
-                                                // Format date as YYYY-MM-DD, handling timezone correctly
+                                            setDate(selectedCalendarDate)
+                                            if (selectedCalendarDate) {
                                                 const year = selectedCalendarDate.getFullYear()
                                                 const month = String(selectedCalendarDate.getMonth() + 1).padStart(2, '0')
                                                 const day = String(selectedCalendarDate.getDate()).padStart(2, '0')
                                                 const dateString = `${year}-${month}-${day}`
-                                                
-                                                console.log('📅 Original date:', selectedCalendarDate)
-                                                console.log('📅 Formatted date string:', dateString)
-                                                
                                                 setSelectedDate(dateString)
-                                                setCurrentPage(1)
-                                                setAllNuggets([])
-                                        } else {
-                                            setSelectedDate('')
-                                                setCurrentPage(1)
-                                                setAllNuggets([])
-                                        }
-                                        setOpen(false)
-                                    }}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
+                                            } else {
+                                                setSelectedDate('')
+                                            }
+                                            setOpen(false)
+                                        }}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
                             {date && (
                                 <Button
                                     variant="outline"
@@ -565,7 +509,6 @@ export default function NuggetsPage() {
                                 </Button>
                             )}
                         </div>
-
 
                         {/* Position Filter Dropdown */}
                         <Select
@@ -640,7 +583,7 @@ export default function NuggetsPage() {
                         {displayNuggets.length === 0 && !isLoading ? (
                             <div className="text-center py-12">
                                 <p className="text-xl text-gray-600 mb-4">
-                                    {hasActiveFilters ? 'No nuggets found for your filters.' : 'No nuggets available.'}
+                                    {hasActiveFilters ? 'No saved nuggets found for your filters.' : 'No saved nuggets available.'}
                                 </p>
                                 {hasActiveFilters && (
                                     <button
@@ -655,70 +598,70 @@ export default function NuggetsPage() {
                             <div className="max-h-[calc(100vh-300px)] overflow-y-auto pr-4 custom-scrollbar">
                                 <div className="space-y-6">
                                     {displayNuggets.map((nugget, index) => {
-                                        const playerTeam = findTeamByKey(nugget.player.team)
+                                        const playerTeam = findTeamByKey(nugget.player.team || '')
                                         const router = useRouter()
                                         return (
                                             <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                                                                                <div className='flex mt-8 gap-2 ml-4 mr-4'>
-                                    <div
-                                        className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
-                                        onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
-                                    >
-                                        <Image
-                                            src={getImageUrl(nugget.player.headshotPic) || ''}
-                                            alt={`${nugget.player.name} headshot`}
-                                            width={50}
-                                            height={50}
-                                            className='rounded-full object-cover bg-background overflow-hidden'
-                                        />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <Link href={`/players/${nugget.player.id}`}>
-                                                <h1 className='text-xl'>{nugget.player.name}</h1>
-                                            </Link>
-                                            {playerTeam && (
-                                                <div className="flex items-center">
-                                                    <Image
-                                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
-                                                        alt={`${playerTeam.name} logo`}
-                                                        width={32}
-                                                        height={24}
-                                                        className='object-contain '
-                                                    />
+                                                <div className='flex mt-8 gap-2 ml-4 mr-4'>
+                                                    <div
+                                                        className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
+                                                        onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
+                                                    >
+                                                        <Image
+                                                            src={getImageUrl(nugget.player.headshotPic) || ''}
+                                                            alt={`${nugget.player.name} headshot`}
+                                                            width={50}
+                                                            height={50}
+                                                            className='rounded-full object-cover bg-background overflow-hidden'
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <Link href={`/players/${nugget.player.id}`}>
+                                                                <h1 className='text-xl'>{nugget.player.name}</h1>
+                                                            </Link>
+                                                            {playerTeam && (
+                                                                <div className="flex items-center">
+                                                                    <Image
+                                                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                                                        alt={`${playerTeam.name} logo`}
+                                                                        width={32}
+                                                                        height={24}
+                                                                        className='object-contain '
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        {nugget.player.team && (
+                                                            <p className="text-sm text-gray-500">
+                                                                {nugget.player.position} • {nugget.player.team}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    {/* Bookmark Button */}
+                                                    <div className="flex items-center">
+                                                        <button
+                                                            onClick={() => handleBookmarkClick(nugget.id, nugget.isSaved || false)}
+                                                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                                                            title={nugget.isSaved ? 'Remove from saved' : 'Save nugget'}
+                                                            disabled={bookmarkLoading === nugget.id}
+                                                        >
+                                                            {bookmarkLoading === nugget.id ? (
+                                                                <Loader2 className="w-5 h-5 animate-spin text-red-800" />
+                                                            ) : (
+                                                                <Bookmark 
+                                                                    className={`w-5 h-5 ${
+                                                                        nugget.isSaved 
+                                                                            ? 'fill-red-800 text-red-800' 
+                                                                            : 'text-gray-500 hover:text-red-800'
+                                                                    }`} 
+                                                                />
+                                                            )}
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            )}
-                                        </div>
-                                        {nugget.player.team && (
-                                            <p className="text-sm text-gray-500">
-                                                {nugget.player.position} • {nugget.player.team}
-                                            </p>
-                                        )}
-                                    </div>
-                                    {/* Bookmark Button */}
-                                    <div className="flex items-center">
-                                        <button
-                                            onClick={() => handleBookmarkClick(nugget.id, nugget.isSaved || false)}
-                                            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-                                            title={nugget.isSaved ? 'Remove from saved' : 'Save nugget'}
-                                            disabled={bookmarkLoading === nugget.id}
-                                        >
-                                            {bookmarkLoading === nugget.id ? (
-                                                <Loader2 className="w-5 h-5 animate-spin text-red-800" />
-                                            ) : (
-                                                <Bookmark 
-                                                    className={`w-5 h-5 ${
-                                                        nugget.isSaved 
-                                                            ? 'fill-red-800 text-red-800' 
-                                                            : 'text-gray-500 hover:text-red-800'
-                                                    }`} 
-                                                />
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
                                                 <div className="px-6 py-4 border-t border-white/20 mt-3">
-                                                    <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
+                                                    <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
                                                 <div className='px-6 py-2'>
                                                     {nugget.fantasyInsight && (
@@ -752,28 +695,8 @@ export default function NuggetsPage() {
                                         )
                                     })}
                                 </div>
-                                {/* Load More Button */}
-                                {hasMoreNuggets && displayNuggets.length > 0 && (
-                                    <div className="text-center py-6">
-                                        <button
-                                            onClick={() => {
-                                                console.log('Load More button clicked, isLoadingMore:', isLoadingMore, 'isFetchingNuggets:', isFetchingNuggets)
-                                                loadMoreNuggets()
-                                            }}
-                                            disabled={isLoadingMore || isFetchingNuggets}
-                                            className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 mx-auto cursor-pointer"
-                                        >
-                                            {(isLoadingMore || isFetchingNuggets) && (
-                                                <Loader2 className="w-5 h-5 animate-spin" />
-                                            )}
-                                            {(isLoadingMore || isFetchingNuggets) ? 'Loading...' : 'Load More'}
-                                        </button>
-                                    </div>
-                                )}
                             </div>
                         )}
-
-
                     </div>
 
                     {/* Trending Players Sidebar */}
@@ -784,6 +707,4 @@ export default function NuggetsPage() {
             </div>
         </>
     )
-}
-
-
+} 
