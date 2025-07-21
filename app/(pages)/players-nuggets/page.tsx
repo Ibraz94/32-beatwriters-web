@@ -148,7 +148,7 @@ export default function PlayersNuggetsPage() {
                 <div className="max-w-4xl mx-auto">
                     <div className="space-y-6">
                         {nuggets.map((nugget, index) => {
-                            const playerTeam = findTeamByKey(nugget.player.team)
+                            const playerTeam = findTeamByKey(nugget.player.team || '')
                             return (
                                 <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
                                     <div className='flex mt-8 gap-2 ml-4 mr-4'>
@@ -210,7 +210,7 @@ export default function PlayersNuggetsPage() {
                                         </div>
                                     </div>
                                     <div className="px-6 py-4 border-t border-white/20 mt-3">
-                                        <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
+                                        <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
                                     </div>
                                     <div className='px-6 py-2'>
                                         {nugget.fantasyInsight && (

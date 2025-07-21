@@ -58,6 +58,7 @@ export interface NuggetFilters {
   search?: string
   startDate?: string
   saved?: boolean
+  followedPlayers?: boolean
 }
 
 // Helper function to construct full image URLs
