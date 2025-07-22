@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     url: "https://32-beatwriters-web.vercel.app/", // **IMPORTANT: Update this to your actual production URL**
   },
   // If you uncommented `metadataBase`, ensure it points to your actual deployment URL in production.
-  // metadataBase: new URL("http://localhost:3000"), // Set the base URL for production
+  metadataBase: new URL("https://32-beatwriters-web.vercel.app/"), // Set the base URL for production
 };
 
 export default function RootLayout({
