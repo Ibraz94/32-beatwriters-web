@@ -22,7 +22,7 @@ interface PlayerCardProps {
 
 function PlayerCard({ player, isActive }: PlayerCardProps) {
     const imageUrl = getImageUrl(player.headshotPic)
-    const team = getTeamByName(player.team)
+    const team = getTeamByName(player.team || '')
 
     return (
         <div className="transition-all duration-300 hover:scale-105">
