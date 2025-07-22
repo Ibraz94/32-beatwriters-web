@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     description: "Your Home For all NFL, Prospect and Fantasy Football News.",
     // Correctly reference the image, ensuring it's in your `public` directory.
     // For production, you'll want to use an absolute URL here for better compatibility across platforms.
-    images: "/32bw_logo_white.png",
+    images: "/logo-small.webp",
     // It's good practice to specify the type, especially for images.
     type: "website",
     // You should set the actual URL for your production site.
