@@ -25,16 +25,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: "32BeatWriters",
     description: "Your Home For all NFL, Prospect and Fantasy Football News.",
-    // Correctly reference the image, ensuring it's in your `public` directory.
-    // For production, you'll want to use an absolute URL here for better compatibility across platforms.
     images: "/logo-small.webp",
-    // It's good practice to specify the type, especially for images.
     type: "website",
-    // You should set the actual URL for your production site.
-    // This helps Open Graph parsers correctly link back to your site.
     url: "https://32-beatwriters-web.vercel.app/", // **IMPORTANT: Update this to your actual production URL**
   },
-  // If you uncommented `metadataBase`, ensure it points to your actual deployment URL in production.
   metadataBase: new URL("https://32-beatwriters-web.vercel.app/"), // Set the base URL for production
 };
 
