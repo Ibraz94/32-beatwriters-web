@@ -209,6 +209,15 @@ export const nuggetsApi = createApi({
       query: () => '/saved/list',
       providesTags: ['SavedNugget'],
     }),
+
+    /**
+     * Get nuggets from user's followed players
+     * Returns a list of nuggets from players the user follows
+     */
+    getFollowedNuggets: builder.query<{ success: boolean; data: { nuggets: Nugget[]; pagination: any } }, void>({
+      query: () => '/followed/list',
+      providesTags: ['Nugget'],
+    }),
   }),
 })
 
@@ -223,4 +232,5 @@ export const {
   useSaveNuggetMutation,     // Hook for saving nuggets
   useUnsaveNuggetMutation,   // Hook for unsaving nuggets
   useGetSavedNuggetsQuery,   // Hook for getting saved nuggets
+  useGetFollowedNuggetsQuery, // Hook for getting followed nuggets
 } = nuggetsApi 

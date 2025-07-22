@@ -7,16 +7,18 @@ export interface Player {
   id: number | string
   playerId: string
   name: string
-  team: string
+  team: string | null
   position: string
   height: string
   weight: number
   headshotPic: string
   college: string
   draftPick: string
-  age: number
+  age: number | null
   status: string
   ppi: number
+  rookie: boolean
+  isFollowed?: boolean
   createdAt: string
   updatedAt: string
 }
@@ -640,6 +642,24 @@ export const playersApi = createApi({
       query: () => '/featured',
       providesTags: ['Player'],
     }),
+
+    // Follow a player
+    followPlayer: builder.mutation<{ success: boolean; message: string }, string>({
+      query: (playerId) => ({
+        url: `/${playerId}/follow`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Player'],
+    }),
+
+    // Unfollow a player
+    unfollowPlayer: builder.mutation<{ success: boolean; message: string }, string>({
+      query: (playerId) => ({
+        url: `/${playerId}/follow`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Player'],
+    }),
   }),
 })
 
@@ -679,6 +699,8 @@ export const {
   useGetPlayersByTeamQuery,
   useSearchPlayersQuery,
   useGetFeaturedPlayersQuery,
+  useFollowPlayerMutation,
+  useUnfollowPlayerMutation,
 } = playersApi
 
 export const {

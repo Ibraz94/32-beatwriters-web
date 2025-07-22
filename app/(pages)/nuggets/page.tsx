@@ -663,42 +663,42 @@ export default function NuggetsPage() {
                                         const router = useRouter()
                                         return (
                                             <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                                                                                <div className='flex mt-8 gap-2 ml-4 mr-4'>
-                                    <div
-                                        className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
-                                        onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
-                                    >
-                                        <Image
-                                            src={getImageUrl(nugget.player.headshotPic) || ''}
-                                            alt={`${nugget.player.name} headshot`}
-                                            width={50}
-                                            height={50}
-                                            className='rounded-full object-cover bg-background overflow-hidden'
-                                        />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <Link href={`/players/${nugget.player.id}`}>
-                                                <h1 className='text-xl'>{nugget.player.name}</h1>
-                                            </Link>
-                                            {playerTeam && (
-                                                <div className="flex items-center">
-                                                    <Image
-                                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
-                                                        alt={`${playerTeam.name} logo`}
-                                                        width={32}
-                                                        height={24}
-                                                        className='object-contain '
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
-                                        {nugget.player.team && (
-                                            <p className="text-sm text-gray-500">
-                                                {nugget.player.position} • {nugget.player.team}
-                                            </p>
-                                        )}
-                                    </div>
+                                                <div className='flex mt-8 gap-2 ml-4 mr-4'>
+                                                    <div
+                                                        className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
+                                                        onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
+                                                    >
+                                                        <Image
+                                                            src={getImageUrl(nugget.player.headshotPic) || ''}
+                                                            alt={`${nugget.player.name} headshot`}
+                                                            width={50}
+                                                            height={50}
+                                                            className='rounded-full object-cover bg-background overflow-hidden'
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <Link href={`/players/${nugget.player.id}`}>
+                                                                <h1 className='text-xl'>{nugget.player.name}</h1>
+                                                            </Link>
+                                                            {playerTeam && (
+                                                                <div className="flex items-center">
+                                                                    <Image
+                                                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                                                        alt={`${playerTeam.name} logo`}
+                                                                        width={32}
+                                                                        height={24}
+                                                                        className='object-contain '
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        {nugget.player.team && (
+                                                            <p className="text-sm text-gray-500">
+                                                                {nugget.player.position} • {nugget.player.team}
+                                                            </p>
+                                                        )}
+                                                    </div>
                                     {/* Bookmark Button */}
                                     <div className="flex items-center">
                                         <button
@@ -720,7 +720,7 @@ export default function NuggetsPage() {
                                             )}
                                         </button>
                                     </div>
-                                </div>
+                                                </div>
                                                 <div className="px-6 py-4 border-t border-white/20 mt-3">
                                                     <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
