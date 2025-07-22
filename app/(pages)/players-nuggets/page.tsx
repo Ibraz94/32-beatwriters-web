@@ -13,13 +13,14 @@ import {
 } from '@/lib/services/nuggetsApi'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
 
 export default function PlayersNuggetsPage() {
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
     const [bookmarkLoading, setBookmarkLoading] = useState<number | null>(null)
     const router = useRouter()
+    const pathname = usePathname();
 
     // Get nuggets for user's followed players
     const { data: nuggetsData, isLoading: isLoadingNuggets, error: nuggetsError } = useGetNuggetsQuery({
@@ -83,7 +84,10 @@ export default function PlayersNuggetsPage() {
                     <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
                     <p className="text-gray-600 mb-8">Please login to view nuggets from your followed players.</p>
                     <Link
-                        href="/login"
+                       href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }}
                         className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
                     >
                         Login

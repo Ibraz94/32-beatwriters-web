@@ -30,7 +30,7 @@ import {
 import { Calendar } from "@/components/ui/calendar"
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
 
@@ -55,7 +55,7 @@ interface ImageModalData {
 }
 
 export default function SavedNuggetsPage() {
-    // Add authentication check
+    const pathname = usePathname();
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
     const [open, setOpen] = useState(false)
     const [date, setDate] = useState<Date | undefined>(undefined)
@@ -369,7 +369,10 @@ export default function SavedNuggetsPage() {
                     <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
                     <p className="text-gray-600 mb-8">Please login to view your saved nuggets.</p>
                     <Link
-                        href="/login"
+                         href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }}
                         className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
                     >
                         Login

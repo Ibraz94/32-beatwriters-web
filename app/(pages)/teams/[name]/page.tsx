@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, MapPin, Users, Calendar, Shield, Lock, User, DollarSign, Activity, Globe, Facebook, Instagram } from 'lucide-react'
@@ -10,6 +10,7 @@ import { useAuth } from '../../articles/hooks/useAuth'
 
 // Premium access component for teams
 const PremiumAccessRequired = ({ team }: { team: NFLTeam }) => {
+  const pathname = usePathname();
   return (
     <div className="border-2 border-red-200 rounded-xl p-8 text-center">
       <div className="w-16 h-16 bg-red-800 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -42,7 +43,10 @@ const PremiumAccessRequired = ({ team }: { team: NFLTeam }) => {
         </Link>
 
         <Link
-          href="/login"
+          href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }}
           className="w-full border py-3 px-6 rounded-lg font-semibold hover:scale-102 transition-all block"
         >
           Already Premium? Sign In

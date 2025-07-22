@@ -30,7 +30,7 @@ import {
 import { Calendar } from "@/components/ui/calendar"
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
 
@@ -56,7 +56,8 @@ interface ImageModalData {
 }
 
 export default function NuggetsPage() {
-    // Add authentication check
+     const pathname = usePathname();
+     const router = useRouter()
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
     const [open, setOpen] = useState(false)
     const [date, setDate] = useState<Date | undefined>(undefined)
@@ -414,7 +415,10 @@ export default function NuggetsPage() {
                     <p className="text-gray-600 mb-8">Please upgrade to a premium subscription to view the feed. Already have a subscription? Please login to your account.</p>
 
                     <p className="text-gray-600 mb-8">
-                        <Link href="/login" className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+                        <Link  href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
                     </p>
                     <Link
                         href="/subscribe"
@@ -660,7 +664,7 @@ export default function NuggetsPage() {
                                 <div className="space-y-6">
                                     {displayNuggets.map((nugget, index) => {
                                         const playerTeam = findTeamByKey(nugget.player.team)
-                                        const router = useRouter()
+                                        // const router = useRouter()
                                         return (
                                             <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
                                                                                 <div className='flex mt-8 gap-2 ml-4 mr-4'>
