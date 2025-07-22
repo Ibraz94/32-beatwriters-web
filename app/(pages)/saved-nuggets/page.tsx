@@ -32,6 +32,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import MobileFeedTabs from '@/app/components/MobileFeedTabs'
 
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
@@ -434,6 +435,9 @@ export default function SavedNuggetsPage() {
     return (
         <>
             <div className="container mx-auto px-4 py-8">
+                {/* Mobile Feed Tabs */}
+                <MobileFeedTabs />
+                
                 {/* Mobile Filter Toggle Button */}
                 <div className="lg:hidden mb-4">
                     <button

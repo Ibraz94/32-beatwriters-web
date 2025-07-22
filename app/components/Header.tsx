@@ -223,7 +223,7 @@ function Header() {
                                 onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
                                 className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white flex items-center space-x-1"
                             >
-                                <span>FEED</span>
+                                <span>FEEDS</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                             </button>
@@ -356,7 +356,7 @@ function Header() {
                                         animationDelay: isMobileMenuOpen ? `${(navLinks.length) * 50}ms` : '0ms'
                                     }}
                                 >
-                                    <span>FEED</span>
+                                    <span>FEEDS</span>
                                     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
                                 </button>
                                 

@@ -14,6 +14,7 @@ import {
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter } from 'next/navigation'
+import MobileFeedTabs from '@/app/components/MobileFeedTabs'
 
 export default function PlayersNuggetsPage() {
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
@@ -122,6 +123,9 @@ export default function PlayersNuggetsPage() {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            {/* Mobile Feed Tabs */}
+            <MobileFeedTabs />
+            
             <div className="text-center mb-12">
                 <h1 className="text-3xl font-bold mb-4">My Players Nuggets</h1>
                 <p className="text-xl max-w-4xl mx-auto">
