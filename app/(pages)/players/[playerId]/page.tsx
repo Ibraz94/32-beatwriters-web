@@ -30,12 +30,21 @@ export default function PlayerProfile() {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const ITEMS_PER_PAGE = 15
 
-  const queryParams = useMemo(() => ({
-    ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
-    playerId: parseInt(playerId),
-    sortBy: 'createdAt' as const,
-    sortOrder: 'desc' as const
-  }), [debouncedSearchTerm, playerId])
+  // Year selection state for nuggets filtering
+  const [selectedYearForNuggets, setSelectedYearForNuggets] = useState('2025')
+
+  const queryParams = useMemo(() => {
+    const params: any = {
+      ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
+      playerId: parseInt(playerId),
+      sortBy: 'createdAt' as const,
+      sortOrder: 'desc' as const
+    }
+    if (selectedYearForNuggets) {
+      params.year = selectedYearForNuggets
+    }
+    return params
+  }, [debouncedSearchTerm, playerId, selectedYearForNuggets])
 
   // Main query for nuggets - with all filters
   const {
@@ -52,6 +61,11 @@ export default function PlayerProfile() {
     }, 500)
     return () => clearTimeout(timer)
   }, [searchTerm])
+
+  // Update nuggets when year changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedYearForNuggets])
 
   // Handle loading nuggets
   useEffect(() => {
@@ -77,6 +91,7 @@ export default function PlayerProfile() {
 
   // Year selection state for performance metrics
   const [selectedYear, setSelectedYear] = useState('2024')
+
 
   // Get the page number user came from (for back navigation)
   const fromPage = searchParams?.get('page')
@@ -999,10 +1014,14 @@ export default function PlayerProfile() {
           return null
         }
 
+        const currentYears = new Date().getFullYear()
+        const availableYear = Array.from({ length: currentYears - 2024 }, (_, i) => (currentYears - i).toString())
+
+
         return (
           <div className="space-y-6">
             {/* Search Bar */}
-            <div className="relative w-full mb-6">
+            <div className="relative w-full mb-6 flex">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
@@ -1011,6 +1030,17 @@ export default function PlayerProfile() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="filter-input w-full pl-10 pr-4 py-3 rounded shadow-sm"
               />
+
+              <select
+                id="year-select"
+                value={selectedYearForNuggets}
+                onChange={(e) => setSelectedYearForNuggets(e.target.value)}
+                className="px-4 py-2 mx-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                {availableYear.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
             </div>
             {isLoadingNuggets ? (
               <div className="space-y-6">
@@ -1292,13 +1322,13 @@ export default function PlayerProfile() {
                 </div>
               )}
               <div className='relative'>
-              <Image
-                src={playerImage}
-                alt={playerName}
-                width={300}
-                height={300}
-                className="w-full h-full object-cover rounded-lg"
-              />
+                <Image
+                  src={playerImage}
+                  alt={playerName}
+                  width={300}
+                  height={300}
+                  className="w-full h-full object-cover rounded-lg"
+                />
               </div>
             </div>
 
@@ -1318,7 +1348,7 @@ export default function PlayerProfile() {
                 <div className="flex flex-col items-start gap-1 text-sm text-gray-300">
                   <span>{teamName || 'N/A'}</span>
                   <div>
-                  <p><span>{player?.Core['ADP Year']}</span> - <span>{player?.Core?.Position}</span></p>
+                    <p><span>{player?.Core['ADP Year']}</span> - <span>{player?.Core?.Position}</span></p>
                   </div>
                 </div>
               </div>
