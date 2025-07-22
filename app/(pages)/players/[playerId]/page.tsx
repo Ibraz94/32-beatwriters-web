@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
@@ -15,6 +15,7 @@ import { Bar, BarChart, LabelList, XAxis, Cell } from "recharts"
 
 export default function PlayerProfile() {
   const params = useParams()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const playerId = params.playerId as string
 
@@ -212,7 +213,10 @@ export default function PlayerProfile() {
           <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
           <p className="text-gray-600 mb-8">Please upgrade to a premium subscription to view player profiles. Already have a subscription? Please login to your account.</p>
           <p className="text-gray-600 mb-8">
-            <Link href="/login" className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+            <Link href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
           </p>
           <Link
             href="/subscribe"
@@ -256,7 +260,10 @@ export default function PlayerProfile() {
             <p className="text-gray-600 mb-8">You need to be signed in to view this player profile.</p>
             <div className="space-x-4">
               <Link
-                href="/login"
+                href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }}
                 className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-900 transition-colors"
               >
                 Sign In

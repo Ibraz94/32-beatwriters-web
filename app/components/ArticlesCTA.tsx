@@ -1,6 +1,9 @@
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
 
 const ArticleCTA = () => {
+  const pathname = usePathname();
   return (
     <div className="header-secondary border-2 rounded-xl p-5 text-center bg-white bg-opacity-10 backdrop-blur-lg shadow-lg mb-5">
       <h2 className="text-white text-2xl font-semibold mb-4">
@@ -17,7 +20,10 @@ const ArticleCTA = () => {
 
         {/* Login Button */}
         <Link
-          href="/login"
+          href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }}
           className="desktop-login-link hover:scale-102 transition-colors text-md"
         >
           Login
