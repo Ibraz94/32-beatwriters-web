@@ -95,7 +95,7 @@ export default function PremiumSignup() {
   }
 
   // Specific plan IDs to display
-  const allowedPlanIds = ['price_1RZZFRAToc8YZruPw5uzOh1n', 'price_1RltPxAToc8YZruP4TJLGvPR']
+  const allowedPlanIds = ['price_1RjqjDAToc8YZruPtwMypo5C', 'plan_SP4eIOlEaiqOH0']
 
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
@@ -113,7 +113,7 @@ export default function PremiumSignup() {
 
         // Set default selected price to monthly plan
         const monthlyPrice = filteredData.data.find((price: SubscriptionOption) =>
-          price.id === 'price_1RiJQQAToc8YZruPj77d8vzO'
+          price.id === 'plan_SP4eIOlEaiqOH0'
         )
         if (monthlyPrice) {
           setSelectedPriceId(monthlyPrice.id)
