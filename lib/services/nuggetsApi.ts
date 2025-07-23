@@ -18,6 +18,7 @@ export interface Nugget {
   images?: string[]
   createdAt: string
   updatedAt: string
+  isSaved?: boolean
   player: {
     id: number
     playerId: string
@@ -56,6 +57,8 @@ export interface NuggetFilters {
   team?: string
   search?: string
   startDate?: string
+  saved?: boolean
+  followedPlayers?: boolean
 }
 
 // Helper function to construct full image URLs
@@ -91,7 +94,7 @@ export const nuggetsApi = createApi({
       return headers
     },
   }),
-  tagTypes: ['Nugget'], // Cache invalidation tags
+  tagTypes: ['Nugget', 'SavedNugget'], // Cache invalidation tags
   endpoints: (builder) => ({
     /**
      * Get nuggets with optional filtering and pagination
@@ -173,6 +176,48 @@ export const nuggetsApi = createApi({
       // Invalidate the specific feed cache to refetch updated data
       invalidatesTags: (result, error, { id }) => [{ type: 'Nugget', id }],
     }),
+
+    /**
+     * Save a nugget to user's saved list
+     * Requires authentication
+     */
+    saveNugget: builder.mutation<{ success: boolean; message: string }, number>({
+      query: (nuggetId) => ({
+        url: `/${nuggetId}/save`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Nugget', 'SavedNugget'],
+    }),
+
+    /**
+     * Remove a nugget from user's saved list
+     * Requires authentication
+     */
+    unsaveNugget: builder.mutation<{ success: boolean; message: string }, number>({
+      query: (nuggetId) => ({
+        url: `/${nuggetId}/save`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Nugget', 'SavedNugget'],
+    }),
+
+    /**
+     * Get user's saved nuggets
+     * Returns a list of nuggets saved by the authenticated user
+     */
+    getSavedNuggets: builder.query<{ success: boolean; data: { nuggets: Nugget[]; pagination: any } }, void>({
+      query: () => '/saved/list',
+      providesTags: ['SavedNugget'],
+    }),
+
+    /**
+     * Get nuggets from user's followed players
+     * Returns a list of nuggets from players the user follows
+     */
+    getFollowedNuggets: builder.query<{ success: boolean; data: { nuggets: Nugget[]; pagination: any } }, void>({
+      query: () => '/followed/list',
+      providesTags: ['Nugget'],
+    }),
   }),
 })
 
@@ -184,4 +229,8 @@ export const {
   useGetNuggetsByCategoryQuery, // Hook for fetching nuggets by category
   useSearchNuggetsQuery,     // Hook for searching nuggets
   useMarkHelpfulMutation,  // Hook for marking nuggets as helpful
+  useSaveNuggetMutation,     // Hook for saving nuggets
+  useUnsaveNuggetMutation,   // Hook for unsaving nuggets
+  useGetSavedNuggetsQuery,   // Hook for getting saved nuggets
+  useGetFollowedNuggetsQuery, // Hook for getting followed nuggets
 } = nuggetsApi 

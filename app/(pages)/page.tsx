@@ -6,8 +6,7 @@ import FeedComponent from "../components/FeedComponent";
 import SubscriptionComponent from "../components/SubscriptionComponent";
 import DeliveredToComponent from "../components/DeliveredToComponent";
 import TrendingPlayers from "../components/TrendingPlayers";
-
-
+import TrustedByPartners from "../components/TrustedByComponent";
 
 
 
@@ -22,6 +21,7 @@ export default function Home() {
       <TrendingPlayers/>
       <NewArticles/>
       <PodcastsComponent/>
+      <TrustedByPartners/>
       <DeliveredToComponent/>
       <SubscriptionComponent/>
     </div>

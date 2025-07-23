@@ -5,12 +5,13 @@ import { Mail, ArrowLeft, Eye, EyeOff, CheckCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import {useRequestOtpMutation, useVerifyOtpMutation, useResetPasswordMutation,} from '@/lib/services/authApi'
 
 type Step = 'email' | 'otp' | 'reset' | 'success'
 
 export default function ForgotPassword() {
+    const pathname = usePathname();
     const [currentStep, setCurrentStep] = useState<Step>('email')
     const [isLoading, setIsLoading] = useState(false)
     const [mounted, setMounted] = useState(false)
@@ -510,12 +511,17 @@ export default function ForgotPassword() {
                             </div>
 
                             <div className="pt-4">
-                                <button
-                                    onClick={handleBackToLogin}
-                                    className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-lg bg-red-800 hover:scale-101 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
-                                >
-                                    Continue to Login
-                                </button>
+                                 <Link
+                            href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }}
+
+                            className="inline-flex items-center text-sm font-medium text-primary hover:text-red-800 transition-colors"
+                        >
+                           
+                            Continue to Login
+                        </Link>
                             </div>
                         </div>
                     )}
@@ -525,7 +531,11 @@ export default function ForgotPassword() {
                 {currentStep !== 'success' && (
                     <div className="text-center">
                         <Link
-                            href="/login"
+                            href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }}
+
                             className="inline-flex items-center text-sm font-medium text-primary hover:text-red-800 transition-colors"
                         >
                             <ArrowLeft className="h-4 w-4 mr-1" />

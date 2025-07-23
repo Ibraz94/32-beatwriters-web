@@ -7,16 +7,18 @@ export interface Player {
   id: number | string
   playerId: string
   name: string
-  team: string
+  team: string | null
   position: string
   height: string
   weight: number
   headshotPic: string
   college: string
   draftPick: string
-  age: number
+  age: number | null
   status: string
   ppi: number
+  rookie: boolean
+  isFollowed?: boolean
   createdAt: string
   updatedAt: string
 }
@@ -400,8 +402,92 @@ export interface SeasonPerformanceMetrics {
   "Fantasy Points Per Game vs Zone Rank": string
 }
 
+interface GameLog {
+  FullName: string;
+  Season: string;
+  Opponent: string;
+  Snaps: string;  // You can change the type if needed (e.g., number if it is a numerical value)
+  'Snap Share': string;
+  'Slot Rate': string;
+  'Fantasy Points': string;
+  'Fantasy Points Rank': string;
+  'Passing Attempts': string;
+  'Completions': string;
+  'Completion Percentage': string;
+  'Passing Yards': string;
+  'Air Yards - Pass': string;
+  'Air Yards - Receiving': string;
+  'Passing Yards Per Attempt': string;
+  'Passing Touchdowns': string;
+  'Interceptions': string;
+  'Fantasy Points Per Attempt': string;
+  'Red Zone Attempts': string;
+  'Red Zone Completion Percentage': string;
+  'Deep Ball Attempts': string;
+  'Deep Ball Completions': string;
+  'Carries': string;
+  'Rushing Yards': string;
+  'Rushing Touchdowns': string;
+  Targets: string;
+  Receptions: string;
+  'Receiving Yards': string;
+  'Receiving Touchdowns': string;
+  'Total Yards': string;
+  'Total Touches': string;
+  'Yards Per Touch': string;
+  Opportunities: string;
+  'Opportunity Share': string;
+  'Total Touchdowns': string;
+  'Evaded Tackles': string;
+  'Juke Rate': string;
+  'Catch Rate': string;
+  'Target Share': string;
+  'Hog Rate': string;
+  'Contested Targets': string;
+  'Contested Catches': string;
+  'Red Zone Carries': string;
+  'Red Zone Targets': string;
+  'Red Zone Opportunities': string;
+  'Red Zone Touches': string;
+  'Red Zone Receptions': string;
+  'Red Zone Catch Rate': string;
+  'Yards Per Carry': string;
+  'Yards Per Target': string;
+  'Yards Per Opportunity': string;
+  'Yards Per Reception': string;
+  'Fantasy Points Per Target': string;
+  'Fantasy Points Per Opportunity': string;
+  'End Zone Targets': string;
+  'Routes Run': string;
+  Burns: string;
+  Hurries: string;
+  'Yards Created': string;
+  'Pass Attempts Inside 5': string;
+  'Pass Attempts Inside 10': string;
+  'Carries Inside 5': string;
+  'Carries Inside 10': string;
+  'Targets Inside 5': string;
+  'Targets Inside 10': string;
+  'Primary Corner': string;
+  'Routes Defended': string;
+  'Targets Allowed': string;
+  'Receptions Allowed': string;
+  'Yards Allowed': string;
+  'Burns - CB': string;
+  'Pass Break ups': string;
+  'Pass Break-ups': string;
+  'Interceptions - CB': string;
+  'Fantasy Points Allowed': string;
+  'Fantasy Points Allowed Week Rank': string;
+  'WR Matchup': string;
+}
+
 export interface PerformanceMetrics {
   [year: string]: SeasonPerformanceMetrics
+}
+
+interface GameLogs {
+  [week: string]: GameLog;  // Key is the week number as a string ("1", "2", "3", ...)
 }
 
 export interface PlayerProfilerData {
@@ -429,6 +515,7 @@ export interface PlayerProfilerData {
   ADP: Record<string, Record<string, string>>
   team_key: string
   'Performance Metrics': PerformanceMetrics
+  'Game Logs': GameLogs; 
 }
 
 export interface PlayerProfilerResponse {
@@ -555,6 +642,24 @@ export const playersApi = createApi({
       query: () => '/featured',
       providesTags: ['Player'],
     }),
+
+    // Follow a player
+    followPlayer: builder.mutation<{ success: boolean; message: string }, string>({
+      query: (playerId) => ({
+        url: `/${playerId}/follow`,
+        method: 'POST',
+      }),
+      invalidatesTags: ['Player'],
+    }),
+
+    // Unfollow a player
+    unfollowPlayer: builder.mutation<{ success: boolean; message: string }, string>({
+      query: (playerId) => ({
+        url: `/${playerId}/follow`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Player'],
+    }),
   }),
 })
 
@@ -594,6 +699,8 @@ export const {
   useGetPlayersByTeamQuery,
   useSearchPlayersQuery,
   useGetFeaturedPlayersQuery,
+  useFollowPlayerMutation,
+  useUnfollowPlayerMutation,
 } = playersApi
 
 export const {

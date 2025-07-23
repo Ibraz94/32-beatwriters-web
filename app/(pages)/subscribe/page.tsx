@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check } from 'lucide-react'
+import { API_CONFIG, buildApiUrl } from '../../../lib/config/api'
 
 interface SubscriptionOption {
   id: string
@@ -46,6 +47,19 @@ export default function PremiumSignup() {
   const [selectedPriceId, setSelectedPriceId] = useState<string>('')
   const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'general' | 'email' | 'username', string>>>({})
   const router = useRouter()
+
+  // Promo code state variables
+  const [promoCode, setPromoCode] = useState('')
+  const [promoLoading, setPromoLoading] = useState(false)
+  const [promoError, setPromoError] = useState('')
+  const [promoSuccessMessage, setPromoSuccessMessage] = useState('')
+  const [validatedPromoId, setValidatedPromoId] = useState<string | null>(null)
+  const [promoDiscount, setPromoDiscount] = useState<{
+    amount_off: number | null
+    percent_off: number | null
+    currency: string
+  } | null>(null)
+
   const [formData, setFormData] = useState<FormData>({
     email: '',
     firstName: '',
@@ -61,25 +75,44 @@ export default function PremiumSignup() {
     confirmPassword: ''
   })
 
+  // Utility functions for price calculations
+  const calculateDiscountedPrice = (basePrice: number, discount: { amount_off: number | null; percent_off: number | null }) => {
+    if (discount.amount_off) {
+      return Math.max(0, basePrice - (discount.amount_off / 100))
+    } else if (discount.percent_off) {
+      return basePrice * (1 - discount.percent_off / 100)
+    }
+    return basePrice
+  }
+
+  const formatDiscountText = (basePrice: number, discount: { amount_off: number | null; percent_off: number | null }) => {
+    if (discount.amount_off) {
+      return `($${(discount.amount_off / 100).toFixed(2)} off)`
+    } else if (discount.percent_off) {
+      return `(${discount.percent_off}% off)`
+    }
+    return ''
+  }
+
   // Specific plan IDs to display
-  const allowedPlanIds = ['price_1RjqjDAToc8YZruPtwMypo5C', 'plan_SP4eIOlEaiqOH0']
+  const allowedPlanIds = ['price_1RZZFRAToc8YZruPw5uzOh1n', 'price_1RltPxAToc8YZruP4TJLGvPR']
 
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
       try {
-        const response = await fetch('https://api.32beatwriters.com/api/stripe/subscription-options')
+        const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.SUBSCRIPTION_OPTIONS))
         const data = await response.json()
-        
+
         // Filter to only show the specific plans
         const filteredData = {
           ...data,
           data: data.data.filter((price: SubscriptionOption) => allowedPlanIds.includes(price.id))
         }
-        
+
         setSubscriptionOptions(filteredData)
-        
+
         // Set default selected price to monthly plan
-        const monthlyPrice = filteredData.data.find((price: SubscriptionOption) => 
+        const monthlyPrice = filteredData.data.find((price: SubscriptionOption) =>
           price.id === 'price_1RiJQQAToc8YZruPj77d8vzO'
         )
         if (monthlyPrice) {
@@ -112,7 +145,7 @@ export default function PremiumSignup() {
 
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof FormData, string>> = {}
-    
+
     // Check for existing email/username errors first
     if (errors.email === 'Email already exists') {
       newErrors.email = 'Email already exists'
@@ -121,13 +154,13 @@ export default function PremiumSignup() {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Invalid email format'
     }
-    
+
     if (errors.username === 'Username already exists') {
       newErrors.username = 'Username already exists'
     } else if (!formData.username) {
       newErrors.username = 'Username is required'
     }
-    
+
     if (!formData.firstName) newErrors.firstName = 'First name is required'
     if (!formData.lastName) newErrors.lastName = 'Last name is required'
     if (!formData.phoneNumber) newErrors.phoneNumber = 'Phone number is required'
@@ -154,18 +187,34 @@ export default function PremiumSignup() {
     e.preventDefault()
     if (!validateForm() || !selectedPriceId) return
     setIsLoading(true)
+    
+    const payload = {
+      ...formData,
+      priceId: selectedPriceId,
+      couponCode: promoCode // Send the actual promo code instead of the ID
+    }
+    
+    console.log('Payload being sent to /api/stripe/create-checkout-session:', payload)
+    console.log('API URL:', buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CREATE_CHECKOUT_SESSION))
+    
     try {
-      const response = await fetch('https://api.32beatwriters.com/api/stripe/create-checkout-session', {
+      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CREATE_CHECKOUT_SESSION), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          priceId: selectedPriceId
-        }),
+        body: JSON.stringify(payload),
       })
-      const { url } = await response.json()
+      
+      console.log('Response status:', response.status)
+      console.log('Response headers:', response.headers)
+      
+      const responseData = await response.json()
+      console.log('Response data:', responseData)
+      
+      const { url } = responseData
+      console.log('Extracted URL:', url)
+      
       window.location.href = url
     } catch (error) {
       console.error('Error creating checkout session:', error)
@@ -175,8 +224,59 @@ export default function PremiumSignup() {
     }
   }
 
+  const handlePromoCodeValidation = async () => {
+    if (!promoCode.trim()) {
+      setPromoError('Please enter a promo code')
+      return
+    }
+
+    setPromoLoading(true)
+    setPromoError('')
+    setPromoSuccessMessage('')
+
+    try {
+      const response = await fetch(buildApiUrl('/api/stripe/validate-promo-code'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: promoCode }),
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.discount) {
+        const discountAmount = data.discount.amount_off
+          ? `$${(data.discount.amount_off / 100).toFixed(2)} off`
+          : `${data.discount.percent_off}% off`
+
+        setPromoSuccessMessage(`Promo applied: ${discountAmount}`)
+        setValidatedPromoId(data.discount.id)
+        setPromoDiscount({
+          amount_off: data.discount.amount_off,
+          percent_off: data.discount.percent_off,
+          currency: data.discount.currency
+        })
+        setPromoError('')
+      } else {
+        setPromoError(data.message || 'Invalid or expired promo code.')
+        setValidatedPromoId(null)
+        setPromoDiscount(null)
+        setPromoSuccessMessage('')
+      }
+    } catch (error) {
+      console.error('Error validating promo code:', error)
+      setPromoError('Failed to validate promo code. Please try again.')
+      setValidatedPromoId(null)
+      setPromoDiscount(null)
+      setPromoSuccessMessage('')
+    } finally {
+      setPromoLoading(false)
+    }
+  }
+
   const checkEmail = async (email: string) => {
-          const response = await fetch('https://api.32beatwriters.com/api/users/check-email', {
+    const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.AUTH + '/check-email'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -188,7 +288,7 @@ export default function PremiumSignup() {
   }
 
   const checkUsername = async (username: string) => {
-          const response = await fetch('https://api.32beatwriters.com/api/users/check-username', {
+    const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.AUTH + '/check-username'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -262,7 +362,7 @@ export default function PremiumSignup() {
       <div>
         <div className="text-center mb-8 sm:mb-10 lg:mb-12">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight font-oswald">
-            Gain Your Competitive Edge
+            Gain Your Competitive Edge
           </h1>
           <p className="text-lg sm:text-xl max-w-3xl mx-auto px-2 sm:px-0">
             Tools and insights specifically designed to give you an advantage over your league-mates
@@ -280,7 +380,7 @@ export default function PremiumSignup() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm sm:text-base">Exclusive Content</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">Summaries All Offseason – The Best, Complete Reports in the Industry That's Used By Industry Leaders.</p>
+                  <p className="text-gray-500 text-sm sm:text-base">Summaries All Offseason - The Best, Complete Reports in the Industry That's Used By Industry Leaders.</p>
                 </div>
               </div>
 
@@ -347,37 +447,94 @@ export default function PremiumSignup() {
                 <div className="space-y-4">
                   <h2 className="text-2xl font-semibold text-foreground font-oswald">Choose Your Plan</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
-                    {subscriptionOptions?.data.map((price) => (
-                      <div
-                        key={price.id}
-                        className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPriceId === price.id
-                          ? 'border-2 border-gray-400 scale-105 bg-[#2c204b]'
-                          : 'border-border hover:border-primary/50 bg-accent '
-                          }`}
-                        onClick={() => setSelectedPriceId(price.id)}
-                      >
-                        <div className="flex justify-between items-center gap-2">
-                          <div>
-                            <h3 className="font-semibold text-white">
-                              {price.recurring.interval === 'month' ? 'Monthly' : 'Annual'}
-                            </h3>
-                            <p className="text-muted-foreground">
-                              {price.recurring.interval === 'month' ? 'Billed monthly' : 'Billed annually'}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-2xl font-bold text-white">
-                              ${(price.unit_amount / 100).toFixed(2)}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              per {price.recurring.interval}
-                            </p>
+                    {subscriptionOptions?.data.map((price) => {
+                      const basePrice = price.unit_amount / 100
+                      const discountedPrice = promoDiscount
+                        ? calculateDiscountedPrice(basePrice, promoDiscount)
+                        : basePrice
+                      const discountText = promoDiscount
+                        ? formatDiscountText(basePrice, promoDiscount)
+                        : ''
+
+                      return (
+                        <div
+                          key={price.id}
+                          className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPriceId === price.id
+                            ? 'border-2 border-gray-400 scale-105 bg-[#2c204b]'
+                            : 'border-border hover:border-primary/50 bg-accent '
+                            }`}
+                          onClick={() => setSelectedPriceId(price.id)}
+                        >
+                          <div className="flex justify-between items-center gap-2">
+                            <div>
+                              <h3 className="font-semibold text-white">
+                                {price.recurring.interval === 'month' ? 'Monthly' : 'Annual'}
+                              </h3>
+                              <p className="text-muted-foreground">
+                                {price.recurring.interval === 'month' ? 'Billed monthly' : 'Billed annually'}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              {promoDiscount ? (
+                                <div>
+                                  <p className="text-2xl font-bold text-white">
+                                    ${discountedPrice.toFixed(2)}
+                                  </p>
+                                  <p className="text-sm text-green-400 font-medium">
+                                    {discountText}
+                                  </p>
+                                </div>
+                              ) : (
+                                <p className="text-2xl font-bold text-white">
+                                  ${basePrice.toFixed(2)}
+                                </p>
+                              )}
+                              <p className="text-sm text-muted-foreground">
+                                per {price.recurring.interval}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
+
+                <div className='grid grid-cols-1 gap-4'>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Promo Code
+                    </label>
+                    <div className='flex gap-2'>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        className={`w-full px-4 py-2 border rounded-md ${promoError ? 'border-destructive' : 'border-input'
+                          }`}
+                        placeholder="Enter your promo code"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handlePromoCodeValidation()}
+                        disabled={promoLoading}
+                        className=" bg-red-800 w-full text-white hover:scale-101 py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50"
+                      >
+                        {promoLoading ? 'Validating...' : 'Validate Promo Code'}
+                      </button>
+                    </div>
+                    {promoError && (
+                      <p className="mt-1 text-sm text-destructive">{promoError}</p>
+                    )}
+                    {promoSuccessMessage && (
+                      <p className="mt-1 text-sm text-green-600">{promoSuccessMessage}</p>
+                    )}
+                  </div>
+
+                  
+                </div>
+
                 <div className="space-y-4">
                   <h2 className="text-xl font-semibold text-foreground">Personal Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -607,7 +764,7 @@ export default function PremiumSignup() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   )
 } 

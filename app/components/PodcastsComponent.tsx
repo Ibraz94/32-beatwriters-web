@@ -40,7 +40,7 @@ export default function PodcastsComponent() {
     };
 
     return (
-        <section className="podcast-section px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 mb-1 container mx-auto">
+        <section className="podcast-section px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 container mx-auto">
             <div className="">
                 {/* Header */}
                 <div className="text-center mb-8 md:mb-12">

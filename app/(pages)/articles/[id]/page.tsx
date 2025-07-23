@@ -8,6 +8,8 @@ import { useAuth } from '../hooks/useAuth'
 import Image from 'next/image'
 import { useGetArticleQuery, getImageUrl, Article, useGetArticlesQuery } from '@/lib/services/articlesApi'
 import { renderRichTextContent } from '@/lib/utils/contentParser'
+import ArticleCTA from '../../../components/ArticlesCTA'
+
 
 
 type Props = {
@@ -147,6 +149,9 @@ export default function ArticlePage() {
           alt={article.title} width={1000} height={1000} className="rounded mb-12 shadow-lg max-w-4xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
           </div>
            <h1 className="text-4xl font-bold mb-10">{article.title}</h1>
+
+                   {/* Display ArticleCTA only if user is not authenticated */}
+        {!isAuthenticated && <ArticleCTA />}
           
           <div className="prose max-w-none prose"/>
           {(() => {
@@ -165,6 +170,8 @@ export default function ArticlePage() {
                   }
                 })()}
         </div>
+
+
 
         {/* Recent Articles */}
         <div className="mt-12">

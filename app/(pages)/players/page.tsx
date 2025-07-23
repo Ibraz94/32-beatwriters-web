@@ -3,18 +3,22 @@
 import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Users, Search, X } from "lucide-react"
-import { useGetPlayersQuery, getImageUrl, Player } from '@/lib/services/playersApi'
+import { Users, Search, X, Loader2 } from "lucide-react"
+import { useGetPlayersQuery, getImageUrl, Player, useFollowPlayerMutation, useUnfollowPlayerMutation } from '@/lib/services/playersApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useSearchParams, useRouter } from "next/navigation"
+import { useAuth } from '@/lib/hooks/useAuth'
+import { useToast } from '@/app/components/Toast'
 
 // PlayerCard component to handle individual player rendering with hooks
-function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollow }: {
+function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollow, isAuthenticated, isLoading }: {
   player: Player;
   currentPage: number;
   teamsData: any;
   isFollowing: boolean;
   onToggleFollow: () => void;
+  isAuthenticated: boolean;
+  isLoading: boolean;
 }) {
     const imageUrl = getImageUrl(player.headshotPic)
     
@@ -29,7 +33,7 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
         )
     }
 
-    const playerTeam = findTeamByKey(player.team)
+    const playerTeam = findTeamByKey(player.team || '')
     
     return (
         <Link 
@@ -57,13 +61,25 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                         {player.name}
                     </h3>
                     <button
-                      className={`text-foreground font-oswald text-xs border px-5 rounded-sm transition-colors hover:cursor-pointer ${isFollowing ? 'bg-red-800 border-red-800' : 'border-red-800 hover:bg-red-800'}`}
+                      className={`text-foreground font-oswald text-xs border px-5 rounded-sm transition-colors hover:cursor-pointer flex items-center gap-1 ${
+                        isFollowing 
+                          ? 'bg-red-800 border-red-800' 
+                          : 'border-red-800 hover:bg-red-800'
+                      }`}
                       onClick={e => {
                         e.preventDefault(); // Prevent Link navigation
                         onToggleFollow();
                       }}
+                      disabled={isLoading}
                     >
-                      {isFollowing ? 'FOLLOWING' : 'FOLLOW'}
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                          <span>...</span>
+                        </>
+                      ) : (
+                        isFollowing ? 'FOLLOWING' : 'FOLLOW'
+                      )}
                     </button>
                 </div>
 
@@ -79,7 +95,7 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                                     className='object-contain'
                                 />
                             )}
-                            <h1 className="text-sm font-oswald">{player.team}  {player.position}</h1>
+                            <h1 className="text-sm font-oswald">{player.team || 'Free Agent'}  {player.position}</h1>
   
                         </div>
                     </div>
@@ -92,6 +108,8 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
 function PlayersContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
+    const { isAuthenticated, isLoading: authLoading } = useAuth()
+    const { showToast } = useToast()
     
     // Initialize state from URL parameters
     const [searchTerm, setSearchTerm] = useState("")
@@ -102,14 +120,51 @@ function PlayersContent() {
         return pageFromUrl ? parseInt(pageFromUrl, 10) : 1
     })
 
-    // Track follow state for each player
+    // Track follow state for each player (fallback for local state management)
     const [followedPlayers, setFollowedPlayers] = useState<{ [id: string]: boolean }>({})
+    const [loadingFollow, setLoadingFollow] = useState<{ [id: string]: boolean }>({})
 
-    const toggleFollow = (playerId: string) => {
-        setFollowedPlayers(prev => ({
-            ...prev,
-            [playerId]: !prev[playerId]
-        }))
+    // Follow/Unfollow mutations
+    const [followPlayer] = useFollowPlayerMutation()
+    const [unfollowPlayer] = useUnfollowPlayerMutation()
+
+    const toggleFollow = async (playerId: string) => {
+        // Check if user is authenticated
+        if (!isAuthenticated) {
+            showToast('Please log in to follow players.', 'warning')
+            return
+        }
+
+        // Set loading state
+        setLoadingFollow(prev => ({ ...prev, [playerId]: true }))
+
+        try {
+            const isCurrentlyFollowed = followedPlayers[playerId] || false
+            if (isCurrentlyFollowed) {
+                await unfollowPlayer(playerId).unwrap()
+                showToast('Player unfollowed successfully!', 'success')
+            } else {
+                await followPlayer(playerId).unwrap()
+                showToast('Player followed successfully!', 'success')
+            }
+            // Update local state for immediate UI feedback
+            setFollowedPlayers(prev => ({
+                ...prev,
+                [playerId]: !prev[playerId]
+            }))
+        } catch (error: any) {
+            console.error('Error toggling follow status:', error)
+            
+            // Handle authentication error specifically
+            if (error?.status === 401 || error?.data?.message?.includes('Authentication required')) {
+                showToast('Please log in to follow players.', 'warning')
+            } else {
+                showToast('Failed to update follow status. Please try again.', 'error')
+            }
+        } finally {
+            // Clear loading state
+            setLoadingFollow(prev => ({ ...prev, [playerId]: false }))
+        }
     }
 
     // Teams query
@@ -182,7 +237,7 @@ function PlayersContent() {
         conference: selectedConference !== "all" ? selectedConference : undefined
     })
 
-    console.log('Full API Response:', playersResponse)
+    console.log('Full API Response:', playersResponse);
 
 
 
@@ -322,8 +377,10 @@ function PlayersContent() {
                       player={player}
                       currentPage={page}
                       teamsData={teamsData}
-                      isFollowing={!!followedPlayers[player.id]}
+                      isFollowing={player.isFollowed || !!followedPlayers[player.id]}
                       onToggleFollow={() => toggleFollow(player.id.toString())}
+                      isAuthenticated={isAuthenticated}
+                      isLoading={!!loadingFollow[player.id]}
                     />
                 ))}
             </div>

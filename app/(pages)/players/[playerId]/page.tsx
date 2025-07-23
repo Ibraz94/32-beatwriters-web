@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
@@ -15,6 +15,7 @@ import { Bar, BarChart, LabelList, XAxis, Cell } from "recharts"
 
 export default function PlayerProfile() {
   const params = useParams()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const playerId = params.playerId as string
 
@@ -30,12 +31,21 @@ export default function PlayerProfile() {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const ITEMS_PER_PAGE = 15
 
-  const queryParams = useMemo(() => ({
-    ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
-    playerId: parseInt(playerId),
-    sortBy: 'createdAt' as const,
-    sortOrder: 'desc' as const
-  }), [debouncedSearchTerm, playerId])
+  // Year selection state for nuggets filtering
+  const [selectedYearForNuggets, setSelectedYearForNuggets] = useState('2025')
+
+  const queryParams = useMemo(() => {
+    const params: any = {
+      ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
+      playerId: parseInt(playerId),
+      sortBy: 'createdAt' as const,
+      sortOrder: 'desc' as const
+    }
+    if (selectedYearForNuggets) {
+      params.year = selectedYearForNuggets
+    }
+    return params
+  }, [debouncedSearchTerm, playerId, selectedYearForNuggets])
 
   // Main query for nuggets - with all filters
   const {
@@ -52,6 +62,11 @@ export default function PlayerProfile() {
     }, 500)
     return () => clearTimeout(timer)
   }, [searchTerm])
+
+  // Update nuggets when year changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedYearForNuggets])
 
   // Handle loading nuggets
   useEffect(() => {
@@ -78,6 +93,7 @@ export default function PlayerProfile() {
   // Year selection state for performance metrics
   const [selectedYear, setSelectedYear] = useState('2024')
 
+
   // Get the page number user came from (for back navigation)
   const fromPage = searchParams?.get('page')
   const backToPlayersUrl = fromPage ? `/players?page=${fromPage}` : '/players'
@@ -86,10 +102,16 @@ export default function PlayerProfile() {
   const { isAuthenticated, isLoading: authLoading, user } = useAuth()
 
   // First, fetch the player from internal API to get the playerId
-  const { data: internalPlayer, isLoading: internalPlayerLoading, error: internalPlayerError } = useGetPlayerQuery(playerId)
+  const { data: internalPlayerResponse, isLoading: internalPlayerLoading, error: internalPlayerError } = useGetPlayerQuery(playerId)
+
+  // Extract the actual player data from the response
+  const internalPlayer = internalPlayerResponse?.data
 
   // Then use the playerId from internal API to fetch detailed data from Player Profiler API
-  const { data: playerResponse, isLoading: playerLoading, error: playerError } = useGetPlayerProfilerQuery(internalPlayer?.playerId || '')
+  const { data: playerResponse, isLoading: playerLoading, error: playerError } = useGetPlayerProfilerQuery(
+    internalPlayer?.playerId || '', 
+    { skip: !internalPlayer?.playerId }
+  )
 
   // Fetch performance data for selected year
   const { data: performanceResponse, isLoading: performanceLoading } = useGetPlayerPerformanceProfilerQuery(
@@ -104,7 +126,9 @@ export default function PlayerProfile() {
 
   // Debug: Log the actual response structure (remove in production)
   if (process.env.NODE_ENV === 'development') {
-    console.log('Internal Player API Response:', internalPlayer)
+    console.log('Internal Player API Response:', internalPlayerResponse)
+    console.log('Internal Player Data:', internalPlayer)
+    console.log('Internal Player ID:', internalPlayer?.playerId)
     console.log('Player Data:', player)
     console.log('Player Error:', playerError)
   }
@@ -180,6 +204,8 @@ export default function PlayerProfile() {
     { id: 'news', label: 'News & Updates', icon: Newspaper },
     { id: 'performance', label: 'Performance Metrics', icon: CircleGauge },
     { id: 'workout', label: 'Workout Metrics', icon: Dumbbell },
+    { id: 'season-stats', label: 'Season Stats', icon: Dumbbell },
+    { id: 'game-log', label: 'Game Log', icon: Dumbbell },
   ]
 
 
@@ -195,7 +221,10 @@ export default function PlayerProfile() {
           <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
           <p className="text-gray-600 mb-8">Please upgrade to a premium subscription to view player profiles. Already have a subscription? Please login to your account.</p>
           <p className="text-gray-600 mb-8">
-            <Link href="/login" className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+            <Link href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
           </p>
           <Link
             href="/subscribe"
@@ -239,7 +268,10 @@ export default function PlayerProfile() {
             <p className="text-gray-600 mb-8">You need to be signed in to view this player profile.</p>
             <div className="space-x-4">
               <Link
-                href="/login"
+                href={{
+        pathname: '/login',
+        query: { redirect: pathname }  // Pass the current path as a query parameter
+      }}
                 className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-900 transition-colors"
               >
                 Sign In
@@ -999,10 +1031,14 @@ export default function PlayerProfile() {
           return null
         }
 
+        const currentYears = new Date().getFullYear()
+        const availableYear = Array.from({ length: currentYears - 2024 }, (_, i) => (currentYears - i).toString())
+
+
         return (
           <div className="space-y-6">
             {/* Search Bar */}
-            <div className="relative w-full mb-6">
+            <div className="relative w-full mb-6 flex">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
@@ -1011,6 +1047,17 @@ export default function PlayerProfile() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="filter-input w-full pl-10 pr-4 py-3 rounded shadow-sm"
               />
+
+              <select
+                id="year-select"
+                value={selectedYearForNuggets}
+                onChange={(e) => setSelectedYearForNuggets(e.target.value)}
+                className="px-4 py-2 mx-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                {availableYear.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
             </div>
             {isLoadingNuggets ? (
               <div className="space-y-6">
@@ -1133,10 +1180,251 @@ export default function PlayerProfile() {
           </div>
         )
 
-      default:
-        return null
+case 'season-stats':
+  const seasonStats = performancePlayer?.['Performance Metrics'];
+  const availableYearsSeasonStats = seasonStats ? Object.keys(seasonStats) : [];
+
+  // Sort the years in descending order to ensure the latest year is on top
+  const sortedYears = availableYearsSeasonStats.sort((a, b) => Number(b) - Number(a));
+
+  // Create an array of column names that have data in any year
+  const columns = [
+    { name: 'Season', key: 'Season', type: 'number' },
+    { name: 'Games Played', key: 'Games', type: 'number' },
+    { name: 'Rush Attempts', key: 'Rush Attempts', type: 'number' },
+    { name: 'Rush Yards', key: 'Rushing Yards', type: 'number' },
+    { name: 'Yards Per Carry', key: 'Rush Yards / Rush Attempts', type: 'calculated' },
+    { name: 'Receptions', key: 'Receptions', type: 'number' },
+    { name: 'Receiving Yards', key: 'Receiving Yards', type: 'number' },
+    { name: 'Total Touchdowns', key: 'Total Touchdowns', type: 'calculated' },
+    { name: 'Air Yards', key: 'Air Yards', type: 'number' },
+    { name: 'Receiving TDs', key: 'Receiving TDs', type: 'number' },
+    { name: 'Fantasy Points Per Game', key: 'Fantasy Points Per Game', type: 'number' },
+  ];
+
+  // Function to check if column data exists in any year
+  interface SeasonPerformanceMetrics {
+    Season?: number | string;
+    Games?: number | string;
+    'Rush Attempts'?: number | string;
+    'Rushing Yards'?: number | string;
+    'Rushing Touchdowns'?: number | string;
+    'Receptions'?: number | string;
+    'Receiving Yards'?: number | string;
+    'Receiving TDs'?: number | string;
+    'Air Yards'?: number | string;
+    'Fantasy Points Per Game'?: number | string;
+    [key: string]: any;  // Add index signature to allow any string key
+  }
+
+  interface SeasonStats {
+    [year: string]: SeasonPerformanceMetrics;
+  }
+
+  interface Column {
+    name: string;
+    key: string;
+    type: 'number' | 'text' | 'calculated';
+  }
+
+  const columnHasData = (columnKey: string): boolean => {
+    return sortedYears.some((year: string) => ((seasonStats as unknown) as SeasonStats)[year][columnKey] != null);
+  };
+
+  // Filter out columns that have no data for all years
+  const visibleColumns = columns.filter((column) => columnHasData(column.key));
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+          <h2 className="text-3xl font-black mb-4 sm:mb-0">Season Stats</h2>
+        </div>
+
+        {/* Performance Metrics Display */}
+        {seasonStats ? (
+          <div className="space-y-8">
+            {/* Season Stats Table */}
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-full">
+                <div className="overflow-x-auto w-full">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-[#0F0724] text-center">
+                        {visibleColumns.map((column) => (
+                          <th key={column.key} className="text-xs font-semibold p-3 text-gray-300">
+                            {column.name}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Loop through all the years (sorted) and display data */}
+                      {sortedYears.map((year) => {
+                        const yearData = seasonStats[year];
+
+                        return (
+                          <tr key={year} className="bg-[#2C204B] text-center">
+                            {visibleColumns.map((column) => {
+                              let value;
+                              if (column.type === 'calculated') {
+                                if (column.key === 'Rush Yards / Rush Attempts') {
+                                  const rushAttempts = parseInt((yearData as any)['Rush Attempts']);
+                                  const rushYards = parseInt((yearData as any)['Rushing Yards']);
+                                  value = (rushYards / rushAttempts).toFixed(2);
+                                } else if (column.key === 'Total Touchdowns') {
+                                  const rushingTouchdowns = parseInt(yearData['Rushing Touchdowns']);
+                                  const receivingTouchdowns = parseInt(yearData['Receiving TDs']);
+                                  value = rushingTouchdowns + receivingTouchdowns;
+                                }
+                              } else {
+                                const rawValue = (yearData as SeasonPerformanceMetrics)[column.key];
+                                value = typeof rawValue === 'string' ? parseInt(rawValue) || rawValue : rawValue;
+                              }
+
+                              return (
+                                <td key={column.key} className="p-3 text-white">
+                                  {value}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <CircleGauge className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-600 mb-2">No Performance Data Available</h3>
+            <p className="text-gray-500">Performance metrics are not available for the selected player.</p>
+            <p className="text-gray-500 mt-2">Try selecting a different year or check back later for updates.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+case 'game-log':
+  const gameLogs = performancePlayer?.['Game Logs']; // Game log data
+  const availableYearsGameLogs = gameLogs ? Object.keys(gameLogs) : [];
+
+  // Function to handle year change from the dropdown
+  interface YearChangeEvent {
+    target: {
+      value: string;
     }
   }
+
+  const handleYearChange = (event: YearChangeEvent): void => {
+    setSelectedYear(event.target.value); // Set the selected year
+  };
+
+  // Get the selected year data
+  const selectedYearData = (gameLogs?.[selectedYear] || {}) as Record<string, any>;
+
+  // Create columns for the game log table
+  const gameLogcolumns = [
+    { name: 'Week', key: 'week', type: 'number' },  // Updated to use 'week' key
+    { name: 'Opponent', key: 'Opponent', type: 'text' },
+    { name: 'Snap Share', key: 'Snap Share', type: 'text' },
+    { name: 'Carries', key: 'Carries', type: 'number' },
+    { name: 'Routes', key: 'Routes Run', type: 'number' },
+    { name: 'Targets', key: 'Targets', type: 'number' },
+    { name: 'Receptions', key: 'Receptions', type: 'number' },
+    { name: 'Total Yards', key: 'Total Yards', type: 'number' },
+    { name: 'Total Tds', key: 'Total Touchdowns', type: 'number' },
+    { name: 'Fantasy Points', key: 'Fantasy Points', type: 'number' },
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+          <h2 className="text-3xl font-black mb-4 sm:mb-0">Game Logs</h2>
+
+          {/* Dropdown for Year Selection */}
+        <select
+          value={selectedYear}
+          onChange={handleYearChange}
+          className="text-md p-2 rounded-md border-gray-300 bg-white dark:bg-gray-800"
+        >
+          {/* Sort the years in descending order */}
+          {availableYearsGameLogs.sort((a, b) => Number(b) - Number(a)).map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+        </div>
+
+        {/* Game Log Table */}
+        {selectedYearData ? (
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold">Game Log for {selectedYear}</h3>
+              <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-full">
+                <div className="overflow-x-auto w-full">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-[#0F0724] text-center">
+                        {gameLogcolumns.map((column) => (
+                          <th key={column.key} className="text-xs font-semibold p-3 text-gray-300">
+                            {column.name}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Loop through all the game logs for the selected year */}
+                      {Object.keys(selectedYearData).map((week) => {
+                        const weekData = selectedYearData[week];
+
+                        return (
+                          <tr key={week} className="bg-[#2C204B] text-center">
+                            {gameLogcolumns.map((column) => {
+                              let value = weekData[column.key] || '-'; // Default to '-' if no data
+                              
+                              // For the 'Week' column, we use the `week` variable directly
+                              if (column.key === 'week') {
+                                value = week;
+                              }
+
+                              return (
+                                <td key={column.key} className="p-3 text-white">
+                                  {value}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <CircleGauge className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-600 mb-2">No Game Log Data Available</h3>
+            <p className="text-gray-500">Game log data is not available for the selected year.</p>
+            <p className="text-gray-500 mt-2">Try selecting a different year or check back later for updates.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+      default:
+        return null;
+    }
+  };
+
 
 
   return (
@@ -1292,13 +1580,13 @@ export default function PlayerProfile() {
                 </div>
               )}
               <div className='relative'>
-              <Image
-                src={playerImage}
-                alt={playerName}
-                width={300}
-                height={300}
-                className="w-full h-full object-cover rounded-lg"
-              />
+                <Image
+                  src={playerImage}
+                  alt={playerName}
+                  width={300}
+                  height={300}
+                  className="w-full h-full object-cover rounded-lg"
+                />
               </div>
             </div>
 
@@ -1318,7 +1606,7 @@ export default function PlayerProfile() {
                 <div className="flex flex-col items-start gap-1 text-sm text-gray-300">
                   <span>{teamName || 'N/A'}</span>
                   <div>
-                  <p><span>{player?.Core['ADP Year']}</span> - <span>{player?.Core?.Position}</span></p>
+                    <p><span>{player?.Core['ADP Year']}</span> - <span>{player?.Core?.Position}</span></p>
                   </div>
                 </div>
               </div>

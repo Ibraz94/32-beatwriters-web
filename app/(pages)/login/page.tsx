@@ -43,7 +43,7 @@ export default function Login() {
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
-            router.push('/nuggets')
+            router.push('/')
         }
     }, [isAuthenticated, router])
 
@@ -74,7 +74,10 @@ export default function Login() {
             const result = await login(formData.emailOrUsername, formData.password)
             
             if (result.success) {
-                // Set token storage based on remember me preference
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect') || '/';
+                console.log(redirect)
                 if (rememberMe) {
                     localStorage.setItem('emailOrUsername', formData.emailOrUsername);
                     localStorage.setItem('password', formData.password);
@@ -90,7 +93,7 @@ export default function Login() {
                         sessionStorage.removeItem('auth_token')
                     }
                 
-                router.push('/nuggets')
+                router.push(redirect);
             } else {
                 setErrors({ 
                     general: result.error || 'Login failed. Please check your credentials and try again.' 

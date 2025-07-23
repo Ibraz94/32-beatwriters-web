@@ -17,7 +17,7 @@ export default function DeliveredToComponent() {
     }
 
     return (
-        <div className="relative pt-18 container mx-auto">
+        <div className="relative container mx-auto">
             {/* Left Player Image - hidden on mobile, visible on larger screens */}
             <div className="hidden lg:block absolute left-8 lg:left-[-5%] xl:left-[-0%] 2xl:left-4  top-12 lg:top-auto lg:bottom-0 z-30">
                 <Image
@@ -40,7 +40,7 @@ export default function DeliveredToComponent() {
                 />
             </div>
 
-            <div className="relative min-h-[400px] md:min-h-[500px] flex items-center justify-center overflow-hidden bg-[#2C204B] mt-8 md:mt-12">
+            <div className="relative min-h-[400px] md:min-h-[500px] flex items-center justify-center overflow-hidden bg-[#2C204B] ">
 
                 {/* Background polygons - adjusted for mobile */}
                 <div className="bg-red-800 absolute top-0 w-[80%] md:w-[60%] h-full z-10"

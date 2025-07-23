@@ -11,20 +11,25 @@ function Header() {
     const { theme } = useTheme();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+    const [isFeedDropdownOpen, setIsFeedDropdownOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const { user, isAuthenticated, logout } = useAuth();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const feedDropdownRef = useRef<HTMLDivElement>(null);
 
     // Prevent hydration mismatch by only applying theme after mounting
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    // Close dropdown when clicking outside
+    // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsUserDropdownOpen(false);
+            }
+            if (feedDropdownRef.current && !feedDropdownRef.current.contains(event.target as Node)) {
+                setIsFeedDropdownOpen(false);
             }
         };
 
@@ -86,7 +91,12 @@ function Header() {
         { href: "/articles", label: "ARTICLES" },
         { href: "/podcasts", label: "PODCAST" },
         { href: "/players", label: "PLAYERS" },
-        { href: "/nuggets", label: "FEED" },
+    ];
+
+    const feedOptions = [
+        { href: "/nuggets", label: "Latest" },
+        { href: "/saved-nuggets", label: "Saved Nuggets" },
+        { href: "/players-nuggets", label: "My Players" },
     ];
 
     return (
@@ -206,6 +216,36 @@ function Header() {
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                         ))}
+                        
+                        {/* Feed Dropdown */}
+                        <div className="relative" ref={feedDropdownRef}>
+                            <button
+                                onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
+                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white flex items-center space-x-1"
+                            >
+                                <span>FEEDS</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
+                            </button>
+
+                            {/* Feed Dropdown Menu */}
+                            {isFeedDropdownOpen && (
+                                <div className="absolute top-full left-0 w-48 rounded-sm shadow-lg border border-white/20 bg-background/90 py-2 z-50">
+                                    <div className="py-1">
+                                        {feedOptions.map((option) => (
+                                            <Link
+                                                key={option.href}
+                                                href={option.href}
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800"
+                                                onClick={() => setIsFeedDropdownOpen(false)}
+                                            >
+                                                {option.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </nav>
 
                     {/* Desktop Actions */}
@@ -306,6 +346,40 @@ function Header() {
                                     {link.label}
                                 </Link>
                             ))}
+                            
+                            {/* Mobile Feed Dropdown */}
+                            <div className="space-y-1">
+                                <button
+                                    onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
+                                    className="mobile-menu-nav-link block w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 flex items-center justify-center space-x-2"
+                                    style={{
+                                        animationDelay: isMobileMenuOpen ? `${(navLinks.length) * 50}ms` : '0ms'
+                                    }}
+                                >
+                                    <span>FEEDS</span>
+                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                                
+                                {/* Mobile Feed Dropdown Options */}
+                                <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isFeedDropdownOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    {feedOptions.map((option, index) => (
+                                        <Link
+                                            key={option.href}
+                                            href={option.href}
+                                            className="mobile-menu-nav-link block px-8 py-2 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 text-sm"
+                                            onClick={() => {
+                                                setIsMobileMenuOpen(false);
+                                                setIsFeedDropdownOpen(false);
+                                            }}
+                                            style={{
+                                                animationDelay: isMobileMenuOpen && isFeedDropdownOpen ? `${(navLinks.length + index + 1) * 50}ms` : '0ms'
+                                            }}
+                                        >
+                                            {option.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
 
                         {/* Theme Toggle - Mobile */}
