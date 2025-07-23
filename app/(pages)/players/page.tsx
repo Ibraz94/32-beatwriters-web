@@ -106,69 +106,39 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
 }
 
 function PlayersContent() {
-    const searchParams = useSearchParams()
-    const router = useRouter()
-    const { isAuthenticated, isLoading: authLoading } = useAuth()
-    const { showToast } = useToast()
-    
-    // Initialize state from URL parameters
-    const [searchTerm, setSearchTerm] = useState("")
-    const [selectedPosition, setSelectedPosition] = useState("all")
-    const [selectedConference, setSelectedConference] = useState("all")
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const { isAuthenticated } = useAuth();
+    const { showToast } = useToast();
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedPosition, setSelectedPosition] = useState("all");
+    const [selectedConference, setSelectedConference] = useState("all");
     const [page, setPage] = useState(() => {
-        const pageFromUrl = searchParams?.get('page')
-        return pageFromUrl ? parseInt(pageFromUrl, 10) : 1
-    })
+        const pageFromUrl = searchParams?.get("page");
+        return pageFromUrl ? parseInt(pageFromUrl, 10) : 1;
+    });
 
-    // Track follow state for each player (fallback for local state management)
-    const [followedPlayers, setFollowedPlayers] = useState<{ [id: string]: boolean }>({})
-    const [loadingFollow, setLoadingFollow] = useState<{ [id: string]: boolean }>({})
+    
 
-    // Follow/Unfollow mutations
-    const [followPlayer] = useFollowPlayerMutation()
-    const [unfollowPlayer] = useUnfollowPlayerMutation()
+    // Track follow state for each player
+    const [followedPlayers, setFollowedPlayers] = useState<{ [id: string]: boolean }>({});
+    const [loadingFollow, setLoadingFollow] = useState<{ [id: string]: boolean }>({});
 
-    const toggleFollow = async (playerId: string) => {
-        // Check if user is authenticated
-        if (!isAuthenticated) {
-            showToast('Please log in to follow players.', 'warning')
-            return
-        }
-
-        // Set loading state
-        setLoadingFollow(prev => ({ ...prev, [playerId]: true }))
-
-        try {
-            const isCurrentlyFollowed = followedPlayers[playerId] || false
-            if (isCurrentlyFollowed) {
-                await unfollowPlayer(playerId).unwrap()
-                showToast('Player unfollowed successfully!', 'success')
-            } else {
-                await followPlayer(playerId).unwrap()
-                showToast('Player followed successfully!', 'success')
-            }
-            // Update local state for immediate UI feedback
-            setFollowedPlayers(prev => ({
-                ...prev,
-                [playerId]: !prev[playerId]
-            }))
-        } catch (error: any) {
-            console.error('Error toggling follow status:', error)
-            
-            // Handle authentication error specifically
-            if (error?.status === 401 || error?.data?.message?.includes('Authentication required')) {
-                showToast('Please log in to follow players.', 'warning')
-            } else {
-                showToast('Failed to update follow status. Please try again.', 'error')
-            }
-        } finally {
-            // Clear loading state
-            setLoadingFollow(prev => ({ ...prev, [playerId]: false }))
-        }
-    }
+    const [followPlayer] = useFollowPlayerMutation();
+    const [unfollowPlayer] = useUnfollowPlayerMutation();
 
     // Teams query
     const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
+    // Fetch players from the server
+    const { data: playersResponse, isLoading: playersLoading, error: playersError, refetch: refetchPlayers } = useGetPlayersQuery({
+        page,
+        limit: 12,
+        pageSize: 12,
+        search: searchTerm || undefined,
+        position: selectedPosition !== "all" ? selectedPosition : undefined,
+        conference: selectedConference !== "all" ? selectedConference : undefined,
+    });
 
     const updateURL = (newPage?: number, newSearch?: string, newPosition?: string, newConference?: string) => {
         const params = new URLSearchParams()
@@ -187,7 +157,23 @@ function PlayersContent() {
         router.replace(newURL, { scroll: false })
     }
 
-    // Initialize from URL parameters on mount
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage)
+        updateURL(newPage, searchTerm, selectedPosition, selectedConference)
+        // Scroll to top when page changes
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
+    const clearAllFilters = () => {
+        setSearchTerm("")
+        setSelectedPosition("all")
+        setSelectedConference("all")
+        const newPage = 1
+        setPage(newPage)
+        updateURL(newPage, "", "all", "all")
+    }
+
+      // Initialize from URL parameters on mount
     useEffect(() => {
         const urlPage = searchParams?.get('page')
         const urlSearch = searchParams?.get('search')
@@ -223,52 +209,70 @@ function PlayersContent() {
         }
     }, [selectedPosition, selectedConference])
 
-    // Fetch players and positions from API
-    const { 
-        data: playersResponse, 
-        isLoading: playersLoading, 
-        error: playersError 
-    } = useGetPlayersQuery({
-        page,
-        limit: 12,
-        pageSize: 12,
-        search: searchTerm || undefined,
-        position: selectedPosition !== "all" ? selectedPosition : undefined,
-        conference: selectedConference !== "all" ? selectedConference : undefined
-    })
+    // Set the initial followed players on load
+    useEffect(() => {
+        if (playersResponse?.data?.players) {
+            const initialFollowedPlayers = playersResponse.data.players.reduce((acc: any, player: any) => {
+                acc[player.id] = player.isFollowed || false; // Use player follow status directly
+                return acc;
+            }, {});
+            setFollowedPlayers(initialFollowedPlayers);
+        }
+    }, [playersResponse]);
 
-    console.log('Full API Response:', playersResponse);
+    // Toggle follow/unfollow
+    const toggleFollow = async (playerId: string, isPlayerFollowed: boolean) => {
+        if (!isAuthenticated) {
+            showToast("Please log in to follow players.", "warning");
+            return;
+        }
 
+        // Optimistic UI update
+        setLoadingFollow((prev) => ({ ...prev, [playerId]: true }));
 
+        try {
+            if (isPlayerFollowed) {
+                await unfollowPlayer(playerId).unwrap();
+                showToast("Player unfollowed successfully!", "success");
+            } else {
+                await followPlayer(playerId).unwrap();
+                showToast("Player followed successfully!", "success");
+            }
 
-    // Handle page changes
-    const handlePageChange = (newPage: number) => {
-        setPage(newPage)
-        updateURL(newPage, searchTerm, selectedPosition, selectedConference)
-        // Scroll to top when page changes
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
+            // Update followed players state for immediate UI feedback
+            setFollowedPlayers((prev) => ({
+                ...prev,
+                [playerId]: !prev[playerId], // Toggle the follow state
+            }));
 
-    const clearAllFilters = () => {
-        setSearchTerm("")
-        setSelectedPosition("all")
-        setSelectedConference("all")
-        const newPage = 1
-        setPage(newPage)
-        updateURL(newPage, "", "all", "all")
-    }
+            // Re-fetch the players data after the follow/unfollow operation
+            refetchPlayers();
+
+        } catch (error: any) {
+            console.error("Error toggling follow status:", error);
+            // Revert state in case of error
+            setFollowedPlayers((prev) => ({
+                ...prev,
+                [playerId]: isPlayerFollowed, // Revert back to the previous state
+            }));
+
+            if (error?.status === 401 || error?.data?.message?.includes("Authentication required")) {
+                showToast("Please log in to follow players.", "warning");
+            } else {
+                showToast("Failed to update follow status. Please try again.", "error");
+            }
+        } finally {
+            setLoadingFollow((prev) => ({ ...prev, [playerId]: false }));
+        }
+    };
 
     // Loading state
-    if (playersLoading || isLoadingTeams) {
+    if (playersLoading) {
         return (
             <section className="container mx-auto max-w-7xl px-4 py-8">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        All Players
-                    </h1>
-                    <p className="text-xl max-w-4xl mx-auto mb-6">
-                        Loading players...
-                    </p>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">All Players</h1>
+                    <p className="text-xl max-w-4xl mx-auto mb-6">Loading players...</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {Array.from({ length: 12 }).map((_, index) => (
@@ -281,7 +285,7 @@ function PlayersContent() {
                     ))}
                 </div>
             </section>
-        )
+        );
     }
 
     // Error state
@@ -289,98 +293,35 @@ function PlayersContent() {
         return (
             <section className="container mx-auto max-w-7xl px-4 py-8">
                 <div className="text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        All Players
-                    </h1>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">All Players</h1>
                     <p className="text-xl text-red-600 mb-4">Failed to load players</p>
                     <p className="text-gray-600">Please try again later.</p>
                 </div>
             </section>
-        )
+        );
     }
 
-    const players = playersResponse?.data?.players || []
-    const totalPlayers = playersResponse?.data?.pagination?.total || 0
-    const totalPages = playersResponse?.data?.pagination?.totalPages || 0
-
-    console.log('Processed Players:', players)
-    console.log('Is Array?', Array.isArray(players))
+    // Player list
+    const players = playersResponse?.data?.players || [];
+    const totalPages = playersResponse?.data?.pagination?.totalPages || 0;
 
     return (
         <section className="container mx-auto max-w-7xl px-4 py-8">
-            {/* Header */}
             <div className="text-center mb-8">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4 font-oswald">
-                    All Players
-                </h1>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 font-oswald">All Players</h1>
             </div>
 
-            {/* Search Bar */}
-            <div className="mb-8 flex w-full">
-                <div className="relative w-full">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                        type="text"
-                        placeholder="Search players..."
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                        className="filter-input w-full pl-10 pr-10 py-3 rounded shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
-                    />
-                    {searchTerm && (
-                        <button
-                            type="button"
-                            onClick={() => setSearchTerm("")}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-600 focus:outline-none"
-                            aria-label="Clear search"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                    )}
-                </div>
-            </div>
-
-            <div>
-                {/* Active Filters Display */}
-                {(searchTerm || selectedPosition !== "all" || selectedConference !== "all") && (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                        <span className="text-sm text-gray-600">Active filters:</span>
-                        {searchTerm && (
-                            <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">
-                                Search: "{searchTerm}"
-                            </span>
-                        )}
-                        {selectedPosition !== "all" && (
-                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
-                                Position: {selectedPosition}
-                            </span>
-                        )}
-                        {selectedConference !== "all" && (
-                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
-                                Conference: {selectedConference}
-                            </span>
-                        )}
-                        <button
-                            onClick={clearAllFilters}
-                            className="text-red-800 underline text-sm ml-2"
-                        >
-                            Clear all
-                        </button>
-                    </div>
-                )}
-            </div>
-
-            {/* Players Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {players.map((player) => (
                     <PlayerCard
-                      key={player.id}
-                      player={player}
-                      currentPage={page}
-                      teamsData={teamsData}
-                      isFollowing={player.isFollowed || !!followedPlayers[player.id]}
-                      onToggleFollow={() => toggleFollow(player.id.toString())}
-                      isAuthenticated={isAuthenticated}
-                      isLoading={!!loadingFollow[player.id]}
+                        key={player.id}
+                        player={player}
+                        currentPage={page}
+                        teamsData={teamsData}
+                        isFollowing={followedPlayers[player.id]}
+                        onToggleFollow={() => toggleFollow(player.id.toString(), followedPlayers[player.id])}
+                        isAuthenticated={isAuthenticated}
+                        isLoading={loadingFollow[player.id] || false}
                     />
                 ))}
             </div>
@@ -388,17 +329,9 @@ function PlayersContent() {
             {/* No Results */}
             {players.length === 0 && (
                 <div className="text-center py-12">
-                    <Users className="w-16 h-16 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold mb-2">No players found</h3>
-                    <p className="mb-4">
-                        Try adjusting your search criteria or filters
-                    </p>
-                    <button
-                        onClick={clearAllFilters}
-                        className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
-                    >
-                        Clear Filters
-                    </button>
+                    <p className="mb-4">Try adjusting your search criteria or filters</p>
+                    <button onClick={clearAllFilters} className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors">Clear Filters</button>
                 </div>
             )}
 
@@ -441,25 +374,9 @@ function PlayersContent() {
                     </div>
                 </div>
             )}
-
-            <div className="flex items-center justify-center gap-2 mt-10 -mb-6">
-            <h1 className="text-sm font-light">Data Powered By <span className="font-bold">PlayerProfiler</span> </h1>
-            <Link
-            href='https://playerprofiler.com/'
-            target="_blank"
-            >
-            <Image
-            src="/pp-logo.png"
-            width={30}
-            height={30}
-            alt="pp=logo"
-            />
-            </Link>
-            </div>
         </section>
-    )
+    );
 }
-
 export default function Players() {
     return (
         <Suspense fallback={
