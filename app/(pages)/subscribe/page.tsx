@@ -187,19 +187,34 @@ export default function PremiumSignup() {
     e.preventDefault()
     if (!validateForm() || !selectedPriceId) return
     setIsLoading(true)
+    
+    const payload = {
+      ...formData,
+      priceId: selectedPriceId,
+      couponCode: promoCode // Send the actual promo code instead of the ID
+    }
+    
+    console.log('Payload being sent to /api/stripe/create-checkout-session:', payload)
+    console.log('API URL:', buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CREATE_CHECKOUT_SESSION))
+    
     try {
       const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CREATE_CHECKOUT_SESSION), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          priceId: selectedPriceId,
-          couponCode: validatedPromoId
-        }),
+        body: JSON.stringify(payload),
       })
-      const { url } = await response.json()
+      
+      console.log('Response status:', response.status)
+      console.log('Response headers:', response.headers)
+      
+      const responseData = await response.json()
+      console.log('Response data:', responseData)
+      
+      const { url } = responseData
+      console.log('Extracted URL:', url)
+      
       window.location.href = url
     } catch (error) {
       console.error('Error creating checkout session:', error)
@@ -494,7 +509,7 @@ export default function PremiumSignup() {
                       type="text"
                       name="firstName"
                       value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value)}
+                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                       className={`w-full px-4 py-2 border rounded-md ${promoError ? 'border-destructive' : 'border-input'
                         }`}
                       placeholder="Enter your promo code"
