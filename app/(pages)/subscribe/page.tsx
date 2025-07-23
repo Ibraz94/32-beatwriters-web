@@ -500,20 +500,30 @@ export default function PremiumSignup() {
                   </div>
                 </div>
 
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='grid grid-cols-1 gap-4'>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                       Promo Code
                     </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                      className={`w-full px-4 py-2 border rounded-md ${promoError ? 'border-destructive' : 'border-input'
-                        }`}
-                      placeholder="Enter your promo code"
-                    />
+                    <div className='flex gap-2'>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                        className={`w-full px-4 py-2 border rounded-md ${promoError ? 'border-destructive' : 'border-input'
+                          }`}
+                        placeholder="Enter your promo code"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handlePromoCodeValidation()}
+                        disabled={promoLoading}
+                        className=" bg-red-800 w-full text-white hover:scale-101 py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50"
+                      >
+                        {promoLoading ? 'Validating...' : 'Validate Promo Code'}
+                      </button>
+                    </div>
                     {promoError && (
                       <p className="mt-1 text-sm text-destructive">{promoError}</p>
                     )}
@@ -522,14 +532,7 @@ export default function PremiumSignup() {
                     )}
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handlePromoCodeValidation()}
-                    disabled={promoLoading}
-                    className=" bg-red-800 text-white hover:scale-101 py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50"
-                  >
-                    {promoLoading ? 'Validating...' : 'Validate Promo Code'}
-                  </button>
+                  
                 </div>
 
                 <div className="space-y-4">

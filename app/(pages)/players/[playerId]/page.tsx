@@ -102,10 +102,16 @@ export default function PlayerProfile() {
   const { isAuthenticated, isLoading: authLoading, user } = useAuth()
 
   // First, fetch the player from internal API to get the playerId
-  const { data: internalPlayer, isLoading: internalPlayerLoading, error: internalPlayerError } = useGetPlayerQuery(playerId)
+  const { data: internalPlayerResponse, isLoading: internalPlayerLoading, error: internalPlayerError } = useGetPlayerQuery(playerId)
+
+  // Extract the actual player data from the response
+  const internalPlayer = internalPlayerResponse?.data
 
   // Then use the playerId from internal API to fetch detailed data from Player Profiler API
-  const { data: playerResponse, isLoading: playerLoading, error: playerError } = useGetPlayerProfilerQuery(internalPlayer?.playerId || '')
+  const { data: playerResponse, isLoading: playerLoading, error: playerError } = useGetPlayerProfilerQuery(
+    internalPlayer?.playerId || '', 
+    { skip: !internalPlayer?.playerId }
+  )
 
   // Fetch performance data for selected year
   const { data: performanceResponse, isLoading: performanceLoading } = useGetPlayerPerformanceProfilerQuery(
@@ -120,7 +126,9 @@ export default function PlayerProfile() {
 
   // Debug: Log the actual response structure (remove in production)
   if (process.env.NODE_ENV === 'development') {
-    console.log('Internal Player API Response:', internalPlayer)
+    console.log('Internal Player API Response:', internalPlayerResponse)
+    console.log('Internal Player Data:', internalPlayer)
+    console.log('Internal Player ID:', internalPlayer?.playerId)
     console.log('Player Data:', player)
     console.log('Player Error:', playerError)
   }
