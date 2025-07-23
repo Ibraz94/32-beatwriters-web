@@ -237,7 +237,7 @@ function PlayersContent() {
         conference: selectedConference !== "all" ? selectedConference : undefined
     })
 
-    console.log('Full API Response:', playersResponse)
+    console.log('Full API Response:', playersResponse);
 
 
 
