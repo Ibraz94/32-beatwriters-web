@@ -33,6 +33,7 @@ export default function Footer() {
             { label: "Home", href: "/" },
             { label: "Articles", href: "/articles" },
             { label: "Feed", href: "/nuggets" },
+            { label: "Contact Us", href: "/contact-us" },
 
 
         ],
