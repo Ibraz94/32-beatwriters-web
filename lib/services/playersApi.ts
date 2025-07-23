@@ -605,7 +605,7 @@ export const playersApi = createApi({
         method: 'GET'
       })
     }),
-    getPlayer: builder.query<Player, string>({
+    getPlayer: builder.query<{ success: boolean; data: Player }, string>({
       query: (id) => ({
         url: `/${id}`,
         method: 'GET',
