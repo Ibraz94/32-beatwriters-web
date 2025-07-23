@@ -4,10 +4,10 @@ const EXTERNAL_API_BASE = 'https://api.32beatwriters.com/api'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     
     // Forward the request to your external API
     const externalUrl = `${EXTERNAL_API_BASE}/players/${id}`
