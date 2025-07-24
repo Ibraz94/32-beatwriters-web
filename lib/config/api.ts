@@ -1,5 +1,7 @@
 export const API_CONFIG = {
+  
   BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com',
+
   ENDPOINTS: {
     ARTICLES: '/api/articles',
     AUTH: '/api/users',
