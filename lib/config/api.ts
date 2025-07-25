@@ -16,7 +16,8 @@ export const API_CONFIG = {
       SUBSCRIPTION_OPTIONS: '/api/stripe/subscription-options',
       CREATE_CHECKOUT_SESSION: '/api/stripe/create-checkout-session',
       MY_SUBSCRIPTION: '/api/stripe/my-subscription',
-      CANCEL_SUBSCRIPTION: '/api/stripe/my-subscription/cancel'
+      CANCEL_SUBSCRIPTION: '/api/stripe/my-subscription/cancel',
+      SESSION: '/api/stripe/session'
     }
   }
 }

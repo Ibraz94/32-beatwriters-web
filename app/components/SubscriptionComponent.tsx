@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check } from 'lucide-react'
 import Image from 'next/image'
+import { buildApiUrl, API_CONFIG } from '@/lib/config/api'
 
 interface SubscriptionOption {
   id: string
@@ -28,7 +29,7 @@ export default function SubscriptionComponent() {
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
       try {
-        const response = await fetch('https://api.32beatwriters.com/api/stripe/subscription-options')
+        const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.SUBSCRIPTION_OPTIONS))
         const data = await response.json()
         setSubscriptionOptions(data)
       } catch (error) {

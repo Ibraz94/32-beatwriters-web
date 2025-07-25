@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const EXTERNAL_API_BASE = 'https://api.32beatwriters.com/api'
+import { buildApiUrl, API_CONFIG } from '../../../lib/config/api'
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,7 +8,7 @@ export async function GET(request: NextRequest) {
     const queryString = searchParams.toString()
     
     // Forward the request to your external API
-    const externalUrl = `${EXTERNAL_API_BASE}/players${queryString ? `?${queryString}` : ''}`
+    const externalUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.PLAYERS)}${queryString ? `?${queryString}` : ''}`
     
     console.log('🔄 Proxying request to:', externalUrl)
     

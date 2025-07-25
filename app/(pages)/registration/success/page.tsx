@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { buildApiUrl, API_CONFIG } from '../../../../lib/config/api'
 
 export default function RegistrationSuccess() {
   const [sessionDetails, setSessionDetails] = useState<any>(null)
@@ -11,7 +12,7 @@ export default function RegistrationSuccess() {
     const sessionId = new URLSearchParams(window.location.search).get('session_id')
     if (sessionId) {
       // Fetch session details from your backend
-      fetch(`https://api.32beatwriters.com/api/stripe/session/${sessionId}`)
+      fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.SESSION) + `/${sessionId}`)
         .then(response => response.json())
         .then(data => setSessionDetails(data))
         .catch(error => console.error('Error fetching session details:', error))
