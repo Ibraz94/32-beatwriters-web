@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const EXTERNAL_API_BASE = 'https://api.32beatwriters.com/api'
+import { buildApiUrl, API_CONFIG } from '../../../../lib/config/api'
 
 export async function GET(
   request: NextRequest,
@@ -10,7 +9,7 @@ export async function GET(
     const { id } = await params
     
     // Forward the request to your external API
-    const externalUrl = `${EXTERNAL_API_BASE}/nuggets/${id}`
+    const externalUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.NUGGETS)}/${id}`
     
     console.log('🔄 Proxying nugget GET request to:', externalUrl)
     
@@ -88,7 +87,7 @@ export async function PUT(
     const body = await request.json()
     
     // Forward the PUT request to your external API
-    const externalUrl = `${EXTERNAL_API_BASE}/nuggets/${id}`
+    const externalUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.NUGGETS)}/${id}`
     
     console.log('🔄 Proxying nugget PUT request to:', externalUrl)
     
@@ -166,7 +165,7 @@ export async function DELETE(
     const { id } = await params
     
     // Forward the DELETE request to your external API
-    const externalUrl = `${EXTERNAL_API_BASE}/nuggets/${id}`
+    const externalUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.NUGGETS)}/${id}`
     
     console.log('🔄 Proxying nugget DELETE request to:', externalUrl)
     

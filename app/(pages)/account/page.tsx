@@ -1,15 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { User, Mail, Lock, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, Check, X, CreditCard, AlertTriangle } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '../../../lib/hooks/useAuth'
 import { useUpdateProfileMutation, useUpdatePasswordMutation, useGetProfileQuery, useLogoutMutation } from '../../../lib/services/authApi'
+import { useGetDiscordStatusQuery } from '../../../lib/services/discordApi'
 import DiscordButton from '@/app/components/DiscordButton'
 import { buildApiUrl, API_CONFIG } from '../../../lib/config/api'
 
-export default function Account() {
+function AccountContent() {
     const [mounted, setMounted] = useState(false)
     const [activeTab, setActiveTab] = useState('profile')
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -35,6 +37,9 @@ export default function Account() {
     const [cancellingSubscription, setCancellingSubscription] = useState(false)
     const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
     const { theme } = useTheme()
     const { user, logout, updateProfile, token } = useAuth()
     const [updateProfileMutation] = useUpdateProfileMutation()
@@ -43,6 +48,11 @@ export default function Account() {
 
     // Fetch fresh profile data
     const { data: profileData, error: profileError, isLoading: profileLoading } = useGetProfileQuery()
+    
+    // Fetch Discord status
+    const { data: discordStatus, isLoading: discordStatusLoading } = useGetDiscordStatusQuery(undefined, {
+        skip: !token
+    })
 
     // Helper function to get display name from user data
     const getDisplayName = (userData: typeof user) => {
@@ -86,6 +96,33 @@ export default function Account() {
             }) // Debug log
         }
     }, [user, profileData])
+
+    // Handle Discord OAuth callback
+    useEffect(() => {
+        const discordStatus = searchParams.get('discord')
+        
+        if (discordStatus === 'success') {
+            const token = searchParams.get('token')
+            const username = searchParams.get('username')
+            
+            if (token) {
+                // Update auth token if provided
+                // Note: This assumes the auth context has a method to update the token
+                // You may need to implement this in your auth context
+                console.log('Discord connection successful!')
+                setSuccessMessage(`Successfully connected to Discord as ${username || 'user'}!`)
+                
+                // Clean up URL parameters
+                router.replace('/account', { scroll: false })
+            }
+        } else if (discordStatus === 'error') {
+            const errorMessage = searchParams.get('message') || 'Failed to connect to Discord'
+            setErrors({ discord: errorMessage })
+            
+            // Clean up URL parameters
+            router.replace('/account', { scroll: false })
+        }
+    }, [searchParams, router])
 
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -213,13 +250,12 @@ export default function Account() {
     const fetchSubscription = async () => {
         setLoadingSubscription(true)
             try {
-      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.MY_SUBSCRIPTION), {
+                  const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.MY_SUBSCRIPTION), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
-                },
-                credentials: 'include'
+                }
             })
 
             if (response.ok) {
@@ -348,6 +384,13 @@ export default function Account() {
                 {successMessage && (
                     <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-800 rounded-lg">
                         <p className="text-green-800 dark:text-green-400">{successMessage}</p>
+                    </div>
+                )}
+
+                {/* Discord Error Message */}
+                {errors.discord && (
+                    <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg">
+                        <p className="text-red-800 dark:text-red-400">{errors.discord}</p>
                     </div>
                 )}
 
@@ -508,6 +551,34 @@ export default function Account() {
                                         <Crown className="h-5 w-5 text-yellow-500" />
                                         <span className="text-foreground">
                                             {user.role === 'Administrator' ? 'Admin' : user.role === 'Subscriber' ? 'Premium Member' : 'Free Member'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Discord Connection Status */}
+                                <div>
+                                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                                        Discord Connection
+                                    </label>
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                        <svg
+                                            className="h-5 w-5 text-[#5865F2]"
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                                        </svg>
+                                        <span className="text-foreground">
+                                            {discordStatusLoading ? (
+                                                <span className="text-muted-foreground">Loading...</span>
+                                            ) : discordStatus?.connected ? (
+                                                <span className="text-green-600 dark:text-green-400">
+                                                    Connected as {discordStatus.discordUsername}
+                                                </span>
+                                            ) : (
+                                                <span className="text-muted-foreground">Not connected</span>
+                                            )}
                                         </span>
                                     </div>
                                 </div>
@@ -826,5 +897,19 @@ export default function Account() {
 
             </div>
         </div>
+    )
+}
+
+export default function Account() {
+    return (
+        <Suspense fallback={
+            <section className="container mx-auto mt-24 px-4">
+                <div className="flex justify-center items-center min-h-[400px]">
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-800"></div>
+                </div>
+            </section>
+        }>
+            <AccountContent />
+        </Suspense>
     )
 }

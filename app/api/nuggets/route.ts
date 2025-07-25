@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const EXTERNAL_API_BASE = 'https://api.32beatwriters.com/api'
+import { buildApiUrl, API_CONFIG } from '../../../lib/config/api'
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,7 +8,7 @@ export async function GET(request: NextRequest) {
     const queryString = searchParams.toString()
     
     // Forward the request to your external API
-    const externalUrl = `${EXTERNAL_API_BASE}/nuggets${queryString ? `?${queryString}` : ''}`
+    const externalUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.NUGGETS)}${queryString ? `?${queryString}` : ''}`
     
     console.log('🔄 Proxying nuggets request to:', externalUrl)
     
@@ -84,7 +83,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     
     // Forward the POST request to your external API
-    const externalUrl = `${EXTERNAL_API_BASE}/nuggets`
+    const externalUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.NUGGETS)}`
     
     console.log('🔄 Proxying POST nugget request to:', externalUrl)
     

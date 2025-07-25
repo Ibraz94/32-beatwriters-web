@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { buildApiUrl, API_CONFIG } from '../../../../lib/config/api'
 
-const EXTERNAL_API_BASE = 'https://api.32beatwriters.com/api'
 
 export async function GET(
   request: NextRequest,
@@ -10,7 +10,7 @@ export async function GET(
     const { id } = await params
     
     // Forward the request to your external API
-    const externalUrl = `${EXTERNAL_API_BASE}/articles/${id}`
+    const externalUrl = `${buildApiUrl(API_CONFIG.ENDPOINTS.ARTICLES)}/${id}`
     
     console.log('Proxying article request to:', externalUrl)
     
