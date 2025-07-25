@@ -1351,7 +1351,7 @@ case 'game-log':
         <select
           value={selectedYear}
           onChange={handleYearChange}
-          className="text-md p-2 rounded-md border-gray-300 bg-white dark:bg-gray-800"
+          className="px-4 py-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
         >
           {/* Sort the years in descending order */}
           {availableYearsGameLogs.sort((a, b) => Number(b) - Number(a)).map((year) => (
