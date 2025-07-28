@@ -24,10 +24,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     return {
       title: article.title,
-      description: article.content?.substring(0, 160) || 'Read this article on 32BeatWriters',
+      description: 'Read this article on 32BeatWriters',
       openGraph: {
         title: article.title,
-        description: article.content?.substring(0, 160) || 'Read this article on 32BeatWriters',
+        description: 'Read this article on 32BeatWriters',
         images: [
           {
             url: getImageUrl(article.featuredImage) || '/logo-small.webp',
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
           },
         ],
         type: 'article',
-        url: `https://32-beatwriters-web.vercel.app/articles/${id}`,
+        url: `${buildApiUrl(API_CONFIG.ENDPOINTS.ARTICLES)}/${id}`,
       },
       twitter: {
         card: 'summary_large_image',
