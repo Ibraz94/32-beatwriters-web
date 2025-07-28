@@ -11,8 +11,6 @@ import { useGetDiscordStatusQuery } from '../../../lib/services/discordApi'
 import DiscordButton from '@/app/components/DiscordButton'
 import { buildApiUrl, API_CONFIG } from '../../../lib/config/api'
 import { setAuthTokens } from '../../../lib/utils/auth'
-import { useAppDispatch } from '../../../lib/hooks'
-import { setToken } from '../../../lib/features/authSlice'
 
 function AccountContent() {
     const [mounted, setMounted] = useState(false)
@@ -42,7 +40,6 @@ function AccountContent() {
 
     const router = useRouter()
     const searchParams = useSearchParams()
-    const dispatch = useAppDispatch()
 
     const { theme } = useTheme()
     const { user, logout, updateProfile, token } = useAuth()
@@ -103,23 +100,19 @@ function AccountContent() {
 
     // Handle Discord OAuth callback
     useEffect(() => {
+        // Console log the full searchParams object
+        console.log('Full searchParams object:', searchParams)
+        
         const discordStatus = searchParams.get('discord')
         
         if (discordStatus === 'success') {
-            const token = searchParams.get('token')
             const username = searchParams.get('username')
             
-            if (token) {
-                // Update auth token with the new JWT token from Discord
-                setAuthTokens(token)
-                // Update Redux state to reflect the new token
-                dispatch(setToken({ token }))
-                console.log('Discord connection successful!')
-                setSuccessMessage(`Successfully connected to Discord as ${username || 'user'}!`)
-                
-                // Clean up URL parameters
-                router.replace('/account', { scroll: false })
-            }
+            console.log('Discord connection successful!')
+            setSuccessMessage(`Successfully connected to Discord as ${username || 'user'}!`)
+            
+            // Clean up URL parameters
+            router.replace('/account', { scroll: false })
         } else if (discordStatus === 'error') {
             const errorMessage = searchParams.get('message') || 'Failed to connect to Discord'
             setErrors({ discord: errorMessage })
@@ -127,7 +120,7 @@ function AccountContent() {
             // Clean up URL parameters
             router.replace('/account', { scroll: false })
         }
-    }, [searchParams, router, dispatch])
+    }, [searchParams, router])
 
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
