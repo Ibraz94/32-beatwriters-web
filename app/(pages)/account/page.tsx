@@ -10,6 +10,9 @@ import { useUpdateProfileMutation, useUpdatePasswordMutation, useGetProfileQuery
 import { useGetDiscordStatusQuery } from '../../../lib/services/discordApi'
 import DiscordButton from '@/app/components/DiscordButton'
 import { buildApiUrl, API_CONFIG } from '../../../lib/config/api'
+import { setAuthTokens } from '../../../lib/utils/auth'
+import { useAppDispatch } from '../../../lib/hooks'
+import { setToken } from '../../../lib/features/authSlice'
 
 function AccountContent() {
     const [mounted, setMounted] = useState(false)
@@ -39,6 +42,7 @@ function AccountContent() {
 
     const router = useRouter()
     const searchParams = useSearchParams()
+    const dispatch = useAppDispatch()
 
     const { theme } = useTheme()
     const { user, logout, updateProfile, token } = useAuth()
@@ -106,9 +110,10 @@ function AccountContent() {
             const username = searchParams.get('username')
             
             if (token) {
-                // Update auth token if provided
-                // Note: This assumes the auth context has a method to update the token
-                // You may need to implement this in your auth context
+                // Update auth token with the new JWT token from Discord
+                setAuthTokens(token)
+                // Update Redux state to reflect the new token
+                dispatch(setToken({ token }))
                 console.log('Discord connection successful!')
                 setSuccessMessage(`Successfully connected to Discord as ${username || 'user'}!`)
                 
@@ -122,7 +127,7 @@ function AccountContent() {
             // Clean up URL parameters
             router.replace('/account', { scroll: false })
         }
-    }, [searchParams, router])
+    }, [searchParams, router, dispatch])
 
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
