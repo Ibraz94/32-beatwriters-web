@@ -23,6 +23,12 @@ export default function PodcastsComponent() {
         limit: 3,
         sortBy: 'publishedAt',
         sortOrder: 'desc'
+    }, {
+        // Add polling: false to prevent automatic refetching
+        pollingInterval: 0,
+        refetchOnMountOrArgChange: false,
+        refetchOnFocus: false,
+        refetchOnReconnect: false
     }) as { data: ApiResponse | undefined, isLoading: boolean, error: any };
 
     const formatTimeAgo = (dateString: string) => {
