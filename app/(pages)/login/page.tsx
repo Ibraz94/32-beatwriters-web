@@ -16,11 +16,11 @@ export default function Login() {
         emailOrUsername: '',
         password: '',
     })
-    const [errors, setErrors] = useState<{[key: string]: string}>({})
+    const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
     const { theme } = useTheme()
     const router = useRouter()
-    const { login, isLoading, isAuthenticated} = useAuth()
+    const { login, isLoading, isAuthenticated } = useAuth()
 
 
     useEffect(() => {
@@ -29,7 +29,7 @@ export default function Login() {
         if (savedEmail && savedPassword) {
             setFormData({
                 emailOrUsername: savedEmail || '',
-                password: savedPassword || '',  
+                password: savedPassword || '',
             })
             setRememberMe(true);
         }
@@ -48,33 +48,33 @@ export default function Login() {
     }, [isAuthenticated, router])
 
     const validateForm = () => {
-        const newErrors: {[key: string]: string} = {}
-        
+        const newErrors: { [key: string]: string } = {}
+
         if (!formData.emailOrUsername) {
             newErrors.emailOrUsername = 'Email or username is required'
         }
-        
+
         if (!formData.password) {
             newErrors.password = 'Password is required'
         } else if (formData.password.length < 6) {
             newErrors.password = 'Password must be at least 6 characters'
         }
-        
+
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        
+
         if (!validateForm()) return
-        
+
         try {
             // Use the auth system with email or username - let the backend handle both
             const result = await login(formData.emailOrUsername, formData.password)
-            
+
             if (result.success) {
-                
+
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirect = urlParams.get('redirect') || '/';
                 console.log(redirect)
@@ -86,24 +86,24 @@ export default function Login() {
                     localStorage.removeItem('password');
                 }
 
-                    // The auth system already handles localStorage, but we ensure it's persistent
-                    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token')
-                    if (token) {
-                        localStorage.setItem('auth_token', token)
-                        sessionStorage.removeItem('auth_token')
-                    }
-                
-                router.push(redirect);
+                // The auth system already handles localStorage, but we ensure it's persistent
+                const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token')
+                if (token) {
+                    localStorage.setItem('auth_token', token)
+                    sessionStorage.removeItem('auth_token')
+                }
+
+                router.push('/nuggets');
             } else {
-                setErrors({ 
-                    general: result.error || 'Login failed. Please check your credentials and try again.' 
+                setErrors({
+                    general: result.error || 'Login failed. Please check your credentials and try again.'
                 })
             }
-            
+
         } catch (error: any) {
             console.error('Login error:', error)
-            setErrors({ 
-                general: error.message || 'Login failed. Please check your credentials and try again.' 
+            setErrors({
+                general: error.message || 'Login failed. Please check your credentials and try again.'
             })
         }
     }
@@ -114,7 +114,7 @@ export default function Login() {
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }))
-        
+
         // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
@@ -125,8 +125,8 @@ export default function Login() {
     }
 
     return (
-            <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8 mt-20 mb-26">
-                <div className="max-w-sm w-full space-y-12">
+        <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8 mt-20 mb-26">
+            <div className="max-w-sm w-full space-y-12">
                 {/* Header */}
                 <div className="text-center">
                     <div className="flex justify-center">
@@ -136,7 +136,7 @@ export default function Login() {
                             <Image src="/logo-small.webp" alt="logo" width={100} height={100} />
                         )}
                     </div>
-                   
+
                     <p className="mt-6">
                         Log in to continue with premium access
                     </p>
@@ -151,7 +151,7 @@ export default function Login() {
                                 <p className="text-sm text-destructive">{errors.general}</p>
                             </div>
                         )}
-                        
+
                         {/* Email/Username Field */}
                         <div>
                             <label htmlFor="emailOrUsername" className="block text-sm mb-2">
@@ -166,9 +166,8 @@ export default function Login() {
                                     required
                                     value={formData.emailOrUsername}
                                     onChange={handleInputChange}
-                                    className={`appearance-none relative block w-full pl-4 pr-3 py-3 border ${
-                                        errors.emailOrUsername ? 'border-destructive' : 'border-input'
-                                    } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring focus:ring-ring focus:border-transparent bg-background/20 transition-colors`}
+                                    className={`appearance-none relative block w-full pl-4 pr-3 py-3 border ${errors.emailOrUsername ? 'border-destructive' : 'border-input'
+                                        } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring focus:ring-ring focus:border-transparent bg-background/20 transition-colors`}
                                     placeholder="Enter your email or username"
                                 />
                             </div>
@@ -191,9 +190,8 @@ export default function Login() {
                                     required
                                     value={formData.password}
                                     onChange={handleInputChange}
-                                    className={`appearance-none relative block w-full pl-4 pr-10 py-3 border ${
-                                        errors.password ? 'border-destructive' : 'border-input'
-                                    } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background/20 transition-colors`}
+                                    className={`appearance-none relative block w-full pl-4 pr-10 py-3 border ${errors.password ? 'border-destructive' : 'border-input'
+                                        } placeholder-muted-foreground text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background/20 transition-colors`}
                                     placeholder="Enter your password"
                                 />
                                 <button
@@ -300,10 +298,10 @@ export default function Login() {
                 {/* Sign Up Link */}
                 <div className="text-center">
                     <p className="text-sm text-muted-foreground">
-                    Don't have an account?{'  '}
-                            <Link href="/subscribe" className="font-medium text-red-800 hover:underline transition-colors">
-                                 Subscribe now
-                            </Link>
+                        Don't have an account?{'  '}
+                        <Link href="/subscribe" className="font-medium text-red-800 hover:underline transition-colors">
+                            Subscribe now
+                        </Link>
                     </p>
                 </div>
             </div>
