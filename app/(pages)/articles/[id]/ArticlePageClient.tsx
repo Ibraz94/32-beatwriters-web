@@ -139,7 +139,7 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto article-container">
                 {/* Article Header */}
                 <div key={article.id}>
                     <div className="flex justify-center ">

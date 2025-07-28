@@ -446,3 +446,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #5d4b7c;
 }
+
+.article-container img, .article-container iframe, picture, .article-container * {
+  max-width: 100% !important;
+}
