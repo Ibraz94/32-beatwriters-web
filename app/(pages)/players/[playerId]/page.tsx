@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ playerId:
       }
     }
 
-    const player = playerData
+    const player = playerData.data
 
     return {
       title: player.name,
