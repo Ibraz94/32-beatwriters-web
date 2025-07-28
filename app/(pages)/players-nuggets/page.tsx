@@ -32,6 +32,7 @@ import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
+import { useGetPlayersQuery} from '@/lib/services/playersApi'
 
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
@@ -97,11 +98,17 @@ export default function PlayersNuggetsPage() {
         } else if (selectedDate && !date) {
             setDate(new Date(selectedDate))
         }
+
+       
     }, [selectedDate, date])
 
     // Get followed nuggets
-    const { data: followedNuggetsData, isLoading: isLoadingFollowedNuggets, error: followedNuggetsError, isFetching: isFetchingFollowedNuggets } = useGetFollowedNuggetsQuery()
+    const { data: followedNuggetsData, isLoading: isLoadingFollowedNuggets, error: followedNuggetsError, isFetching: isFetchingFollowedNuggets, refetch: refetchFollowedNuggets } = useGetFollowedNuggetsQuery()
 
+    useEffect(() => {
+         refetchFollowedNuggets()
+    }, [user?.id, debouncedSearchTerm, filters, selectedDate, currentPage])
+    
     // Teams query
     const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
 
@@ -257,61 +264,132 @@ export default function PlayersNuggetsPage() {
     }, [imageModal])
 
     // Trending Players component
-    const TrendingPlayers = () => {
-        const trendingPlayers = allNuggets
-            .reduce((acc: any[], nugget) => {
-                if (!acc.find(p => p.id === nugget.player.id)) {
-                    acc.push({
-                        ...nugget.player,
-                        team: findTeamByKey(nugget.player.team)
-                    })
-                }
-                return acc
-            }, [])
-            .slice(0, 5)
+ const TrendingPlayers = () => {
+  const targetPlayerNames = [
+    'Emeka Egbuka',
+    'Kyle Pitts',
+    'Kyler Murray',
+    'Dont\'e Thornton',
+    'TreVeyon Henderson',
+  ];
 
-        return (
-            <div className="rounded-lg border border-[#2C204B]">
-                <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
-                    <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
-                </div>
-                <div className="space-y-3">
-                    {trendingPlayers.map((player, index) => (
-                        <Link
-                            key={player.id}
-                            href={`/players/${player.id}`}
-                            className="flex items-center justify-between p-3 border-b border-[#2C204B]"
-                        >
-                            <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 rounded-full overflow-hidden">
-                                    <Image
-                                        src={getImageUrl(player.headshotPic) || '/default-player.jpg'}
-                                        alt={player.name}
-                                        width={40}
-                                        height={40}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <span className="font-medium">{player.name}</span>
-                            </div>
-                            {player.team && (
-                                <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
-                                    <Image
-                                        src={getTeamLogoUrl(player.team.logo) || ''}
-                                        alt={player.team.name}
-                                        width={24}
-                                        height={24}
-                                        className="object-contain"
-                                    />
-                                    <p>{player.team.name}</p>
-                                </div>
-                            )}
-                        </Link>
-                    ))}
-                </div>
+  // Define separate queries for each player
+  const query1 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[0], // Search for 'Emeka Egbuka'
+  });
+
+  const query2 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[1], // Search for 'Kyle Pitts'
+  });
+
+  const query3 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[2], // Search for 'Kyler Murray'
+  });
+
+  const query4 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[3], // Search for 'Dont\'e Thornton'
+  });
+
+  const query5 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[4], // Search for 'TreVeyon Henderson'
+  });
+
+  const playersQuery = [query1, query2, query3, query4, query5];
+
+  const allFoundPlayers: any[] = []
+    let isLoading = false
+    let hasError = false
+
+    playersQuery.forEach((query, index) => {
+        if (query.isLoading) isLoading = true
+        if (query.error) hasError = true
+        if (query.data?.data?.players) {
+            // Find the best match for each search
+            const players = query.data.data.players
+            const targetName = targetPlayerNames[index]
+            const bestMatch = players.find(player => 
+                player.name.toLowerCase().trim() === targetName.toLowerCase().trim()
+            ) || players[0] // If exact match not found, take the first result
+            
+            if (bestMatch && !allFoundPlayers.some(p => p.id === bestMatch.id)) {
+                 const updatedPlayer = {
+        ...bestMatch,
+        team: findTeamByKey(bestMatch.team || '') || { name: 'No team', logo: null }, // Handle case where team is not available
+      };
+      
+
+      allFoundPlayers.push(updatedPlayer);
+            }
+        }
+    })
+
+  
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (hasError) {
+    return <div>Error fetching player data</div>;
+  }
+
+  return (
+    <div className="rounded-lg border border-[#2C204B]">
+      <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
+        <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+      </div>
+      <div className="space-y-3">
+        {allFoundPlayers.map((player) => (
+          <Link
+            key={player.id}
+            href={`/players/${player.id}`}
+            className="flex items-center justify-between p-3 border-b border-[#2C204B]"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full overflow-hidden">
+                <Image
+                  src={getImageUrl(player.headshotPic) || '/default-player.jpg'}
+                  alt={player.name}
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="font-medium">{player.name}</span>
             </div>
-        )
-    }
+            {player.team && (
+              <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
+                <Image
+                  src={getTeamLogoUrl(player.team.logo) || ''}
+                  alt={player.team?.name || 'Team logo'}
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+                <p>{player.team?.name || 'No team'}</p>
+              </div>
+            )}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
 
     // Filter nuggets based on search and filters
     const filteredNuggets = useMemo(() => {
@@ -590,19 +668,11 @@ export default function PlayersNuggetsPage() {
                             </div>
                         ) : (
                             <>
-                                <Masonry
-                                    breakpointCols={{
-                                        default: 2,
-                                        1100: 1,
-                                        700: 1
-                                    }}
-                                    className="flex w-auto -ml-6"
-                                    columnClassName="pl-6 bg-clip-padding"
-                                >
+                              <div className="space-y-6">
                                     {displayNuggets.map((nugget, index) => {
                                         const playerTeam = findTeamByKey(nugget.player.team || '')
                                         return (
-                                            <div key={`${nugget.id}-${index}`} className="rounded-xl border shadow-lg overflow-hidden mb-6">
+                                            <div key={`${nugget.id}-${index}`} className="rounded-xl shadow-lg overflow-hidden mb-6">
                                                 <div className='flex mt-8 gap-2 ml-4 mr-4'>
                                                     <div
                                                         className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
@@ -700,16 +770,29 @@ export default function PlayersNuggetsPage() {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div className='px-6 py-4 border-t border-white/20'>
-                                                    <div className='flex justify-between items-center text-sm text-gray-500'>
-                                                        <span>{nugget.sourceName}</span>
-                                                        <span>{new Date(nugget.createdAt).toLocaleDateString()}</span>
-                                                    </div>
+                                                <div className='px-6 py-4 border-b border-white/20'>
+                                                <div className='flex flex-col mt-1 -mb-8 text-sm'>
+                                                    {nugget.sourceUrl && (
+                                                        <>
+                                                            <div className=''>Source:
+                                                                <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
+                                                                    ? nugget.sourceUrl
+                                                                    : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link></div>
+                                                        </>
+                                                    )}
                                                 </div>
+                                                <h1 className='text-right text-gray-400 mt-2 text-sm'>
+                                                    {new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    })}
+                                                </h1>
+                                            </div>
                                             </div>
                                         )
                                     })}
-                                </Masonry>
+                                </div>
                             </>
                         )}
                     </div>

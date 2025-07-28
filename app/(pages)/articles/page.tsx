@@ -194,207 +194,48 @@ export default function ArticlesPage() {
           const canAccess = canAccessArticle(article.access)
 
           return (
-            <article key={index} className="rounded shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer articles-card p-4 dark:border dark:border-white/10">
-              {/* Article Image */}
-              <Link href={buttonConfig.href}>
-                <div className="relative aspect-video">
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                    {article.featuredImage ? (
-                      <Image
-                        src={getImageUrl(article.featuredImage) || ''}
-                        alt={article.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover"
-                        priority
-                      />
-                    ) : (
-                      <span className="text-gray-500 text-sm">No Image</span>
-                    )}
-                  </div>
+<article key={index} className="rounded shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer group p-0 bg-[#1A1330]">
+  <Link href={buttonConfig.href}>
+    {/* Article Image */}
+    <div className="relative aspect-video">
+      {article.featuredImage ? (
+        <Image
+          src={getImageUrl(article.featuredImage) || ''}
+          alt={article.title}
+          fill
+          className="object-cover"
+          priority
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-sm">No Image</div>
+      )}
 
-                  {/* Access Badge */}
-                  {article.access !== 'public' && (
-                    <div className="absolute top-3 right-3 bg-red-800 text-white px-2 py-1 rounded-full font-semibold flex items-center">
-                      {article.access === 'pro' || article.access === 'lifetime' ? (
-                        <>
-                          <Gem className="w-4 h-4 mr-1" />
-                          Premium
-                        </>
-                      ) : (
-                        <>
-                          <Gem className="w-4 h-4 mr-1" />
-                          Premium
-                        </>
-                      )}
-                    </div>
-                  )}
+      {/* Access Badge */}
+      <div className="absolute top-3 right-3 bg-red-800 text-white px-2 py-1 rounded-full font-semibold text-xs flex items-center shadow-md">
+        <Gem className="w-4 h-4 mr-1" />
+        {article.access === 'public' ? 'Free' : 'Premium'}
+      </div>
+    </div>
 
-                  {/* Overlay for locked content */}
-                  {!canAccess && (
-                    <div className="flex items-center justify-center">
-                      <Image src={getImageUrl(article.featuredImage) || ''}
-                        alt="Locked" width={100} height={100} className="object-cover" />
-                    </div>
-                  )}
-                </div>
+    {/* Article Body */}
+    <div className="relative p-4 text-white h-[190px] overflow-hidden">
+      <h2 className="text-lg font-bold mb-2 line-clamp-1">{article.title}</h2>
 
-                {/* Article Content */}
-                <div className="mt-6">
-                  <h2 className="text-2xl text-left font-bold mb-3 line-clamp-1 font-oswald">
-                    {canAccess ? (
-                      <div>
-                        {article.title}
-                      </div>
-                    ) : (
-                      <span className="cursor-default">{article.title}</span>
-                    )}
-                  </h2>
+      <div className="text-sm line-clamp-3 overflow-hidden relative z-10">
+        <div dangerouslySetInnerHTML={{ __html: article.content }} />
+      </div>
 
-                  {/* Access Status */}
-                  <div className="text-sm sm:text-base md:text-lg lg:text-xl line-clamp-2 md:line-clamp-2 mb-1 md:mb-4">
-                  {(() => {
-                    try {
-                      let contentToRender = article.content;
-                      
-                      // Check if content starts with '{' and try to parse it as JSON
-                      if (article.content.trim().startsWith('{')) {
-                        const contentObj = JSON.parse(article.content);
-                        contentToRender = contentObj.content || article.content;
-                      }
-                      
-                      // Helper function to detect table-like content
-                      const isTableContent = (content: string) => {
-                        const contentLower = content.toLowerCase();
-                        
-                        // Check for HTML table tags
-                        if (contentLower.includes('<table') || contentLower.includes('<tr') || contentLower.includes('<td')) {
-                          return true;
-                        }
-                        
-                        // Check for pipe-separated table format (|)
-                        const lines = content.split('\n');
-                        const pipeLines = lines.filter(line => line.includes('|'));
-                        if (pipeLines.length >= 2) {
-                          return true;
-                        }
-                        
-                        // Check for CSV-like format with commas and consistent structure
-                        const commaLines = lines.filter(line => line.includes(',') && line.split(',').length >= 3);
-                        if (commaLines.length >= 2) {
-                          return true;
-                        }
-                        
-                        // Check for tab-separated values
-                        const tabLines = lines.filter(line => line.includes('\t'));
-                        if (tabLines.length >= 2) {
-                          return true;
-                        }
-                        
-                        // Check for structured data patterns (common table indicators)
-                        const tableIndicators = [
-                          'player', 'team', 'position', 'stats', 'rank', 'yards', 'touchdowns',
-                          'receptions', 'targets', 'snaps', 'percentage', 'rating', 'score'
-                        ];
-                        
-                        const hasTableIndicators = tableIndicators.some(indicator => 
-                          contentLower.includes(indicator)
-                        );
-                        
-                        // If content has table indicators and is structured (multiple lines with similar patterns)
-                        if (hasTableIndicators && lines.length >= 3) {
-                          return true;
-                        }
-                        
-                        return false;
-                      };
-                      
-                      // Check if content is table-like
-                      if (isTableContent(contentToRender)) {
-                        // If content contains table, show creation date instead
-                        const createdDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        }) : 'Date not available';
-                        return <span>Published on {createdDate}</span>;
-                      }
-                      
-                      // If no table, render the content normally
-                      return <div dangerouslySetInnerHTML={{ __html: contentToRender }} />;
-                    } catch (error) {
-                      // If JSON parsing fails, check if original content has table
-                      const isTableContent = (content: string) => {
-                        const contentLower = content.toLowerCase();
-                        
-                        // Check for HTML table tags
-                        if (contentLower.includes('<table') || contentLower.includes('<tr') || contentLower.includes('<td')) {
-                          return true;
-                        }
-                        
-                        // Check for pipe-separated table format (|)
-                        const lines = content.split('\n');
-                        const pipeLines = lines.filter(line => line.includes('|'));
-                        if (pipeLines.length >= 2) {
-                          return true;
-                        }
-                        
-                        // Check for CSV-like format with commas and consistent structure
-                        const commaLines = lines.filter(line => line.includes(',') && line.split(',').length >= 3);
-                        if (commaLines.length >= 2) {
-                          return true;
-                        }
-                        
-                        // Check for tab-separated values
-                        const tabLines = lines.filter(line => line.includes('\t'));
-                        if (tabLines.length >= 2) {
-                          return true;
-                        }
-                        
-                        // Check for structured data patterns (common table indicators)
-                        const tableIndicators = [
-                          'player', 'team', 'position', 'stats', 'rank', 'yards', 'touchdowns',
-                          'receptions', 'targets', 'snaps', 'percentage', 'rating', 'score'
-                        ];
-                        
-                        const hasTableIndicators = tableIndicators.some(indicator => 
-                          contentLower.includes(indicator)
-                        );
-                        
-                        // If content has table indicators and is structured (multiple lines with similar patterns)
-                        if (hasTableIndicators && lines.length >= 3) {
-                          return true;
-                        }
-                        
-                        return false;
-                      };
-                      
-                      if (isTableContent(article.content)) {
-                        const createdDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        }) : 'Date not available';
-                        return <span>Published on {createdDate}</span>;
-                      }
-                      
-                      // If no table and parsing failed, return original content
-                      console.error('Error parsing content:', error);
-                      return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
-                    }
-                  })()}
-                </div>
+     <div className="absolute bottom-0 left-0 w-full h-44 bg-gradient-to-t from-[#1A1330] to-transparent z-20 pointer-events-none" />
 
-                {/* Action Button */}
-                <div
-
-                  className={buttonConfig.className}
-                >
-                  {buttonConfig.text}
-                </div>
-              </div>
-              </Link>
-            </article>
+      {/* Hover Action Button */}
+      <div className="absolute bottom-0 left-0 w-full p-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="bg-red-800 text-white text-center py-2 rounded-md font-semibold hover:scale-105 transition-transform">
+          {buttonConfig.text}
+        </div>
+      </div>
+    </div>
+  </Link>
+</article>
           )
         })}
         </div>
