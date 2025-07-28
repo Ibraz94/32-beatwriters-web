@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const TrustedByPartners = () => {
   return (
-    <section className="container mx-auto">
+    <section className="container mx-auto mt-4">
       <div className="min-w-7xl mx-auto text-center bg-gray-50 ">
         <h2 className="text-5xl font-semibold text-gray-800 mb-2 pt-5 font-oswald">Trusted by</h2>
         <div className="flex flex-wrap justify-center gap-6">
