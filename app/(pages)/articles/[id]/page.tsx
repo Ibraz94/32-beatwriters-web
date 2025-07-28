@@ -11,14 +11,16 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ARTICLES)}/${id}`)
     const articleData = await response.json()
 
-    if (!articleData.data?.article) {
+    console.log(articleData)
+
+    if (!articleData) {
       return {
         title: 'Article Not Found',
         description: 'The requested article could not be found.'
       }
     }
 
-    const article = articleData.data.article
+    const article = articleData
 
     return {
       title: article.title,
