@@ -52,7 +52,7 @@ export default function Footer() {
     };
 
     return (
-        <footer className="bg-background ">
+        <footer className="bg-background w-full overflow-x-hidden">
             {/* Newsletter Section */}
             {/* <div className="border-b bg-card">
                 <div className="container mx-auto px-4 py-12">
