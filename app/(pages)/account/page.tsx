@@ -10,6 +10,7 @@ import { useUpdateProfileMutation, useUpdatePasswordMutation, useGetProfileQuery
 import { useGetDiscordStatusQuery } from '../../../lib/services/discordApi'
 import DiscordButton from '@/app/components/DiscordButton'
 import { buildApiUrl, API_CONFIG } from '../../../lib/config/api'
+import { setAuthTokens } from '../../../lib/utils/auth'
 
 function AccountContent() {
     const [mounted, setMounted] = useState(false)
@@ -99,22 +100,19 @@ function AccountContent() {
 
     // Handle Discord OAuth callback
     useEffect(() => {
+        // Console log the full searchParams object
+        console.log('Full searchParams object:', searchParams)
+        
         const discordStatus = searchParams.get('discord')
         
         if (discordStatus === 'success') {
-            const token = searchParams.get('token')
             const username = searchParams.get('username')
             
-            if (token) {
-                // Update auth token if provided
-                // Note: This assumes the auth context has a method to update the token
-                // You may need to implement this in your auth context
-                console.log('Discord connection successful!')
-                setSuccessMessage(`Successfully connected to Discord as ${username || 'user'}!`)
-                
-                // Clean up URL parameters
-                router.replace('/account', { scroll: false })
-            }
+            console.log('Discord connection successful!')
+            setSuccessMessage(`Successfully connected to Discord as ${username || 'user'}!`)
+            
+            // Clean up URL parameters
+            router.replace('/account', { scroll: false })
         } else if (discordStatus === 'error') {
             const errorMessage = searchParams.get('message') || 'Failed to connect to Discord'
             setErrors({ discord: errorMessage })

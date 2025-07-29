@@ -18,12 +18,12 @@ export default function Home() {
   return (
     <div>
       <HeroSection />
-      <TrendingPlayers/>
-      <NewArticles/>
-      <PodcastsComponent/>
-      <TrustedByPartners/>
-      <DeliveredToComponent/>
-      <SubscriptionComponent/>
+      <TrendingPlayers />
+      <TrustedByPartners />
+      <NewArticles />
+      <PodcastsComponent />
+      <DeliveredToComponent />
+      <SubscriptionComponent />
     </div>
   );
-}``
+} ``

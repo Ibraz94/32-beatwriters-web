@@ -446,3 +446,43 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #5d4b7c;
 }
+
+.article-container img, .article-container iframe, picture, .article-container * {
+  max-width: 100% !important;
+}
+.podcast-description * {
+  max-width: 100% !important;
+}
+
+.podcast-description *, .article-container * {
+  color: black !important;
+  background-color: transparent !important;
+}
+
+.dark .podcast-description *, .dark .article-container * {
+  color: white !important;
+  background-color: transparent !important;
+}
+
+.podcast-description a, .dark .podcast-description a, .article-container a, .dark .article-container a {
+  color: #9F0712 !important;
+}
+
+.podcast-description a:hover, .dark .podcast-description a:hover, .article-container a:hover, .dark .article-container a:hover {
+  color: #9F0712 !important;
+  text-decoration: underline !important;
+}
+
+.podcast-description a span, .dark .podcast-description a span, .article-container a span, .dark .article-container a span {
+  color: #9F0712 !important;
+}
+
+.podcast-description a:hover span, .dark .podcast-description a:hover span, .article-container a:hover span, .dark .article-container a:hover span {
+  color: #9F0712 !important;
+  text-decoration: underline !important;
+}
+
+.article-mini-container * {
+  color: white !important;
+  background-color: transparent !important;
+}

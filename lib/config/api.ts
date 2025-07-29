@@ -5,6 +5,7 @@ export const API_CONFIG = {
   ENDPOINTS: {
     ARTICLES: '/api/articles',
     AUTH: '/api/users',
+    DISCORD_TOKEN_EXCHANGE: '/api/discord/callback',
     BEAT_WRITERS: '/api/beat-writers',
     CONTACT: '/api/contact',
     NUGGETS: '/api/nuggets',

@@ -181,7 +181,7 @@ export default function PodcastDetailPage() {
                     {podcast.title}
                 </h1>
 
-                <div className="leading-relaxed whitespace-pre-line mb-4 mt-6">
+                <div className="leading-relaxed whitespace-pre-line mb-4 mt-6 podcast-description">
                 {renderRichTextContent(podcast.description)}
                 </div>
                 <div className="flex items-center justify-center lg:justify-start gap-4 text-sm mb-4">

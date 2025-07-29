@@ -32,6 +32,7 @@ import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
+import { useGetPlayersQuery} from '@/lib/services/playersApi'
 
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
@@ -97,11 +98,17 @@ export default function PlayersNuggetsPage() {
         } else if (selectedDate && !date) {
             setDate(new Date(selectedDate))
         }
+
+       
     }, [selectedDate, date])
 
     // Get followed nuggets
-    const { data: followedNuggetsData, isLoading: isLoadingFollowedNuggets, error: followedNuggetsError, isFetching: isFetchingFollowedNuggets } = useGetFollowedNuggetsQuery()
+    const { data: followedNuggetsData, isLoading: isLoadingFollowedNuggets, error: followedNuggetsError, isFetching: isFetchingFollowedNuggets, refetch: refetchFollowedNuggets } = useGetFollowedNuggetsQuery()
 
+    useEffect(() => {
+         refetchFollowedNuggets()
+    }, [user?.id, debouncedSearchTerm, filters, selectedDate, currentPage])
+    
     // Teams query
     const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
 
@@ -257,61 +264,132 @@ export default function PlayersNuggetsPage() {
     }, [imageModal])
 
     // Trending Players component
-    const TrendingPlayers = () => {
-        const trendingPlayers = allNuggets
-            .reduce((acc: any[], nugget) => {
-                if (!acc.find(p => p.id === nugget.player.id)) {
-                    acc.push({
-                        ...nugget.player,
-                        team: findTeamByKey(nugget.player.team)
-                    })
-                }
-                return acc
-            }, [])
-            .slice(0, 5)
+ const TrendingPlayers = () => {
+  const targetPlayerNames = [
+    'Emeka Egbuka',
+    'Kyle Pitts',
+    'Kyler Murray',
+    'Dont\'e Thornton',
+    'TreVeyon Henderson',
+  ];
 
-        return (
-            <div className="rounded-lg border border-[#2C204B]">
-                <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
-                    <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
-                </div>
-                <div className="space-y-3">
-                    {trendingPlayers.map((player, index) => (
-                        <Link
-                            key={player.id}
-                            href={`/players/${player.id}`}
-                            className="flex items-center justify-between p-3 border-b border-[#2C204B]"
-                        >
-                            <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 rounded-full overflow-hidden">
-                                    <Image
-                                        src={getImageUrl(player.headshotPic) || '/default-player.jpg'}
-                                        alt={player.name}
-                                        width={40}
-                                        height={40}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                                <span className="font-medium">{player.name}</span>
-                            </div>
-                            {player.team && (
-                                <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
-                                    <Image
-                                        src={getTeamLogoUrl(player.team.logo) || ''}
-                                        alt={player.team.name}
-                                        width={24}
-                                        height={24}
-                                        className="object-contain"
-                                    />
-                                    <p>{player.team.name}</p>
-                                </div>
-                            )}
-                        </Link>
-                    ))}
-                </div>
+  // Define separate queries for each player
+  const query1 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[0], // Search for 'Emeka Egbuka'
+  });
+
+  const query2 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[1], // Search for 'Kyle Pitts'
+  });
+
+  const query3 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[2], // Search for 'Kyler Murray'
+  });
+
+  const query4 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[3], // Search for 'Dont\'e Thornton'
+  });
+
+  const query5 = useGetPlayersQuery({
+    page: 1,
+    limit: 10,
+    pageSize: 10,
+    search: targetPlayerNames[4], // Search for 'TreVeyon Henderson'
+  });
+
+  const playersQuery = [query1, query2, query3, query4, query5];
+
+  const allFoundPlayers: any[] = []
+    let isLoading = false
+    let hasError = false
+
+    playersQuery.forEach((query, index) => {
+        if (query.isLoading) isLoading = true
+        if (query.error) hasError = true
+        if (query.data?.data?.players) {
+            // Find the best match for each search
+            const players = query.data.data.players
+            const targetName = targetPlayerNames[index]
+            const bestMatch = players.find(player => 
+                player.name.toLowerCase().trim() === targetName.toLowerCase().trim()
+            ) || players[0] // If exact match not found, take the first result
+            
+            if (bestMatch && !allFoundPlayers.some(p => p.id === bestMatch.id)) {
+                 const updatedPlayer = {
+        ...bestMatch,
+        team: findTeamByKey(bestMatch.team || '') || { name: 'No team', logo: null }, // Handle case where team is not available
+      };
+      
+
+      allFoundPlayers.push(updatedPlayer);
+            }
+        }
+    })
+
+  
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (hasError) {
+    return <div>Error fetching player data</div>;
+  }
+
+  return (
+    <div className="rounded-lg border border-[#2C204B]">
+      <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
+        <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+      </div>
+      <div className="space-y-3">
+        {allFoundPlayers.map((player) => (
+          <Link
+            key={player.id}
+            href={`/players/${player.id}`}
+            className="flex items-center justify-between p-3 border-b border-[#2C204B]"
+          >
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full overflow-hidden">
+                <Image
+                  src={getImageUrl(player.headshotPic) || '/default-player.jpg'}
+                  alt={player.name}
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="font-medium">{player.name}</span>
             </div>
-        )
-    }
+            {player.team && (
+              <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
+                <Image
+                  src={getTeamLogoUrl(player.team.logo) || ''}
+                  alt={player.team?.name || 'Team logo'}
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
+                <p>{player.team?.name || 'No team'}</p>
+              </div>
+            )}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
 
     // Filter nuggets based on search and filters
     const filteredNuggets = useMemo(() => {
@@ -490,78 +568,90 @@ export default function PlayersNuggetsPage() {
                                                 const day = String(selectedCalendarDate.getDate()).padStart(2, '0')
                                                 const dateString = `${year}-${month}-${day}`
                                                 setSelectedDate(dateString)
-                                                setCurrentPage(1)
-                                                setAllNuggets([])
                                             } else {
                                                 setSelectedDate('')
-                                                setCurrentPage(1)
-                                                setAllNuggets([])
                                             }
+                                            setOpen(false)
                                         }}
+                                        initialFocus
                                     />
                                 </PopoverContent>
                             </Popover>
-                            {selectedDate && (
-                                <button
+                            {date && (
+                                <Button
+                                    variant="outline"
                                     onClick={clearDateFilter}
-                                    className="px-3 py-2 text-gray-500 hover:text-gray-700"
+                                    className="filter-button h-12 px-3"
+                                    title="Clear date filter"
                                 >
-                                    <X className="w-4 h-4" />
-                                </button>
+                                    <X className="h-4 w-4" />
+                                </Button>
                             )}
                         </div>
 
-                        {/* Position Filter */}
-                        <Select value={filters.position || 'All'} onValueChange={handlePositionFilterChange}>
-                            <SelectTrigger className="filter-button w-full lg:w-42 h-12">
-                                <SelectValue placeholder="Position" />
+                        {/* Position Filter Dropdown */}
+                        <Select
+                            value={filters.position || "all"}
+                            onValueChange={handlePositionFilterChange}
+                        >
+                            <SelectTrigger className="filter-select h-10 w-full lg:w-1/3">
+                                <SelectValue placeholder="All Positions" />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="All">All Positions</SelectItem>
-                                <SelectItem value="QB">QB</SelectItem>
-                                <SelectItem value="RB">RB</SelectItem>
-                                <SelectItem value="WR">WR</SelectItem>
-                                <SelectItem value="TE">TE</SelectItem>
-                                <SelectItem value="K">K</SelectItem>
-                                <SelectItem value="DEF">DEF</SelectItem>
+                            <SelectContent className='border-none'>
+                                <SelectGroup>
+                                    <SelectItem value="all">All Positions</SelectItem>
+                                    {['QB', 'WR', 'RB', 'FB', 'TE'].map(position => (
+                                        <SelectItem key={position} value={position}>
+                                            {position}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
 
-                        {/* Team Filter */}
-                        <Select value={filters.team || 'All'} onValueChange={handleTeamFilterChange}>
-                            <SelectTrigger className="filter-button w-full lg:w-42 h-12">
-                                <SelectValue placeholder="Team" />
+                        {/* Team Filter Dropdown */}
+                        <Select
+                            value={filters.team || "all"}
+                            onValueChange={handleTeamFilterChange}
+                        >
+                            <SelectTrigger className="filter-select w-full lg:w-1/2 h-10 text-sm">
+                                <SelectValue placeholder="All Teams" />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="All">All Teams</SelectItem>
-                                {teamsData?.teams?.map((team) => (
-                                    <SelectItem key={team.id} value={team.name}>
-                                        {team.name}
-                                    </SelectItem>
-                                ))}
+                            <SelectContent className='border-none'>
+                                <SelectGroup>
+                                    <SelectItem value="all">All Teams</SelectItem>
+                                    {teamsData?.teams.map(team => (
+                                        <SelectItem key={team.name} value={team.name}>
+                                            {team.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
 
                         {/* Rookie Filter */}
-                        <Select value={filters.rookie ? 'true' : 'false'} onValueChange={(value) => handleRookieFilterChange(value === 'true')}>
-                            <SelectTrigger className="filter-button w-full lg:w-42 h-12">
-                                <SelectValue placeholder="Rookie Status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="false">All Players</SelectItem>
-                                <SelectItem value="true">Rookies Only</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <div className="filter-checkbox-container flex items-center space-x-2 px-6 py-3 rounded">
+                            <input
+                                type="checkbox"
+                                id="rookie-filter"
+                                checked={filters.rookie || false}
+                                onChange={(e) => handleRookieFilterChange(e.target.checked)}
+                                className="w-4 h-4 hover:cursor-pointer"
+                            />
+                            <label htmlFor="rookie-filter" className="text-sm font-medium hover:cursor-pointer">
+                                Rookie
+                            </label>
+                        </div>
 
                         {/* Clear Filters Button */}
-                        {hasActiveFilters && (
+                        <div className="w-full lg:w-1/5 text-center">
                             <button
                                 onClick={clearFilters}
-                                className="px-4 py-2 text-red-600 hover:text-red-800 font-medium"
+                                className="px-4 py-2 text-sm font-medium hover:cursor-pointer hover:text-red-800"
                             >
-                                Clear All
+                                Clear Filters
                             </button>
-                        )}
+                        </div>
                     </div>
                 </div>
 
@@ -589,20 +679,12 @@ export default function PlayersNuggetsPage() {
                                 )}
                             </div>
                         ) : (
-                            <>
-                                <Masonry
-                                    breakpointCols={{
-                                        default: 2,
-                                        1100: 1,
-                                        700: 1
-                                    }}
-                                    className="flex w-auto -ml-6"
-                                    columnClassName="pl-6 bg-clip-padding"
-                                >
+                            <div className="max-h-[calc(100vh-300px)] overflow-y-auto pr-4 custom-scrollbar">
+                              <div className="space-y-6">
                                     {displayNuggets.map((nugget, index) => {
                                         const playerTeam = findTeamByKey(nugget.player.team || '')
                                         return (
-                                            <div key={`${nugget.id}-${index}`} className="rounded-xl border shadow-lg overflow-hidden mb-6">
+                                            <div key={`${nugget.id}-${index}`} className="rounded-xl shadow-lg overflow-hidden mb-6">
                                                 <div className='flex mt-8 gap-2 ml-4 mr-4'>
                                                     <div
                                                         className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
@@ -700,22 +782,35 @@ export default function PlayersNuggetsPage() {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div className='px-6 py-4 border-t border-white/20'>
-                                                    <div className='flex justify-between items-center text-sm text-gray-500'>
-                                                        <span>{nugget.sourceName}</span>
-                                                        <span>{new Date(nugget.createdAt).toLocaleDateString()}</span>
-                                                    </div>
+                                                <div className='px-6 py-4 border-b border-white/20'>
+                                                <div className='flex flex-col mt-1 -mb-8 text-sm'>
+                                                    {nugget.sourceUrl && (
+                                                        <>
+                                                            <div className=''>Source:
+                                                                <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
+                                                                    ? nugget.sourceUrl
+                                                                    : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link></div>
+                                                        </>
+                                                    )}
                                                 </div>
+                                                <h1 className='text-right text-gray-400 mt-2 text-sm'>
+                                                    {new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    })}
+                                                </h1>
+                                            </div>
                                             </div>
                                         )
                                     })}
-                                </Masonry>
-                            </>
+                                </div>
+                            </div>
                         )}
                     </div>
 
                     {/* Sidebar */}
-                    <div className="w-80 hidden lg:block">
+                    <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
                         <TrendingPlayers />
                     </div>
                 </div>

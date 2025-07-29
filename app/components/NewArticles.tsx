@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Calendar, ArrowRight, TrendingUp, Lock } from "lucide-react";
 import { useGetArticlesQuery, Article, getImageUrl } from "@/lib/services/articlesApi";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useMemo } from "react";
 
 export default function NewArticles() {
     const { isAuthenticated, checkPremiumAccess, user } = useAuth();
@@ -16,10 +17,16 @@ export default function NewArticles() {
         limit: 20, // Fetch more articles to ensure we have enough to show (1 featured + 10+ sidebar)
         sortBy: 'publishedAt',
         sortOrder: 'desc'
+    }, {
+        // Add polling: false to prevent automatic refetching
+        pollingInterval: 0,
+        refetchOnMountOrArgChange: false,
+        refetchOnFocus: false,
+        refetchOnReconnect: false
     });
 
     // Helper function to check if user can access an article (same as articles page)
-    const canAccessArticle = (articleAccess: string) => {
+    const canAccessArticle = useMemo(() => (articleAccess: string) => {
         if (articleAccess === 'public') return true;
 
         // Check if user is admin using case-insensitive comparison
@@ -35,10 +42,10 @@ export default function NewArticles() {
             return hasPremiumAccess;
         }
         return false;
-    };
+    }, [user?.roles.id, hasPremiumAccess]);
 
     // Helper function to get the correct href based on access
-    const getArticleHref = (article: Article) => {
+    const getArticleHref = useMemo(() => (article: Article) => {
         const canAccess = canAccessArticle(article.access);
 
         if (canAccess) {
@@ -46,7 +53,7 @@ export default function NewArticles() {
         } else {
             return isAuthenticated ? '/subscribe' : '/login';
         }
-    };
+    }, [canAccessArticle, isAuthenticated]);
 
     // Helper function to format date
     const formatDate = (dateString: string) => {
