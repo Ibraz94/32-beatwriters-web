@@ -221,7 +221,7 @@ export default function ArticlesPage() {
     <div className="relative p-4 text-white h-[190px] overflow-hidden">
       <h2 className="text-lg font-bold mb-2 line-clamp-1">{article.title}</h2>
 
-      <div className="text-sm line-clamp-3 overflow-hidden relative z-10">
+      <div className="text-sm line-clamp-3 overflow-hidden relative z-10 article-mini-container">
         <div dangerouslySetInnerHTML={{ __html: article.content }} />
       </div>
 

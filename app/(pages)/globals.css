@@ -481,3 +481,8 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   color: #9F0712 !important;
   text-decoration: underline !important;
 }
+
+.article-mini-container * {
+  color: white !important;
+  background-color: transparent !important;
+}
