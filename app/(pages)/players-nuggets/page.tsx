@@ -568,78 +568,90 @@ export default function PlayersNuggetsPage() {
                                                 const day = String(selectedCalendarDate.getDate()).padStart(2, '0')
                                                 const dateString = `${year}-${month}-${day}`
                                                 setSelectedDate(dateString)
-                                                setCurrentPage(1)
-                                                setAllNuggets([])
                                             } else {
                                                 setSelectedDate('')
-                                                setCurrentPage(1)
-                                                setAllNuggets([])
                                             }
+                                            setOpen(false)
                                         }}
+                                        initialFocus
                                     />
                                 </PopoverContent>
                             </Popover>
-                            {selectedDate && (
-                                <button
+                            {date && (
+                                <Button
+                                    variant="outline"
                                     onClick={clearDateFilter}
-                                    className="px-3 py-2 text-gray-500 hover:text-gray-700"
+                                    className="filter-button h-12 px-3"
+                                    title="Clear date filter"
                                 >
-                                    <X className="w-4 h-4" />
-                                </button>
+                                    <X className="h-4 w-4" />
+                                </Button>
                             )}
                         </div>
 
-                        {/* Position Filter */}
-                        <Select value={filters.position || 'All'} onValueChange={handlePositionFilterChange}>
-                            <SelectTrigger className="filter-button w-full lg:w-42 h-12">
-                                <SelectValue placeholder="Position" />
+                        {/* Position Filter Dropdown */}
+                        <Select
+                            value={filters.position || "all"}
+                            onValueChange={handlePositionFilterChange}
+                        >
+                            <SelectTrigger className="filter-select h-10 w-full lg:w-1/3">
+                                <SelectValue placeholder="All Positions" />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="All">All Positions</SelectItem>
-                                <SelectItem value="QB">QB</SelectItem>
-                                <SelectItem value="RB">RB</SelectItem>
-                                <SelectItem value="WR">WR</SelectItem>
-                                <SelectItem value="TE">TE</SelectItem>
-                                <SelectItem value="K">K</SelectItem>
-                                <SelectItem value="DEF">DEF</SelectItem>
+                            <SelectContent className='border-none'>
+                                <SelectGroup>
+                                    <SelectItem value="all">All Positions</SelectItem>
+                                    {['QB', 'WR', 'RB', 'FB', 'TE'].map(position => (
+                                        <SelectItem key={position} value={position}>
+                                            {position}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
 
-                        {/* Team Filter */}
-                        <Select value={filters.team || 'All'} onValueChange={handleTeamFilterChange}>
-                            <SelectTrigger className="filter-button w-full lg:w-42 h-12">
-                                <SelectValue placeholder="Team" />
+                        {/* Team Filter Dropdown */}
+                        <Select
+                            value={filters.team || "all"}
+                            onValueChange={handleTeamFilterChange}
+                        >
+                            <SelectTrigger className="filter-select w-full lg:w-1/2 h-10 text-sm">
+                                <SelectValue placeholder="All Teams" />
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="All">All Teams</SelectItem>
-                                {teamsData?.teams?.map((team) => (
-                                    <SelectItem key={team.id} value={team.name}>
-                                        {team.name}
-                                    </SelectItem>
-                                ))}
+                            <SelectContent className='border-none'>
+                                <SelectGroup>
+                                    <SelectItem value="all">All Teams</SelectItem>
+                                    {teamsData?.teams.map(team => (
+                                        <SelectItem key={team.name} value={team.name}>
+                                            {team.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
                             </SelectContent>
                         </Select>
 
                         {/* Rookie Filter */}
-                        <Select value={filters.rookie ? 'true' : 'false'} onValueChange={(value) => handleRookieFilterChange(value === 'true')}>
-                            <SelectTrigger className="filter-button w-full lg:w-42 h-12">
-                                <SelectValue placeholder="Rookie Status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="false">All Players</SelectItem>
-                                <SelectItem value="true">Rookies Only</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <div className="filter-checkbox-container flex items-center space-x-2 px-6 py-3 rounded">
+                            <input
+                                type="checkbox"
+                                id="rookie-filter"
+                                checked={filters.rookie || false}
+                                onChange={(e) => handleRookieFilterChange(e.target.checked)}
+                                className="w-4 h-4 hover:cursor-pointer"
+                            />
+                            <label htmlFor="rookie-filter" className="text-sm font-medium hover:cursor-pointer">
+                                Rookie
+                            </label>
+                        </div>
 
                         {/* Clear Filters Button */}
-                        {hasActiveFilters && (
+                        <div className="w-full lg:w-1/5 text-center">
                             <button
                                 onClick={clearFilters}
-                                className="px-4 py-2 text-red-600 hover:text-red-800 font-medium"
+                                className="px-4 py-2 text-sm font-medium hover:cursor-pointer hover:text-red-800"
                             >
-                                Clear All
+                                Clear Filters
                             </button>
-                        )}
+                        </div>
                     </div>
                 </div>
 
@@ -667,7 +679,7 @@ export default function PlayersNuggetsPage() {
                                 )}
                             </div>
                         ) : (
-                            <>
+                            <div className="max-h-[calc(100vh-300px)] overflow-y-auto pr-4 custom-scrollbar">
                               <div className="space-y-6">
                                     {displayNuggets.map((nugget, index) => {
                                         const playerTeam = findTeamByKey(nugget.player.team || '')
@@ -793,12 +805,12 @@ export default function PlayersNuggetsPage() {
                                         )
                                     })}
                                 </div>
-                            </>
+                            </div>
                         )}
                     </div>
 
                     {/* Sidebar */}
-                    <div className="w-80 hidden lg:block">
+                    <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
                         <TrendingPlayers />
                     </div>
                 </div>

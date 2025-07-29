@@ -4,14 +4,15 @@ import { useParams, useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
-import { CircleGauge, Newspaper, Dumbbell, ArrowLeft, Search } from 'lucide-react'
-import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery, useGetPlayerPerformanceProfilerQuery } from '@/lib/services/playersApi'
+import { CircleGauge, Newspaper, Dumbbell, Search, Loader2 } from 'lucide-react'
+import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery, useGetPlayerPerformanceProfilerQuery, useFollowPlayerMutation, useUnfollowPlayerMutation  } from '@/lib/services/playersApi'
 import { useGetNuggetsByPlayerIdQuery, getImageUrl as getNuggetImageUrl, useGetNuggetsQuery, type NuggetFilters } from '@/lib/services/nuggetsApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ReadMore } from '@/app/components/ReadMore'
 import { ChartConfig, ChartContainer } from "@/components/ui/chart"
 import { Bar, BarChart, LabelList, XAxis, Cell } from "recharts"
+import { useToast } from '@/app/components/Toast'
 
 export default function PlayerPageClient({ id }: any) {
     const params = useParams()
@@ -25,6 +26,7 @@ export default function PlayerPageClient({ id }: any) {
     const [activeTab, setActiveTab] = useState('news')
     // Follow state
     const [isFollowing, setIsFollowing] = useState(false)
+    const [loadingFollow, setLoadingFollow] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
@@ -32,6 +34,9 @@ export default function PlayerPageClient({ id }: any) {
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [isLoadingMore, setIsLoadingMore] = useState(false)
     const ITEMS_PER_PAGE = 15
+    const [followPlayer] = useFollowPlayerMutation();
+    const [unfollowPlayer] = useUnfollowPlayerMutation();
+     const { showToast } = useToast();
 
     // Year selection state for nuggets filtering
     const [selectedYearForNuggets, setSelectedYearForNuggets] = useState('2025')
@@ -104,10 +109,56 @@ export default function PlayerPageClient({ id }: any) {
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
 
     // First, fetch the player from internal API to get the playerId
-    const { data: internalPlayerResponse, isLoading: internalPlayerLoading, error: internalPlayerError } = useGetPlayerQuery(playerId)
+    const { data: internalPlayerResponse, isLoading: internalPlayerLoading, error: internalPlayerError, refetch: refetchPlayer } = useGetPlayerQuery(playerId)
 
     // Extract the actual player data from the response
     const internalPlayer = internalPlayerResponse?.data
+
+
+    useEffect(() => {
+        refetchPlayer()
+    }, [playerId, refetchPlayer])
+
+    
+    
+
+    useEffect(() => {
+        if (internalPlayer) {
+
+            setIsFollowing(internalPlayer?.isFollowed || false)
+        }       
+    }, [internalPlayer])  
+    
+     // Toggle follow/unfollow
+    const toggleFollow = async (playerId: string, isPlayerFollowed: boolean) => {
+        if (!isAuthenticated) {
+            showToast("Please log in to follow players.", "warning");
+            return;
+        }
+
+        console.log("Toggling follow status:", { playerId, isPlayerFollowed });
+
+        // Optimistic UI update
+        setLoadingFollow(true);
+
+        try {
+            if (isPlayerFollowed) {
+                await unfollowPlayer(playerId).unwrap();
+                showToast("Player unfollowed successfully!", "success");
+            } else {
+                await followPlayer(playerId).unwrap();
+                showToast("Player followed successfully!", "success");
+            }
+
+            setIsFollowing(!isPlayerFollowed);
+        } catch (error) {
+            console.log("Error toggling follow status:", error);
+            showToast("Failed to update follow status. Please try again.", "error");
+        } finally {
+            setLoadingFollow(false);
+        }
+    }
+
 
     // Then use the playerId from internal API to fetch detailed data from Player Profiler API
     const { data: playerResponse, isLoading: playerLoading, error: playerError } = useGetPlayerProfilerQuery(
@@ -1500,9 +1551,19 @@ export default function PlayerPageClient({ id }: any) {
                             <div className="flex items-center gap-4 lg:gap-8 mt-4">
                                 <button
                                     className={`text-white text-sm border px-4 py-1 rounded-sm transition-colors hover:cursor-pointer ${isFollowing ? 'bg-red-800 border-red-800' : 'border-red-800 hover:bg-red-800'}`}
-                                    onClick={() => setIsFollowing(f => !f)}
+                                     onClick={e => {
+                            e.preventDefault(); // Prevent Link navigation
+                            toggleFollow(playerId , isFollowing);
+                        }}
                                 >
-                                    {isFollowing ? 'FOLLOWING' : 'FOLLOW'}
+                                    {loadingFollow ? (
+                            <>
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                                <span>...</span>
+                            </>
+                        ) : (
+                            isFollowing ? 'FOLLOWING' : 'FOLLOW'
+                        )}
                                 </button>
                             </div>
                         </div>
@@ -1612,12 +1673,24 @@ export default function PlayerPageClient({ id }: any) {
                                     </div>
                                 </div>
                             </div>
-                            <button
-                                className={`text-white text-sm border px-4 py-1 rounded-sm transition-colors ${isFollowing ? 'bg-red-800 border-red-800' : 'border-red-800 hover:bg-red-800'} mt-2`}
-                                onClick={() => setIsFollowing(f => !f)}
-                            >
-                                {isFollowing ? 'FOLLOWING' : 'FOLLOW'}
-                            </button>
+                                                       <div className="flex items-center gap-4 lg:gap-8 mt-4">
+                                <button
+                                    className={`text-white text-sm border px-4 py-1 rounded-sm transition-colors hover:cursor-pointer ${isFollowing ? 'bg-red-800 border-red-800' : 'border-red-800 hover:bg-red-800'}`}
+                                     onClick={e => {
+                            e.preventDefault(); // Prevent Link navigation
+                            toggleFollow(playerId , isFollowing);
+                        }}
+                                >
+                                    {loadingFollow ? (
+                            <>
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                                <span>...</span>
+                            </>
+                        ) : (
+                            isFollowing ? 'FOLLOWING' : 'FOLLOW'
+                        )}
+                                </button>
+                            </div>
                         </div>
                     </div>
 

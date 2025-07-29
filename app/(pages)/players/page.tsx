@@ -219,6 +219,12 @@ function PlayersContent() {
         }
     }, [playersResponse]);
 
+    useEffect(() => {
+         refetchPlayers();
+    }
+, [page, searchTerm, selectedPosition, selectedConference]);
+
+
     // Toggle follow/unfollow
     const toggleFollow = async (playerId: string, isPlayerFollowed: boolean) => {
         if (!isAuthenticated) {
