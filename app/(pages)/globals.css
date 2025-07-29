@@ -450,3 +450,23 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 .article-container img, .article-container iframe, picture, .article-container * {
   max-width: 100% !important;
 }
+.podcast-description * {
+  max-width: 100% !important;
+}
+
+.podcast-description * {
+  color: black !important;
+}
+
+.dark .podcast-description * {
+  color: white !important;
+}
+
+.podcast-description a, .dark .podcast-description a {
+  color: #9F0712 !important;
+}
+
+.podcast-description a:hover, .dark .podcast-description a:hover {
+  color: #9F0712 !important;
+  text-decoration: underline !important;
+}

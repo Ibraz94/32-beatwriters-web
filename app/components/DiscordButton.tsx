@@ -56,7 +56,7 @@ const DiscordButton = () => {
             <div className="flex items-center gap-2 w-full sm:w-auto">
                 <button
                     disabled
-                    className="flex items-center justify-center gap-2 bg-green-600 text-white text-sm sm:text-md py-2 sm:px-2 rounded transition-colors duration-200 cursor-not-allowed"
+                    className="flex items-center justify-center gap-2 bg-green-600 text-white text-sm sm:text-md py-2 px-2 rounded transition-colors duration-200 cursor-not-allowed"
                 >
                     <svg
                         className="w-4 h-4 sm:w-5 sm:h-5"
@@ -68,7 +68,7 @@ const DiscordButton = () => {
                     </svg>
                     Connected
                 </button>
-                <span className="text-xs text-muted-foreground hidden sm:inline">
+                <span className="text-xs text-muted-foreground sm:inline">
                     {discordStatus.discordUsername}
                 </span>
             </div>
