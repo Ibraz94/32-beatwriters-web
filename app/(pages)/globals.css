@@ -456,10 +456,12 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 
 .podcast-description * {
   color: black !important;
+  background-color: transparent !important;
 }
 
 .dark .podcast-description * {
   color: white !important;
+  background-color: transparent !important;
 }
 
 .podcast-description a, .dark .podcast-description a {
