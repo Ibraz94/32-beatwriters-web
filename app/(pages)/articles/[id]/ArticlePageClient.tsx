@@ -65,7 +65,8 @@ interface ArticlePageClientProps {
 }
 
 export default function ArticlePageClient({ id }: ArticlePageClientProps) {
-    const { user, isAuthenticated, loading: authLoading } = useAuth()
+    const { user, isAuthenticated, loading: authLoading, checkPremiumAccess } = useAuth()
+    const hasPremiumAccess = checkPremiumAccess()
 
     // Use the dedicated hook to fetch a single article by slug
     const { data: article, isLoading: articleLoading, error } = useGetArticleQuery(id)
@@ -81,10 +82,37 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
     useEffect(() => {
     }, [article, articleLoading, error])
 
+    console.log("article",article)
+
     // Add debugging for recent articles
     useEffect(() => {
         console.log('Recent Articles Data:', recentArticlesData?.data?.articles)
     }, [recentArticlesData])
+
+
+    // Helper function to check if user can access an article
+  const canAccessArticle = (articleAccess: string) => {
+    if (articleAccess === 'public') return true
+
+    // Check if user is admin using case-insensitive comparison
+    const userRole = user?.roles.id
+    const isAdminByRole = userRole === 1 || userRole === 2 || userRole === 3 || userRole === 4
+
+    // Administrators can access all articles
+    if (isAdminByRole) {
+      console.log('✅ Administrator access granted for article:', articleAccess)
+      return true
+    }
+
+    if (articleAccess.includes('pro') || articleAccess.includes('lifetime')) {
+      return hasPremiumAccess
+    }
+    return false
+  }
+
+    // const canAccess = canAccessArticle(articleData?.access)
+    const canAccess = canAccessArticle(article?.access??'pro');
+
 
     if (articleLoading || authLoading || recentLoading) {
         return (
@@ -127,7 +155,7 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
     )
 
     // If article is premium and user doesn't have access, show premium access required
-    if (article.access === 'pro' && !hasAccess) {
+    if (!canAccess && !hasAccess) {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-6xl mx-auto">
@@ -149,7 +177,7 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
                     <h1 className="text-4xl font-bold mb-10">{article.title}</h1>
 
                     {/* Display ArticleCTA only if user is not authenticated */}
-                    {!isAuthenticated && <ArticleCTA />}
+                    {!isAuthenticated  && article.access==='public' &&<ArticleCTA />}
 
                     <div className="prose max-w-none prose" />
                     {(() => {

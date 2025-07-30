@@ -656,7 +656,7 @@ export default function PlayersNuggetsPage() {
                 </div>
 
                 {/* Main Content */}
-                <div className="flex gap-6">
+                <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0">
                     {/* Nuggets Grid */}
                     <div className="flex-1">
                         {displayNuggets.length === 0 ? (
