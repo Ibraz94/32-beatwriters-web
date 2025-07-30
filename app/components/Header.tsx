@@ -6,6 +6,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 function Header() {
     const { theme } = useTheme();
@@ -16,6 +17,7 @@ function Header() {
     const { user, isAuthenticated, logout } = useAuth();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const feedDropdownRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     // Prevent hydration mismatch by only applying theme after mounting
     useEffect(() => {
@@ -78,6 +80,8 @@ function Header() {
     const handleLogout = async () => {
         try {
             await logout();
+            router.push('/'); // Redirect to login after logout
+            // Close dropdown after logout
             setIsUserDropdownOpen(false);
         } catch (error) {
             console.error('Logout error:', error);
