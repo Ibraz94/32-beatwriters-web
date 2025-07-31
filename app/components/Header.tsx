@@ -103,14 +103,6 @@ function Header() {
         { href: "/players-nuggets", label: "My Players" },
     ];
 
-    const mobileNavLinks = [
-        { href: "/", label: "HOME" },
-        { href: "/articles", label: "ARTICLES" },
-        { href: "/podcasts", label: "PODCAST" },
-        { href: "/players", label: "PLAYERS" },
-        { href: "/nuggets", label: "FEEDS" },
-    ];
-
     return (
         <header className="header-main z-50 w-full border-gray-100 shadow-sm transition-colors duration-300 container mx-auto">
             <div>
@@ -381,7 +373,6 @@ function Header() {
                                             className="mobile-menu-nav-link block px-8 py-2 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 text-sm"
                                             onClick={() => {
                                                 setIsMobileMenuOpen(false);
-                                                setIsFeedDropdownOpen(false);
                                             }}
                                             style={{
                                                 animationDelay: isMobileMenuOpen && isFeedDropdownOpen ? `${(navLinks.length + index + 1) * 50}ms` : '0ms'
@@ -466,8 +457,6 @@ function Header() {
                                 </div>
                             )}
                         </div>
-
-
                     </div>
                 </div>
             </div>
