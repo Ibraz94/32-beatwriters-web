@@ -776,9 +776,9 @@ const TrendingPlayers = () => {
                     </div>
 
                     {/* Trending Players Sidebar */}
-                    <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
+                    {/* <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
                         <TrendingPlayers />
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </>

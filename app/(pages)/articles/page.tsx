@@ -67,7 +67,7 @@ export default function ArticlesPage() {
 
     // Check if user is admin using case-insensitive comparison
     const userRole = user?.roles.id
-    const isAdminByRole = userRole === 1 || userRole === 2 || userRole === 3 || userRole === 4
+    const isAdminByRole = userRole === 1 || userRole === 5
 
     // Administrators can access all articles
     if (isAdminByRole) {
