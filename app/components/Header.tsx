@@ -103,14 +103,6 @@ function Header() {
         { href: "/players-nuggets", label: "My Players" },
     ];
 
-    const mobileNavLinks = [
-        { href: "/", label: "HOME" },
-        { href: "/articles", label: "ARTICLES" },
-        { href: "/podcasts", label: "PODCAST" },
-        { href: "/players", label: "PLAYERS" },
-        { href: "/nuggets", label: "FEEDS" },
-    ];
-
     return (
         <header className="header-main z-50 w-full border-gray-100 shadow-sm transition-colors duration-300 container mx-auto">
             <div>
@@ -345,7 +337,7 @@ function Header() {
                     <div className="py-6 space-y-4">
                         {/* Navigation Links */}
                         <div className="space-y-1">
-                            {mobileNavLinks.map((link, index) => (
+                            {navLinks.map((link, index) => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
@@ -361,7 +353,7 @@ function Header() {
                             
                             {/* Mobile Feed Dropdown */}
                             <div className="space-y-1">
-                                {/* <button
+                                <button
                                     onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
                                     className="mobile-menu-nav-link w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 flex items-center justify-center space-x-2"
                                     style={{
@@ -370,10 +362,10 @@ function Header() {
                                 >
                                     <span>FEEDS</span>
                                     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
-                                </button> */}
+                                </button>
                                 
                                 {/* Mobile Feed Dropdown Options */}
-                                {/* <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isFeedDropdownOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isFeedDropdownOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
                                     {feedOptions.map((option, index) => (
                                         <Link
                                             key={option.href}
@@ -381,7 +373,6 @@ function Header() {
                                             className="mobile-menu-nav-link block px-8 py-2 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 text-sm"
                                             onClick={() => {
                                                 setIsMobileMenuOpen(false);
-                                                setIsFeedDropdownOpen(false);
                                             }}
                                             style={{
                                                 animationDelay: isMobileMenuOpen && isFeedDropdownOpen ? `${(navLinks.length + index + 1) * 50}ms` : '0ms'
@@ -390,7 +381,7 @@ function Header() {
                                             {option.label}
                                         </Link>
                                     ))}
-                                </div> */}
+                                </div>
                             </div>
                         </div>
 
@@ -466,8 +457,6 @@ function Header() {
                                 </div>
                             )}
                         </div>
-
-
                     </div>
                 </div>
             </div>
