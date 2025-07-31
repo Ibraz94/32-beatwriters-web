@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { ReduxProvider } from "../../lib/providers/ReduxProvider";
 import { ToastProvider } from "../components/Toast";
-import { useIOSScrollFix } from "../../lib/hooks/useIOSScrollFix";
+import IOSScrollFix from "../components/IOSScrollFix";
 // import Head from "next/head"; // No longer needed for Open Graph with Metadata export
 
 const cabin = Cabin({
@@ -40,12 +40,6 @@ export const metadata: Metadata = {
     viewportFit: 'cover',
   },
 };
-
-// iOS Scroll Restoration Component
-function IOSScrollFix() {
-  useIOSScrollFix();
-  return null;
-}
 
 export default function RootLayout({
   children,
