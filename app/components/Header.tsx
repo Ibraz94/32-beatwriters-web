@@ -355,7 +355,7 @@ function Header() {
                             <div className="space-y-1">
                                 <button
                                     onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
-                                    className="mobile-menu-nav-link block w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 flex items-center justify-center space-x-2"
+                                    className="mobile-menu-nav-link w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 flex items-center justify-center space-x-2"
                                     style={{
                                         animationDelay: isMobileMenuOpen ? `${(navLinks.length) * 50}ms` : '0ms'
                                     }}
