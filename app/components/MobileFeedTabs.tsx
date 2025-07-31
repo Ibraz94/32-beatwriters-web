@@ -30,6 +30,16 @@ export default function MobileFeedTabs() {
     }
   ]
 
+  // iOS scroll fix for tab navigation
+  const handleTabClick = () => {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+    }
+  };
+
   return (
     <div className="lg:hidden mb-6">
       <div className="flex bg-[#2C204B] rounded-lg p-1">
@@ -42,6 +52,7 @@ export default function MobileFeedTabs() {
                 ? 'bg-red-800 text-white shadow-sm'
                 : 'text-gray-300 hover:text-white hover:bg-[#3a2d5a]'
             }`}
+            onClick={handleTabClick}
           >
             {tab.label}
           </Link>

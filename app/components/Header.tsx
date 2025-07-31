@@ -41,6 +41,19 @@ function Header() {
         };
     }, []);
 
+    // iOS scroll fix for mobile navigation
+    const handleMobileNavigation = () => {
+        setIsMobileMenuOpen(false);
+        
+        // Fix for iOS Safari scroll issues
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 100);
+        }
+    };
+
     const getUserDisplayName = () => {
         if (!user) return null;
 
@@ -342,7 +355,7 @@ function Header() {
                                     key={link.href}
                                     href={link.href}
                                     className="mobile-menu-nav-link block px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105"
-                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    onClick={handleMobileNavigation}
                                     style={{
                                         animationDelay: isMobileMenuOpen ? `${index * 50}ms` : '0ms'
                                     }}
@@ -371,9 +384,7 @@ function Header() {
                                             key={option.href}
                                             href={option.href}
                                             className="mobile-menu-nav-link block px-8 py-2 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 text-sm"
-                                            onClick={() => {
-                                                setIsMobileMenuOpen(false);
-                                            }}
+                                            onClick={handleMobileNavigation}
                                             style={{
                                                 animationDelay: isMobileMenuOpen && isFeedDropdownOpen ? `${(navLinks.length + index + 1) * 50}ms` : '0ms'
                                             }}
@@ -443,7 +454,7 @@ function Header() {
                                     <Link
                                         href="/login"
                                         className="mobile-menu-link block w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
-                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        onClick={handleMobileNavigation}
                                     >
                                         Login
                                     </Link>

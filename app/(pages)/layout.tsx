@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { ReduxProvider } from "../../lib/providers/ReduxProvider";
 import { ToastProvider } from "../components/Toast";
+import { useIOSScrollFix } from "../../lib/hooks/useIOSScrollFix";
 // import Head from "next/head"; // No longer needed for Open Graph with Metadata export
 
 const cabin = Cabin({
@@ -31,7 +32,20 @@ export const metadata: Metadata = {
     url: "https://32-beatwriters-web.vercel.app/", // **IMPORTANT: Update this to your actual production URL**
   },
   metadataBase: new URL("https://32-beatwriters-web.vercel.app/"), // Set the base URL for production
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
+  },
 };
+
+// iOS Scroll Restoration Component
+function IOSScrollFix() {
+  useIOSScrollFix();
+  return null;
+}
 
 export default function RootLayout({
   children,
@@ -40,13 +54,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* The viewport meta tag can remain here or be configured in the metadata export as well.
-          For general page settings, the metadata export is often cleaner.
-          If you have dynamic viewport needs per page, consider a client-side solution or dynamic metadata.
-      */}
-      {/* <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head> */}
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+      </head>
       <body
         className={`${cabin.variable} ${oswald.variable} antialiased bg-white text-black dark:bg-[#18122B] dark:text-white`}
       >
@@ -58,6 +68,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <ToastProvider>
+              <IOSScrollFix />
               <Header />
               {children}
               <Footer />
