@@ -67,16 +67,21 @@ export default function ArticlesPage() {
 
     // Check if user is admin using case-insensitive comparison
     const userRole = user?.roles.id
+    const userMembership = user?.memberships.id
     const isAdminByRole = userRole === 1 || userRole === 5
+    const isProByMembership = userMembership === 2 || userMembership === 3
 
     // Administrators can access all articles
     if (isAdminByRole) {
-      console.log('✅ Administrator access granted for article:', articleAccess)
+      // console.log('✅ Administrator access granted for article:', articleAccess)
       return true
     }
-
+    if (isProByMembership) {
+      return true
+    }
+    console.log('Article Access', articleAccess);
     if (articleAccess === 'premium' || articleAccess === 'lifetime') {
-      return hasPremiumAccess
+      return true
     }
     return false
   }
@@ -91,6 +96,7 @@ export default function ArticlesPage() {
 
   // Helper function to get button configuration
   const getButtonConfig = (article: any) => {
+    // console.log('Article Access inside getButtonConfig', article.access);
     const canAccess = canAccessArticle(article.access)
 
     if (canAccess) {
@@ -191,7 +197,7 @@ export default function ArticlesPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {allArticles.map((article, index) => {
           const buttonConfig = getButtonConfig(article)
-          const canAccess = canAccessArticle(article.access)
+          // const canAccess = canAccessArticle(article.access)
 
           return (
 <article key={index} className="rounded shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer group p-0 bg-[#1A1330]">
