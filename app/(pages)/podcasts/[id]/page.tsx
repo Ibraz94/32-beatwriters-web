@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
         return {
             title: podcast.title,
-            description: podcast.description?.substring(0, 160) || 'Read this podcast on 32BeatWriters',
+            description: 'Watch this podcast on 32BeatWriters',
             openGraph: {
                 title: podcast.title,
-                description: 'Read this podcast on 32BeatWriters',
+                description: 'Watch this podcast on 32BeatWriters',
                 images: [
                     {
                         url: getImageUrl(podcast.thumbnail) || '/logo-small.webp',
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
             twitter: {
                 card: 'summary_large_image',
                 title: podcast.title,
-                description: podcast.description?.substring(0, 160) || 'Read this podcast on 32BeatWriters',
+                description: 'Watch this podcast on 32BeatWriters',
                 images: [getImageUrl(podcast.thumbnail) || '/logo-small.webp'],
             },
         }
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         console.error('Error generating metadata:', error)
         return {
             title: 'Podcast',
-            description: 'Read this podcast on 32BeatWriters'
+            description: 'Watch this podcast on 32BeatWriters'
         }
     }
 }
