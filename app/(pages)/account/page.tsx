@@ -363,7 +363,7 @@ function AccountContent() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-accent/20 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8">
             <div className="max-w-4xl mx-auto mt-8">
                 {/* Header */}
                 <div className="text-center mb-8">
@@ -424,7 +424,7 @@ function AccountContent() {
                 </div>
 
                 {/* Tab Content */}
-                <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+                <div className="rounded-lg shadow-sm border border-border p-6">
                     {/* Profile Tab */}
                     {activeTab === 'profile' && (
                         <div className="space-y-6">
@@ -433,7 +433,7 @@ function AccountContent() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Full Name */}
                                 <div>
-                                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label className="block text-sm font-medium mb-2">
                                         Full Name
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -481,7 +481,7 @@ function AccountContent() {
 
                                 {/* Email Address */}
                                 <div>
-                                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label className="block text-sm font-medium mb-2">
                                         Email Address
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -529,7 +529,7 @@ function AccountContent() {
 
                                 {/* Member Since */}
                                 <div>
-                                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label className="block text-sm font-medium mb-2">
                                         Member Since
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -542,7 +542,7 @@ function AccountContent() {
 
                                 {/* Account Status */}
                                 <div>
-                                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label className="block text-sm font-medium mb-2">
                                         Membership Status
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -555,7 +555,7 @@ function AccountContent() {
 
                                 {/* Account Status */}
                                 <div>
-                                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label className="block text-sm font-medium mb-2">
                                         Account Status
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -568,7 +568,7 @@ function AccountContent() {
 
                                 {/* Discord Connection Status */}
                                 <div>
-                                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label className="block text-sm font-medium mb-2">
                                         Discord Connection
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -606,7 +606,7 @@ function AccountContent() {
                                 onSubmit={handlePasswordSubmit}
                                 className="space-y-4">
                                 <div>
-                                    <label htmlFor="currentPassword" className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label htmlFor="currentPassword" className="block text-sm font-medium mb-2">
                                         Current Password
                                     </label>
                                     <div className="relative">
@@ -641,7 +641,7 @@ function AccountContent() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="newPassword" className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label htmlFor="newPassword" className="block text-sm font-medium mb-2">
                                         New Password
                                     </label>
                                     <div className="relative">
@@ -676,7 +676,7 @@ function AccountContent() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-card-foreground mb-2">
+                                    <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
                                         Confirm New Password
                                     </label>
                                     <div className="relative">
@@ -746,7 +746,7 @@ function AccountContent() {
                                     {/* Subscription Status */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-card-foreground mb-2">
+                                            <label className="block text-sm font-medium mb-2">
                                                 Plan
                                             </label>
                                             <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -755,7 +755,7 @@ function AccountContent() {
                                                     {subscription.planName || 'Premium Plan'}
                                                 </span>
                                                 <span className={`px-2 py-1 rounded-full text-xs ${subscription.status === 'active'
-                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-700'
                                                     : subscription.status === 'canceled'
                                                         ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                                                         : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
@@ -766,7 +766,7 @@ function AccountContent() {
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-card-foreground mb-2">
+                                            <label className="block text-sm font-medium mb-2">
                                                 Amount
                                             </label>
                                             <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -778,7 +778,7 @@ function AccountContent() {
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-card-foreground mb-2">
+                                            <label className="block text-sm font-medium mb-2">
                                                 Next Billing Date
                                             </label>
                                             <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -793,7 +793,7 @@ function AccountContent() {
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium text-card-foreground mb-2">
+                                            <label className="block text-sm font-medium mb-2">
                                                 Subscription ID
                                             </label>
                                             <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
@@ -809,19 +809,19 @@ function AccountContent() {
                                     {subscription.status === 'active' && (
                                         <div className="border border-red-200 dark:border-red-800 rounded-lg p-6 bg-red-50 dark:bg-red-900/10">
                                             <div className="flex items-start space-x-3">
-                                                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
+                                                <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
                                                 <div className="flex-1">
-                                                    <h3 className="text-lg font-medium text-red-900 dark:text-red-200">
+                                                    <h3 className="text-lg font-medium">
                                                         Cancel Subscription
                                                     </h3>
-                                                    <p className="mt-2 text-sm text-red-700 dark:text-red-300">
+                                                    <p className="mt-2 text-sm text-red-800 ">
                                                         Cancelling your subscription will stop all future charges. You will retain access to premium features until the end of your current billing period.
                                                     </p>
 
                                                     {!showCancelConfirm ? (
                                                         <button
                                                             onClick={() => setShowCancelConfirm(true)}
-                                                            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                                            className="mt-4 px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-700 transition-colors"
                                                         >
                                                             Cancel Subscription
                                                         </button>
