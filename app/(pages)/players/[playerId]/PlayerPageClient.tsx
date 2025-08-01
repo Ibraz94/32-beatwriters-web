@@ -4,7 +4,7 @@ import { useParams, useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
-import { CircleGauge, Newspaper, Dumbbell, Search, Loader2 } from 'lucide-react'
+import { CircleGauge, Newspaper, Dumbbell, Search, Loader2, Logs, NotepadTextDashed } from 'lucide-react'
 import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery, useGetPlayerPerformanceProfilerQuery, useFollowPlayerMutation, useUnfollowPlayerMutation  } from '@/lib/services/playersApi'
 import { useGetNuggetsByPlayerIdQuery, getImageUrl as getNuggetImageUrl, useGetNuggetsQuery, type NuggetFilters } from '@/lib/services/nuggetsApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
@@ -257,8 +257,8 @@ export default function PlayerPageClient({ id }: any) {
         { id: 'news', label: 'News & Updates', icon: Newspaper },
         { id: 'performance', label: 'Performance Metrics', icon: CircleGauge },
         { id: 'workout', label: 'Workout Metrics', icon: Dumbbell },
-        { id: 'season-stats', label: 'Season Stats', icon: Dumbbell },
-        { id: 'game-log', label: 'Game Log', icon: Dumbbell },
+        { id: 'season-stats', label: 'Season Stats', icon: NotepadTextDashed },
+        { id: 'game-log', label: 'Game Log', icon: Logs },
     ]
 
 
@@ -1299,7 +1299,7 @@ export default function PlayerPageClient({ id }: any) {
                                 <div className="space-y-8">
                                     {/* Season Stats Table */}
                                     <div className="space-y-4">
-                                        <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-full">
+                                        <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
                                             <div className="overflow-x-auto w-full">
                                                 <table className="w-full">
                                                     <thead>
@@ -1420,7 +1420,7 @@ export default function PlayerPageClient({ id }: any) {
                                 <div className="space-y-8">
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Game Log for {selectedYear}</h3>
-                                        <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-full">
+                                        <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
                                             <div className="overflow-x-auto w-full">
                                                 <table className="w-full">
                                                     <thead>
