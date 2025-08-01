@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { User, Mail, Lock, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, Check, X, CreditCard, AlertTriangle } from 'lucide-react'
+import { User, Mail, Lock, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, Check, X, CreditCard, AlertTriangle, Badge } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -49,7 +49,7 @@ function AccountContent() {
 
     // Fetch fresh profile data
     const { data: profileData, error: profileError, isLoading: profileLoading } = useGetProfileQuery()
-    
+
     // Fetch Discord status
     const { data: discordStatus, isLoading: discordStatusLoading } = useGetDiscordStatusQuery(undefined, {
         skip: !token
@@ -102,21 +102,21 @@ function AccountContent() {
     useEffect(() => {
         // Console log the full searchParams object
         console.log('Full searchParams object:', searchParams)
-        
+
         const discordStatus = searchParams.get('discord')
-        
+
         if (discordStatus === 'success') {
             const username = searchParams.get('username')
-            
+
             console.log('Discord connection successful!')
             setSuccessMessage(`Successfully connected to Discord as ${username || 'user'}!`)
-            
+
             // Clean up URL parameters
             router.replace('/account', { scroll: false })
         } else if (discordStatus === 'error') {
             const errorMessage = searchParams.get('message') || 'Failed to connect to Discord'
             setErrors({ discord: errorMessage })
-            
+
             // Clean up URL parameters
             router.replace('/account', { scroll: false })
         }
@@ -247,8 +247,8 @@ function AccountContent() {
     // Fetch subscription information
     const fetchSubscription = async () => {
         setLoadingSubscription(true)
-            try {
-                  const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.MY_SUBSCRIPTION), {
+        try {
+            const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.MY_SUBSCRIPTION), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -258,11 +258,11 @@ function AccountContent() {
 
             if (response.ok) {
                 const data = await response.json()
-                
+
                 if (data.success && data.data?.subscription) {
                     const stripeSubscription = data.data.subscription
                     const userData = data.data.user
-                    
+
                     // Map the Stripe subscription data to the expected format
                     const mappedSubscription = {
                         subscriptionId: stripeSubscription.id,
@@ -277,7 +277,7 @@ function AccountContent() {
                         membershipType: userData.membershipType,
                         subscriptionEndDate: userData.subscriptionEndDate
                     }
-                    
+
                     setSubscription(mappedSubscription)
                 } else {
                     setSubscription(null)
@@ -296,8 +296,8 @@ function AccountContent() {
     // Cancel subscription
     const handleCancelSubscription = async () => {
         setCancellingSubscription(true)
-            try {
-      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CANCEL_SUBSCRIPTION), {
+        try {
+            const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CANCEL_SUBSCRIPTION), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -349,7 +349,7 @@ function AccountContent() {
 
     if (!user || profileLoading) {
         return (
-            <section className="container mx-auto mt-24 px-4">
+            <section className="container mx-auto mt-8 px-4 min-h-screen">
                 <div className="flex justify-center items-center min-h-[400px]">
                     <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-800"></div>
                 </div>
@@ -364,7 +364,7 @@ function AccountContent() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-accent/20 px-4 sm:px-6 lg:px-8 py-8">
-            <div className="max-w-4xl mx-auto mt-24">
+            <div className="max-w-4xl mx-auto mt-8">
                 {/* Header */}
                 <div className="text-center mb-8">
                     <div className="flex justify-center mb-4">
@@ -405,8 +405,8 @@ function AccountContent() {
                                     key={id}
                                     onClick={() => setActiveTab(id)}
                                     className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === id
-                                            ? 'border-red-800 text-red-800'
-                                            : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
+                                        ? 'border-red-800 text-red-800'
+                                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
                                         }`}
                                 >
                                     <div className="flex items-center space-x-2">
@@ -543,12 +543,25 @@ function AccountContent() {
                                 {/* Account Status */}
                                 <div>
                                     <label className="block text-sm font-medium text-card-foreground mb-2">
-                                        Account Status
+                                        Membership Status
                                     </label>
                                     <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <Crown className="h-5 w-5 text-yellow-500" />
                                         <span className="text-foreground">
-                                            {user.role === 'Administrator' ? 'Admin' : user.role === 'Subscriber' ? 'Premium Member' : 'Free Member'}
+                                            {user.memberships.type}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Account Status */}
+                                <div>
+                                    <label className="block text-sm font-medium text-card-foreground mb-2">
+                                        Account Status
+                                    </label>
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                        <Badge className="h-5 w-5 text-red-800" />
+                                        <span className="text-foreground">
+                                            {user.role}
                                         </span>
                                     </div>
                                 </div>
@@ -590,7 +603,7 @@ function AccountContent() {
                             <h2 className="text-xl font-semibold text-foreground">Update Password</h2>
 
                             <form
-                                onSubmit={handlePasswordSubmit} 
+                                onSubmit={handlePasswordSubmit}
                                 className="space-y-4">
                                 <div>
                                     <label htmlFor="currentPassword" className="block text-sm font-medium text-card-foreground mb-2">
@@ -741,13 +754,12 @@ function AccountContent() {
                                                 <span className="text-foreground font-medium">
                                                     {subscription.planName || 'Premium Plan'}
                                                 </span>
-                                                <span className={`px-2 py-1 rounded-full text-xs ${
-                                                    subscription.status === 'active' 
-                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                                                        : subscription.status === 'canceled'
+                                                <span className={`px-2 py-1 rounded-full text-xs ${subscription.status === 'active'
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                                                    : subscription.status === 'canceled'
                                                         ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                                                         : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-                                                }`}>
+                                                    }`}>
                                                     {subscription.status?.charAt(0).toUpperCase() + subscription.status?.slice(1)}
                                                 </span>
                                             </div>
@@ -772,7 +784,7 @@ function AccountContent() {
                                             <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                                 <Calendar className="h-5 w-5 text-muted-foreground" />
                                                 <span className="text-foreground">
-                                                    {subscription.currentPeriodEnd 
+                                                    {subscription.currentPeriodEnd
                                                         ? new Date(subscription.currentPeriodEnd * 1000).toLocaleDateString()
                                                         : 'N/A'
                                                     }
@@ -805,7 +817,7 @@ function AccountContent() {
                                                     <p className="mt-2 text-sm text-red-700 dark:text-red-300">
                                                         Cancelling your subscription will stop all future charges. You will retain access to premium features until the end of your current billing period.
                                                     </p>
-                                                    
+
                                                     {!showCancelConfirm ? (
                                                         <button
                                                             onClick={() => setShowCancelConfirm(true)}
@@ -857,7 +869,7 @@ function AccountContent() {
                                                     </h3>
                                                     <p className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
                                                         Your subscription has been cancelled. You will retain access to premium features until{' '}
-                                                        {subscription.currentPeriodEnd 
+                                                        {subscription.currentPeriodEnd
                                                             ? new Date(subscription.currentPeriodEnd * 1000).toLocaleDateString()
                                                             : 'the end of your billing period'
                                                         }.
