@@ -5,45 +5,47 @@ interface ReadMoreProps {
   id: string
   text: string
   amountOfCharacters?: number
+  target?: string
+  rel?: string
 }
 
 // Function to parse player mentions and convert them to links
 const parsePlayerMentions = (content: string) => {
   // Regular expression to match @[Player Name](playerId) pattern
   const mentionRegex = /@\[([^\]]+)\]\((\d+)\)/g;
-  
+
   // Split content into parts (text and mentions)
   const parts: (string | { name: string; id: string })[] = [];
   let lastIndex = 0;
   let match;
-  
+
   while ((match = mentionRegex.exec(content)) !== null) {
     // Add text before the mention
     if (match.index > lastIndex) {
       parts.push(content.slice(lastIndex, match.index));
     }
-    
+
     // Add the mention as an object
     parts.push({
       name: match[1],
       id: match[2]
     });
-    
+
     lastIndex = match.index + match[0].length;
   }
-  
+
   // Add remaining text after the last mention
   if (lastIndex < content.length) {
     parts.push(content.slice(lastIndex));
   }
-  
+
   return parts;
 };
 
 // Component to render content with player mentions as links
 const ContentWithPlayerMentions = ({ content }: { content: string }) => {
   const parts = parsePlayerMentions(content);
-  
+
   return (
     <>
       {parts.map((part, index) => {
@@ -51,13 +53,16 @@ const ContentWithPlayerMentions = ({ content }: { content: string }) => {
           return <span key={index}>{part}</span>;
         } else {
           return (
-            <Link
+            <a
               key={index}
               href={`/players/${part.id}`}
-              className="text-blue-600 hover:text-blue-800 underline font-medium"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red-800 hover:underline font-bold "
             >
               {part.name}
-            </Link>
+            </a>
+
           );
         }
       })}
@@ -72,7 +77,7 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
     ? text.slice(0, amountOfCharacters)
     : text
   const endText = text.slice(amountOfCharacters)
-  
+
   const handleKeyboard = (e: any) => {
     if (e.code === 'Space' || e.code === 'Enter') {
       setIsExpanded(!isExpanded)
@@ -85,8 +90,8 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
       {itCanOverflow && (
         <>
           {!isExpanded && <span>... </span>}
-          <span 
-            className={`${!isExpanded && 'hidden'}`} 
+          <span
+            className={`${!isExpanded && 'hidden'}`}
             aria-hidden={!isExpanded}
           >
             <ContentWithPlayerMentions content={endText} />
