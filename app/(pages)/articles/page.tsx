@@ -39,6 +39,10 @@ export default function ArticlesPage() {
   // Handle loading more articles
   useEffect(() => {
     if (articles?.data.articles) {
+      // Debug: Log the entire articles response
+      console.log('🔍 Full articles response:', articles)
+      console.log('🔍 Articles data:', articles.data.articles)
+      
       if (page === 1) {
         // First load or search - replace all articles
         setAllArticles(articles.data.articles)
@@ -197,6 +201,14 @@ export default function ArticlesPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {allArticles.map((article, index) => {
           const buttonConfig = getButtonConfig(article)
+          // Debug: Log authorName value and all article fields
+          console.log(`Article ${index}:`, {
+            id: article.id,
+            title: article.title,
+            authorName: article.authorName,
+            authorId: article.authorId,
+            allFields: Object.keys(article)
+          })
           // const canAccess = canAccessArticle(article.access)
 
           return (
@@ -221,6 +233,13 @@ export default function ArticlesPage() {
         <Gem className="w-4 h-4 mr-1" />
         {article.access === 'public' ? 'Free' : 'Premium'}
       </div>
+
+      {/* Author Name */}
+      {article.authorName && (
+        <div className="absolute bottom-3 left-3 text-white text-sm bg-black bg-opacity-50 px-2 py-1 rounded">
+          {article.authorName}
+        </div>
+      )}
     </div>
 
     {/* Article Body */}
