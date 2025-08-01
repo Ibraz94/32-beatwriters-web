@@ -33,7 +33,7 @@ import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
-import { useGetPlayersQuery} from '@/lib/services/playersApi'
+import { useGetPlayersQuery } from '@/lib/services/playersApi'
 
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
@@ -123,18 +123,18 @@ export default function SavedNuggetsPage() {
     // Handle save/unsave nugget
     const handleBookmarkClick = async (nuggetId: number, isSaved: boolean) => {
         setBookmarkLoading(nuggetId)
-        
+
         try {
             if (isSaved) {
                 await unsaveNugget(nuggetId).unwrap()
             } else {
                 await saveNugget(nuggetId).unwrap()
             }
-            
+
             // Update local state to reflect the change immediately
-            setAllNuggets(prevNuggets => 
-                prevNuggets.map(nugget => 
-                    nugget.id === nuggetId 
+            setAllNuggets(prevNuggets =>
+                prevNuggets.map(nugget =>
+                    nugget.id === nuggetId
                         ? { ...nugget, isSaved: !isSaved }
                         : nugget
                 )
@@ -297,132 +297,132 @@ export default function SavedNuggetsPage() {
     }, [imageModal])
 
     // Trending Players Component
-const TrendingPlayers = () => {
-  const targetPlayerNames = [
-    'Emeka Egbuka',
-    'Kyle Pitts',
-    'Kyler Murray',
-    'Dont\'e Thornton',
-    'TreVeyon Henderson',
-  ];
+    const TrendingPlayers = () => {
+        const targetPlayerNames = [
+            'Emeka Egbuka',
+            'Kyle Pitts',
+            'Kyler Murray',
+            'Dont\'e Thornton',
+            'TreVeyon Henderson',
+        ];
 
-  // Define separate queries for each player
-  const query1 = useGetPlayersQuery({
-    page: 1,
-    limit: 10,
-    pageSize: 10,
-    search: targetPlayerNames[0], // Search for 'Emeka Egbuka'
-  });
+        // Define separate queries for each player
+        const query1 = useGetPlayersQuery({
+            page: 1,
+            limit: 10,
+            pageSize: 10,
+            search: targetPlayerNames[0], // Search for 'Emeka Egbuka'
+        });
 
-  const query2 = useGetPlayersQuery({
-    page: 1,
-    limit: 10,
-    pageSize: 10,
-    search: targetPlayerNames[1], // Search for 'Kyle Pitts'
-  });
+        const query2 = useGetPlayersQuery({
+            page: 1,
+            limit: 10,
+            pageSize: 10,
+            search: targetPlayerNames[1], // Search for 'Kyle Pitts'
+        });
 
-  const query3 = useGetPlayersQuery({
-    page: 1,
-    limit: 10,
-    pageSize: 10,
-    search: targetPlayerNames[2], // Search for 'Kyler Murray'
-  });
+        const query3 = useGetPlayersQuery({
+            page: 1,
+            limit: 10,
+            pageSize: 10,
+            search: targetPlayerNames[2], // Search for 'Kyler Murray'
+        });
 
-  const query4 = useGetPlayersQuery({
-    page: 1,
-    limit: 10,
-    pageSize: 10,
-    search: targetPlayerNames[3], // Search for 'Dont\'e Thornton'
-  });
+        const query4 = useGetPlayersQuery({
+            page: 1,
+            limit: 10,
+            pageSize: 10,
+            search: targetPlayerNames[3], // Search for 'Dont\'e Thornton'
+        });
 
-  const query5 = useGetPlayersQuery({
-    page: 1,
-    limit: 10,
-    pageSize: 10,
-    search: targetPlayerNames[4], // Search for 'TreVeyon Henderson'
-  });
+        const query5 = useGetPlayersQuery({
+            page: 1,
+            limit: 10,
+            pageSize: 10,
+            search: targetPlayerNames[4], // Search for 'TreVeyon Henderson'
+        });
 
-  const playersQuery = [query1, query2, query3, query4, query5];
+        const playersQuery = [query1, query2, query3, query4, query5];
 
-  const allFoundPlayers: any[] = []
-    let isLoading = false
-    let hasError = false
+        const allFoundPlayers: any[] = []
+        let isLoading = false
+        let hasError = false
 
-    playersQuery.forEach((query, index) => {
-        if (query.isLoading) isLoading = true
-        if (query.error) hasError = true
-        if (query.data?.data?.players) {
-            // Find the best match for each search
-            const players = query.data.data.players
-            const targetName = targetPlayerNames[index]
-            const bestMatch = players.find(player => 
-                player.name.toLowerCase().trim() === targetName.toLowerCase().trim()
-            ) || players[0] // If exact match not found, take the first result
-            
-            if (bestMatch && !allFoundPlayers.some(p => p.id === bestMatch.id)) {
-                 const updatedPlayer = {
-        ...bestMatch,
-        team: findTeamByKey(bestMatch.team || '') || { name: 'No team', logo: null }, // Handle case where team is not available
-      };
-      
+        playersQuery.forEach((query, index) => {
+            if (query.isLoading) isLoading = true
+            if (query.error) hasError = true
+            if (query.data?.data?.players) {
+                // Find the best match for each search
+                const players = query.data.data.players
+                const targetName = targetPlayerNames[index]
+                const bestMatch = players.find(player =>
+                    player.name.toLowerCase().trim() === targetName.toLowerCase().trim()
+                ) || players[0] // If exact match not found, take the first result
 
-      allFoundPlayers.push(updatedPlayer);
+                if (bestMatch && !allFoundPlayers.some(p => p.id === bestMatch.id)) {
+                    const updatedPlayer = {
+                        ...bestMatch,
+                        team: findTeamByKey(bestMatch.team || '') || { name: 'No team', logo: null }, // Handle case where team is not available
+                    };
+
+
+                    allFoundPlayers.push(updatedPlayer);
+                }
             }
+        })
+
+
+
+        if (isLoading) {
+            return <div>Loading...</div>;
         }
-    })
 
-  
+        if (hasError) {
+            return <div>Error fetching player data</div>;
+        }
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (hasError) {
-    return <div>Error fetching player data</div>;
-  }
-
-  return (
-    <div className="rounded-lg border border-[#2C204B]">
-      <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
-        <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
-      </div>
-      <div className="space-y-3">
-        {allFoundPlayers.map((player) => (
-          <Link
-            key={player.id}
-            href={`/players/${player.id}`}
-            className="flex items-center justify-between p-3 border-b border-[#2C204B]"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full overflow-hidden">
-                <Image
-                  src={getImageUrl(player.headshotPic) || '/default-player.jpg'}
-                  alt={player.name}
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <span className="font-medium">{player.name}</span>
+        return (
+            <div className="rounded-lg border border-[#2C204B]">
+                <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
+                    <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+                </div>
+                <div className="space-y-3">
+                    {allFoundPlayers.map((player) => (
+                        <Link
+                            key={player.id}
+                            href={`/players/${player.id}`}
+                            className="flex items-center justify-between p-3 border-b border-[#2C204B]"
+                        >
+                            <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 rounded-full overflow-hidden">
+                                    <Image
+                                        src={getImageUrl(player.headshotPic) || '/default-player.jpg'}
+                                        alt={player.name}
+                                        width={40}
+                                        height={40}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <span className="font-medium">{player.name}</span>
+                            </div>
+                            {player.team && (
+                                <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
+                                    <Image
+                                        src={getTeamLogoUrl(player.team.logo) || ''}
+                                        alt={player.team?.name || 'Team logo'}
+                                        width={24}
+                                        height={24}
+                                        className="object-contain"
+                                    />
+                                    <p>{player.team?.name || 'No team'}</p>
+                                </div>
+                            )}
+                        </Link>
+                    ))}
+                </div>
             </div>
-            {player.team && (
-              <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
-                <Image
-                  src={getTeamLogoUrl(player.team.logo) || ''}
-                  alt={player.team?.name || 'Team logo'}
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
-                <p>{player.team?.name || 'No team'}</p>
-              </div>
-            )}
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-};
+        );
+    };
 
     // Combined loading states
     const isLoading = isLoadingSavedNuggets || authLoading || isLoadingTeams
@@ -431,20 +431,32 @@ const TrendingPlayers = () => {
     const hasActiveFilters = debouncedSearchTerm || filters.position || filters.team || selectedDate || filters.rookie
 
     // Show authentication required message if not authenticated
-    if (!authLoading && !isAuthenticated) {
+     // Show authentication required message if not authenticated or has insufficient membership
+    if (!authLoading && (!isAuthenticated || (user?.memberships?.id !== undefined && user?.memberships?.id < 2))) {
         return (
             <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
                 <div className="max-w-6xl mx-auto text-center">
-                    <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
-                    <p className="text-gray-600 mb-8">Please login to view your saved nuggets.</p>
+                    <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
+                    <p className="text-gray-600 mb-8">
+                        {!isAuthenticated 
+                            ? "Please login to your account to view the feed. Don't have a subscription? Please subscribe to access premium content."
+                            : "Please upgrade to a premium subscription to view the feed."
+                        }
+                    </p>
+
+                    {!isAuthenticated && (
+                        <p className="text-gray-600 mb-8">
+                            <Link href={{
+                                pathname: '/login',
+                                query: { redirect: pathname }
+                            }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+                        </p>
+                    )}
                     <Link
-                         href={{
-        pathname: '/login',
-        query: { redirect: pathname }  // Pass the current path as a query parameter
-      }}
+                        href="/subscribe"
                         className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
                     >
-                        Login
+                        Subscribe
                     </Link>
                 </div>
             </div>
@@ -509,7 +521,7 @@ const TrendingPlayers = () => {
             <div className="container mx-auto px-4 py-8">
                 {/* Mobile Feed Tabs */}
                 <MobileFeedTabs />
-                
+
                 {/* Mobile Filter Toggle Button */}
                 <div className="lg:hidden mb-4">
                     <button
@@ -725,12 +737,11 @@ const TrendingPlayers = () => {
                                                             {bookmarkLoading === nugget.id ? (
                                                                 <Loader2 className="w-5 h-5 animate-spin text-red-800" />
                                                             ) : (
-                                                                <Bookmark 
-                                                                    className={`w-5 h-5 ${
-                                                                        nugget.isSaved 
-                                                                            ? 'fill-red-800 text-red-800' 
+                                                                <Bookmark
+                                                                    className={`w-5 h-5 ${nugget.isSaved
+                                                                            ? 'fill-red-800 text-red-800'
                                                                             : 'text-gray-500 hover:text-red-800'
-                                                                    }`} 
+                                                                        }`}
                                                                 />
                                                             )}
                                                         </button>

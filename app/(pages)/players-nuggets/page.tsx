@@ -433,21 +433,32 @@ export default function PlayersNuggetsPage() {
     const displayNuggets = filteredNuggets
     const hasActiveFilters = debouncedSearchTerm || filters.position || filters.team || selectedDate || filters.rookie
 
-    // Show authentication required message if not authenticated
-    if (!authLoading && !isAuthenticated) {
+   // Show authentication required message if not authenticated or has insufficient membership
+    if (!authLoading && (!isAuthenticated || (user?.memberships?.id !== undefined && user?.memberships?.id < 2))) {
         return (
             <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
                 <div className="max-w-6xl mx-auto text-center">
-                    <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
-                    <p className="text-gray-600 mb-8">Please login to view nuggets from your followed players.</p>
+                    <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
+                    <p className="text-gray-600 mb-8">
+                        {!isAuthenticated 
+                            ? "Please login to your account to view the feed. Don't have a subscription? Please subscribe to access premium content."
+                            : "Please upgrade to a premium subscription to view the feed."
+                        }
+                    </p>
+
+                    {!isAuthenticated && (
+                        <p className="text-gray-600 mb-8">
+                            <Link href={{
+                                pathname: '/login',
+                                query: { redirect: pathname }
+                            }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+                        </p>
+                    )}
                     <Link
-                       href={{
-        pathname: '/login',
-        query: { redirect: pathname }  // Pass the current path as a query parameter
-      }}
+                        href="/subscribe"
                         className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
                     >
-                        Login
+                        Subscribe
                     </Link>
                 </div>
             </div>
