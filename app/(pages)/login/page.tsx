@@ -143,7 +143,7 @@ export default function Login() {
                 </div>
 
                 {/* Login Form */}
-                <div className="bg-car rounded-lg shadow-lg border border-border p-8 pt-12 pb-12">
+                <div className="rounded-lg shadow-lg border border-border p-8 pt-12 pb-12">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         {/* General Error Message */}
                         {errors.general && (

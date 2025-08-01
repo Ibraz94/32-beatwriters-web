@@ -4,7 +4,7 @@ import { useParams, useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useMemo } from 'react'
-import { CircleGauge, Newspaper, Dumbbell, Search, Loader2 } from 'lucide-react'
+import { CircleGauge, Newspaper, Dumbbell, Search, Loader2, Logs, NotepadTextDashed } from 'lucide-react'
 import { getImageUrl, useGetPlayerQuery, useGetPlayersQuery, useGetPlayerProfilerQuery, useGetPlayerPerformanceProfilerQuery, useFollowPlayerMutation, useUnfollowPlayerMutation  } from '@/lib/services/playersApi'
 import { useGetNuggetsByPlayerIdQuery, getImageUrl as getNuggetImageUrl, useGetNuggetsQuery, type NuggetFilters } from '@/lib/services/nuggetsApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
@@ -257,8 +257,8 @@ export default function PlayerPageClient({ id }: any) {
         { id: 'news', label: 'News & Updates', icon: Newspaper },
         { id: 'performance', label: 'Performance Metrics', icon: CircleGauge },
         { id: 'workout', label: 'Workout Metrics', icon: Dumbbell },
-        { id: 'season-stats', label: 'Season Stats', icon: Dumbbell },
-        { id: 'game-log', label: 'Game Log', icon: Dumbbell },
+        { id: 'season-stats', label: 'Season Stats', icon: NotepadTextDashed },
+        { id: 'game-log', label: 'Game Log', icon: Logs },
     ]
 
 
@@ -266,19 +266,27 @@ export default function PlayerPageClient({ id }: any) {
         setSearchTerm(term)
     }
 
-    // Show authentication required message if not authenticated
-    if (!authLoading && !isAuthenticated && !user?.memberships) {
+   // Show authentication required message if not authenticated or has insufficient membership
+    if (!authLoading && (!isAuthenticated || (user?.memberships?.id !== undefined && user?.memberships?.id < 2))) {
         return (
             <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
                 <div className="max-w-6xl mx-auto text-center">
                     <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
-                    <p className="text-gray-600 mb-8">Please upgrade to a premium subscription to view player profiles. Already have a subscription? Please login to your account.</p>
                     <p className="text-gray-600 mb-8">
-                        <Link href={{
-                            pathname: '/login',
-                            query: { redirect: pathname }  // Pass the current path as a query parameter
-                        }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+                        {!isAuthenticated 
+                            ? "Please login to your account to view the feed. Don't have a subscription? Please subscribe to access premium content."
+                            : "Please upgrade to a premium subscription to view the feed."
+                        }
                     </p>
+
+                    {!isAuthenticated && (
+                        <p className="text-gray-600 mb-8">
+                            <Link href={{
+                                pathname: '/login',
+                                query: { redirect: pathname }
+                            }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+                        </p>
+                    )}
                     <Link
                         href="/subscribe"
                         className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
@@ -1299,7 +1307,7 @@ export default function PlayerPageClient({ id }: any) {
                                 <div className="space-y-8">
                                     {/* Season Stats Table */}
                                     <div className="space-y-4">
-                                        <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-full">
+                                        <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
                                             <div className="overflow-x-auto w-full">
                                                 <table className="w-full">
                                                     <thead>
@@ -1420,7 +1428,7 @@ export default function PlayerPageClient({ id }: any) {
                                 <div className="space-y-8">
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Game Log for {selectedYear}</h3>
-                                        <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-full">
+                                        <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
                                             <div className="overflow-x-auto w-full">
                                                 <table className="w-full">
                                                     <thead>

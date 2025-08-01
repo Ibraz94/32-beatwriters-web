@@ -33,6 +33,7 @@ export interface Article {
     avatar?: string
     bio?: string
   }
+  authorName?: string
   playerTags: string[]
   teamTags: string[]
   beatWriterTags: string[]
@@ -40,7 +41,7 @@ export interface Article {
   modifiedAt?: string
   createdAt: string
   updatedAt: string
-  access: 'public' | 'pro' | 'lifetime'
+  access: 'public' | 'pro' | 'lifetime' | 'pro,lifetime'
 }
 
 interface ArticlesResponse {

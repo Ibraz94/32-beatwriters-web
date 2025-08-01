@@ -404,6 +404,38 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   color: white;
 }
 
+/* iOS Safari Scroll Fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific fixes */
+  html {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto;
+  }
+  
+  body {
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    min-height: 100vh;
+  }
+  
+  /* Prevent iOS Safari from scrolling to bottom on navigation */
+  .mobile-menu-container {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Ensure proper scroll restoration */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Prevent scroll restoration issues on iOS */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Custom Scrollbar Styles */
 .custom-scrollbar {
   scrollbar-width: thin;
@@ -448,7 +480,8 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 }
 
 .article-container img, .article-container iframe, picture, .article-container * {
-  max-width: 100% !important;
+  max-width: 100%;
+  height: auto;
 }
 .podcast-description * {
   max-width: 100% !important;

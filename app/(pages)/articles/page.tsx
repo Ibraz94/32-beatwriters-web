@@ -39,6 +39,10 @@ export default function ArticlesPage() {
   // Handle loading more articles
   useEffect(() => {
     if (articles?.data.articles) {
+      // Debug: Log the entire articles response
+      console.log('🔍 Full articles response:', articles)
+      console.log('🔍 Articles data:', articles.data.articles)
+      
       if (page === 1) {
         // First load or search - replace all articles
         setAllArticles(articles.data.articles)
@@ -67,16 +71,21 @@ export default function ArticlesPage() {
 
     // Check if user is admin using case-insensitive comparison
     const userRole = user?.roles.id
-    const isAdminByRole = userRole === 1 || userRole === 2 || userRole === 3 || userRole === 4
+    const userMembership = user?.memberships.id
+    const isAdminByRole = userRole === 1 || userRole === 5
+    const isProByMembership = userMembership === 2 || userMembership === 3
 
     // Administrators can access all articles
     if (isAdminByRole) {
-      console.log('✅ Administrator access granted for article:', articleAccess)
+      // console.log('✅ Administrator access granted for article:', articleAccess)
       return true
     }
-
+    if (isProByMembership) {
+      return true
+    }
+    console.log('Article Access', articleAccess);
     if (articleAccess === 'premium' || articleAccess === 'lifetime') {
-      return hasPremiumAccess
+      return true
     }
     return false
   }
@@ -91,6 +100,7 @@ export default function ArticlesPage() {
 
   // Helper function to get button configuration
   const getButtonConfig = (article: any) => {
+    // console.log('Article Access inside getButtonConfig', article.access);
     const canAccess = canAccessArticle(article.access)
 
     if (canAccess) {
@@ -191,7 +201,15 @@ export default function ArticlesPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {allArticles.map((article, index) => {
           const buttonConfig = getButtonConfig(article)
-          const canAccess = canAccessArticle(article.access)
+          // Debug: Log authorName value and all article fields
+          console.log(`Article ${index}:`, {
+            id: article.id,
+            title: article.title,
+            authorName: article.authorName,
+            authorId: article.authorId,
+            allFields: Object.keys(article)
+          })
+          // const canAccess = canAccessArticle(article.access)
 
           return (
 <article key={index} className="rounded shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer group p-0 bg-[#1A1330]">
@@ -215,6 +233,13 @@ export default function ArticlesPage() {
         <Gem className="w-4 h-4 mr-1" />
         {article.access === 'public' ? 'Free' : 'Premium'}
       </div>
+
+      {/* Author Name */}
+      {article.authorName && (
+        <div className="absolute bottom-3 left-3 text-white text-sm bg-black bg-opacity-50 px-2 py-1 rounded">
+          {article.authorName}
+        </div>
+      )}
     </div>
 
     {/* Article Body */}

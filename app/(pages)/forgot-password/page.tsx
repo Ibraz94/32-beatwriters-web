@@ -274,12 +274,12 @@ export default function ForgotPassword() {
                 </div>
 
                 {/* Form Container */}
-                <div className="bg-card rounded-lg shadow-lg border border-border p-8 pt-12 pb-12">
+                <div className="rounded-lg shadow-lg border border-border p-8 pt-12 pb-12">
                     {/* Email Step */}
                     {currentStep === 'email' && (
                         <form className="space-y-6" onSubmit={handleEmailSubmit}>
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-card-foreground mb-2">
+                                <label htmlFor="email" className="block text-sm font-medium mb-2">
                                     Email address
                                 </label>
                                 <input
