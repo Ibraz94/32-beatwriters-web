@@ -54,7 +54,7 @@ export default function PodcastsComponent() {
                         Our Podcast Network
                     </h2>
                     <p className="text-sm sm:text-base md:text-lg max-w-5xl mx-auto px-2">
-                        Welcome to the NFL Network Podcast, your go-to source for everything NFL! We dive deep into game analyses, player performances, and the hottest news from around the league. Join us weekly for engaging discussions and expert commentary!
+                    Fantasy analysis, beat writer interviews, and more!
                     </p>
                 </div>
 
