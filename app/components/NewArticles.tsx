@@ -199,10 +199,10 @@ export default function NewArticles() {
 
                                     {/* Article Content */}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl mb-1 md:mb-2 line-clamp-2 leading-tight">
+                                        <h3 className="font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl mb-1 md:mb-2 line-clamp-2 leading-tight article-title-home">
                                             {article.title}
                                         </h3>
-                                        <div className="text-gray-300 text-sm sm:text-base md:text-lg line-clamp-2 md:line-clamp-3 mb-1 md:mb-2">
+                                        <div className="text-gray-300 text-sm sm:text-base md:text-lg line-clamp-2 md:line-clamp-3 mb-1 md:mb-2 article-content-home">
                                             {(() => {
                                                 try {
                                                     // Check if content starts with '{' and try to parse it as JSON
