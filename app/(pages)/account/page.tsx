@@ -271,11 +271,18 @@ function AccountContent() {
                         amount: stripeSubscription.plan?.amount || stripeSubscription.items?.data?.[0]?.price?.unit_amount,
                         interval: stripeSubscription.plan?.interval || stripeSubscription.items?.data?.[0]?.price?.recurring?.interval,
                         currentPeriodEnd: stripeSubscription.current_period_end,
+                        // Handle next billing date for both active and cancelled subscriptions
+                        nextBillingDate: stripeSubscription.cancel_at_period_end 
+                            ? stripeSubscription.cancel_at 
+                            : stripeSubscription.current_period_end,
                         // Additional useful data
                         customerEmail: stripeSubscription.customer?.email,
-                        nextBillingDate: stripeSubscription.current_period_end,
                         membershipType: userData.membershipType,
-                        subscriptionEndDate: userData.subscriptionEndDate
+                        subscriptionEndDate: userData.subscriptionEndDate,
+                        // Add cancellation info
+                        isCancelled: stripeSubscription.cancel_at_period_end,
+                        cancelAtDate: stripeSubscription.cancel_at,
+                        cancelledAt: stripeSubscription.canceled_at
                     }
 
                     setSubscription(mappedSubscription)
@@ -753,14 +760,16 @@ function AccountContent() {
                                                 <span className="text-foreground font-medium">
                                                     {subscription.planName || 'Premium Plan'}
                                                 </span>
-                                                <span className={`px-2 py-1 rounded-full text-xs ${subscription.status === 'active'
-                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-700'
-                                                    : subscription.status === 'canceled'
-                                                        ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                                                        : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-                                                    }`}>
-                                                    {subscription.status?.charAt(0).toUpperCase() + subscription.status?.slice(1)}
-                                                </span>
+                                                                                                 <span className={`px-2 py-1 rounded-full text-xs ${subscription.isCancelled
+                                                     ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
+                                                     : subscription.status === 'active'
+                                                         ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-700'
+                                                         : subscription.status === 'canceled'
+                                                             ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                                                             : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                                                     }`}>
+                                                     {subscription.isCancelled ? 'Active (Cancelled)' : subscription.status?.charAt(0).toUpperCase() + subscription.status?.slice(1)}
+                                                 </span>
                                             </div>
                                         </div>
 
@@ -776,20 +785,25 @@ function AccountContent() {
                                             </div>
                                         </div>
 
-                                        <div>
-                                            <label className="block text-sm font-medium mb-2">
-                                                Next Billing Date
-                                            </label>
-                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
-                                                <Calendar className="h-5 w-5 text-muted-foreground" />
-                                                <span className="text-foreground">
-                                                    {subscription.currentPeriodEnd
-                                                        ? new Date(subscription.currentPeriodEnd * 1000).toLocaleDateString()
-                                                        : 'N/A'
-                                                    }
-                                                </span>
-                                            </div>
-                                        </div>
+                                                                                 <div>
+                                             <label className="block text-sm font-medium mb-2">
+                                                 {subscription.isCancelled ? 'Access Until' : 'Next Billing Date'}
+                                             </label>
+                                             <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                                 <Calendar className="h-5 w-5 text-muted-foreground" />
+                                                 <span className="text-foreground">
+                                                     {subscription.nextBillingDate
+                                                         ? new Date(subscription.nextBillingDate * 1000).toLocaleDateString()
+                                                         : 'N/A'
+                                                     }
+                                                 </span>
+                                                 {subscription.isCancelled && (
+                                                     <span className="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 px-2 py-1 rounded">
+                                                         Cancelled
+                                                     </span>
+                                                 )}
+                                             </div>
+                                         </div>
 
                                         <div>
                                             <label className="block text-sm font-medium mb-2">
@@ -804,8 +818,8 @@ function AccountContent() {
                                         </div>
                                     </div>
 
-                                    {/* Cancel Subscription Section */}
-                                    {subscription.status === 'active' && (
+                                                                         {/* Cancel Subscription Section */}
+                                     {subscription.status === 'active' && !subscription.isCancelled && (
                                         <div className="border border-red-200 dark:border-red-800 rounded-lg p-6 bg-red-50 dark:bg-red-900/10">
                                             <div className="flex items-start space-x-3">
                                                 <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
@@ -858,7 +872,7 @@ function AccountContent() {
                                         </div>
                                     )}
 
-                                    {subscription.status === 'canceled' && (
+                                                                         {(subscription.status === 'canceled' || subscription.isCancelled) && (
                                         <div className="border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 bg-yellow-50 dark:bg-yellow-900/10">
                                             <div className="flex items-start space-x-3">
                                                 <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
@@ -866,13 +880,13 @@ function AccountContent() {
                                                     <h3 className="text-lg font-medium text-yellow-900 dark:text-yellow-200">
                                                         Subscription Cancelled
                                                     </h3>
-                                                    <p className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
-                                                        Your subscription has been cancelled. You will retain access to premium features until{' '}
-                                                        {subscription.currentPeriodEnd
-                                                            ? new Date(subscription.currentPeriodEnd * 1000).toLocaleDateString()
-                                                            : 'the end of your billing period'
-                                                        }.
-                                                    </p>
+                                                                                                         <p className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                                                         Your subscription has been cancelled. You will retain access to premium features until{' '}
+                                                         {subscription.nextBillingDate
+                                                             ? new Date(subscription.nextBillingDate * 1000).toLocaleDateString()
+                                                             : 'the end of your billing period'
+                                                         }.
+                                                     </p>
                                                 </div>
                                             </div>
                                         </div>

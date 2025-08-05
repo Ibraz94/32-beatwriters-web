@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL:  'https://api.32beatwriters.staging.pegasync.com',
+  BASE_URL:  'http://localhost:4004',
   ENDPOINTS: {
     ARTICLES: '/api/articles',
     AUTH: '/api/users',
