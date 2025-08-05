@@ -270,11 +270,11 @@ function AccountContent() {
                         planName: stripeSubscription.items?.data?.[0]?.price?.product?.name || userData.membershipType || 'Premium Plan',
                         amount: stripeSubscription.plan?.amount || stripeSubscription.items?.data?.[0]?.price?.unit_amount,
                         interval: stripeSubscription.plan?.interval || stripeSubscription.items?.data?.[0]?.price?.recurring?.interval,
-                        currentPeriodEnd: stripeSubscription.current_period_end,
+                        currentPeriodEnd: stripeSubscription.items?.data?.[0]?.current_period_end,
                         // Handle next billing date for both active and cancelled subscriptions
                         nextBillingDate: stripeSubscription.cancel_at_period_end 
                             ? stripeSubscription.cancel_at 
-                            : stripeSubscription.current_period_end,
+                            : stripeSubscription.items?.data?.[0]?.current_period_end,
                         // Additional useful data
                         customerEmail: stripeSubscription.customer?.email,
                         membershipType: userData.membershipType,
@@ -285,6 +285,7 @@ function AccountContent() {
                         cancelledAt: stripeSubscription.canceled_at
                     }
 
+                    console.log('Mapped subscription data:', mappedSubscription)
                     setSubscription(mappedSubscription)
                 } else {
                     setSubscription(null)
