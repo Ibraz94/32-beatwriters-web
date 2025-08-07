@@ -218,6 +218,15 @@ export const nuggetsApi = createApi({
       query: () => '/followed/list',
       providesTags: ['Nugget'],
     }),
+
+    /**
+     * Get latest nuggets
+     * Returns the 3 most recent nuggets
+     */
+    getLatestNuggets: builder.query<{ success: boolean; data: Nugget[] }, void>({
+      query: () => '/latest',
+      providesTags: ['Nugget'],
+    }),
   }),
 })
 
@@ -233,4 +242,5 @@ export const {
   useUnsaveNuggetMutation,   // Hook for unsaving nuggets
   useGetSavedNuggetsQuery,   // Hook for getting saved nuggets
   useGetFollowedNuggetsQuery, // Hook for getting followed nuggets
+  useGetLatestNuggetsQuery,   // Hook for getting latest nuggets
 } = nuggetsApi 
