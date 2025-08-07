@@ -1,11 +1,10 @@
-import HeroSection from "../components/HeroSection";
+import LatestNuggets from "../components/LatestNuggets";
 import NewArticles from "../components/NewArticles";
 import BeatWritersComponent from "../components/BeatWritersComponent";
 import PodcastsComponent from "../components/PodcastsComponent";
 import FeedComponent from "../components/FeedComponent";
 import SubscriptionComponent from "../components/SubscriptionComponent";
 import DeliveredToComponent from "../components/DeliveredToComponent";
-import TrendingPlayers from "../components/TrendingPlayers";
 import TrustedByPartners from "../components/TrustedByComponent";
 
 
@@ -17,8 +16,7 @@ import TrustedByPartners from "../components/TrustedByComponent";
 export default function Home() {
   return (
     <div>
-      <HeroSection />
-      <TrendingPlayers />
+      <LatestNuggets />
       <TrustedByPartners />
       <NewArticles />
       <PodcastsComponent />
