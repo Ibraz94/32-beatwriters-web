@@ -692,14 +692,13 @@ export default function SavedNuggetsPage() {
                                             <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
                                                 <div className='flex mt-2 gap-2 ml-4 mr-4'>
                                                     <div
-                                                        className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
+                                                        className="cursor-pointer border rounded-full py-2 w-15 h-15 flex items-center justify-center relative"
                                                         onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
                                                     >
                                                         <Image
                                                             src={getImageUrl(nugget.player.headshotPic) || ''}
                                                             alt={`${nugget.player.name} headshot`}
-                                                            width={50}
-                                                            height={50}
+                                                            fill
                                                             className='rounded-full object-cover bg-background overflow-hidden'
                                                         />
                                                     </div>
