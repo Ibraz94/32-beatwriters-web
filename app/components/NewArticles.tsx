@@ -103,7 +103,7 @@ export default function NewArticles() {
                     <div className="lg:w-1/2 lg:order-2">
                         {featuredArticle && (
                             <Link href={getArticleHref(featuredArticle)} className="block group">
-                                <div className="relative h-64 sm:h-80 md:h-96 lg:h-[800px] overflow-hidden rounded-t-lg lg:rounded-none">
+                                <div className="relative h-64 sm:h-80 md:h-96 lg:h-[600px] overflow-hidden rounded-t-lg lg:rounded-lg">
                                     {/* Background Image */}
                                     {featuredArticle.featuredImage ? (
                                         <Image
@@ -160,12 +160,12 @@ export default function NewArticles() {
                     </div>
 
                     {/* Latest Articles - Second on mobile, Left side on desktop */}
-                    <div className="lg:w-1/2 lg:order-1 p-4 md:p-6 lg:p-8">
-                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-oswald font-bold text-white mb-4 md:mb-6 lg:mb-8">
+                    <div className="lg:w-1/2 lg:order-2 p-4 md:p-6 lg:p-8">
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-oswald font-bold text-white mb-4 md:mb-6 lg:mb-12">
                             Latest Articles
                         </h2>
 
-                        <div className="space-y-4 md:space-y-6 max-h-[400px] sm:max-h-[500px] md:max-h-[600px] lg:max-h-[650px] overflow-y-auto pr-0 lg:pr-2 custom-scrollbar">
+                        <div className="space-y-4 md:space-y-6 max-h-[400px] sm:max-h-[500px] md:max-h-[600px] lg:max-h-[410px] overflow-y-auto pr-0 lg:pr-2 custom-scrollbar">
                             {sidebarArticles.map((article: Article) => (
                                 <Link
                                     key={article.id}

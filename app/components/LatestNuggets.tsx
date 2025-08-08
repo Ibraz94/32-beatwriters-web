@@ -116,14 +116,13 @@ export default function LatestNuggets() {
                   <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
                     <div className='flex items-center gap-2 ml-4 mr-4'>
                       <div
-                        className="cursor-pointer border rounded-full p-0 w-12 h-12 flex items-center justify-center"
+                        className="cursor-pointer border rounded-full p-0 w-15 h-15 flex items-center justify-center relative"
                         onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
                       >
                         <Image
                           src={getImageUrl(nugget.player.headshotPic) || ''}
                           alt={`${nugget.player.name} headshot`}
-                          width={50}
-                          height={50}
+                          fill
                           className='rounded-full object-cover bg-background overflow-hidden'
                         />
                       </div>
@@ -201,7 +200,7 @@ export default function LatestNuggets() {
       {latestNuggets.length > 0 && (
             <div className="text-center py-8">
               <Link
-                href="/nuggets"
+                href="/subscribe"
                 className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-2"
               >
                 Subscribe to See All the Latest News

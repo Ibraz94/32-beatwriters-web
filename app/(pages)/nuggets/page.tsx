@@ -740,22 +740,21 @@ export default function NuggetsPage() {
                             </div>
                         ) : (
                             <div className="max-h-[calc(100vh-300px)] overflow-y-auto pr-4 custom-scrollbar">
-                                <div className="space-y-6">
+                                <div className="space-y-2">
                                     {displayNuggets.map((nugget, index) => {
                                         const playerTeam = findTeamByKey(nugget.player.team)
                                         // const router = useRouter()
                                         return (
                                             <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                                                <div className='flex mt-8 gap-2 ml-4 mr-4'>
+                                                <div className='flex mt-2 gap-2 ml-4 mr-4'>
                                                     <div
-                                                        className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
+                                                        className="cursor-pointer border rounded-full py-2 w-15 h-15 flex items-center justify-center relative"
                                                         onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
                                                     >
                                                         <Image
                                                             src={getImageUrl(nugget.player.headshotPic) || ''}
                                                             alt={`${nugget.player.name} headshot`}
-                                                            width={50}
-                                                            height={50}
+                                                            fill
                                                             className='rounded-full object-cover bg-background overflow-hidden'
                                                         />
                                                     </div>
@@ -803,30 +802,30 @@ export default function NuggetsPage() {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className="px-6 py-4 border-t border-white/20 mt-3">
+                                                <div className="px-6 border-white/20 mt-2">
                                                     <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
-                                                <div className='px-6 py-2'>
+                                                <div className='px-6'>
                                                     {nugget.fantasyInsight && (
                                                         <>
-                                                            <h1 className='font-semibold mt-4 text-red-800'>Fantasy Insight:</h1>
+                                                            <h1 className='font-semibold mt-2 text-red-800'>Fantasy Insight:</h1>
                                                             {fantasyInsight(nugget.fantasyInsight)}
                                                         </>
                                                     )}
                                                 </div>
 
-                                                <div className='px-6 py-4 border-b border-white/20'>
-                                                    <div className='flex flex-col mt-1 -mb-8 text-sm'>
+                                                <div className='px-6 border-b border-white/20'>
+                                                    <div className='flex flex-col mt-1 text-sm'>
                                                         {nugget.sourceUrl && (
-                                                            <>
+                                                            <div className='mt-2 -mb-7'>
                                                                 <div className=''>Source:
                                                                     <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
                                                                         ? nugget.sourceUrl
                                                                         : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link></div>
-                                                            </>
+                                                            </div>
                                                         )}
                                                     </div>
-                                                    <h1 className='text-right text-gray-400 mt-2 text-sm'>
+                                                    <h1 className='text-right text-gray-400 mt-2 mb-2 text-sm'>
                                                         {new Date(nugget.createdAt).toLocaleDateString('en-US', {
                                                             year: 'numeric',
                                                             month: 'short',
