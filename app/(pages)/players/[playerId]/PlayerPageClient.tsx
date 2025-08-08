@@ -1607,14 +1607,14 @@ export default function PlayerPageClient({ id }: any) {
 
                         <div className="h-36 w-px bg-white/20"></div>
                         <div className="flex flex-col gap-3">
-                            <div className="flex flex-col items-start leading-tight">
+                            {/* <div className="flex flex-col items-start leading-tight">
                                 <h1 className="text-[#796D97]">
                                     BMI
                                 </h1>
                                 <h1>
                                     {player?.Core?.BMI} ({player?.Core?.['BMI Rank']}th)
                                 </h1>
-                            </div>
+                            </div> */}
                             <div className="flex flex-col items-start leading-tight">
                                 <h1 className="text-[#796D97]">
                                     Status
