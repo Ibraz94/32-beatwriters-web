@@ -740,13 +740,13 @@ export default function NuggetsPage() {
                             </div>
                         ) : (
                             <div className="max-h-[calc(100vh-300px)] overflow-y-auto pr-4 custom-scrollbar">
-                                <div className="space-y-6">
+                                <div className="space-y-2">
                                     {displayNuggets.map((nugget, index) => {
                                         const playerTeam = findTeamByKey(nugget.player.team)
                                         // const router = useRouter()
                                         return (
                                             <div key={`${nugget.id}-${index}`} className="overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                                                <div className='flex mt-8 gap-2 ml-4 mr-4'>
+                                                <div className='flex mt-2 gap-2 ml-4 mr-4'>
                                                     <div
                                                         className="cursor-pointer border rounded-full py-2 w-12 h-12 flex items-center justify-center"
                                                         onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
@@ -803,20 +803,20 @@ export default function NuggetsPage() {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className="px-6 py-4 border-t border-white/20 mt-3">
+                                                <div className="px-6 py-2 borde border-white/20 mt-2">
                                                     <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
                                                 <div className='px-6 py-2'>
                                                     {nugget.fantasyInsight && (
                                                         <>
-                                                            <h1 className='font-semibold mt-4 text-red-800'>Fantasy Insight:</h1>
+                                                            <h1 className='font-semibold mt-2 text-red-800'>Fantasy Insight:</h1>
                                                             {fantasyInsight(nugget.fantasyInsight)}
                                                         </>
                                                     )}
                                                 </div>
 
-                                                <div className='px-6 py-4 border-b border-white/20'>
-                                                    <div className='flex flex-col mt-1 -mb-8 text-sm'>
+                                                <div className='px-6 py-1 border-b border-white/20'>
+                                                    <div className='flex flex-col mt-1 -mb-6 text-sm'>
                                                         {nugget.sourceUrl && (
                                                             <>
                                                                 <div className=''>Source:
