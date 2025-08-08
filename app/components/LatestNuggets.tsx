@@ -200,7 +200,7 @@ export default function LatestNuggets() {
       {latestNuggets.length > 0 && (
             <div className="text-center py-8">
               <Link
-                href="/nuggets"
+                href="/subscribe"
                 className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-2"
               >
                 Subscribe to See All the Latest News
