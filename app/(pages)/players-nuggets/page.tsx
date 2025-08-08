@@ -754,10 +754,10 @@ export default function PlayersNuggetsPage() {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className="px-6 py-4 border-white/20 mt-3">
+                                                <div className="px-6 border-white/20 mt-3">
                                                     <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
-                                                <div className='px-6 py-2'>
+                                                <div className='px-6'>
                                                     {nugget.fantasyInsight && (
                                                         <>
                                                             <h1 className='font-semibold mt-2 text-red-800'>Fantasy Insight:</h1>
@@ -767,7 +767,7 @@ export default function PlayersNuggetsPage() {
                                                         </>
                                                     )}
                                                 </div>
-                                                <div className='px-6 py-2'>
+                                                <div className='px-6'>
                                                     {nugget.images && nugget.images.length > 0 && (
                                                         <div className="grid grid-cols-2 gap-2 mt-4">
                                                             {nugget.images.slice(0, 4).map((image, imgIndex) => (
@@ -804,7 +804,7 @@ export default function PlayersNuggetsPage() {
                                                         </>
                                                     )}
                                                 </div>
-                                                <h1 className='text-right text-gray-400 mt-2 text-sm'>
+                                                <h1 className='text-right text-gray-400 mt-2 mb-1 text-sm'>
                                                     {new Date(nugget.createdAt).toLocaleDateString('en-US', {
                                                         year: 'numeric',
                                                         month: 'short',

@@ -747,10 +747,10 @@ export default function SavedNuggetsPage() {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className="px-6 py-4 border-white/20 mt-3">
+                                                <div className="px-6 border-white/20 mt-3">
                                                     <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
-                                                <div className='px-6 py-2'>
+                                                <div className='px-6'>
                                                     {nugget.fantasyInsight && (
                                                         <>
                                                             <h1 className='font-semibold mt-2 text-red-800'>Fantasy Insight:</h1>
@@ -759,8 +759,8 @@ export default function SavedNuggetsPage() {
                                                     )}
                                                 </div>
 
-                                                <div className='px-6 py-1 border-b border-white/20'>
-                                                    <div className='flex flex-col mt-1 -mb-6 text-sm'>
+                                                <div className='px-6 border-b border-white/20'>
+                                                    <div className='flex flex-col mt-2 -mb-5 text-sm'>
                                                         {nugget.sourceUrl && (
                                                             <>
                                                                 <div className=''>Source:
@@ -770,7 +770,7 @@ export default function SavedNuggetsPage() {
                                                             </>
                                                         )}
                                                     </div>
-                                                    <h1 className='text-right text-gray-400 mt-2 text-sm'>
+                                                    <h1 className='text-right text-gray-400 mt-2 mb-1 text-sm'>
                                                         {new Date(nugget.createdAt).toLocaleDateString('en-US', {
                                                             year: 'numeric',
                                                             month: 'short',

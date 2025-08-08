@@ -803,10 +803,10 @@ export default function NuggetsPage() {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div className="px-6 py-2 borde border-white/20 mt-2">
+                                                <div className="px-6 border-white/20 mt-2">
                                                     <ReadMore id={nugget.id} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
-                                                <div className='px-6 py-2'>
+                                                <div className='px-6'>
                                                     {nugget.fantasyInsight && (
                                                         <>
                                                             <h1 className='font-semibold mt-2 text-red-800'>Fantasy Insight:</h1>
@@ -815,18 +815,18 @@ export default function NuggetsPage() {
                                                     )}
                                                 </div>
 
-                                                <div className='px-6 py-1 border-b border-white/20'>
-                                                    <div className='flex flex-col mt-1 -mb-6 text-sm'>
+                                                <div className='px-6 border-b border-white/20'>
+                                                    <div className='flex flex-col mt-1 text-sm'>
                                                         {nugget.sourceUrl && (
-                                                            <>
+                                                            <div className='mt-2 -mb-7'>
                                                                 <div className=''>Source:
                                                                     <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
                                                                         ? nugget.sourceUrl
                                                                         : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link></div>
-                                                            </>
+                                                            </div>
                                                         )}
                                                     </div>
-                                                    <h1 className='text-right text-gray-400 mt-2 text-sm'>
+                                                    <h1 className='text-right text-gray-400 mt-2 mb-2 text-sm'>
                                                         {new Date(nugget.createdAt).toLocaleDateString('en-US', {
                                                             year: 'numeric',
                                                             month: 'short',
