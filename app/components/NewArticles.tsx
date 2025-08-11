@@ -30,12 +30,18 @@ export default function NewArticles() {
         if (articleAccess === 'public') return true;
 
         // Check if user is admin using case-insensitive comparison
-        const userRole = user?.roles.id;
-        const isAdminByRole = userRole === 1 || userRole === 2 || userRole === 3 || userRole === 4;
+        // Check if user is admin using case-insensitive comparison
+        const userRole = user?.roles.id
+        const userMembership = user?.memberships.id
+        const isAdminByRole = userRole === 1 || userRole === 5
+        const isProByMembership = userMembership === 2 || userMembership === 3
 
         // Administrators can access all articles
         if (isAdminByRole) {
             return true;
+        }
+        if (isProByMembership) {
+            return true
         }
 
         if (articleAccess === 'pro' || articleAccess === 'lifetime') {
@@ -98,7 +104,7 @@ export default function NewArticles() {
         <section className="mt-2 md:mt-12 px-4 md:px-0 container mx-auto">
             <div className="bg-[#2C204B] rounded-lg">
                 <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
-                    
+
                     {/* Featured Article - First on mobile, Right side on desktop */}
                     <div className="lg:w-1/2 lg:order-2">
                         {featuredArticle && (

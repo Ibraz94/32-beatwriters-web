@@ -82,7 +82,7 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
     useEffect(() => {
     }, [article, articleLoading, error])
 
-    console.log("article",article)
+    console.log("article", article)
 
     // Add debugging for recent articles
     useEffect(() => {
@@ -91,27 +91,33 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
 
 
     // Helper function to check if user can access an article
-  const canAccessArticle = (articleAccess: string) => {
-    if (articleAccess === 'public') return true
+    const canAccessArticle = (articleAccess: string) => {
+        if (articleAccess === 'public') return true
 
-    // Check if user is admin using case-insensitive comparison
-    const userRole = user?.roles.id
-    const isAdminByRole = userRole === 1 || userRole === 2 || userRole === 3 || userRole === 4
+        // Check if user is admin using case-insensitive comparison
+        // Check if user is admin using case-insensitive comparison
+        const userRole = user?.roles.id
+        const userMembership = user?.memberships.id
+        const isAdminByRole = userRole === 1 || userRole === 5
+        const isProByMembership = userMembership === 2 || userMembership === 3
 
-    // Administrators can access all articles
-    if (isAdminByRole) {
-      console.log('✅ Administrator access granted for article:', articleAccess)
-      return true
+        // Administrators can access all articles
+        if (isAdminByRole) {
+            console.log('✅ Administrator access granted for article:', articleAccess)
+            return true
+        }
+        if (isProByMembership) {
+            return true
+        }
+
+        if (articleAccess.includes('pro') || articleAccess.includes('lifetime')) {
+            return hasPremiumAccess
+        }
+        return false
     }
-
-    if (articleAccess.includes('pro') || articleAccess.includes('lifetime')) {
-      return hasPremiumAccess
-    }
-    return false
-  }
 
     // const canAccess = canAccessArticle(articleData?.access)
-    const canAccess = canAccessArticle(article?.access??'pro');
+    const canAccess = canAccessArticle(article?.access ?? 'pro');
 
 
     if (articleLoading || authLoading || recentLoading) {
@@ -177,7 +183,7 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
                     <h1 className="text-4xl font-bold mb-10">{article.title}</h1>
 
                     {/* Display ArticleCTA only if user is not authenticated */}
-                    {!isAuthenticated  && article.access==='public' &&<ArticleCTA />}
+                    {!isAuthenticated && article.access === 'public' && <ArticleCTA />}
 
                     <div className="prose max-w-none prose" />
                     {(() => {
