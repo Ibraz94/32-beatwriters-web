@@ -793,16 +793,21 @@ export default function PlayersNuggetsPage() {
                                                     )}
                                                 </div>
                                                 <div className='px-6 border-b border-white/20'>
-                                                <div className='flex flex-col mt-2 -mb-5 text-sm'>
-                                                    {nugget.sourceUrl && (
-                                                        <>
-                                                            <div className=''>Source:
-                                                                <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
-                                                                    ? nugget.sourceUrl
-                                                                    : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link></div>
-                                                        </>
-                                                    )}
-                                                </div>
+                                                <div className='flex flex-col mt-1 text-sm'>
+                                                        {nugget.sourceUrl && (
+                                                            <div className='mt-2 -mb-7'>
+                                                                    <div className='flex items-center gap-2'>
+                                                                        <span>Source:</span>
+                                                                        <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
+                                                                            ? nugget.sourceUrl
+                                                                            : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link>
+                                                                        {nugget.urlIcon && (
+                                                                            <img src={(nugget.urlIcon) || ''} alt='icon' className='h-6 w-6' />
+                                                                        )}
+                                                                    </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 <h1 className='text-right text-gray-400 mt-2 mb-1 text-sm'>
                                                     {new Date(nugget.createdAt).toLocaleDateString('en-US', {
                                                         year: 'numeric',

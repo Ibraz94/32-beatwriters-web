@@ -19,6 +19,7 @@ export interface Nugget {
   createdAt: string
   updatedAt: string
   isSaved?: boolean
+  urlIcon: string | null
   player: {
     id: number
     playerId: string
@@ -59,6 +60,7 @@ export interface NuggetFilters {
   startDate?: string
   saved?: boolean
   followedPlayers?: boolean
+  urlIcon?: string | null
 }
 
 // Helper function to construct full image URLs
