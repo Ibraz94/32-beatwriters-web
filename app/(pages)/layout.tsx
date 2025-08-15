@@ -7,6 +7,7 @@ import { ThemeProvider } from "../components/ThemeProvider";
 import { ReduxProvider } from "../../lib/providers/ReduxProvider";
 import { ToastProvider } from "../components/Toast";
 import IOSScrollFix from "../components/IOSScrollFix";
+import ErrorBoundary from "../../components/ErrorBoundary";
 // import Head from "next/head"; // No longer needed for Open Graph with Metadata export
 
 const cabin = Cabin({
@@ -54,21 +55,23 @@ export default function RootLayout({
       <body
         className={`${cabin.variable} ${oswald.variable} antialiased bg-white text-black dark:bg-[#18122B] dark:text-white`}
       >
-        <ReduxProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <ToastProvider>
-              <IOSScrollFix />
-              <Header />
-              {children}
-              <Footer />
-            </ToastProvider>
-          </ThemeProvider>
-        </ReduxProvider>
+        <ErrorBoundary>
+          <ReduxProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <ToastProvider>
+                <IOSScrollFix />
+                <Header />
+                {children}
+                <Footer />
+              </ToastProvider>
+            </ThemeProvider>
+          </ReduxProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

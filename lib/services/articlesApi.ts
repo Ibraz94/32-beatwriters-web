@@ -101,6 +101,12 @@ export const articlesApi = createApi({
         if (result.error.status === 500) {
           return { error: { status: 500, data: 'Server error' } }
         }
+        if (result.error.status === 401) {
+          return { error: { status: 401, data: 'Unauthorized' } }
+        }
+        if (result.error.status === 403) {
+          return { error: { status: 403, data: 'Forbidden' } }
+        }
       }
 
       return result
@@ -115,25 +121,51 @@ export const articlesApi = createApi({
     // Get all articles with filtering and pagination
     getArticles: builder.query<ArticlesResponse, ArticleFilters>({
       query: (filters) => {
-        const params = new URLSearchParams()
-        Object.entries(filters).forEach(([key, value]) => {
-          if (value !== undefined) {
-            if (Array.isArray(value)) {
-              value.forEach(v => params.append(key, v))
-            } else {
-              params.append(key, value.toString())
+        try {
+          const params = new URLSearchParams()
+          Object.entries(filters).forEach(([key, value]) => {
+            if (value !== undefined) {
+              if (Array.isArray(value)) {
+                value.forEach(v => params.append(key, v))
+              } else {
+                params.append(key, value.toString())
+              }
             }
-          }
-        })
-        return `?${params.toString()}`
+          })
+          return `?${params.toString()}`
+        } catch (error) {
+          console.error('Error building query params:', error)
+          return ''
+        }
       },
       providesTags: ['Article'],
+      // Add error handling for the query
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          console.error('Articles query failed:', error)
+        }
+      },
     }),
     
     // Get single article by slug
     getArticle: builder.query<Article, string>({
-      query: (slug) => `/${slug}`,
+      query: (slug) => {
+        if (!slug) {
+          throw new Error('Article slug is required')
+        }
+        return `/${slug}`
+      },
       providesTags: (result, error, slug) => [{ type: 'Article', id: slug }],
+      // Add error handling for the query
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled
+        } catch (error) {
+          console.error('Article query failed:', error)
+        }
+      },
     }),
     
     // Get featured articles

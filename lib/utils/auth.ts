@@ -127,16 +127,40 @@ export const getUserAvatarUrl = (user: User | null): string | null => {
 // Check if user has premium access
 export const hasPremiumAccess = (memberships?: User['memberships']): boolean => {
   if (!memberships) return false
-  return memberships.type === '' || memberships.type === 'pro' || memberships.type === 'lifetime'
+  
+  try {
+    // Handle array structure
+    if (Array.isArray(memberships)) {
+      return memberships.some(membership => 
+        membership?.type === 'pro' || membership?.type === 'lifetime'
+      )
+    }
+    
+    // Handle object structure
+    if (typeof memberships === 'object' && memberships !== null) {
+      const type = (memberships as any).type
+      return type === 'pro' || type === 'lifetime'
+    }
+    
+    return false
+  } catch (error) {
+    console.warn('Error checking premium access:', error)
+    return false
+  }
 }
 
 // Check if user has specific role
 export const hasRole = (requiredRole: User['roles']): boolean => {
-  const user = getUserData()
-  if (!user) return false
-  
-  // Admin has access to everything
-  if (user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4) return true
-  
-  return user.roles.id === requiredRole.id || user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4
+  try {
+    const user = getUserData()
+    if (!user || !user.roles) return false
+    
+    // Admin has access to everything
+    if (user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4) return true
+    
+    return user.roles.id === requiredRole.id || user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4
+  } catch (error) {
+    console.warn('Error checking user role:', error)
+    return false
+  }
 } 

@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { getImageUrl } from '@/lib/services/articlesApi'
 import ArticlePageClient from './ArticlePageClient'
 import { buildApiUrl, API_CONFIG } from '@/lib/config/api'
+import { Suspense } from 'react'
 
 // Generate metadata for the article page
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -55,7 +56,30 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+interface ArticlePageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function ArticlePage({ params }: ArticlePageProps) {
   const { id } = await params
-  return <ArticlePageClient id={id} />
+  
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded mb-4"></div>
+            <div className="h-64 bg-gray-200 rounded mb-6"></div>
+            <div className="space-y-3">
+              <div className="h-4 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-gray-200 rounded"></div>
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <ArticlePageClient id={id} />
+    </Suspense>
+  )
 }
