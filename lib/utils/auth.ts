@@ -156,9 +156,9 @@ export const hasRole = (requiredRole: User['roles']): boolean => {
     if (!user || !user.roles) return false
     
     // Admin has access to everything
-    if (user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4) return true
+    if (user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4 || user.roles.id === 5) return true
     
-    return user.roles.id === requiredRole.id || user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4
+    return user.roles.id === requiredRole.id || user.roles.id === 1 || user.roles.id === 2 || user.roles.id === 3 || user.roles.id === 4 || user.roles.id === 5
   } catch (error) {
     console.warn('Error checking user role:', error)
     return false
