@@ -267,7 +267,7 @@ export default function PlayerPageClient({ id }: any) {
     }
 
    // Show authentication required message if not authenticated or has insufficient membership
-    if (!authLoading && (!isAuthenticated || (user?.memberships?.id !== undefined && user?.memberships?.id < 2))) {
+    if (!authLoading && (!isAuthenticated || (user?.memberships && user.memberships.id !== undefined && user.memberships.id < 2))) {
         return (
             <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
                 <div className="max-w-6xl mx-auto text-center">

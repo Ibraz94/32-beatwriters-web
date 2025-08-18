@@ -230,7 +230,7 @@ export default function Login() {
                             <div className="text-sm">
                                 <Link
                                     href="/forgot-password"
-                                    className="font-medium text-red-800 hover:text-red-800 transition-colors"
+                                    className="font-medium text-red-800 hover:underline transition-colors"
                                 >
                                     Forgot your password?
                                 </Link>

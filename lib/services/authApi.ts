@@ -141,8 +141,8 @@ export const authApi = createApi({
 
     updatePassword: builder.mutation<{ message: string }, UpdatePasswordRequest>({
       query: (data) => ({
-        url: '/profile/password',
-        method: 'PUT',
+        url: '/password',
+        method: 'PATCH',
         body: data,
       }),
     }),

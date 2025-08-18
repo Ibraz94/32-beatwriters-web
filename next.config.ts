@@ -17,13 +17,32 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'api.32beatwriters.staging.pegasync.com',
         port: '',
+      }
+    ],
+  },
+  async redirects() {
+    return [
+      {
+        source: '/our-blog',
+        destination: '/articles',
+        permanent: true,
       },
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '4004',
+        source: '/our-blog/',
+        destination: '/articles',
+        permanent: true,
       },
-    ],
+      {
+        source: '/about-us',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/about-us/',
+        destination: '/',
+        permanent: true,
+      },
+    ];
   },
 };
 

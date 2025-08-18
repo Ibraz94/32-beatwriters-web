@@ -80,32 +80,44 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
 
     // Add debugging to see the response structure
     useEffect(() => {
+        if (error) {
+            console.error('Article fetch error:', error)
+        }
     }, [article, articleLoading, error])
-
-    console.log("article", article)
 
     // Add debugging for recent articles
     useEffect(() => {
-        console.log('Recent Articles Data:', recentArticlesData?.data?.articles)
+        if (recentArticlesData?.data?.articles) {
+            console.log('Recent Articles Data:', recentArticlesData.data.articles)
+        }
     }, [recentArticlesData])
-
 
     // Helper function to check if user can access an article
     const canAccessArticle = (articleAccess: string) => {
-        if (articleAccess === 'public') return true
+        if (!articleAccess || articleAccess === 'public') return true
 
-        // Check if user is admin using case-insensitive comparison
-        // Check if user is admin using case-insensitive comparison
-        const userRole = user?.roles.id
-        const userMembership = user?.memberships.id
+        // Safely check user role and membership
+        const userRole = user?.roles?.id
+        const userMembership = user?.memberships?.id
+        
+        // Handle both array and object structures for memberships
+        let isProByMembership = false
+        if (Array.isArray(user?.memberships)) {
+            isProByMembership = user.memberships.some(membership => 
+                membership?.id === 2 || membership?.id === 3
+            )
+        } else if (userMembership) {
+            isProByMembership = userMembership === 2 || userMembership === 3
+        }
+
         const isAdminByRole = userRole === 1 || userRole === 5
-        const isProByMembership = userMembership === 2 || userMembership === 3
 
         // Administrators can access all articles
         if (isAdminByRole) {
             console.log('✅ Administrator access granted for article:', articleAccess)
             return true
         }
+        
         if (isProByMembership) {
             return true
         }
@@ -116,9 +128,7 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
         return false
     }
 
-    // const canAccess = canAccessArticle(articleData?.access)
-    const canAccess = canAccessArticle(article?.access ?? 'pro');
-
+    const canAccess = canAccessArticle(article?.access ?? 'pro')
 
     if (articleLoading || authLoading || recentLoading) {
         return (
@@ -155,20 +165,91 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
         )
     }
 
-    // Check if user has access to premium content
-    const hasAccess = isAuthenticated && Array.isArray(user?.memberships) && user.memberships.some(membership =>
-        membership.status === 'active' && membership.plan?.access === 'pro'
-    )
+    // Check if user has access to premium content - safely handle different data structures
+    const hasAccess = isAuthenticated && (() => {
+        if (Array.isArray(user?.memberships)) {
+            return user.memberships.some(membership =>
+                membership?.status === 'active' && membership?.plan?.access === 'pro'
+            )
+        }
+        return false
+    })()
 
     // If article is premium and user doesn't have access, show premium access required
     if (!canAccess && !hasAccess) {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-6xl mx-auto">
-                    <PremiumAccessRequired content={article.content} />
+                    <PremiumAccessRequired content={article.content || ''} />
                 </div>
             </div>
         )
+    }
+
+    // Safe content rendering with error handling
+    const renderArticleContent = () => {
+        try {
+            if (!article.content) {
+                return <div>Content not available</div>
+            }
+
+            // Check if content starts with '{' and try to parse it as JSON
+            if (article.content.trim().startsWith('{')) {
+                try {
+                    const contentObj = JSON.parse(article.content)
+                    return <div dangerouslySetInnerHTML={{ __html: contentObj.content || article.content }} />
+                } catch (parseError) {
+                    console.warn('Failed to parse JSON content, falling back to raw content:', parseError)
+                    return <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                }
+            }
+            
+            // If not JSON, return original content
+            return <div dangerouslySetInnerHTML={{ __html: article.content }} />
+        } catch (error) {
+            console.error('Error rendering article content:', error)
+            return <div>Error loading content. Please refresh the page.</div>
+        }
+    }
+
+    // Safe image rendering
+    const renderArticleImage = () => {
+        try {
+            if (!article.featuredImage) {
+                return null
+            }
+            
+            const imageUrl = getImageUrl(article.featuredImage)
+            if (!imageUrl) {
+                return null
+            }
+
+            return (
+                <Image 
+                    src={imageUrl}
+                    alt={article.title || 'Article image'} 
+                    width={1000} 
+                    height={1000} 
+                    className="rounded mb-12 shadow-lg max-w-4xl" 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    onError={(e) => {
+                        console.warn('Failed to load article image:', e)
+                        // Hide the image on error
+                        const target = e.target as HTMLImageElement
+                        if (target) target.style.display = 'none'
+                    }}
+                />
+            )
+        } catch (error) {
+            console.error('Error rendering article image:', error)
+            return null
+        }
+    }
+
+    // Add error boundary test (remove in production)
+    if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+        // Test error boundary - uncomment to test
+        // if (Math.random() < 0.1) throw new Error('Test error for error boundary')
     }
 
     return (
@@ -176,31 +257,17 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
             <div className="max-w-6xl mx-auto article-container">
                 {/* Article Header */}
                 <div key={article.id}>
-                    <div className="flex justify-center ">
-                        <Image src={getImageUrl(article.featuredImage) || ''}
-                            alt={article.title} width={1000} height={1000} className="rounded mb-12 shadow-lg max-w-4xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+                    <div className="flex justify-center">
+                        {renderArticleImage()}
                     </div>
-                    <h1 className="text-4xl font-bold mb-10">{article.title}</h1>
+                    <h1 className="text-4xl font-bold mb-10">{article.title || 'Untitled Article'}</h1>
 
                     {/* Display ArticleCTA only if user is not authenticated */}
                     {!isAuthenticated && article.access === 'public' && <ArticleCTA />}
 
-                    <div className="prose max-w-none prose" />
-                    {(() => {
-                        try {
-                            // Check if content starts with '{' and try to parse it as JSON
-                            if (article.content.trim().startsWith('{')) {
-                                const contentObj = JSON.parse(article.content);
-                                return <div dangerouslySetInnerHTML={{ __html: contentObj.content || article.content }} />;
-                            }
-                            // If not JSON or parsing fails, return original content
-                            return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
-                        } catch (error) {
-                            // If JSON parsing fails, return original content
-                            console.error('Error parsing content:', error);
-                            return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
-                        }
-                    })()}
+                    <div className="prose max-w-none prose">
+                        {renderArticleContent()}
+                    </div>
                 </div>
 
                 {/* Recent Articles */}
@@ -208,14 +275,18 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
                     <h3 className="text-2xl font-bold mb-6">Recent Articles</h3>
                     <div className="grid md:grid-cols-3 gap-6">
                         {recentArticlesData?.data?.articles
-                            .filter((recentArticle: Article) => {
-                                console.log('Article being filtered:', recentArticle)
-                                return recentArticle.id !== article?.id
+                            ?.filter((recentArticle: Article) => {
+                                return recentArticle?.id && recentArticle.id !== article?.id
                             })
-                            .sort((a: Article, b: Article) => new Date(b.publishedAt || '').getTime() - new Date(a.publishedAt || '').getTime())
-                            .slice(0, 3)
-                            .map((recentArticle: Article) => {
-                                console.log('Rendering article:', recentArticle)
+                            ?.sort((a: Article, b: Article) => {
+                                const dateA = new Date(a.publishedAt || '').getTime()
+                                const dateB = new Date(b.publishedAt || '').getTime()
+                                return dateB - dateA
+                            })
+                            ?.slice(0, 3)
+                            ?.map((recentArticle: Article) => {
+                                if (!recentArticle?.id) return null
+                                
                                 return (
                                     <Link
                                         key={recentArticle.id}
@@ -231,6 +302,10 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
                                                     height={1000}
                                                     className="object-cover w-full h-full"
                                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    onError={(e) => {
+                                                        const target = e.target as HTMLImageElement
+                                                        if (target) target.style.display = 'none'
+                                                    }}
                                                 />
                                             </div>
                                             {recentArticle.access === 'pro' && (
@@ -244,12 +319,15 @@ export default function ArticlePageClient({ id }: ArticlePageClientProps) {
                                                 {recentArticle.title || 'Untitled Article'}
                                             </h4>
                                             <p className="text-sm text-gray-600 line-clamp-3">
-                                                {recentArticle.content?.substring(0, 100)}...
+                                                {recentArticle.content?.substring(0, 100) || 'No content available'}...
                                             </p>
                                             <div className="flex items-center justify-between mt-4 text-xs text-gray-500">
                                                 <div className="flex items-center gap-1">
                                                     <Calendar className="w-3 h-3" />
-                                                    {new Date(recentArticle.publishedAt || '').toLocaleDateString()}
+                                                    {recentArticle.publishedAt ? 
+                                                        new Date(recentArticle.publishedAt).toLocaleDateString() : 
+                                                        'Date not available'
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
