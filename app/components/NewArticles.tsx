@@ -4,13 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar, ArrowRight, TrendingUp, Lock } from "lucide-react";
 import { useGetArticlesQuery, Article, getImageUrl } from "@/lib/services/articlesApi";
-import { useAuth } from "@/lib/hooks/useAuth";
 import { useMemo } from "react";
 
 export default function NewArticles() {
-    const { isAuthenticated, checkPremiumAccess, user } = useAuth();
-    const hasPremiumAccess = checkPremiumAccess();
-
     // Fetch all articles (public, pro, and lifetime) to show in the grid
     const { data: articles, isLoading, error } = useGetArticlesQuery({
         page: 1,
@@ -24,42 +20,6 @@ export default function NewArticles() {
         refetchOnFocus: false,
         refetchOnReconnect: false
     });
-
-    // Helper function to check if user can access an article (same as articles page)
-    const canAccessArticle = useMemo(() => (articleAccess: string) => {
-        if (articleAccess === 'public') return true;
-
-        // Check if user is admin using case-insensitive comparison
-        // Check if user is admin using case-insensitive comparison
-        const userRole = user?.roles.id
-        const userMembership = user?.memberships.id
-        const isAdminByRole = userRole === 1 || userRole === 5
-        const isProByMembership = userMembership === 2 || userMembership === 3
-
-        // Administrators can access all articles
-        if (isAdminByRole) {
-            return true;
-        }
-        if (isProByMembership) {
-            return true
-        }
-
-        if (articleAccess === 'pro' || articleAccess === 'lifetime') {
-            return hasPremiumAccess;
-        }
-        return false;
-    }, [user?.roles.id, hasPremiumAccess]);
-
-    // Helper function to get the correct href based on access
-    const getArticleHref = useMemo(() => (article: Article) => {
-        const canAccess = canAccessArticle(article.access);
-
-        if (canAccess) {
-            return `/articles/${article.id}`;
-        } else {
-            return isAuthenticated ? '/subscribe' : '/login';
-        }
-    }, [canAccessArticle, isAuthenticated]);
 
     // Helper function to format date
     const formatDate = (dateString: string) => {
@@ -108,7 +68,7 @@ export default function NewArticles() {
                     {/* Featured Article - First on mobile, Right side on desktop */}
                     <div className="lg:w-1/2 lg:order-2">
                         {featuredArticle && (
-                            <Link href={getArticleHref(featuredArticle)} className="block group">
+                            <Link href={`/articles/${featuredArticle.id}`} className="block group">
                                 <div className="relative h-64 sm:h-80 md:h-96 lg:h-[600px] overflow-hidden rounded-t-lg lg:rounded-lg">
                                     {/* Background Image */}
                                     {featuredArticle.featuredImage ? (
@@ -145,20 +105,6 @@ export default function NewArticles() {
                                             {featuredArticle.title}
                                         </h2>
 
-                                        {/* Premium Badge for Featured */}
-                                        {(featuredArticle.access === 'pro' || featuredArticle.access === 'lifetime') && (
-                                            <div className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
-                                                <Lock className="h-3 w-3 md:h-4 md:w-4 text-amber-400" />
-                                                <span className="text-amber-400 font-medium">
-                                                    {!isAuthenticated
-                                                        ? 'Login required to read'
-                                                        : !hasPremiumAccess
-                                                            ? 'Premium subscription required'
-                                                            : 'Premium content'
-                                                    }
-                                                </span>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </Link>
@@ -175,7 +121,7 @@ export default function NewArticles() {
                             {sidebarArticles.map((article: Article) => (
                                 <Link
                                     key={article.id}
-                                    href={getArticleHref(article)}
+                                    href={`/articles/${article.id}`}
                                     className="flex flex-col sm:flex-row gap-3 md:gap-4 hover:opacity-90 transition-opacity duration-300 group"
                                 >
                                     {/* Article Image */}
@@ -195,12 +141,6 @@ export default function NewArticles() {
                                             </div>
                                         )}
 
-                                        {/* Premium Badge */}
-                                        {(article.access === 'pro' || article.access === 'lifetime') && (
-                                            <div className="absolute top-1 right-1 bg-amber-500 text-white px-1.5 py-0.5 rounded text-xs font-bold flex items-center gap-1">
-                                                <Lock className="h-2 w-2" />
-                                            </div>
-                                        )}
                                     </div>
 
                                     {/* Article Content */}
@@ -226,20 +166,6 @@ export default function NewArticles() {
                                             })()}
                                         </div>
 
-                                        {/* Premium Content Notice */}
-                                        {(article.access === 'pro' || article.access === 'lifetime') && (
-                                            <div className="flex items-center gap-1 text-xs">
-                                                <Lock className="h-3 w-3 text-amber-400" />
-                                                <span className="text-amber-400 font-medium">
-                                                    {!isAuthenticated
-                                                        ? 'Login required'
-                                                        : !hasPremiumAccess
-                                                            ? 'Premium required'
-                                                            : 'Premium content'
-                                                    }
-                                                </span>
-                                            </div>
-                                        )}
                                     </div>
                                 </Link>
                             ))}
