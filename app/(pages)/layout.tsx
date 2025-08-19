@@ -30,9 +30,9 @@ export const metadata: Metadata = {
     description: "Your Home For all NFL, Prospect and Fantasy Football News.",
     images: "/logo-small.webp",
     type: "website",
-    url: "https://32-beatwriters-web.vercel.app/", // **IMPORTANT: Update this to your actual production URL**
+    url: "https://32beatwriters.com/", // **IMPORTANT: Update this to your actual production URL**
   },
-  metadataBase: new URL("https://32-beatwriters-web.vercel.app/"), // Set the base URL for production
+  metadataBase: new URL("https://32beatwriters.com/"), // Set the base URL for production
   viewport: {
     width: 'device-width',
     initialScale: 1,
