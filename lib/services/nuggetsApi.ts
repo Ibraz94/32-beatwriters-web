@@ -20,6 +20,7 @@ export interface Nugget {
   updatedAt: string
   isSaved?: boolean
   urlIcon: string | null
+  isNew: string
   player: {
     id: number
     playerId: string
@@ -229,6 +230,14 @@ export const nuggetsApi = createApi({
       query: () => '/latest',
       providesTags: ['Nugget'],
     }),
+    /**
+     * Get new player nuggets (first nugget for a player, added recently)
+     * Returns a list of nuggets for players who previously had none and now have one, created within the last hour.
+     */
+    getNewPlayerNuggets: builder.query<{ success: boolean; data: { nuggets: Nugget[], pagination: any } }, void>({
+      query: () => '/new-players',
+      providesTags: ['Nugget'], // Consider if a new tag type is needed if caching behavior differs
+    }),
   }),
 })
 
@@ -245,4 +254,5 @@ export const {
   useGetSavedNuggetsQuery,   // Hook for getting saved nuggets
   useGetFollowedNuggetsQuery, // Hook for getting followed nuggets
   useGetLatestNuggetsQuery,   // Hook for getting latest nuggets
+  useGetNewPlayerNuggetsQuery, // Hook for getting new player nuggets
 } = nuggetsApi 

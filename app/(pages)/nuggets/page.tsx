@@ -35,6 +35,8 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
 import { useGetPlayersQuery, Player } from '@/lib/services/playersApi'
+import TrendingPlayers from '@/app/components/TrendingPlayers' // Import the TrendingPlayers component
+import NewPlayerNuggetsSection from '@/app/components/NewPlayerNuggetsSection' // Import the new component
 
 
 interface NuggetFilters {
@@ -870,6 +872,7 @@ export default function NuggetsPage() {
                     {/* Trending Players Sidebar */}
                     <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
                         <TrendingPlayers />
+                        <NewPlayerNuggetsSection /> {/* Add the new component here */}
                     </div>
                 </div>
             </div>
