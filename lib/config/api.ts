@@ -11,6 +11,7 @@ export const API_CONFIG = {
     NUGGETS: '/api/nuggets',
     SAVED_NUGGETS: '/api/nuggets/saved/list',
     PLAYERS: '/api/players',
+    TRENDING_PLAYERS: '/api/players/trending',
     PODCASTS: '/api/podcasts',
     SUBSCRIPTION: '/api/subscription',
     TEAMS: '/api/teams',

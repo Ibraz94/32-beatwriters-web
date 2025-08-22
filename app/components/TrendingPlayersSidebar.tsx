@@ -2,97 +2,13 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useGetPlayersQuery, getImageUrl, Player } from '@/lib/services/playersApi'
-import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
+import { useGetTrendingPlayersQuery, getImageUrl } from '@/lib/services/playersApi'
+import { getTeamLogoUrl } from '@/lib/services/teamsApi'
 
 export default function TrendingPlayersSidebar() {
-    const targetPlayerNames = [
-        'Emeka Egbuka',
-        'Kyle Pitts',
-        'Kyler Murray',
-        'Dont\'e Thornton',
-        'TreVeyon Henderson',
-    ];
+    const { data: trendingPlayersData, isLoading, error } = useGetTrendingPlayersQuery();
 
-    // Teams query
-    const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
-
-    // Helper function to find team by abbreviation or name
-    const findTeamByKey = (teamKey: string) => {
-        if (!teamsData?.teams || !teamKey) return null
-
-        return teamsData.teams.find(team =>
-            team.abbreviation?.toLowerCase() === teamKey.toLowerCase() ||
-            team.name?.toLowerCase() === teamKey.toLowerCase() ||
-            team.city?.toLowerCase() === teamKey.toLowerCase()
-        )
-    }
-
-    // Define separate queries for each player
-    const query1 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: targetPlayerNames[0], // Search for 'Emeka Egbuka'
-    });
-
-    const query2 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: targetPlayerNames[1], // Search for 'Kyle Pitts'
-    });
-
-    const query3 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: targetPlayerNames[2], // Search for 'Kyler Murray'
-    });
-
-    const query4 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: targetPlayerNames[3], // Search for 'Dont\'e Thornton'
-    });
-
-    const query5 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: targetPlayerNames[4], // Search for 'TreVeyon Henderson'
-    });
-
-    const playersQuery = [query1, query2, query3, query4, query5];
-
-    const allFoundPlayers: any[] = []
-    let isLoading = false
-    let hasError = false
-
-    playersQuery.forEach((query, index) => {
-        if (query.isLoading) isLoading = true
-        if (query.error) hasError = true
-        if (query.data?.data?.players) {
-            // Find the best match for each search
-            const players = query.data.data.players
-            const targetName = targetPlayerNames[index]
-            const bestMatch = players.find(player =>
-                player.name.toLowerCase().trim() === targetName.toLowerCase().trim()
-            ) || players[0] // If exact match not found, take the first result
-
-            if (bestMatch && !allFoundPlayers.some(p => p.id === bestMatch.id)) {
-                const updatedPlayer = {
-                    ...bestMatch,
-                    team: findTeamByKey(bestMatch.team || '') || { name: 'No team', logo: null }, // Handle case where team is not available
-                };
-
-                allFoundPlayers.push(updatedPlayer);
-            }
-        }
-    })
-
-    if (isLoading || isLoadingTeams) {
+    if (isLoading) {
         return (
             <div className="rounded-lg border border-[#2C204B]">
                 <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
@@ -116,7 +32,7 @@ export default function TrendingPlayersSidebar() {
         );
     }
 
-    if (hasError) {
+    if (error) {
         return (
             <div className="rounded-lg border border-[#2C204B]">
                 <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
@@ -129,13 +45,26 @@ export default function TrendingPlayersSidebar() {
         );
     }
 
+    if (!trendingPlayersData?.data || trendingPlayersData.data.length === 0) {
+        return (
+            <div className="rounded-lg border border-[#2C204B]">
+                <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
+                    <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+                </div>
+                <div className="p-4 text-center text-gray-500">
+                    No trending players available
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="rounded-lg border border-[#2C204B]">
             <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
                 <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
             </div>
             <div className="space-y-3">
-                {allFoundPlayers.map((player) => (
+                {trendingPlayersData.data.map((player) => (
                     <Link
                         key={player.id}
                         href={`/players/${player.id}`}
@@ -153,16 +82,16 @@ export default function TrendingPlayersSidebar() {
                             </div>
                             <span className="font-medium">{player.name}</span>
                         </div>
-                        {player.team && (
+                        {player.teamDetails && (
                             <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
                                 <Image
-                                    src={getTeamLogoUrl(player.team.logo) || ''}
-                                    alt={player.team?.name || 'Team logo'}
+                                    src={getTeamLogoUrl(player.teamDetails.logo) || ''}
+                                    alt={player.teamDetails.name || 'Team logo'}
                                     width={24}
                                     height={24}
                                     className="object-contain"
                                 />
-                                <p>{player.team?.name || 'No team'}</p>
+                                <p>{player.teamDetails.name || 'No team'}</p>
                             </div>
                         )}
                     </Link>
