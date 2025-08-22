@@ -660,6 +660,12 @@ export const playersApi = createApi({
       }),
       invalidatesTags: ['Player'],
     }),
+
+    // Get trending players
+    getTrendingPlayers: builder.query<{ players: Player[] }, void>({
+      query: () => '/trending',
+      providesTags: ['Player'],
+    }),
   }),
 })
 
@@ -691,6 +697,7 @@ export const playerProfilerApi = createApi({
   }),
 })
 
+
 export const {
   useGetPlayersQuery,
   useGetPositionsQuery,
@@ -701,6 +708,7 @@ export const {
   useGetFeaturedPlayersQuery,
   useFollowPlayerMutation,
   useUnfollowPlayerMutation,
+  useGetTrendingPlayersQuery,
 } = playersApi
 
 export const {
