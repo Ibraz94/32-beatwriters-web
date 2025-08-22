@@ -422,7 +422,25 @@ export default function NuggetsPage() {
 
 
         if (isLoading) {
-            return <div>Loading...</div>;
+            return <div className="rounded-lg border border-[#2C204B]">
+            <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
+                <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+            </div>
+            <div className="space-y-3 p-3">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 border-b border-[#2C204B] animate-pulse">
+                        <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200"></div>
+                            <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                            <div className="w-6 h-6 bg-gray-200 rounded"></div>
+                            <div className="h-3 bg-gray-200 rounded w-12"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
         }
 
         if (hasError) {
@@ -872,7 +890,7 @@ export default function NuggetsPage() {
                     {/* Trending Players Sidebar */}
                     <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
                         <TrendingPlayers />
-                        <NewPlayerNuggetsSection /> {/* Add the new component here */}
+                        <NewPlayerNuggetsSection />
                     </div>
                 </div>
             </div>

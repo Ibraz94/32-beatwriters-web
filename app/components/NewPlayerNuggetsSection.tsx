@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { ReadMore } from '@/app/components/ReadMore'
 import { useGetNewPlayerNuggetsQuery, getImageUrl, Nugget } from '@/lib/services/nuggetsApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter } from 'next/navigation'
@@ -17,10 +16,8 @@ export default function NewPlayerNuggetsSection() {
     error: newNuggetsError
   } = useGetNewPlayerNuggetsQuery()
 
-  // Teams query (for team logos)
   const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
 
-  // Helper function to find team by abbreviation or name
   const findTeamByKey = (teamKey: string | null) => {
     if (!teamsData?.teams || !teamKey) return null
 
@@ -35,11 +32,21 @@ export default function NewPlayerNuggetsSection() {
     return (
       <div className="rounded-lg border border-[#2C204B] mt-8">
         <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
-          <h2 className="text-white text-center text-xl">NEW PLAYER NUGGETS</h2>
+          <h2 className="text-white text-center text-xl">NEWLY MENTIONED PLAYERS</h2>
         </div>
-        <div className="p-4 text-center text-white">
-          <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-          <p>Loading new player nuggets...</p>
+        <div className="space-y-3 p-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center justify-between p-3 border-b border-[#2C204B] animate-pulse">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-gray-200"></div>
+                <div className="h-4 bg-gray-200 rounded w-20"></div>
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                <div className="w-6 h-6 bg-gray-200 rounded"></div>
+                <div className="h-3 bg-gray-200 rounded w-12"></div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     )
@@ -50,7 +57,7 @@ export default function NewPlayerNuggetsSection() {
     return (
       <div className="rounded-lg border border-[#2C204B] mt-8">
         <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
-          <h2 className="text-white text-center text-xl">NEW PLAYER NUGGETS</h2>
+          <h2 className="text-white text-center text-xl">NEWLY MENTIONED PLAYERS</h2>
         </div>
         <div className="p-4 text-center text-red-500">
           Failed to load new player nuggets.
@@ -59,15 +66,15 @@ export default function NewPlayerNuggetsSection() {
     )
   }
 
-  const newPlayerNuggets = newPlayerNuggetsData?.data?.nuggets?.slice(0, 3) || []
+  const newPlayerNuggets = newPlayerNuggetsData?.data?.nuggets || []
   if (newPlayerNuggets.length === 0) {
-    return null // Don't render the section if there are no new nuggets
+    return null
   }
 
   return (
     <div className="rounded-lg border border-[#2C204B] mt-8">
       <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
-        <h2 className="text-white text-center text-xl">NEW PLAYERS</h2>
+        <h2 className="text-white text-center text-xl">NEWLY MENTIONED PLAYERS</h2>
       </div>
       <div className="space-y-3">
         {newPlayerNuggets.map((nugget: Nugget) => {
@@ -89,17 +96,18 @@ export default function NewPlayerNuggetsSection() {
                   />
                 </div>
                 <span className="font-medium">{nugget.player.name}</span>
-                {nugget.isNew && <span className="ml-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">NEW</span>}
               </div>
               {playerTeam && (
                 <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
-                  <Image
-                    src={getTeamLogoUrl(playerTeam.logo) || ''}
-                    alt={playerTeam.name || 'Team logo'}
-                    width={24}
-                    height={24}
-                    className="object-contain"
-                  />
+                  <div className='flex gap-2'>
+                    <Image
+                      src={getTeamLogoUrl(playerTeam.logo) || ''}
+                      alt={playerTeam.name || 'Team logo'}
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
+                  </div>
                   <p>{playerTeam.name || 'No team'}</p>
                 </div>
               )}
