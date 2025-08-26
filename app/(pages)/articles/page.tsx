@@ -32,7 +32,6 @@ export default function ArticlesPage() {
   const { data: articles, isLoading, error, isFetching } = useGetArticlesQuery({
     page: page,
     limit: 12,
-    status: 'published',
     ...(debouncedSearchTerm && { search: debouncedSearchTerm })
   })
 
