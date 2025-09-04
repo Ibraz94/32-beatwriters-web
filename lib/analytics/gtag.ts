@@ -1,5 +1,5 @@
 // Google Analytics configuration and tracking functions
-export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
+export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-9YMCN3FK7T';
 
 // Check if GA is enabled
 export const isGAEnabled = !!GA_TRACKING_ID;
