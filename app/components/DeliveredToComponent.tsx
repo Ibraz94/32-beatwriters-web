@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import Image from "next/image"
 import { API_CONFIG, buildApiUrl } from '../../lib/config/api'; // assuming this path for API_CONFIG
+import { useAnalytics } from '../../lib/hooks/useAnalytics';
 
 export default function DeliveredToComponent() {
     const [email, setEmail] = useState('')
     const [message, setMessage] = useState('') // For displaying success or error message
     const [loading, setLoading] = useState(false)
+    const { trackNewsletterSignup } = useAnalytics()
 
     const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -29,6 +31,9 @@ export default function DeliveredToComponent() {
                 const data = await response.json()
                 setMessage(`${data.message} Thank you for subscribing to our newsletter.`)
                 setEmail('') // Clear the email input
+                
+                // Track newsletter signup
+                trackNewsletterSignup('delivered-to-section')
             } else {
                 // Handle error case
                 const data = await response.json()
