@@ -1104,7 +1104,7 @@ export default function PlayerPageClient({ id }: any) {
                 }
 
                 const currentYears = new Date().getFullYear()
-                const availableYear = Array.from({ length: currentYears - 2024 }, (_, i) => (currentYears - i).toString())
+                const availableYear = Array.from({ length: currentYears - 2018 }, (_, i) => (currentYears - i).toString())
 
 
                 return (
@@ -1254,10 +1254,13 @@ export default function PlayerPageClient({ id }: any) {
 
             case 'season-stats':
                 const seasonStats = performancePlayer?.['Performance Metrics'];
-                const availableYearsSeasonStats = seasonStats ? Object.keys(seasonStats) : [];
+                const currentYearSeasonStats = new Date().getFullYear();
+                const generatedYears = Array.from({ length: currentYearSeasonStats - 2023 }, (_, i) => (currentYearSeasonStats - i).toString());
+                const yearsFromData = seasonStats ? Object.keys(seasonStats) : [];
+                const combinedYears = Array.from(new Set([...generatedYears, ...yearsFromData]));
 
                 // Sort the years in descending order to ensure the latest year is on top
-                const sortedYears = availableYearsSeasonStats.sort((a, b) => Number(b) - Number(a));
+                const sortedYears = combinedYears.sort((a, b) => Number(b) - Number(a));
 
                 // Create an array of column names that have data in any year
                 const columns = [
@@ -1300,7 +1303,10 @@ export default function PlayerPageClient({ id }: any) {
                 }
 
                 const columnHasData = (columnKey: string): boolean => {
-                    return sortedYears.some((year: string) => ((seasonStats as unknown) as SeasonStats)[year][columnKey] != null);
+                    return sortedYears.some((year: string) => {
+                        const yearData = ((seasonStats as unknown) as SeasonStats)[year];
+                        return yearData && yearData[columnKey] != null;
+                    });
                 };
 
                 // Filter out columns that have no data for all years
@@ -1333,25 +1339,27 @@ export default function PlayerPageClient({ id }: any) {
                                                     <tbody>
                                                         {/* Loop through all the years (sorted) and display data */}
                                                         {sortedYears.map((year) => {
-                                                            const yearData = seasonStats[year];
+                                                            const yearData = seasonStats?.[year] || {}; // Fallback to empty object if year data is missing
 
                                                             return (
                                                                 <tr key={year} className="bg-[#2C204B] text-center">
                                                                     {visibleColumns.map((column) => {
-                                                                        let value;
-                                                                        if (column.type === 'calculated') {
+                                                                        let value: string | number = 'N/A'; // Default to 'N/A'
+                                                                        if (column.key === 'Season') {
+                                                                            value = year; // Display the year for the Season column
+                                                                        } else if (column.type === 'calculated') {
                                                                             if (column.key === 'Rush Yards / Rush Attempts') {
                                                                                 const rushAttempts = parseInt((yearData as any)['Rush Attempts']);
                                                                                 const rushYards = parseInt((yearData as any)['Rushing Yards']);
-                                                                                value = (rushYards / rushAttempts).toFixed(2);
+                                                                                value = (rushAttempts > 0 && rushYards != null) ? (rushYards / rushAttempts).toFixed(2) : 'N/A';
                                                                             } else if (column.key === 'Total Touchdowns') {
-                                                                                const rushingTouchdowns = parseInt(yearData['Rushing Touchdowns']);
-                                                                                const receivingTouchdowns = parseInt(yearData['Receiving TDs']);
-                                                                                value = rushingTouchdowns + receivingTouchdowns;
+                                                                                const rushingTouchdowns = parseInt(yearData['Rushing Touchdowns'] as string);
+                                                                                const receivingTouchdowns = parseInt(yearData['Receiving TDs'] as string);
+                                                                                value = (rushingTouchdowns != null || receivingTouchdowns != null) ? ( (isNaN(rushingTouchdowns) ? 0 : rushingTouchdowns) + (isNaN(receivingTouchdowns) ? 0 : receivingTouchdowns) ) : 'N/A';
                                                                             }
                                                                         } else {
                                                                             const rawValue = (yearData as SeasonPerformanceMetrics)[column.key];
-                                                                            value = typeof rawValue === 'string' ? parseInt(rawValue) || rawValue : rawValue;
+                                                                            value = (rawValue != null && rawValue !== '') ? (typeof rawValue === 'string' ? parseInt(rawValue) || rawValue : rawValue) : 'N/A';
                                                                         }
 
                                                                         return (
