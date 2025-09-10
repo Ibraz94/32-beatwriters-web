@@ -98,8 +98,19 @@ export default function PlayerPageClient({ id }: any) {
 
 
     // Year selection state for performance metrics
-    const [selectedYear, setSelectedYear] = useState('2024')
+    const [selectedYear, setSelectedYear] = useState('2025')
 
+    // Game Logs and Performance Metrics year selection logic
+    const currentYearDynamic = new Date().getFullYear();
+    const availableYearsDynamic = Array.from({ length: currentYearDynamic - 2018 }, (_, i) => (currentYearDynamic - i).toString());
+
+    useEffect(() => {
+        if (!selectedYear && availableYearsDynamic.includes('2025')) {
+            setSelectedYear('2025');
+        } else if (!selectedYear && availableYearsDynamic.length > 0) {
+            setSelectedYear(availableYearsDynamic[0]);
+        }
+    }, [availableYearsDynamic, selectedYear]);
 
     // Get the page number user came from (for back navigation)
     const fromPage = searchParams?.get('page')
@@ -1372,8 +1383,7 @@ export default function PlayerPageClient({ id }: any) {
 
             case 'game-log':
                 const gameLogs = performancePlayer?.['Game Logs']; // Game log data
-                const availableYearsGameLogs = gameLogs ? Object.keys(gameLogs) : [];
-
+               
                 // Function to handle year change from the dropdown
                 interface YearChangeEvent {
                     target: {
@@ -1415,7 +1425,7 @@ export default function PlayerPageClient({ id }: any) {
                                     className="px-4 py-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
                                 >
                                     {/* Sort the years in descending order */}
-                                    {availableYearsGameLogs.sort((a, b) => Number(b) - Number(a)).map((year) => (
+                                    {availableYearsDynamic.sort((a, b) => Number(b) - Number(a)).map((year) => (
                                         <option key={year} value={year}>
                                             {year}
                                         </option>
