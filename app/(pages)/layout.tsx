@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cabin, Oswald } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
@@ -33,14 +33,22 @@ export const metadata: Metadata = {
     url: "https://32-beatwriters-web.vercel.app/", // **IMPORTANT: Update this to your actual production URL**
   },
   metadataBase: new URL("https://32-beatwriters-web.vercel.app/"), // Set the base URL for production
-  viewport: {
+  // viewport: {
+  //   width: 'device-width',
+  //   initialScale: 1,
+  //   maximumScale: 1,
+  //   userScalable: false,
+  //   viewportFit: 'cover',
+  // },
+};
+
+export const viewport: Viewport = {
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
     userScalable: false,
     viewportFit: 'cover',
-  },
-};
+}
 
 export default function RootLayout({
   children,

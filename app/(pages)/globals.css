@@ -107,16 +107,52 @@ body {
   border: 1px solid #3a3a3a 
 }
 
+.position-select {
+  background-color: #ffffff;
+}
+
+.dark .position-select {
+  background-color: #2C204B;
+  border: 1px solid #3a3a3a 
+}
+
 
 .player-card {
   background-color: #f6f6f6;
-  border: 1px solid #d1d1d1
+  border: 1px solid #d1d1d1;
+  
 }
 
 .dark .player-card {
     background-color: transparent;
     border: 1px solid #36383b
 }
+
+.ranking-table {
+  background-color: #ffffff;
+  border: 1px solid #d1d1d1;
+  
+}
+
+.ranking-table:hover {
+  background-color: #f6f6f6;  
+}
+
+.dark .ranking-table {
+    background-color: transparent;
+    border: 1px solid #36383b
+}
+
+.position-card {
+  background-color: #f6f6f6;
+  /* border: 1px solid #d1d1d1 */
+}
+
+.dark .position-card {
+    background-color: transparent;
+    border: 1px solid #36383b
+}
+
 
 .subscription-gradient {
   display: none;
