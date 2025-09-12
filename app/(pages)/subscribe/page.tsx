@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Check } from 'lucide-react'
 import { API_CONFIG, buildApiUrl } from '../../../lib/config/api'
+import GoogleOAuthButton from '@/app/components/GoogleOAuthButton'
 
 interface SubscriptionOption {
   id: string
@@ -39,7 +40,7 @@ interface FormData {
   confirmPassword: string
 }
 
-export default function PremiumSignup() {
+function PremiumSignupForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [subscriptionOptions, setSubscriptionOptions] = useState<{
     data: SubscriptionOption[]
@@ -74,6 +75,11 @@ export default function PremiumSignup() {
     password: '',
     confirmPassword: ''
   })
+
+  // Google OAuth state
+  const [useGoogleAuth, setUseGoogleAuth] = useState(false)
+  const [googleUser, setGoogleUser] = useState<any>(null)
+  const searchParams = useSearchParams()
 
   // Utility functions for price calculations
   const calculateDiscountedPrice = (basePrice: number, discount: { amount_off: number | null; percent_off: number | null }) => {
@@ -128,6 +134,50 @@ export default function PremiumSignup() {
     fetchSubscriptionOptions()
   }, [])
 
+  // Handle Google OAuth callback
+  useEffect(() => {
+    const googleAuth = searchParams.get('google_auth')
+    const googleUserParam = searchParams.get('google_user')
+    
+    if (googleAuth === 'true' && googleUserParam) {
+      try {
+        const user = JSON.parse(decodeURIComponent(googleUserParam))
+        setGoogleUser(user)
+        setUseGoogleAuth(true)
+        
+        // Pre-fill form with Google data
+        setFormData(prev => ({
+          ...prev,
+          firstName: user.given_name || '',
+          lastName: user.family_name || '',
+          email: user.email || '',
+          username: user.email?.split('@')[0] || '',
+        }))
+      } catch (error) {
+        console.error('Error parsing Google user data:', error)
+      }
+    }
+  }, [searchParams])
+
+  const handleGoogleAuthSuccess = (user: any) => {
+    setGoogleUser(user)
+    setUseGoogleAuth(true)
+    
+    // Pre-fill form with Google data
+    setFormData(prev => ({
+      ...prev,
+      firstName: user.given_name || '',
+      lastName: user.family_name || '',
+      email: user.email || '',
+      username: user.email?.split('@')[0] || '',
+    }))
+  }
+
+  const handleGoogleAuthError = (error: string) => {
+    console.error('Google OAuth error:', error)
+    setErrors({ general: error })
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -168,15 +218,18 @@ export default function PremiumSignup() {
     if (!formData.city) newErrors.city = 'City is required'
     if (!formData.state) newErrors.state = 'State is required'
     if (!formData.zipCode) newErrors.zipCode = 'ZIP code is required'
-    if (!formData.password) {
-      newErrors.password = 'Password is required'
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters'
-    }
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password'
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match'
+    // Skip password validation for Google OAuth users
+    if (!useGoogleAuth) {
+      if (!formData.password) {
+        newErrors.password = 'Password is required'
+      } else if (formData.password.length < 8) {
+        newErrors.password = 'Password must be at least 8 characters'
+      }
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = 'Please confirm your password'
+      } else if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match'
+      }
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -191,7 +244,9 @@ export default function PremiumSignup() {
     const payload = {
       ...formData,
       priceId: selectedPriceId,
-      couponCode: promoCode // Send the actual promo code instead of the ID
+      couponCode: promoCode, // Send the actual promo code instead of the ID
+      useGoogleAuth,
+      googleUser: useGoogleAuth ? googleUser : null
     }
     
     console.log('Payload being sent to /api/stripe/create-checkout-session:', payload)
@@ -535,6 +590,46 @@ export default function PremiumSignup() {
                   
                 </div>
 
+                {/* Google OAuth Section */}
+                {!useGoogleAuth && (
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <GoogleOAuthButton 
+                        text="Continue with Google"
+                        variant="signup"
+                        onSuccess={handleGoogleAuthSuccess}
+                        onError={handleGoogleAuthError}
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border" />
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-background text-muted-foreground">Or fill out the form below</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Google User Info Display */}
+                {useGoogleAuth && googleUser && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center space-x-3">
+                      <img 
+                        src={googleUser.picture} 
+                        alt="Google Profile" 
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div>
+                        <p className="font-medium text-green-800">Signed in with Google</p>
+                        <p className="text-sm text-green-600">{googleUser.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-4">
                   <h2 className="text-xl font-semibold text-foreground">Personal Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -718,40 +813,45 @@ export default function PremiumSignup() {
                       <p className="mt-1 text-sm text-destructive">{errors.username}</p>
                     )}
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Password *
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-md ${errors.password ? 'border-destructive' : 'border-input'
-                        }`}
-                      required
-                    />
-                    {errors.password && (
-                      <p className="mt-1 text-sm text-destructive">{errors.password}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Confirm Password *
-                    </label>
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-md ${errors.confirmPassword ? 'border-destructive' : 'border-input'
-                        }`}
-                      required
-                    />
-                    {errors.confirmPassword && (
-                      <p className="mt-1 text-sm text-destructive">{errors.confirmPassword}</p>
-                    )}
-                  </div>
+                  {/* Password fields - only show for non-Google OAuth users */}
+                  {!useGoogleAuth && (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Password *
+                        </label>
+                        <input
+                          type="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-md ${errors.password ? 'border-destructive' : 'border-input'
+                            }`}
+                          required
+                        />
+                        {errors.password && (
+                          <p className="mt-1 text-sm text-destructive">{errors.password}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Confirm Password *
+                        </label>
+                        <input
+                          type="password"
+                          name="confirmPassword"
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-md ${errors.confirmPassword ? 'border-destructive' : 'border-input'
+                            }`}
+                          required
+                        />
+                        {errors.confirmPassword && (
+                          <p className="mt-1 text-sm text-destructive">{errors.confirmPassword}</p>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
                 <button
                   type="submit"
@@ -766,5 +866,13 @@ export default function PremiumSignup() {
         </div>
       </div >
     </div >
+  )
+}
+
+export default function PremiumSignup() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PremiumSignupForm />
+    </Suspense>
   )
 } 

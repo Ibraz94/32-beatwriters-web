@@ -1,15 +1,14 @@
 'use client'
 
-import { useEffect, useState, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-function PaymentSuccessContent() {
+export default function PaymentSuccess() {
   const [sessionDetails, setSessionDetails] = useState<any>(null)
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   useEffect(() => {
-    const sessionId = searchParams.get('session_id')
+    const sessionId = new URLSearchParams(window.location.search).get('session_id')
     if (sessionId) {
       // Fetch session details from your backend
       fetch(`http://localhost:4004/api/stripe/session/${sessionId}`)
@@ -17,7 +16,7 @@ function PaymentSuccessContent() {
         .then(data => setSessionDetails(data))
         .catch(error => console.error('Error fetching session details:', error))
     }
-  }, [searchParams])
+  }, [])
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -46,13 +45,5 @@ function PaymentSuccessContent() {
         </button>
       </div>
     </div>
-  )
-}
-
-export default function PaymentSuccess() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <PaymentSuccessContent />
-    </Suspense>
   )
 } 

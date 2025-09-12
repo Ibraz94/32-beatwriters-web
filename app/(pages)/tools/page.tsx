@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from "react"
+export const dynamic = 'force-dynamic'
+
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { Search, Upload, X } from 'lucide-react'
 
-
-export default function Tools() {
+function ToolsContent() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedPosition, setSelectedPosition] = useState("QB");
     const searchParams = useSearchParams();
@@ -184,6 +185,14 @@ export default function Tools() {
                 </div>
             </div>
         </div>
+    )
+}
+
+export default function Tools() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ToolsContent />
+        </Suspense>
     )
 }
 

@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect, Suspense } from 'react'
 import { User, Mail, Lock, Crown, Eye, EyeOff, Calendar, Shield, LogOut, Edit2, Check, X, CreditCard, AlertTriangle, Badge } from 'lucide-react'
 import Image from 'next/image'

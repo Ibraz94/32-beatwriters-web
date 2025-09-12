@@ -1,6 +1,6 @@
 export const API_CONFIG = {
   
-  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com',
+  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4004',
 
   ENDPOINTS: {
     ARTICLES: '/api/articles',

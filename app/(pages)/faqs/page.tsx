@@ -1,6 +1,8 @@
 
 
 
+export const dynamic = 'force-dynamic'
+
 const faqs = [
     {
         question: "I Signed Up Using the 32BW Site",
