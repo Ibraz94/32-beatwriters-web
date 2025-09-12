@@ -39,7 +39,7 @@ const TrustedByPartners = () => {
           {/* Logo 4 */}
           <div className="w-24 h-20 sm:w-32 sm:h-20 px-2 bg-gray-200 flex justify-center items-center rounded-lg max-[435px]:w-full">
             <Image
-              src="/sleeper_logo.png"
+              src="/sleeper_logo-min.png"
               alt="Sleeper Logo"
               width={150}
               height={150}

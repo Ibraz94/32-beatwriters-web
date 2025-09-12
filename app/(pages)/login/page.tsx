@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useAnalytics } from '@/lib/hooks/useAnalytics'
 import { useAuth } from '@/lib/hooks/useAuth'
 
 export default function Login() {
@@ -21,6 +22,7 @@ export default function Login() {
     const { theme } = useTheme()
     const router = useRouter()
     const { login, isLoading, isAuthenticated } = useAuth()
+    const { trackUserLogin } = useAnalytics()
 
 
     useEffect(() => {
@@ -74,6 +76,8 @@ export default function Login() {
             const result = await login(formData.emailOrUsername, formData.password)
 
             if (result.success) {
+                // Track successful login
+                trackUserLogin('email')
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirect = urlParams.get('redirect') || '/';

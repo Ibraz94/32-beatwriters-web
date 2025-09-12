@@ -8,6 +8,7 @@ import { ReduxProvider } from "../../lib/providers/ReduxProvider";
 import { ToastProvider } from "../components/Toast";
 import IOSScrollFix from "../components/IOSScrollFix";
 import ErrorBoundary from "../../components/ErrorBoundary";
+import GoogleAnalytics from "../../lib/analytics/GoogleAnalytics";
 // import Head from "next/head"; // No longer needed for Open Graph with Metadata export
 
 const cabin = Cabin({
@@ -30,7 +31,7 @@ export const metadata: Metadata = {
     description: "Your Home For all NFL, Prospect and Fantasy Football News.",
     images: "/logo-small.webp",
     type: "website",
-    url: "https://32-beatwriters-web.vercel.app/", // **IMPORTANT: Update this to your actual production URL**
+    url: "https://32beatwriters.com/", // **IMPORTANT: Update this to your actual production URL**
   },
   metadataBase: new URL("https://32-beatwriters-web.vercel.app/"), // Set the base URL for production
   // viewport: {
@@ -84,6 +85,7 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <ToastProvider>
+                <GoogleAnalytics />
                 <IOSScrollFix />
                 <Header />
                 {children}
