@@ -18,7 +18,7 @@ export interface GoogleUser {
 /**
  * Get Google OAuth authorization URL
  */
-export const getGoogleAuthUrl = (): string => {
+export const getGoogleAuthUrl = (state: 'signup' | 'login' = 'signup'): string => {
   const redirectUri = `${window.location.origin}/api/auth/callback/google`
   
   const params = new URLSearchParams({
@@ -28,6 +28,7 @@ export const getGoogleAuthUrl = (): string => {
     scope: 'openid email profile',
     access_type: 'offline',
     prompt: 'consent',
+    state: state,
   })
 
   return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`

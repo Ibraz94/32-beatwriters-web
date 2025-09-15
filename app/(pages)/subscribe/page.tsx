@@ -79,6 +79,8 @@ function PremiumSignupForm() {
   // Google OAuth state
   const [useGoogleAuth, setUseGoogleAuth] = useState(false)
   const [googleUser, setGoogleUser] = useState<any>(null)
+  const [googleAuthLoading, setGoogleAuthLoading] = useState(false)
+  const [googleAuthChecked, setGoogleAuthChecked] = useState(false)
   const searchParams = useSearchParams()
 
   // Utility functions for price calculations
@@ -102,6 +104,9 @@ function PremiumSignupForm() {
 
   // Specific plan IDs to display
   const allowedPlanIds = ['price_1RZZFRAToc8YZruPw5uzOh1n', 'price_1RltPxAToc8YZruP4TJLGvPR']
+  
+  // Monthly plan ID (first one in the array)
+  const monthlyPlanId = 'price_1RZZFRAToc8YZruPw5uzOh1n'
 
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
@@ -117,15 +122,17 @@ function PremiumSignupForm() {
 
         setSubscriptionOptions(filteredData)
 
-        // Set default selected price to monthly plan
-        const monthlyPrice = filteredData.data.find((price: SubscriptionOption) =>
-          price.id === 'plan_SP4eIOlEaiqOH0'
-        )
-        if (monthlyPrice) {
-          setSelectedPriceId(monthlyPrice.id)
-        } else if (filteredData.data.length > 0) {
-          // Fallback to first available plan if monthly not found
-          setSelectedPriceId(filteredData.data[0].id)
+        // Set default selected price to monthly plan only if no price is already selected
+        if (!selectedPriceId) {
+          const monthlyPrice = filteredData.data.find((price: SubscriptionOption) =>
+            price.id === monthlyPlanId
+          )
+          if (monthlyPrice) {
+            setSelectedPriceId(monthlyPrice.id)
+          } else if (filteredData.data.length > 0) {
+            // Fallback to first available plan if monthly not found
+            setSelectedPriceId(filteredData.data[0].id)
+          }
         }
       } catch (error) {
         console.error('Error fetching subscription options:', error)
@@ -134,16 +141,40 @@ function PremiumSignupForm() {
     fetchSubscriptionOptions()
   }, [])
 
-  // Handle Google OAuth callback
-  useEffect(() => {
-    const googleAuth = searchParams.get('google_auth')
-    const googleUserParam = searchParams.get('google_user')
+  const checkGoogleAuth = async (user: any) => {
+    console.log('checkGoogleAuth called with user:', user)
+    console.log('Current selectedPriceId:', selectedPriceId)
     
-    if (googleAuth === 'true' && googleUserParam) {
-      try {
-        const user = JSON.parse(decodeURIComponent(googleUserParam))
+    // Ensure we have a selected price ID, default to monthly if not set
+    const priceIdToUse = selectedPriceId || monthlyPlanId
+    console.log('Using price ID for Google auth:', priceIdToUse)
+    
+    setGoogleAuthLoading(true)
+    try {
+      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.AUTH_GOOGLE_CHECK), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: user.email,
+          googleId: user.id,
+          firstName: user.given_name,
+          lastName: user.family_name,
+          profilePicture: user.picture
+        }),
+      })
+      
+      console.log('Google auth check response status:', response.status)
+      const data = await response.json()
+      console.log('Google auth check response data:', data)
+      
+      if (data.success && data.userExists === false) {
+        // User doesn't exist, can proceed with Google OAuth signup
+        console.log('User does not exist, proceeding with Google OAuth signup')
         setGoogleUser(user)
         setUseGoogleAuth(true)
+        setGoogleAuthChecked(true)
         
         // Pre-fill form with Google data
         setFormData(prev => ({
@@ -153,24 +184,58 @@ function PremiumSignupForm() {
           email: user.email || '',
           username: user.email?.split('@')[0] || '',
         }))
+        
+        // Show success message and redirect to Stripe checkout
+        console.log('About to call handleGoogleSubscribe')
+        setTimeout(() => {
+          handleGoogleSubscribe(user)
+        }, 1000) // Small delay to show the success message
+      } else if (data.success && data.userExists === true) {
+        // User exists, show error
+        console.log('User already exists')
+        setErrors({ general: 'An account with this email already exists. Please use a different email or sign in instead.' })
+      } else {
+        console.log('Google auth check failed:', data.message)
+        setErrors({ general: data.message || 'Failed to verify Google account. Please try again.' })
+      }
+    } catch (error) {
+      console.error('Error checking Google auth:', error)
+      setErrors({ general: 'Failed to verify Google account. Please try again.' })
+    } finally {
+      setGoogleAuthLoading(false)
+    }
+  }
+
+  // Handle Google OAuth callback
+  useEffect(() => {
+    const googleAuth = searchParams.get('google_auth')
+    const googleUserParam = searchParams.get('google_user')
+    const error = searchParams.get('error')
+    const message = searchParams.get('message')
+    
+    // Handle OAuth errors
+    if (error) {
+      console.error('Google OAuth error:', error, message)
+      setErrors({ general: message || 'Google authentication failed. Please try again.' })
+      return
+    }
+    
+    if (googleAuth === 'true' && googleUserParam) {
+      try {
+        const user = JSON.parse(decodeURIComponent(googleUserParam))
+        console.log('Google OAuth callback - user data:', user)
+        
+        // Call the Google auth check API
+        checkGoogleAuth(user)
       } catch (error) {
         console.error('Error parsing Google user data:', error)
+        setErrors({ general: 'Failed to process Google authentication. Please try again.' })
       }
     }
   }, [searchParams])
 
   const handleGoogleAuthSuccess = (user: any) => {
-    setGoogleUser(user)
-    setUseGoogleAuth(true)
-    
-    // Pre-fill form with Google data
-    setFormData(prev => ({
-      ...prev,
-      firstName: user.given_name || '',
-      lastName: user.family_name || '',
-      email: user.email || '',
-      username: user.email?.split('@')[0] || '',
-    }))
+    checkGoogleAuth(user)
   }
 
   const handleGoogleAuthError = (error: string) => {
@@ -236,6 +301,88 @@ function PremiumSignupForm() {
   }
 
 
+  const handleGoogleSubscribe = async (userData?: any) => {
+    const user = userData || googleUser
+    
+    if (!user) {
+      console.log('Missing Google user data')
+      return
+    }
+    
+    // Ensure we have a selected price ID, default to monthly if not set
+    const priceIdToUse = selectedPriceId || monthlyPlanId
+    console.log('Using price ID for Google subscribe:', priceIdToUse)
+    
+    // Update the selectedPriceId state if it's not set
+    if (!selectedPriceId) {
+      setSelectedPriceId(priceIdToUse)
+    }
+    
+    console.log('Starting Google OAuth subscription process...')
+    setIsLoading(true)
+    
+    const payload = {
+      email: user.email,
+      firstName: user.given_name || user.name || '',
+      lastName: user.family_name || user.name?.split(' ')[1] || 'User', // Use last part of name or default
+      phoneNumber: '000-000-0000', // Default phone number for Google OAuth users
+      address1: 'Not provided', // Default address for Google OAuth users
+      address2: '',
+      city: 'Not provided', // Default city for Google OAuth users
+      country: 'US',
+      state: 'Not provided', // Default state for Google OAuth users
+      zipCode: '00000', // Default ZIP code for Google OAuth users
+      username: user.email?.split('@')[0] || '',
+      password: '',
+      confirmPassword: '',
+      priceId: priceIdToUse,
+      couponCode: promoCode,
+      useGoogleAuth: true,
+      googleUser: user,
+      authType: 'google',
+      googleId: user.id,
+      profilePicture: user.picture
+    }
+    
+    console.log('Google OAuth payload being sent to /api/stripe/create-google-checkout-session:', payload)
+    console.log('API URL:', buildApiUrl('/api/stripe/create-google-checkout-session'))
+    
+    try {
+      const response = await fetch(buildApiUrl('/api/stripe/create-google-checkout-session'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+      
+      console.log('Stripe API response status:', response.status)
+      
+      const responseData = await response.json()
+      console.log('Stripe API response data:', responseData)
+      
+      if (!response.ok) {
+        console.error('Stripe API error:', response.status, response.statusText, responseData)
+        setErrors({ general: `Failed to create checkout session. ${responseData.error || responseData.message || response.statusText}` })
+        return
+      }
+      
+      if (responseData.url) {
+        console.log('Redirecting to Stripe checkout:', responseData.url)
+        // Use window.location.replace for more reliable redirect
+        window.location.replace(responseData.url)
+      } else {
+        console.error('No URL in response:', responseData)
+        setErrors({ general: 'Failed to create checkout session. No redirect URL received.' })
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error)
+      setErrors({ general: 'Failed to create checkout session. Please try again.' })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateForm() || !selectedPriceId) return
@@ -246,7 +393,8 @@ function PremiumSignupForm() {
       priceId: selectedPriceId,
       couponCode: promoCode, // Send the actual promo code instead of the ID
       useGoogleAuth,
-      googleUser: useGoogleAuth ? googleUser : null
+      googleUser: useGoogleAuth ? googleUser : null,
+      authType: useGoogleAuth ? 'google' : 'regular'
     }
     
     console.log('Payload being sent to /api/stripe/create-checkout-session:', payload)
@@ -595,11 +743,12 @@ function PremiumSignupForm() {
                   <div className="space-y-4">
                     <div className="text-center">
                       <GoogleOAuthButton 
-                        text="Continue with Google"
+                        text={googleAuthLoading ? "Checking Google Account..." : "Continue with Google"}
                         variant="signup"
                         onSuccess={handleGoogleAuthSuccess}
                         onError={handleGoogleAuthError}
                         className="w-full"
+                        disabled={googleAuthLoading}
                       />
                     </div>
                     <div className="relative">
@@ -625,196 +774,220 @@ function PremiumSignupForm() {
                       <div>
                         <p className="font-medium text-green-800">Signed in with Google</p>
                         <p className="text-sm text-green-600">{googleUser.email}</p>
+                        {googleAuthChecked && (
+                          <div>
+                            <p className="text-sm text-green-600 mt-1">
+                              ✓ Account verified, redirecting to Stripe checkout...
+                            </p>
+                            <div className="mt-2 flex items-center">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600 mr-2"></div>
+                              <span className="text-sm text-green-600">Please wait...</span>
+                            </div>
+                            <button 
+                              onClick={() => handleGoogleSubscribe(googleUser)}
+                              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                            >
+                              Manual Redirect to Stripe
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 )}
 
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-foreground">Personal Information</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Personal Information - Hide for Google OAuth users */}
+                {!useGoogleAuth && (
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-foreground">Personal Information</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          First Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-md ${errors.firstName ? 'border-destructive' : 'border-input'
+                            }`}
+                          required
+                        />
+                        {errors.firstName && (
+                          <p className="mt-1 text-sm text-destructive">{errors.firstName}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Last Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-md ${errors.lastName ? 'border-destructive' : 'border-input'
+                            }`}
+                          required
+                        />
+                        {errors.lastName && (
+                          <p className="mt-1 text-sm text-destructive">{errors.lastName}</p>
+                        )}
+                      </div>
+                    </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        First Name *
+                        Email Address *
                       </label>
                       <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
+                        type="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.firstName ? 'border-destructive' : 'border-input'
+                        className={`w-full px-4 py-2 border rounded-md ${errors.email ? 'border-destructive' : 'border-input'
                           }`}
                         required
                       />
-                      {errors.firstName && (
-                        <p className="mt-1 text-sm text-destructive">{errors.firstName}</p>
+                      {errors.email && (
+                        <p className="mt-1 text-sm text-destructive">{errors.email}</p>
                       )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        Last Name *
+                        Phone Number *
                       </label>
                       <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
+                        type="tel"
+                        name="phoneNumber"
+                        value={formData.phoneNumber}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.lastName ? 'border-destructive' : 'border-input'
+                        className={`w-full px-4 py-2 border rounded-md ${errors.phoneNumber ? 'border-destructive' : 'border-input'
                           }`}
                         required
                       />
-                      {errors.lastName && (
-                        <p className="mt-1 text-sm text-destructive">{errors.lastName}</p>
+                      {errors.phoneNumber && (
+                        <p className="mt-1 text-sm text-destructive">{errors.phoneNumber}</p>
                       )}
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-md ${errors.email ? 'border-destructive' : 'border-input'
-                        }`}
-                      required
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-destructive">{errors.email}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Phone Number *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-md ${errors.phoneNumber ? 'border-destructive' : 'border-input'
-                        }`}
-                      required
-                    />
-                    {errors.phoneNumber && (
-                      <p className="mt-1 text-sm text-destructive">{errors.phoneNumber}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-foreground">Address Information</h2>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Street Address *
-                    </label>
-                    <input
-                      type="text"
-                      name="address1"
-                      value={formData.address1}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-md ${errors.address1 ? 'border-destructive' : 'border-input'
-                        }`}
-                      required
-                    />
-                    {errors.address1 && (
-                      <p className="mt-1 text-sm text-destructive">{errors.address1}</p>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                )}
+                {/* Address Information - Hide for Google OAuth users */}
+                {!useGoogleAuth && (
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-foreground">Address Information</h2>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        City *
+                        Street Address *
                       </label>
                       <input
                         type="text"
-                        name="city"
-                        value={formData.city}
+                        name="address1"
+                        value={formData.address1}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.city ? 'border-destructive' : 'border-input'
+                        className={`w-full px-4 py-2 border rounded-md ${errors.address1 ? 'border-destructive' : 'border-input'
                           }`}
                         required
                       />
-                      {errors.city && (
-                        <p className="mt-1 text-sm text-destructive">{errors.city}</p>
+                      {errors.address1 && (
+                        <p className="mt-1 text-sm text-destructive">{errors.address1}</p>
                       )}
                     </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          City *
+                        </label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-md ${errors.city ? 'border-destructive' : 'border-input'
+                            }`}
+                          required
+                        />
+                        {errors.city && (
+                          <p className="mt-1 text-sm text-destructive">{errors.city}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          State/Province *
+                        </label>
+                        <input
+                          type="text"
+                          name="state"
+                          value={formData.state}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-md ${errors.state ? 'border-destructive' : 'border-input'
+                            }`}
+                          required
+                        />
+                        {errors.state && (
+                          <p className="mt-1 text-sm text-destructive">{errors.state}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          ZIP/Postal Code *
+                        </label>
+                        <input
+                          type="text"
+                          name="zipCode"
+                          value={formData.zipCode}
+                          onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-md ${errors.zipCode ? 'border-destructive' : 'border-input'
+                            }`}
+                          required
+                        />
+                        {errors.zipCode && (
+                          <p className="mt-1 text-sm text-destructive">{errors.zipCode}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-2">
+                          Country *
+                        </label>
+                        <select
+                          name="country"
+                          value={formData.country}
+                          onChange={handleInputChange}
+                          className="w-full px-4 py-2 border border-input rounded-md"
+                          required
+                        >
+                          <option value="US">United States</option>
+                          <option value="CA">Canada</option>
+                          <option value="GB">United Kingdom</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {/* Account Information - Hide for Google OAuth users */}
+                {!useGoogleAuth && (
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-semibold text-foreground">Account Information</h2>
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
-                        State/Province *
+                        Username *
                       </label>
                       <input
                         type="text"
-                        name="state"
-                        value={formData.state}
+                        name="username"
+                        value={formData.username}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.state ? 'border-destructive' : 'border-input'
+                        className={`w-full px-4 py-2 border rounded-md ${errors.username ? 'border-destructive' : 'border-input'
                           }`}
                         required
                       />
-                      {errors.state && (
-                        <p className="mt-1 text-sm text-destructive">{errors.state}</p>
+                      {errors.username && (
+                        <p className="mt-1 text-sm text-destructive">{errors.username}</p>
                       )}
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        ZIP/Postal Code *
-                      </label>
-                      <input
-                        type="text"
-                        name="zipCode"
-                        value={formData.zipCode}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.zipCode ? 'border-destructive' : 'border-input'
-                          }`}
-                        required
-                      />
-                      {errors.zipCode && (
-                        <p className="mt-1 text-sm text-destructive">{errors.zipCode}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        Country *
-                      </label>
-                      <select
-                        name="country"
-                        value={formData.country}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-input rounded-md"
-                        required
-                      >
-                        <option value="US">United States</option>
-                        <option value="CA">Canada</option>
-                        <option value="GB">United Kingdom</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-foreground">Account Information</h2>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Username *
-                    </label>
-                    <input
-                      type="text"
-                      name="username"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-md ${errors.username ? 'border-destructive' : 'border-input'
-                        }`}
-                      required
-                    />
-                    {errors.username && (
-                      <p className="mt-1 text-sm text-destructive">{errors.username}</p>
-                    )}
-                  </div>
-                  {/* Password fields - only show for non-Google OAuth users */}
-                  {!useGoogleAuth && (
+                    {/* Password fields - only show for non-Google OAuth users */}
                     <>
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
@@ -851,15 +1024,18 @@ function PremiumSignupForm() {
                         )}
                       </div>
                     </>
-                  )}
-                </div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-red-800 text-white hover:scale-101 py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50"
-                >
-                  {isLoading ? 'Processing...' : 'Subscribe Now'}
-                </button>
+                  </div>
+                )}
+                {/* Subscribe Button - Hide for Google OAuth users */}
+                {!useGoogleAuth && (
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-red-800 text-white hover:scale-101 py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50"
+                  >
+                    {isLoading ? 'Processing...' : 'Subscribe Now'}
+                  </button>
+                )}
               </form>
             </div>
           </div>

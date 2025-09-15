@@ -15,10 +15,10 @@ interface RegisterRequest {
 }
 
 interface AuthResponse {
+  message: string
   user: User
   token: string
   refreshToken?: string
-  message: string
 }
 
 interface ForgotPasswordRequest {
@@ -46,6 +46,14 @@ interface UpdateProfileRequest {
 interface UpdatePasswordRequest {
   currentPassword: string
   newPassword: string
+}
+
+interface GoogleLoginRequest {
+  email: string
+  googleId: string
+  firstName?: string
+  lastName?: string
+  profilePicture?: string
 }
 
 export const authApi = createApi({
@@ -146,6 +154,16 @@ export const authApi = createApi({
         body: data,
       }),
     }),
+
+    // Google OAuth login
+    googleLogin: builder.mutation<AuthResponse, GoogleLoginRequest>({
+      query: (data) => ({
+        url: buildApiUrl('/api/auth/google/login'),
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['User', 'Auth'],
+    }),
   })
 })
 
@@ -160,4 +178,5 @@ export const {
   useGetProfileQuery,
   useUpdateProfileMutation,
   useUpdatePasswordMutation,
+  useGoogleLoginMutation,
 } = authApi 

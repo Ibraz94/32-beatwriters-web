@@ -9,6 +9,7 @@ interface GoogleOAuthButtonProps {
   onSuccess?: (user?: any) => void
   onError?: (error: string) => void
   className?: string
+  disabled?: boolean
 }
 
 export default function GoogleOAuthButton({ 
@@ -16,11 +17,14 @@ export default function GoogleOAuthButton({
   variant = 'login',
   onSuccess,
   onError,
-  className = ''
+  className = '',
+  disabled = false
 }: GoogleOAuthButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleGoogleAuth = async () => {
+    if (disabled) return
+    
     try {
       setIsLoading(true)
       
@@ -40,7 +44,7 @@ export default function GoogleOAuthButton({
   return (
     <button
       onClick={handleGoogleAuth}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       className={`
         w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg
         bg-white text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2
