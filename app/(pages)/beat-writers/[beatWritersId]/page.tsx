@@ -25,7 +25,7 @@ interface BeatWriterDetailPageProps {
 
 async function fetchBeatWriter(beatWritersId: string): Promise<{ success: boolean; data?: BeatWriter; error?: string }> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/beat-writers/${beatWritersId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/beat-writers/${beatWritersId}`, {
       cache: 'no-store'
     });
     return await response.json();

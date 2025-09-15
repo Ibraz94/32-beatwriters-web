@@ -12,13 +12,13 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error('Google OAuth error:', error)
       return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/subscribe?error=oauth_error&message=${encodeURIComponent('Google authentication failed')}`
+        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/subscribe?error=oauth_error&message=${encodeURIComponent('Google authentication failed')}`
       )
     }
 
     if (!code) {
       return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/subscribe?error=no_code&message=${encodeURIComponent('No authorization code received')}`
+        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/subscribe?error=no_code&message=${encodeURIComponent('No authorization code received')}`
       )
     }
 
@@ -27,13 +27,13 @@ export async function GET(request: NextRequest) {
     
     if (!userInfo) {
       return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/subscribe?error=user_info_failed&message=${encodeURIComponent('Failed to get user information')}`
+        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/subscribe?error=user_info_failed&message=${encodeURIComponent('Failed to get user information')}`
       )
     }
 
     // Determine redirect based on state parameter
     const userData = encodeURIComponent(JSON.stringify(userInfo))
-    const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
     
     let redirectUrl: string
     if (state === 'login') {
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Google OAuth callback error:', error)
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/subscribe?error=callback_error&message=${encodeURIComponent('Authentication callback failed')}`
+      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/subscribe?error=callback_error&message=${encodeURIComponent('Authentication callback failed')}`
     )
   }
 }
@@ -66,7 +66,7 @@ async function exchangeCodeForUserInfo(code: string): Promise<GoogleUser | null>
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
         code,
         grant_type: 'authorization_code',
-        redirect_uri: `${process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000'}/api/auth/callback/google`,
+        redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/auth/callback/google`,
       }),
     })
 
