@@ -82,6 +82,7 @@ function PremiumSignupForm() {
   const [googleAuthLoading, setGoogleAuthLoading] = useState(false)
   const [googleAuthChecked, setGoogleAuthChecked] = useState(false)
   const searchParams = useSearchParams()
+  const inviteActivationKey = searchParams.get('invite') || ''
 
   // Utility functions for price calculations
   const calculateDiscountedPrice = (basePrice: number, discount: { amount_off: number | null; percent_off: number | null }) => {
@@ -394,7 +395,8 @@ function PremiumSignupForm() {
       couponCode: promoCode, // Send the actual promo code instead of the ID
       useGoogleAuth,
       googleUser: useGoogleAuth ? googleUser : null,
-      authType: useGoogleAuth ? 'google' : 'regular'
+      authType: useGoogleAuth ? 'google' : 'regular',
+      inviteActivationKey: inviteActivationKey || undefined
     }
     
     console.log('Payload being sent to /api/stripe/create-checkout-session:', payload)

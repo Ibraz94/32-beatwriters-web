@@ -141,7 +141,19 @@ export default function Login() {
                     sessionStorage.removeItem('auth_token')
                 }
 
-                router.push('/nuggets');
+                // After successful login, if user came from FastDraft and doesn't
+                // have Stripe customer/subscription, force onboarding page
+                const user = result.user as any
+                const isFastDraftContext = (user?.context || '').toLowerCase() === 'fastdraft'
+                const hasStripeCustomer = typeof user?.stripeCustomerId === 'string' && user.stripeCustomerId.trim().length > 0
+                const hasStripeSubscription = typeof user?.stripeSubscriptionId === 'string' && user.stripeSubscriptionId.trim().length > 0
+                const hasPaidMembership = user?.membership === 'premium' || user?.membership === 'pro' || (user?.memberships?.type === 'pro')
+                const hasStripe = hasStripeCustomer || hasStripeSubscription || hasPaidMembership
+                if (isFastDraftContext && !hasStripe) {
+                    router.push('/fastdraft/complete-registration')
+                } else {
+                    router.push('/nuggets')
+                }
             } else {
                 setErrors({
                     general: result.error || 'Login failed. Please check your credentials and try again.'
