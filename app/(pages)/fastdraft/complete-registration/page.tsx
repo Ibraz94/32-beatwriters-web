@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { API_CONFIG, buildApiUrl } from '@/lib/config/api'
-import { getUserData } from '@/lib/utils/auth'
+import { getUserData, clearAuthData } from '@/lib/utils/auth'
 
 interface SubscriptionOption {
   id: string
@@ -118,10 +118,16 @@ function FastDraftCompleteRegistrationPage() {
   }
 
   if (success) {
+    // Clear user data and logout since their Stripe info is now updated on the server
+    useEffect(() => {
+      clearAuthData()
+    }, [])
+
     return (
       <div className="container mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-16 text-center">
         <h1 className="text-4xl font-oswald font-bold mb-4">Registration Complete</h1>
-        <p className="mb-8">Your FastDraft promotional checkout was successful. Please log in to start using your account.</p>
+        <p className="mb-8">Your FastDraft promotional checkout was successful. Your account has been updated with subscription details.</p>
+        <p className="mb-8 text-sm text-muted-foreground">Please log in again to access your updated account.</p>
         <button onClick={() => router.push('/login')} className="bg-red-800 text-white px-6 py-3 rounded-md font-semibold">
           Go to Login
         </button>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { buildApiUrl } from '../../../../lib/config/api'
+import { clearAuthData } from '@/lib/utils/auth'
 
 export default function PaymentSuccess() {
   const [sessionDetails, setSessionDetails] = useState<any>(null)
@@ -11,6 +12,9 @@ export default function PaymentSuccess() {
   const router = useRouter()
 
   useEffect(() => {
+    // Always clear any cached auth/user data so the next login pulls fresh subscription info
+    clearAuthData()
+
     const sessionId = new URLSearchParams(window.location.search).get('session_id')
     if (sessionId) {
       // Fetch session details from your backend
@@ -64,13 +68,14 @@ export default function PaymentSuccess() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Verified</h2>
           <p className="text-gray-600 mb-6">{error}</p>
+          <p className="text-gray-600 mb-6">Your account may already be updated. Please log in again to continue.</p>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/login')}
             className="mt-4 bg-red-800 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
           >
-            Return to Home
+            Go to Login
           </button>
         </div>
       </div>
@@ -87,7 +92,7 @@ export default function PaymentSuccess() {
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h2>
         <p className="text-gray-600 mb-6">
-          Thank you for your payment. Your subscription has been activated.
+          Thank you. Your subscription has been activated. For security, we've signed you out. Please log in again to continue.
         </p>
         {sessionDetails && (
           <div className="text-left bg-gray-50 rounded-lg p-4 mb-6">
@@ -99,10 +104,10 @@ export default function PaymentSuccess() {
           </div>
         )}
         <button
-          onClick={() => router.push('/')}
+          onClick={() => router.push('/login')}
           className="mt-4 bg-red-800 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
         >
-          Return to Home
+          Go to Login
         </button>
       </div>
     </div>
