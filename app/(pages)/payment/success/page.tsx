@@ -97,8 +97,8 @@ export default function PaymentSuccess() {
         {sessionDetails && (
           <div className="text-left bg-gray-50 rounded-lg p-4 mb-6">
             <h3 className="font-semibold text-gray-900 mb-2">Payment Details</h3>
-            <p className="text-sm text-gray-600 mb-1"><strong>Session ID:</strong> {sessionDetails.id}</p>
-            <p className="text-sm text-gray-600 mb-1"><strong>Amount:</strong> ${sessionDetails.amount_total ? (sessionDetails.amount_total / 100).toFixed(2) : 'N/A'}</p>
+            {/* <p className="text-sm text-gray-600 mb-1"><strong>Session ID:</strong> {sessionDetails.id}</p>
+            <p className="text-sm text-gray-600 mb-1"><strong>Amount:</strong> ${sessionDetails.amount_total ? (sessionDetails.amount_total / 100).toFixed(2) : 'N/A'}</p> */}
             <p className="text-sm text-gray-600 mb-1"><strong>Status:</strong> {sessionDetails.payment_status || sessionDetails.status}</p>
             <p className="text-sm text-gray-600"><strong>Customer Email:</strong> {sessionDetails.customer_details?.email || 'N/A'}</p>
           </div>
