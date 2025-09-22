@@ -57,7 +57,7 @@ interface ArticlesResponse {
 interface ArticleFilters {
   category?: string
   author?: string
-  status?: 'draft' | 'published' | 'archived'
+  status?: 'draft' | 'published' | 'archived' | 'futurearticle'
   access?: 'public' | 'pro' | 'lifetime'
   tags?: string[]
   search?: string

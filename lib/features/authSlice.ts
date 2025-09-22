@@ -5,6 +5,8 @@ export interface User {
   humanId: number
   username: string
   email: string
+  // Optional onboarding context (e.g., 'fastdraft') used for post-login flows
+  context?: string
   firstName?: string
   lastName?: string
   address1?: string

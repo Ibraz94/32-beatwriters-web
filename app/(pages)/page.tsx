@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import LatestNuggets from "../components/LatestNuggets";
 import NewArticles from "../components/NewArticles";
 import BeatWritersComponent from "../components/BeatWritersComponent";

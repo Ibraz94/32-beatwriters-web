@@ -23,6 +23,57 @@ export interface Player {
   updatedAt: string
 }
 
+// Trending Player interfaces for the new API
+export interface TrendingPlayerNugget {
+  id: number
+  content: string
+  sourceName: string
+  sourceUrl: string
+  createdAt: string
+}
+
+export interface TrendingPlayerTeamDetails {
+  id: string
+  name: string
+  city: string | null
+  abbreviation: string | null
+  teamColor: string
+  logo: string
+}
+
+export interface TrendingPlayer {
+  id: number
+  playerId: string
+  name: string
+  team: string
+  position: string
+  height: string
+  weight: number
+  age: number
+  college: string
+  headshotPic: string
+  rookie: boolean
+  ppi: number
+  status: string
+  nuggetCount: number
+  period: string
+  teamDetails: TrendingPlayerTeamDetails
+  recentNuggets: TrendingPlayerNugget[]
+}
+
+export interface TrendingPlayersResponse {
+  success: boolean
+  data: TrendingPlayer[]
+  totalPlayers: number
+  period: string
+  generatedAt: string
+  searchStrategy: {
+    sevenDayPlayers: number
+    fifteenDayPlayers: number
+    twentyDayPlayers: number
+  }
+}
+
 // Player Profiler API response interfaces
 export interface PlayerProfilerCore {
   Permalink: string
@@ -660,6 +711,15 @@ export const playersApi = createApi({
       }),
       invalidatesTags: ['Player'],
     }),
+
+    // Get trending players
+    getTrendingPlayers: builder.query<TrendingPlayersResponse, void>({
+      query: () => ({
+        url: buildApiUrl(API_CONFIG.ENDPOINTS.TRENDING_PLAYERS),
+        method: 'GET',
+      }),
+      providesTags: ['Player'],
+    }),
   }),
 })
 
@@ -691,6 +751,7 @@ export const playerProfilerApi = createApi({
   }),
 })
 
+
 export const {
   useGetPlayersQuery,
   useGetPositionsQuery,
@@ -701,6 +762,7 @@ export const {
   useGetFeaturedPlayersQuery,
   useFollowPlayerMutation,
   useUnfollowPlayerMutation,
+  useGetTrendingPlayersQuery,
 } = playersApi
 
 export const {

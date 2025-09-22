@@ -163,13 +163,18 @@ export default function LatestNuggets() {
                     </div>
 
                     <div className='px-6 border-b border-white/20'>
-                      <div className='flex flex-col text-sm'>
+                      <div className='flex flex-col mt-1 text-sm'>
                         {nugget.sourceUrl && (
-                          <div className='mt-2 -mb-8'>
-                            <div className=''>Source:
+                          <div className='mt-2 -mb-7'>
+                            <div className='flex items-center gap-2'>
+                              <span>Source:</span>
                               <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
                                 ? nugget.sourceUrl
-                                : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link></div>
+                                : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link>
+                              {nugget.urlIcon && (
+                                <img src={(nugget.urlIcon) || ''} alt='icon' className='h-6 w-6' />
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -187,7 +192,7 @@ export default function LatestNuggets() {
             </div>
           )}
 
-          
+
         </div>
 
         {/* Trending Players Sidebar */}
@@ -198,15 +203,15 @@ export default function LatestNuggets() {
 
       {/* View All Nuggets Button */}
       {latestNuggets.length > 0 && (
-            <div className="text-center py-8">
-              <Link
-                href="/subscribe"
-                className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-2"
-              >
-                Subscribe to See All the Latest News
-              </Link>
-            </div>
-          )}
+        <div className="text-center py-8">
+          <Link
+            href="/subscribe"
+            className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-2"
+          >
+            Subscribe to See All the Latest News
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

@@ -33,7 +33,7 @@ import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
-import { useGetPlayersQuery } from '@/lib/services/playersApi'
+import { useGetTrendingPlayersQuery } from '@/lib/services/playersApi'
 
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
@@ -298,87 +298,50 @@ export default function SavedNuggetsPage() {
 
     // Trending Players Component
     const TrendingPlayers = () => {
-        const targetPlayerNames = [
-            'Emeka Egbuka',
-            'Kyle Pitts',
-            'Kyler Murray',
-            'Dont\'e Thornton',
-            'TreVeyon Henderson',
-        ];
-
-        // Define separate queries for each player
-        const query1 = useGetPlayersQuery({
-            page: 1,
-            limit: 10,
-            pageSize: 10,
-            search: targetPlayerNames[0], // Search for 'Emeka Egbuka'
-        });
-
-        const query2 = useGetPlayersQuery({
-            page: 1,
-            limit: 10,
-            pageSize: 10,
-            search: targetPlayerNames[1], // Search for 'Kyle Pitts'
-        });
-
-        const query3 = useGetPlayersQuery({
-            page: 1,
-            limit: 10,
-            pageSize: 10,
-            search: targetPlayerNames[2], // Search for 'Kyler Murray'
-        });
-
-        const query4 = useGetPlayersQuery({
-            page: 1,
-            limit: 10,
-            pageSize: 10,
-            search: targetPlayerNames[3], // Search for 'Dont\'e Thornton'
-        });
-
-        const query5 = useGetPlayersQuery({
-            page: 1,
-            limit: 10,
-            pageSize: 10,
-            search: targetPlayerNames[4], // Search for 'TreVeyon Henderson'
-        });
-
-        const playersQuery = [query1, query2, query3, query4, query5];
-
-        const allFoundPlayers: any[] = []
-        let isLoading = false
-        let hasError = false
-
-        playersQuery.forEach((query, index) => {
-            if (query.isLoading) isLoading = true
-            if (query.error) hasError = true
-            if (query.data?.data?.players) {
-                // Find the best match for each search
-                const players = query.data.data.players
-                const targetName = targetPlayerNames[index]
-                const bestMatch = players.find(player =>
-                    player.name.toLowerCase().trim() === targetName.toLowerCase().trim()
-                ) || players[0] // If exact match not found, take the first result
-
-                if (bestMatch && !allFoundPlayers.some(p => p.id === bestMatch.id)) {
-                    const updatedPlayer = {
-                        ...bestMatch,
-                        team: findTeamByKey(bestMatch.team || '') || { name: 'No team', logo: null }, // Handle case where team is not available
-                    };
-
-
-                    allFoundPlayers.push(updatedPlayer);
-                }
-            }
-        })
-
-
+        const { data: trendingPlayersData, isLoading, error } = useGetTrendingPlayersQuery();
 
         if (isLoading) {
-            return <div>Loading...</div>;
+            return <div className="rounded-lg border border-[#2C204B]">
+            <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
+                <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+            </div>
+            <div className="space-y-3 p-3">
+                {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 border-b border-[#2C204B] animate-pulse">
+                        <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200"></div>
+                            <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                            <div className="w-6 h-6 bg-gray-200 rounded"></div>
+                            <div className="h-3 bg-gray-200 rounded w-12"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
         }
 
-        if (hasError) {
-            return <div>Error fetching player data</div>;
+        if (error) {
+            return <div className="rounded-lg border border-[#2C204B]">
+                <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
+                    <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+                </div>
+                <div className="p-4 text-center text-gray-500">
+                    Error loading trending players
+                </div>
+            </div>
+        }
+
+        if (!trendingPlayersData?.data || trendingPlayersData.data.length === 0) {
+            return <div className="rounded-lg border border-[#2C204B]">
+                <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
+                    <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+                </div>
+                <div className="p-4 text-center text-gray-500">
+                    No trending players available
+                </div>
+            </div>
         }
 
         return (
@@ -387,7 +350,7 @@ export default function SavedNuggetsPage() {
                     <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
                 </div>
                 <div className="space-y-3">
-                    {allFoundPlayers.map((player) => (
+                    {trendingPlayersData.data.map((player) => (
                         <Link
                             key={player.id}
                             href={`/players/${player.id}`}
@@ -405,16 +368,16 @@ export default function SavedNuggetsPage() {
                                 </div>
                                 <span className="font-medium">{player.name}</span>
                             </div>
-                            {player.team && (
+                            {player.teamDetails && (
                                 <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
                                     <Image
-                                        src={getTeamLogoUrl(player.team.logo) || ''}
-                                        alt={player.team?.name || 'Team logo'}
+                                        src={getTeamLogoUrl(player.teamDetails.logo) || ''}
+                                        alt={player.teamDetails.name || 'Team logo'}
                                         width={24}
                                         height={24}
                                         className="object-contain"
                                     />
-                                    <p>{player.team?.name || 'No team'}</p>
+                                    <p>{player.teamDetails.name || 'No team'}</p>
                                 </div>
                             )}
                         </Link>
@@ -759,14 +722,19 @@ export default function SavedNuggetsPage() {
                                                 </div>
 
                                                 <div className='px-6 border-b border-white/20'>
-                                                    <div className='flex flex-col mt-2 -mb-5 text-sm'>
+                                                <div className='flex flex-col mt-1 text-sm'>
                                                         {nugget.sourceUrl && (
-                                                            <>
-                                                                <div className=''>Source:
-                                                                    <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
-                                                                        ? nugget.sourceUrl
-                                                                        : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link></div>
-                                                            </>
+                                                            <div className='mt-2 -mb-7'>
+                                                                    <div className='flex items-center gap-2'>
+                                                                        <span>Source:</span>
+                                                                        <Link href={nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
+                                                                            ? nugget.sourceUrl
+                                                                            : `https://${nugget.sourceUrl}`} target='_blank' rel='noopener noreferrer' className='text-left hover:text-red-800'> {nugget.sourceName}</Link>
+                                                                        {nugget.urlIcon && (
+                                                                            <img src={(nugget.urlIcon) || ''} alt='icon' className='h-6 w-6' />
+                                                                        )}
+                                                                    </div>
+                                                            </div>
                                                         )}
                                                     </div>
                                                     <h1 className='text-right text-gray-400 mt-2 mb-1 text-sm'>

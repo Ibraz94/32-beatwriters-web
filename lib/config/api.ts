@@ -1,16 +1,18 @@
 export const API_CONFIG = {
   
-  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.com',
+  BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.32beatwriters.staging.pegasync.com',
 
   ENDPOINTS: {
     ARTICLES: '/api/articles',
     AUTH: '/api/users',
+    AUTH_GOOGLE_CHECK: '/api/auth/google/check',
     DISCORD_TOKEN_EXCHANGE: '/api/discord/callback',
     BEAT_WRITERS: '/api/beat-writers',
     CONTACT: '/api/contact',
     NUGGETS: '/api/nuggets',
     SAVED_NUGGETS: '/api/nuggets/saved/list',
     PLAYERS: '/api/players',
+    TRENDING_PLAYERS: '/api/players/trending',
     PODCASTS: '/api/podcasts',
     SUBSCRIPTION: '/api/subscription',
     TEAMS: '/api/teams',

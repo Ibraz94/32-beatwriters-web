@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { Gem, Shield, Search, X } from 'lucide-react'
 import Image from 'next/image'
@@ -32,7 +34,6 @@ export default function ArticlesPage() {
   const { data: articles, isLoading, error, isFetching } = useGetArticlesQuery({
     page: page,
     limit: 12,
-    status: 'published',
     ...(debouncedSearchTerm && { search: debouncedSearchTerm })
   })
 
@@ -101,7 +102,7 @@ export default function ArticlesPage() {
   // Helper function to get button configuration
   const getButtonConfig = (article: any) => {
     // console.log('Article Access inside getButtonConfig', article.access);
-    const canAccess = canAccessArticle(article.access)
+    const canAccess = getAccessStatusText(article.access)
 
     if (canAccess) {
       return {
@@ -250,7 +251,7 @@ export default function ArticlesPage() {
         <div dangerouslySetInnerHTML={{ __html: article.content }} />
       </div>
 
-     <div className="absolute bottom-0 left-0 w-full h-44 bg-gradient-to-t from-[#1A1330] to-transparent z-20 pointer-events-none" />
+     <div className="absolute bottom-0 left-0 w-full h-44 bg-gradient-to-t from-[#1A1330] to-transparent z-20 pointer-events-none" /> 
 
       {/* Hover Action Button */}
       <div className="absolute bottom-0 left-0 w-full p-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity">

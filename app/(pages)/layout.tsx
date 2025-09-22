@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cabin, Oswald } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
@@ -8,6 +8,7 @@ import { ReduxProvider } from "../../lib/providers/ReduxProvider";
 import { ToastProvider } from "../components/Toast";
 import IOSScrollFix from "../components/IOSScrollFix";
 import ErrorBoundary from "../../components/ErrorBoundary";
+import GoogleAnalytics from "../../lib/analytics/GoogleAnalytics";
 // import Head from "next/head"; // No longer needed for Open Graph with Metadata export
 
 const cabin = Cabin({
@@ -32,15 +33,23 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://32beatwriters.com/", // **IMPORTANT: Update this to your actual production URL**
   },
-  metadataBase: new URL("https://32beatwriters.com/"), // Set the base URL for production
-  viewport: {
+  metadataBase: new URL("https://32-beatwriters-web.vercel.app/"), // Set the base URL for production
+  // viewport: {
+  //   width: 'device-width',
+  //   initialScale: 1,
+  //   maximumScale: 1,
+  //   userScalable: false,
+  //   viewportFit: 'cover',
+  // },
+};
+
+export const viewport: Viewport = {
     width: 'device-width',
     initialScale: 1,
     maximumScale: 1,
     userScalable: false,
     viewportFit: 'cover',
-  },
-};
+}
 
 export default function RootLayout({
   children,
@@ -51,6 +60,18 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-WB47DPBVKG"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-WB47DPBVKG');
+            `,
+          }}
+        />
       </head>
       <body
         className={`${cabin.variable} ${oswald.variable} antialiased bg-white text-black dark:bg-[#18122B] dark:text-white`}
@@ -64,6 +85,7 @@ export default function RootLayout({
               disableTransitionOnChange
             >
               <ToastProvider>
+                <GoogleAnalytics />
                 <IOSScrollFix />
                 <Header />
                 {children}

@@ -1,14 +1,18 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Mail, Phone, CheckCircle } from "lucide-react";
 import { ContactRequest, useSubmitContactMutation } from "@/lib/services/contactApi";
+import { useAnalytics } from "@/lib/hooks/useAnalytics";
 
 
 export default function ContactUs() {
     const [submitContact, { isLoading }] = useSubmitContactMutation();
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const { trackContactSubmit } = useAnalytics();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -20,6 +24,9 @@ export default function ContactUs() {
             setIsSubmitted(true);
             // Reset form
             (e.target as HTMLFormElement).reset();
+            
+            // Track contact form submission
+            trackContactSubmit();
         } catch (error) {
             console.error('Error submitting contact form:', error);
         }

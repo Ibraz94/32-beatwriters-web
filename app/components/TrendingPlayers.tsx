@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useGetPlayersQuery, getImageUrl, Player } from '@/lib/services/playersApi'
-import { getTeamByName } from '@/app/(pages)/teams/data/teams'
+import { useGetTrendingPlayersQuery, getImageUrl } from '@/lib/services/playersApi'
 import {
     Carousel,
     CarouselContent,
@@ -16,13 +15,14 @@ import {
 } from "@/components/ui/carousel"
 
 interface PlayerCardProps {
-    player: Player
+    player: any // Using any for now since this component has a different structure
     isActive?: boolean
 }
 
 function PlayerCard({ player, isActive }: PlayerCardProps) {
     const imageUrl = getImageUrl(player.headshotPic)
-    const team = getTeamByName(player.team || '')
+    const teamName = player.teamDetails?.name || player.team || ''
+    const teamLogo = player.teamDetails?.logo
 
     return (
         <div className="transition-all duration-300 hover:scale-105">
@@ -62,16 +62,16 @@ function PlayerCard({ player, isActive }: PlayerCardProps) {
 
                         {/* Team Info */}
                         <div className="flex items-center justify-end gap-2">
-                            {team?.logo && (
+                            {teamLogo && (
                                 <Image
-                                    src={team.logo}
-                                    alt={team.name}
+                                    src={teamLogo}
+                                    alt={teamName}
                                     width={24}
                                     height={24}
                                     className="object-contain"
                                 />
                             )}
-                            <span className="text-sm md:text-[18px] font-medium">{player.team}</span>
+                            <span className="text-sm md:text-[18px] font-medium">{teamName}</span>
                         </div>
                     </div>
                 </div>
@@ -95,76 +95,10 @@ export default function TrendingPlayers() {
         })
     }, [api])
     
-    // Specified players to display
-    const targetPlayerNames = [
-        'Emeka Egbuka',
-        'Kyle Pitts',
-        'Kyler Murray',
-        'Dont\'e Thornton',
-        'TreVeyon Henderson'
-    ]
+    // Use the new trending players API
+    const { data: trendingPlayersData, isLoading, error } = useGetTrendingPlayersQuery()
 
-    // Search for each player individually
-    const query1 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: 'Emeka Egbuka'
-    })
-    
-    const query2 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: 'Kyle Pitts'
-    })
-    
-    const query3 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: 'Kyler Murray'
-    })
-    
-    const query4 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: 'Dont\'e Thornton'
-    })
-    
-    const query5 = useGetPlayersQuery({
-        page: 1,
-        limit: 10,
-        pageSize: 10,
-        search: 'TreVeyon Henderson'
-    })
-
-    const playerQueries = [query1, query2, query3, query4, query5]
-
-    // Combine all found players
-    const allFoundPlayers: Player[] = []
-    let isLoading = false
-    let hasError = false
-
-    playerQueries.forEach((query, index) => {
-        if (query.isLoading) isLoading = true
-        if (query.error) hasError = true
-        if (query.data?.data?.players) {
-            // Find the best match for each search
-            const players = query.data.data.players
-            const targetName = targetPlayerNames[index]
-            const bestMatch = players.find(player => 
-                player.name.toLowerCase().trim() === targetName.toLowerCase().trim()
-            ) || players[0] // If exact match not found, take the first result
-            
-            if (bestMatch && !allFoundPlayers.some(p => p.id === bestMatch.id)) {
-                allFoundPlayers.push(bestMatch)
-            }
-        }
-    })
-
-    const players = allFoundPlayers
+    const players = trendingPlayersData?.data || []
 
     // Auto-play functionality with 2-second interval
     /* useEffect(() => {
@@ -188,13 +122,13 @@ export default function TrendingPlayers() {
         )
     }
 
-    if (hasError || players.length === 0) {
+    if (error || players.length === 0) {
         return (
             <div className="mt-8 md:mt-12 px-4 md:px-0 container mx-auto">
                 <h1 className="text-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-bold mb-6 md:mb-10">Trending Players</h1>
                 <div className="h-[350px] md:h-[400px] w-full bg-[#2C204B] rounded-2xl flex items-center justify-center">
                     <div className="text-white text-base md:text-xl">
-                        {hasError ? 'Unable to load players' : 'No matching players found'}
+                        {error ? 'Unable to load players' : 'No trending players available'}
                     </div>
                 </div>
             </div>
