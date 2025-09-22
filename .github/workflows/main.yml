@@ -22,6 +22,10 @@ jobs:
 
     - name: Build project
       run: npm run build
+      env:
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
 
     - name: Add SSH key
       uses: webfactory/ssh-agent@v0.5.2
