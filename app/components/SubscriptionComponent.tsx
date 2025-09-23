@@ -140,7 +140,7 @@ export default function SubscriptionComponent() {
 
             {/* Subscription Card */}
             {selectedPlan !== 'fastdraft' && currentPlan && (
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
+              <div className="rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
                 {/* Header Section */}
                 <div className={`p-6 text-center ${
                   selectedPlan === 'monthly' 
