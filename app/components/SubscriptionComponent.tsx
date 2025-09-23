@@ -197,7 +197,7 @@ export default function SubscriptionComponent() {
 
             {/* FastDraft Card */}
             {selectedPlan === 'fastdraft' && (
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
+              <div className="rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto">
                 {/* Header with logo on black background */}
                 <div className="bg-black p-6 flex items-center justify-center">
                   <div className="w-full max-w-xs">

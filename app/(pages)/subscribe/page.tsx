@@ -104,10 +104,10 @@ function PremiumSignupForm() {
   }
 
   // Specific plan IDs to display
-  const allowedPlanIds = ['price_1RZZFRAToc8YZruPw5uzOh1n', 'price_1RltPxAToc8YZruP4TJLGvPR']
+  const allowedPlanIds = ['price_1RjqjDAToc8YZruPtwMypo5C', 'plan_SP4eIOlEaiqOH0']
   
   // Monthly plan ID (first one in the array)
-  const monthlyPlanId = 'price_1RZZFRAToc8YZruPw5uzOh1n'
+  const monthlyPlanId = 'price_1RjqjDAToc8YZruPtwMypo5C'
 
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
