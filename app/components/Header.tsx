@@ -13,10 +13,12 @@ function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [isFeedDropdownOpen, setIsFeedDropdownOpen] = useState(false);
+    const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const { user, isAuthenticated, logout } = useAuth();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const feedDropdownRef = useRef<HTMLDivElement>(null);
+    const toolsDropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
     // Prevent hydration mismatch by only applying theme after mounting
@@ -32,6 +34,9 @@ function Header() {
             }
             if (feedDropdownRef.current && !feedDropdownRef.current.contains(event.target as Node)) {
                 setIsFeedDropdownOpen(false);
+            }
+            if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(event.target as Node)) {
+                setIsToolsDropdownOpen(false);
             }
         };
 
@@ -114,6 +119,10 @@ function Header() {
         { href: "/nuggets", label: "Latest" },
         { href: "/saved-nuggets", label: "Saved Nuggets" },
         { href: "/players-nuggets", label: "My Players" },
+    ];
+
+    const toolOptions = [
+        { href: "/rankings", label: "Rankings" },
     ];
 
     // const toolNavLink = [
@@ -267,6 +276,34 @@ function Header() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Tools Dropdown */}
+                        <div className="relative left-2" ref={toolsDropdownRef}>
+                            <button
+                                onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
+                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white flex items-center space-x-1"
+                            >
+                                <span>TOOLS</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
+                            </button>
+                            {isToolsDropdownOpen && (
+                                <div className="absolute top-full left-0 w-56 rounded-sm shadow-lg border border-white/20 bg-background/90 py-2 z-50">
+                                    <div className="py-1">
+                                        {toolOptions.map((option) => (
+                                            <Link
+                                                key={option.href}
+                                                href={option.href}
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800"
+                                                onClick={() => setIsToolsDropdownOpen(false)}
+                                            >
+                                                {option.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         {/* {toolNavLink.map((link) => (
                             <Link
                                 key={link.href}
@@ -401,6 +438,35 @@ function Header() {
                                             onClick={handleMobileNavigation}
                                             style={{
                                                 animationDelay: isMobileMenuOpen && isFeedDropdownOpen ? `${(navLinks.length + index + 1) * 50}ms` : '0ms'
+                                            }}
+                                        >
+                                            {option.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Mobile Tools Dropdown */}
+                            <div className="space-y-1">
+                                <button
+                                    onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
+                                    className="mobile-menu-nav-link w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 flex items-center justify-center space-x-2"
+                                    style={{
+                                        animationDelay: isMobileMenuOpen ? `${(navLinks.length + 1) * 50}ms` : '0ms'
+                                    }}
+                                >
+                                    <span>TOOLS</span>
+                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+                                <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isToolsDropdownOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    {toolOptions.map((option, index) => (
+                                        <Link
+                                            key={option.href}
+                                            href={option.href}
+                                            className="mobile-menu-nav-link block px-8 py-2 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 text-sm"
+                                            onClick={handleMobileNavigation}
+                                            style={{
+                                                animationDelay: isMobileMenuOpen && isToolsDropdownOpen ? `${(navLinks.length + index + 2) * 50}ms` : '0ms'
                                             }}
                                         >
                                             {option.label}

@@ -84,13 +84,18 @@ export default function TrendingPlayersSidebar() {
                         </div>
                         {player.teamDetails && (
                             <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
-                                <Image
-                                    src={getTeamLogoUrl(player.teamDetails.logo) || ''}
-                                    alt={player.teamDetails.name || 'Team logo'}
-                                    width={24}
-                                    height={24}
-                                    className="object-contain"
-                                />
+                                {(() => {
+                                    const teamLogoUrl = getTeamLogoUrl(player.teamDetails.logo)
+                                    return teamLogoUrl ? (
+                                        <Image
+                                            src={teamLogoUrl}
+                                            alt={player.teamDetails.name || 'Team logo'}
+                                            width={24}
+                                            height={24}
+                                            className="object-contain"
+                                        />
+                                    ) : null
+                                })()}
                                 <p>{player.teamDetails.name || 'No team'}</p>
                             </div>
                         )}
