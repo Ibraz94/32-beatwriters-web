@@ -93,22 +93,6 @@ function RankingsContent() {
     })
   }, [data])
 
-  if (loading) {
-    return (
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center text-muted-foreground">Loading rankings…</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center text-destructive">{error}</div>
-      </div>
-    )
-  }
-
   return (
     <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-6">
@@ -173,7 +157,22 @@ function RankingsContent() {
             </tr>
           </thead>
           <tbody>
-            {normalized.map((row) => (
+            {error && (
+              <tr>
+                <td colSpan={8} className="px-3 py-6 text-center text-destructive">{error}</td>
+              </tr>
+            )}
+            {!error && loading && (
+              <tr>
+                <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">Loading…</td>
+              </tr>
+            )}
+            {!error && !loading && normalized.length === 0 && (
+              <tr>
+                <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">No data</td>
+              </tr>
+            )}
+            {!error && !loading && normalized.map((row) => (
               <tr key={`${row.rank}-${row.playerName}`} className="border-t border-border">
                 <td className="px-3 py-2">{row.rank}</td>
                 <td className="px-3 py-2 font-medium">{row.playerName}</td>
