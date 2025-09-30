@@ -25,7 +25,7 @@ function RankingsContent() {
   const [weeks, setWeeks] = useState<number[]>([])
   const [week, setWeek] = useState<number | undefined>(undefined)
   const [format, setFormat] = useState<'standard' | 'halfPPR' | 'ppr'>('ppr')
-  const [position, setPosition] = useState<'' | 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DST'>('')
+  const [position, setPosition] = useState<'' | 'QB' | 'RB' | 'WR'>('')
 
   // Load weeks and set current week
   useEffect(() => {
@@ -77,7 +77,6 @@ function RankingsContent() {
       const proj = projections?.ppr ?? null
       const passY = stats?.passingYards ?? null
       const passTd = stats?.passingTDs ?? null
-      const interceptions = stats?.interceptions ?? null
       const rushY = stats?.rushingYards ?? null
       const tds = (stats?.rushingTDs ?? 0) + (stats?.receivingTDs ?? 0)
       return {
@@ -86,7 +85,6 @@ function RankingsContent() {
         proj,
         passY,
         passTd,
-        interceptions,
         rushY,
         tds,
       }
@@ -113,7 +111,7 @@ function RankingsContent() {
 
             {/* Position Tabs */}
             <div className="ml-3 flex items-center gap-1 bg-accent/40 rounded-md p-1">
-              {['', 'QB', 'RB', 'WR', 'TE', 'K', 'DST'].map((pos) => (
+              {['', 'QB', 'RB', 'WR'].map((pos) => (
                 <button
                   key={pos || 'ALL'}
                   onClick={() => setPosition(pos as any)}
@@ -151,7 +149,6 @@ function RankingsContent() {
               <th className="px-3 py-2 text-left">Proj. Pts</th>
               <th className="px-3 py-2 text-left">Pass Yds</th>
               <th className="px-3 py-2 text-left">Pass TDs</th>
-              <th className="px-3 py-2 text-left">INTs</th>
               <th className="px-3 py-2 text-left">Rush Yds</th>
               <th className="px-3 py-2 text-left">TDs</th>
             </tr>
@@ -159,17 +156,17 @@ function RankingsContent() {
           <tbody>
             {error && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-destructive">{error}</td>
+                <td colSpan={7} className="px-3 py-6 text-center text-destructive">{error}</td>
               </tr>
             )}
             {!error && loading && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">Loading…</td>
+                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">Loading…</td>
               </tr>
             )}
             {!error && !loading && normalized.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">No data</td>
+                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">No data</td>
               </tr>
             )}
             {!error && !loading && normalized.map((row) => (
@@ -179,7 +176,6 @@ function RankingsContent() {
                 <td className="px-3 py-2">{row.proj ?? '—'}</td>
                 <td className="px-3 py-2">{row.passY ?? '—'}</td>
                 <td className="px-3 py-2">{row.passTd ?? '—'}</td>
-                <td className="px-3 py-2">{row.interceptions ?? '—'}</td>
                 <td className="px-3 py-2">{row.rushY ?? '—'}</td>
                 <td className="px-3 py-2">{row.tds ?? '—'}</td>
               </tr>
