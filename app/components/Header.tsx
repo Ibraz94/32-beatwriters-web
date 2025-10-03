@@ -416,18 +416,6 @@ function Header() {
 
                 <div className="hero-bg h-screen max-w-7xl mx-auto" />
 
-                <div>
-                    <SearchBar
-                        placeholder="Search players..."
-                        size="md"
-                        width="w-1/2"
-                        buttonLabel="Search here"
-                        onButtonClick={() => alert("Button clicked!")}
-                        onSearchChange={(val) => console.log(val)}
-                        className="flex justify-center items-center"
-                    />
-                </div>
-
 
                 {/* Mobile Menu */}
                 <div className={`mobile-menu-container lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen

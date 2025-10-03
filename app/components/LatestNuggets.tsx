@@ -11,6 +11,7 @@ import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter } from 'next/navigation'
 import TrendingPlayersSidebar from '@/app/components/TrendingPlayersSidebar'
 import { Button } from '@/components/ui/button'
+import SearchBar from '@/components/ui/search'
 
 export default function LatestNuggets() {
   const router = useRouter()
@@ -101,6 +102,19 @@ export default function LatestNuggets() {
         <p className="text-xl max-w-4xl mx-auto">Stay updated with the most recent insights and analysis</p>
       </div>
 
+
+      <div className='flex justify-center'>
+        <SearchBar
+          placeholder="Search players..."
+          size="md"
+          width="w-1/2"
+          buttonLabel="Search here"
+          onButtonClick={() => alert("Button clicked!")}
+          onSearchChange={(val) => console.log(val)}
+          className="flex justify-center items-center"
+        />
+      </div>
+      
       {/* Main Content Area - Two Column Layout */}
       <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0">
         {/* Feed Column */}
