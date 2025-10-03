@@ -132,87 +132,97 @@ function Header() {
     return (
         <header className="header-main z-50 w-full border-gray-100 shadow-sm transition-colors duration-300 container mx-auto">
             <div>
-                <div className="flex h-[80px] lg:h-[80px] items-center justify-between px-2 lg:px-0">
+                <div className="md:flex h-[50px] lg:h-[50px] justify-center items-center px-2 lg:px-0 bg-[#1D212D]">
                     {/* Logo and Social Links */}
-                    <div className="flex items-center justify-between w-full space-x-3">
-                        <Link href="/" className="flex items-center space-x-2 lg:space-x-2 hover:opacity-90 transition-opacity pl-2">
-                            <div className="relative">
-                                {mounted && (
-                                    <Image
-                                        src={theme === 'light' ? '/logo-small.webp' : '/32bw_logo_white.png'}
-                                        alt="32 Beat Writers"
-                                        width={50}
-                                        height={50}
-                                        className=""
-                                    />
-                                )}
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="font-extrabold text-2xl -mb-1 font-oswald">
-                                    32BeatWriters
-                                </span>
-                                <span className="text-lg text-red-800 ">
-                                    NFL Insider Network
-                                </span>
-                            </div>
-                        </Link>
 
+                    <div className="flex items-center justify-center pt-2 md:pt-0">
                         {/* Header Image Section - Hidden on mobile */}
-                        <div className="hidden lg:flex h-[75px] w-[60%] items-center bg-[#2C204B] mt-2">
-                            <div className="relative top-0 right-0 w-[350px] h-full">
-                                <Image
-                                    src={"/header-image.png"}
-                                    alt="Header Image"
-                                    fill
-                                    className="relative inset-0 object-cover flex items-center justify-center"
-                                    style={{ clipPath: 'polygon(0% 0%, 100% 0%, 68% 0%, 52% 100%, 0% 100%)' }}
-                                />
-                            </div>
-                            <div className="relative left-[-40px] w-1/2 md:w-1/2 xl:w-1/2">
-                                <h1 className="text-white font-bold text-xl xl:text-md tracking-wide font-oswald">
-                                    Stay Connected
-                                </h1>
-                                <p className="text-white text-md 1280:text-sm">
-                                    Watch, Listen, and Stay Updated.
-                                </p>
-                            </div>
+                        <div className=" lg:flex h-[30px] items-center">
+                            <div className="flex justify-center items-center">
+                                <div className="flex justify-center md:flex space-x-6 gap-2 md:gap-12">
+                                    <Link
+                                        href="https://youtube.com/@32beatwriters"
+                                        target="_blank"
+                                        className="flex items-center gap-2 hover:scale-98 transition-transform"
+                                    >
+                                        <Image
+                                            src={"/youtube-white-logo.svg"}
+                                            alt="Youtube"
+                                            width={20}
+                                            height={20}
+                                            className="w-7 h-7 md:w-5 md:h-5"
+                                        />
+                                        <span className="text-white text-xs hidden md:inline lg:inline">YouTube</span>
+                                    </Link>
 
-                            <div className="relative right-2">
-                                <div className="hidden justify-center items-center md:justify-start space-x-4 lg:flex">
-                                    <Link href="https://youtube.com/@32beatwriters" target="_blank" className="w-10 h-10 bg-red-700 hover:scale-98 rounded flex items-center justify-center transition-colors">
-                                        <Image src={"/youtube-logo.svg"} alt="Youtube" width={25} height={25} />
+                                    <Link
+                                        href="https://x.com/32beatwriters"
+                                        target="_blank"
+                                        className="flex items-center gap-2 hover:scale-98 transition-transform"
+                                    >
+                                        <Image
+                                            src={"/X-white-logo2.svg"}
+                                            alt="Twitter (X)"
+                                            width={20}
+                                            height={20}
+                                            className="w-7 h-7 md:w-5 md:h-5"
+                                        />
+                                        <span className="text-white text-xs hidden md:inline lg:inline">Twitter</span>
                                     </Link>
-                                    <Link href="https://x.com/32beatwriters" target="_blank" className="w-10 h-10 hover:scale-98  bg-white rounded flex items-center justify-center transition-colors">
-                                        <Image src={"/x-black-logo.svg"} alt="Twitter" width={25} height={25} />
+
+                                    <Link
+                                        href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292"
+                                        target="_blank"
+                                        className="flex items-center gap-2 hover:scale-98 transition-transform"
+                                    >
+                                        <Image
+                                            src={"/apple-white-logo.svg"}
+                                            alt="Apple Podcasts"
+                                            width={100}
+                                            height={100}
+                                            className="w-7 h-7 md:w-5 md:h-5"
+                                        />
+                                        <span className="text-white text-xs hidden md:inline lg:inline">Apple</span>
                                     </Link>
-                                    <Link href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292" target="_blank" className="w-10 h-10 hover:scale-98  bg-white rounded flex items-center justify-center transition-colors">
-                                        <Image src={"/apple-icon.svg"} alt="Apple Podcasts" width={25} height={25} />
-                                    </Link>
-                                    <Link href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c" target="_blank" className="w-10 h-10 hover:scale-98  bg-white rounded flex items-center justify-center transition-colors">
-                                        <Image src={"/spotify-icon.svg"} alt="Spotify" width={25} height={25} />
+
+                                    <Link
+                                        href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c"
+                                        target="_blank"
+                                        className="flex items-center gap-2 hover:scale-98 transition-transform"
+                                    >
+                                        <Image
+                                            src={"/spotify-white-logo.svg"}
+                                            alt="Spotify"
+                                            width={30}
+                                            height={30}
+                                            className="w-7 h-7 md:w-5 md:h-5"
+                                        />
+                                        <span className="text-white text-xs hidden md:inline lg:inline">Spotify</span>
                                     </Link>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Mobile Menu Button */}
-                    <div className="flex lg:hidden items-center space-x-3 ml-2">
-                        {/* <ThemeToggle /> */}
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="p-2 rounded-lg transition-colors"
-                            aria-label="Toggle menu"
-                        >
-                            {isMobileMenuOpen ? (
-                                <X className="h-6 w-6" />
-                            ) : (
-                                <Menu className="h-6 w-6" />
-                            )}
-                        </button>
-                    </div>
                 </div>
-                <div className="header-secondary h-[32px] lg:h-[50px] flex items-center justify-between px-2 lg:px-5 mb-1 mt-2">
+
+                {/* Mobile Menu Button */}
+                <div className="flex lg:hidden items-center space-x-3 ml-2">
+                    {/* <ThemeToggle /> */}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="p-2 rounded-lg transition-colors"
+                        aria-label="Toggle menu"
+                    >
+                        {isMobileMenuOpen ? (
+                            <X className="h-6 w-6" />
+                        ) : (
+                            <Menu className="h-6 w-6" />
+                        )}
+                    </button>
+                </div>
+
+
+                <div className="hidden md:flex items-center justify-between px-2 lg:px-5 mb-1 mt-2">
                     {/* Mobile Social Links - Only visible on mobile */}
                     <div className="flex lg:hidden items-center justify-center w-full space-x-4">
                         {/* <h1 className="text-white text-xl font-bold">Social Links</h1> */}
@@ -236,11 +246,14 @@ function Header() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-8">
+                        <Link href="/">
+                            <Image src={"/32bw_logo_black.svg"} alt="Spotify" width={60} height={60} />
+                        </Link>
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white"
+                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-black"
                             >
                                 {link.label}
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
@@ -251,10 +264,10 @@ function Header() {
                         <div className="relative left-2" ref={feedDropdownRef}>
                             <button
                                 onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
-                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white flex items-center space-x-1"
+                                className="relative transition-colors duration-200 py-2 group text-md text-black flex items-center space-x-1"
                             >
-                                <span>FEEDS</span>
-                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
+                                <span className="text-black">FEEDS</span>
+                                <ChevronDown className={`h-4 w-4 text-black transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                             </button>
 
@@ -266,7 +279,7 @@ function Header() {
                                             <Link
                                                 key={option.href}
                                                 href={option.href}
-                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800"
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800 text-black"
                                                 onClick={() => setIsFeedDropdownOpen(false)}
                                             >
                                                 {option.label}
@@ -281,7 +294,7 @@ function Header() {
                         <div className="relative left-2" ref={toolsDropdownRef}>
                             <button
                                 onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white flex items-center space-x-1"
+                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-black flex items-center space-x-1"
                             >
                                 <span>TOOLS</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
@@ -294,7 +307,7 @@ function Header() {
                                             <Link
                                                 key={option.href}
                                                 href={option.href}
-                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800"
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800 text-black"
                                                 onClick={() => setIsToolsDropdownOpen(false)}
                                             >
                                                 {option.label}
@@ -392,6 +405,9 @@ function Header() {
                         )}
                     </div>
                 </div>
+
+                <div className="hero-bg h-screen max-w-7xl mx-auto" />
+
 
                 {/* Mobile Menu */}
                 <div className={`mobile-menu-container lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen
@@ -560,11 +576,10 @@ function Header() {
                         </div>
                     </div>
                 </div>
+
             </div>
         </header>
     );
 }
 
 export default Header;
-
-
