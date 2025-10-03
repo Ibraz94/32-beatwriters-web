@@ -36,7 +36,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white/80 dark:bg-[#2C204B] text-gray-800 dark:text-yellow-300 shadow hover:bg-gray-100 dark:hover:bg-[#3a2d5c] transition-colors h-10 w-10 focus:outline-none focus:ring-2 focus:ring-red-600"
+      className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white dark:bg-[#ffffff] text-gray-800 dark:text-black-300 shadow hover:bg-gray-100 dark:hover:bg-[#94919b] dark:hover:text-[#ffffff] transition-colors h-10 w-10 focus:outline-none"
     >
       {getCurrentIcon()}
       <span className="sr-only">Toggle theme</span>

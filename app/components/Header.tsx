@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import SearchBar from "@/components/ui/search";
+import { Button } from "@/components/ui/button";
 
 function Header() {
     const { theme } = useTheme();
@@ -332,7 +333,6 @@ function Header() {
 
                     {/* Desktop Actions */}
                     <div className="hidden lg:flex items-center space-x-4">
-                        <ThemeToggle />
                         {/* <div className="w-px h-7 bg-gray-300"></div> */}
                         {isAuthenticated ? (
                             <div className="relative" ref={dropdownRef}>
@@ -389,19 +389,26 @@ function Header() {
                             </div>
                         ) : (
                             <div className="flex items-center space-x-3">
-                                <Link
-                                    href="/subscribe"
-                                    className="bg-red-800 hover:scale-102 text-white px-4 py-1 rounded text-md transition-all duration-200 shadow-sm hover:shadow-md"
+                                <Button
+                                    variant="secondary"
+                                    className="rounded-4xl px-6"
                                 >
-                                    SUBSCRIBE
-                                </Link>
-                                <Link
-                                    href="/login"
-                                    className="desktop-login-link hover:scale-102 transition-colors text-md"
-                                >
-                                    LOGIN
-                                </Link>
-
+                                    <Link
+                                        href="/login"
+                                        // className="desktop-login-link hover:scale-102 transition-colors text-md"
+                                    >
+                                        LOGIN
+                                    </Link>
+                                </Button>
+                                <Button variant="orange"
+                                    className="rounded-4xl px-8">
+                                    <Link
+                                        href="/subscribe"
+                                    >
+                                        SUBSCRIBE
+                                    </Link>
+                                </Button>
+                                <ThemeToggle />
                             </div>
                         )}
                     </div>
