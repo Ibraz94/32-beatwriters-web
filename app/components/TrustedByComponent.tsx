@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const TrustedByPartners = () => {
   return (
@@ -48,6 +49,9 @@ const TrustedByPartners = () => {
           </div>
         </div>
       </div>
+      <Link href="/about">
+      <h2 className="font-semibold text-foreground mb-4 pt-3 sm:pt-5 font-oswald text-center hover:underline">Learn About Why They Trust Us</h2>
+      </Link>
     </section>
   );
 };
