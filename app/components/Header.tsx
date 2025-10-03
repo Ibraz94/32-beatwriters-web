@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import SearchBar from "@/components/ui/search";
 
 function Header() {
     const { theme } = useTheme();
@@ -407,6 +408,18 @@ function Header() {
                 </div>
 
                 <div className="hero-bg h-screen max-w-7xl mx-auto" />
+
+                <div>
+                    <SearchBar
+                        placeholder="Search players..."
+                        size="md"
+                        width="w-1/2"
+                        buttonLabel="Search here"
+                        onButtonClick={() => alert("Button clicked!")}
+                        onSearchChange={(val) => console.log(val)}
+                        className="flex justify-center items-center"
+                    />
+                </div>
 
 
                 {/* Mobile Menu */}

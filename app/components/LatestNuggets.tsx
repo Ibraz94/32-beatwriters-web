@@ -10,6 +10,7 @@ import {
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useRouter } from 'next/navigation'
 import TrendingPlayersSidebar from '@/app/components/TrendingPlayersSidebar'
+import { Button } from '@/components/ui/button'
 
 export default function LatestNuggets() {
   const router = useRouter()
@@ -203,13 +204,15 @@ export default function LatestNuggets() {
 
       {/* View All Nuggets Button */}
       {latestNuggets.length > 0 && (
-        <div className="text-center py-8">
-          <Link
-            href="/subscribe"
-            className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-2"
-          >
-            Subscribe to See All the Latest News
-          </Link>
+        <div className="py-8 flex justify-center lg:ml-[440px] md:ml-[175px]">
+          <Button variant="orange">
+            <Link
+              href="/subscribe"
+            // className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-2"
+            >
+              Subscribe to See All the Latest News
+            </Link>
+          </Button>
         </div>
       )}
     </div>
