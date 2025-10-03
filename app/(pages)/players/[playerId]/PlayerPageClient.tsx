@@ -258,7 +258,7 @@ export default function PlayerPageClient({ id }: any) {
     const tabs = [
         { id: 'news', label: 'News & Updates', icon: Newspaper },
         { id: 'performance', label: 'Performance Metrics', icon: CircleGauge },
-        { id: 'workout', label: 'Workout Metrics', icon: Dumbbell },
+        // { id: 'workout', label: 'Workout Metrics', icon: Dumbbell },
         { id: 'season-stats', label: 'Season Stats', icon: NotepadTextDashed },
         { id: 'game-log', label: 'Game Log', icon: Logs },
     ]
