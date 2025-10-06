@@ -3,56 +3,73 @@ import Link from "next/link";
 
 const TrustedByPartners = () => {
   return (
-    <section className="container mx-auto mt-4 p-2">
+    <section className="container mx-auto mt-4 p-4 bg-[var(--gray-background-color)]">
       <div className="text-center">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-foreground mb-4 pt-3 sm:pt-5 font-oswald">Trusted By</h2>
-        <div className="grid grid-cols-2 gap-4 justify-center max-w-xs mx-auto min-[435px]:flex min-[435px]:max-w-none">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground mb-4 pt-3 sm:pt-5 font-oswald">
+          Our Valuable Allies
+        </h2>
+        <p className="text-[var(--color-gray)] text-base sm:text-lg md:text-xl mb-10 leading-relaxed max-w-[700px] mx-auto">
+          Working as a team for positive outcomes, we make your brand known.
+          So, expect only success from us.
+        </p>
+
+
+        {/* ✅ Mobile-first grid — expands responsively */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 justify-items-center">
           {/* Logo 1 */}
-          <div className="w-24 h-20 sm:w-32 sm:h-20 px-2 bg-gray-200 flex justify-center items-center rounded-lg max-[435px]:w-full">
+          <div className="w-full bg-white flex justify-center items-center rounded-lg h-24 md:h-32 lg:h-36 transition-all duration-300">
             <Image
               src="/ESPN_logo.png"
               alt="ESPN Logo"
-              width={120}
-              height={120}
-              className="object-contain max-w-full"
+              width={200}
+              height={180}
+              className="object-contain w-[120px] sm:w-[83px] md:w-[200px] h-auto"
             />
           </div>
+
           {/* Logo 2 */}
-          <div className="w-24 h-20 sm:w-32 sm:h-20 px-2 bg-gray-200 flex justify-center items-center rounded-lg max-[435px]:w-full">
+          <div className="w-full bg-white flex justify-center items-center rounded-lg h-24 md:h-32 lg:h-36 transition-all duration-300">
             <Image
               src="/CBS_logo.png"
               alt="CBS Logo"
-              width={120}
-              height={120}
-              className="object-contain max-w-full"
+              width={200}
+              height={180}
+              className="object-contain w-[120px] sm:w-[83px] md:w-[200px] h-auto"
             />
           </div>
+
           {/* Logo 3 */}
-          <div className="w-24 h-20 sm:w-32 sm:h-20 px-2 bg-gray-200 flex justify-center items-center rounded-lg max-[435px]:w-full">
+          <div className="w-full bg-white flex justify-center items-center rounded-lg h-24 md:h-32 lg:h-36 transition-all duration-300">
             <Image
               src="/NBC_logo.png"
               alt="NBC Logo"
-              width={120}
-              height={120}
-              className="object-contain max-w-full"
+              width={200}
+              height={180}
+              className="object-contain w-[120px] sm:w-[83px] md:w-[200px] h-auto"
             />
           </div>
+
           {/* Logo 4 */}
-          <div className="w-24 h-20 sm:w-32 sm:h-20 px-2 bg-gray-200 flex justify-center items-center rounded-lg max-[435px]:w-full">
+          <div className="w-full bg-white flex justify-center items-center rounded-lg h-24 md:h-32 lg:h-36 transition-all duration-300">
             <Image
               src="/sleeper_logo-min.png"
               alt="Sleeper Logo"
-              width={150}
-              height={150}
-              className="object-contain max-w-full"
+              width={200}
+              height={180}
+              className="object-contain w-[120px] sm:w-[83px] md:w-[200px] h-auto"
             />
           </div>
         </div>
       </div>
+
       <Link href="/about">
-      <h2 className="font-semibold text-foreground mb-4 pt-3 sm:pt-5 font-oswald text-center hover:underline">Learn About Why They Trust Us</h2>
+        <h2 className="font-semibold text-foreground mb-4 pt-3 sm:pt-5 font-oswald text-center hover:underline underline-offset-4">
+          Learn About Why They Trust Us
+        </h2>
       </Link>
     </section>
+
+
   );
 };
 

@@ -59,24 +59,24 @@ export default function TrendingPlayersSidebar() {
     }
 
     return (
-        <div className="rounded-lg border border-[#2C204B]">
-            <div className='bg-[#2C204B] h-14 flex items-center justify-center'>
-                <h2 className="text-white text-center text-xl">TRENDING PLAYERS</h2>
+        <div className="bg-[var(--trending-background-color)] rounded-2xl py-4 px-2">
+            <div className='h-14 flex items-center justify-center'>
+                <h2 className="text-black font-semibold text-center text-2xl tracking-wider">Trending Players</h2>
             </div>
             <div className="space-y-3">
                 {trendingPlayersData.data.map((player) => (
                     <Link
                         key={player.id}
                         href={`/players/${player.id}`}
-                        className="flex items-center justify-between p-3 border-b border-[#2C204B] hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        className="flex items-center justify-between p-3  bg-[var(--light-trending-background-color)] hover:bg-gray-50 dark:hover:bg-[#FFF6F5] transition-colors mx-3 rounded-2xl"
                     >
                         <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 rounded-full overflow-hidden">
+                            <div className="w-12 h-12 rounded-full overflow-hidden border-1 border-red-400 p-0.5">
                                 <Image
                                     src={getImageUrl(player.headshotPic) || '/default-player.jpg'}
                                     alt={player.name}
-                                    width={40}
-                                    height={40}
+                                    width={45}
+                                    height={45}
                                     className="w-full h-full object-cover"
                                 />
                             </div>
@@ -101,6 +101,11 @@ export default function TrendingPlayersSidebar() {
                         )}
                     </Link>
                 ))}
+            </div>
+            <div className="text-center">
+                <button className="lg:hidden text-[var(--color-orange)] mt-5 underline underline-offset-6 font-semibold">
+                    View all
+                </button>
             </div>
         </div>
     );

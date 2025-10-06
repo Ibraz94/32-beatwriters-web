@@ -111,10 +111,10 @@ function Header() {
     };
 
     const navLinks = [
-        { href: "/", label: "HOME" },
-        { href: "/articles", label: "ARTICLES" },
-        { href: "/podcasts", label: "PODCAST" },
-        { href: "/players", label: "PLAYERS" },
+        { href: "/", label: "Home" },
+        { href: "/articles", label: "Articles" },
+        { href: "/podcasts", label: "Podcast" },
+        { href: "/players", label: "Player" },
     ];
 
     const feedOptions = [
@@ -208,19 +208,29 @@ function Header() {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className="flex lg:hidden items-center space-x-3 ml-2">
+                <div className="flex lg:hidden items-center space-x-3 ml-2 py-4 justify-between">
                     {/* <ThemeToggle /> */}
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="p-2 rounded-lg transition-colors"
-                        aria-label="Toggle menu"
-                    >
-                        {isMobileMenuOpen ? (
-                            <X className="h-6 w-6" />
-                        ) : (
-                            <Menu className="h-6 w-6" />
-                        )}
-                    </button>
+                    <div>
+                        <Link href="/">
+                            <Image src={"/32bw_logo_black.svg"} alt="Spotify" width={50} height={50} className="ml-3"/>
+                        </Link>
+                    </div>
+
+                    <div className="flex align-middle">
+                        {/* Theme Toggle - Mobile */}
+                        <ThemeToggle />
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="ml-2 mr-4 inline-flex items-center justify-center rounded-full py-0.5 border border-gray-300 bg-white dark:bg-[#ffffff] text-gray-800 dark:text-black-300 shadow hover:bg-gray-100 dark:hover:bg-[#94919b] dark:hover:text-[#ffffff] transition-colors h-10 w-10 focus:outline-none"
+                            aria-label="Toggle menu"
+                        >
+                            {isMobileMenuOpen ? (
+                                <X />
+                            ) : (
+                                <Menu/>
+                            )}
+                        </button>
+                    </div>
                 </div>
 
 
@@ -247,7 +257,7 @@ function Header() {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <nav className="hidden lg:flex items-center space-x-8">
+                    <nav className="hidden lg:flex items-center space-x-2">
                         <Link href="/">
                             <Image src={"/32bw_logo_black.svg"} alt="Spotify" width={60} height={60} />
                         </Link>
@@ -255,7 +265,7 @@ function Header() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-black"
+                                className="relative py-3 text-md font-oswald border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-medium text-(--color-gray)"
                             >
                                 {link.label}
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
@@ -266,10 +276,10 @@ function Header() {
                         <div className="relative left-2" ref={feedDropdownRef}>
                             <button
                                 onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
-                                className="relative transition-colors duration-200 py-2 group text-md text-black flex items-center space-x-1"
+                                className="relative py-3 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange)"
                             >
-                                <span className="text-black">FEEDS</span>
-                                <ChevronDown className={`h-4 w-4 text-black transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
+                                <span>Feeds</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                             </button>
 
@@ -281,7 +291,7 @@ function Header() {
                                             <Link
                                                 key={option.href}
                                                 href={option.href}
-                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800 text-black"
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black"
                                                 onClick={() => setIsFeedDropdownOpen(false)}
                                             >
                                                 {option.label}
@@ -296,7 +306,7 @@ function Header() {
                         <div className="relative left-2" ref={toolsDropdownRef}>
                             <button
                                 onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-                                className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-black flex items-center space-x-1"
+                                className="relative py-3 text-md text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-normal"
                             >
                                 <span>TOOLS</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
@@ -309,7 +319,7 @@ function Header() {
                                             <Link
                                                 key={option.href}
                                                 href={option.href}
-                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800 text-black"
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black font-normal"
                                                 onClick={() => setIsToolsDropdownOpen(false)}
                                             >
                                                 {option.label}
@@ -395,7 +405,7 @@ function Header() {
                                 >
                                     <Link
                                         href="/login"
-                                        // className="desktop-login-link hover:scale-102 transition-colors text-md"
+                                    // className="desktop-login-link hover:scale-102 transition-colors text-md"
                                     >
                                         LOGIN
                                     </Link>
@@ -414,7 +424,7 @@ function Header() {
                     </div>
                 </div>
 
-                <div className="hero-bg h-screen max-w-7xl mx-auto" />
+                {/* <div className="hero-bg h-screen max-w-7xl mx-auto" /> */}
 
 
                 {/* Mobile Menu */}
@@ -584,7 +594,6 @@ function Header() {
                         </div>
                     </div>
                 </div>
-
             </div>
         </header>
     );

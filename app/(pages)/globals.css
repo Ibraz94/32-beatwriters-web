@@ -20,6 +20,16 @@
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
   --ring: 212.7 26.8% 83.9%;
+  --orange: 9, 78%, 55%;
+  --link-color: 222, 4%, 47%;
+  --primary2-color: 225, 7%, 36%;
+  --gray-background: 180, 4%, 95%;
+  --light-orange-background: 9, 79%, 83%;
+  /* Source bg color at home page*/
+  --trending-background: 8, 79%, 89%;
+  /* trending players bg color at home page*/
+  --light-trending-background: 8, 100%, 94%;
+  /* trending player (individual player) bg color at home page*/
   --radius: 0.5rem;
 }
 
@@ -42,6 +52,7 @@
   --destructive-foreground: 210 40% 98%;
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
+  --orange: 9, 78%, 55%;
   --ring: 212.7 26.8% 83.9%;
 }
 
@@ -65,10 +76,24 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-orange: hsl(var(--orange));
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-inter: var(--font-inter);
-  --font-product-sans: var(--font-producs-sans)
+  --font-product-sans: var(--font-product-sans);
+  --color-gray: hsl(var(--link-color));
+  --primary-gray-color: hsl(var(--primary2-color));
+
+  --light-orange-background-color: hsl(var(--light-orange-background));
+  /* Source bg color at home page*/
+
+  --trending-background-color: hsl(var(--trending-background));
+  /* trending players bg color at home page*/
+  
+  --light-trending-background-color: hsl(var(--light-trending-background));
+  /* trending player (individual player) bg color at home page*/
+
+  --gray-background-color: hsl(var(--gray-background));
 }
 
 body {
@@ -90,22 +115,22 @@ body {
 /* Custom theme-aware classes */
 .articles-card {
   background-color: transparent;
-  border: 1px solid #d1d1d1 
+  border: 1px solid #d1d1d1
 }
 
 .dark .articles-card {
   background-color: #2C204B;
-  border: 1px solid #3a3a3a 
+  border: 1px solid #3a3a3a
 }
 
 .select {
   background-color: transparent;
-  border: 1px solid #d1d1d1 
+  border: 1px solid #d1d1d1
 }
 
 .dark .select {
   background-color: #2C204B;
-  border: 1px solid #3a3a3a 
+  border: 1px solid #3a3a3a
 }
 
 .position-select {
@@ -114,34 +139,34 @@ body {
 
 .dark .position-select {
   background-color: #2C204B;
-  border: 1px solid #3a3a3a 
+  border: 1px solid #3a3a3a
 }
 
 
 .player-card {
   background-color: #f6f6f6;
   border: 1px solid #d1d1d1;
-  
+
 }
 
 .dark .player-card {
-    background-color: transparent;
-    border: 1px solid #36383b
+  background-color: transparent;
+  border: 1px solid #36383b
 }
 
 .ranking-table {
   background-color: #ffffff;
   border: 1px solid #d1d1d1;
-  
+
 }
 
 .ranking-table:hover {
-  background-color: #f6f6f6;  
+  background-color: #f6f6f6;
 }
 
 .dark .ranking-table {
-    background-color: transparent;
-    border: 1px solid #36383b
+  background-color: transparent;
+  border: 1px solid #36383b
 }
 
 .position-card {
@@ -150,8 +175,8 @@ body {
 }
 
 .dark .position-card {
-    background-color: transparent;
-    border: 1px solid #36383b
+  background-color: transparent;
+  border: 1px solid #36383b
 }
 
 
@@ -444,23 +469,24 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 
 /* iOS Safari Scroll Fixes */
 @supports (-webkit-touch-callout: none) {
+
   /* iOS Safari specific fixes */
   html {
     -webkit-overflow-scrolling: touch;
     scroll-behavior: auto;
   }
-  
+
   body {
     -webkit-overflow-scrolling: touch;
     position: relative;
     min-height: 100vh;
   }
-  
+
   /* Prevent iOS Safari from scrolling to bottom on navigation */
   .mobile-menu-container {
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Ensure proper scroll restoration */
   * {
     -webkit-overflow-scrolling: touch;
@@ -517,38 +543,56 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   background: #5d4b7c;
 }
 
-.article-container img, .article-container iframe, picture, .article-container * {
+.article-container img,
+.article-container iframe,
+picture,
+.article-container * {
   max-width: 100%;
   height: auto;
 }
+
 .podcast-description * {
   max-width: 100% !important;
 }
 
-.podcast-description *, .article-container * {
+.podcast-description *,
+.article-container * {
   color: black !important;
   background-color: transparent !important;
 }
 
-.dark .podcast-description *, .dark .article-container * {
+.dark .podcast-description *,
+.dark .article-container * {
   color: white !important;
   background-color: transparent !important;
 }
 
-.podcast-description a, .dark .podcast-description a, .article-container a, .dark .article-container a {
+.podcast-description a,
+.dark .podcast-description a,
+.article-container a,
+.dark .article-container a {
   color: #9F0712 !important;
 }
 
-.podcast-description a:hover, .dark .podcast-description a:hover, .article-container a:hover, .dark .article-container a:hover {
+.podcast-description a:hover,
+.dark .podcast-description a:hover,
+.article-container a:hover,
+.dark .article-container a:hover {
   color: #9F0712 !important;
   text-decoration: underline !important;
 }
 
-.podcast-description a span, .dark .podcast-description a span, .article-container a span, .dark .article-container a span {
+.podcast-description a span,
+.dark .podcast-description a span,
+.article-container a span,
+.dark .article-container a span {
   color: #9F0712 !important;
 }
 
-.podcast-description a:hover span, .dark .podcast-description a:hover span, .article-container a:hover span, .dark .article-container a:hover span {
+.podcast-description a:hover span,
+.dark .podcast-description a:hover span,
+.article-container a:hover span,
+.dark .article-container a:hover span {
   color: #9F0712 !important;
   text-decoration: underline !important;
 }
@@ -589,14 +633,16 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 80px; 
+  height: 80px;
   background: linear-gradient(to top, hsl(var(--background)), transparent);
   pointer-events: none;
 }
 
 .hero-bg {
-  position: absolute;            /* make it float behind */
-  top: -10px;                    /* shift it upwards */
+  position: absolute;
+  /* make it float behind */
+  top: -10px;
+  /* shift it upwards */
   /* left: 50px; */
   width: 100%;
   height: 100%;
@@ -605,6 +651,8 @@ input[type="date"]::-webkit-datetime-edit-year-field {
   background-position: center;
   background-repeat: no-repeat;
   transform: scaleY(-1);
-  opacity: 0.1;                  /* dim image */
-  z-index: -1;                   /* send it behind everything */
+  opacity: 0.1;
+  /* dim image */
+  z-index: -1;
+  /* send it behind everything */
 }
