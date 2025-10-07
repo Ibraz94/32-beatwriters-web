@@ -41,58 +41,60 @@ export default function DeliveredToComponent() {
     }
 
     return (
-        <div className="container mx-auto px-4 md:px-6 py-10">
-            <div className="w-full grid grid-cols-1 md:grid-cols-12 md:rounded-3xl overflow-hidden bg-white rounded-3xl" style={{boxShadow: "0px 0px 0px 9px rgba(217,217,217,0.53)"}}>
+        <div className='bg-[linear-gradient(to_bottom,white_50%,var(--gray-background-color)_50%)]'>
+            <div className="container mx-auto px-4 md:px-6 py-10">
+                <div className="w-full grid grid-cols-1 md:grid-cols-12 md:rounded-3xl overflow-hidden bg-white rounded-3xl shadow-lg">
 
-                {/* Left Image Section (Full width on small, half on large) */}
-                <div className="col-span-12 md:col-span-6">
-                    <Image
-                        src="/newsletter.png"
-                        alt="Newsletter"
-                        width={800}
-                        height={500}
-                        className="w-full h-64 sm:h-80 md:h-full object-cover object-left"
-                    />
-                </div>
-
-                {/* Right Content Section */}
-                <div className="col-span-12 md:col-span-6 flex flex-col justify-center px-6 md:px-12 py-10 bg-white space-y-6">
-                    <div>
-                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                            Stay tuned!
-                        </h1>
-                        <p className="text-gray-600 text-sm md:text-base max-w-lg">
-                            Get the latest articles and business updates that you need to know,
-                            and receive special recommendations weekly.
-                        </p>
+                    {/* Left Image Section (Full width on small, half on large) */}
+                    <div className="col-span-12 md:col-span-6">
+                        <Image
+                            src="/newsletter.png"
+                            alt="Newsletter"
+                            width={800}
+                            height={500}
+                            className="w-full h-64 sm:h-80 md:h-full object-cover object-left"
+                        />
                     </div>
 
-                    {message ? (
-                        <div className="text-green-600 font-semibold bg-green-50 border border-green-200 px-4 py-3 rounded-lg w-full max-w-md">
-                            {message}
+                    {/* Right Content Section */}
+                    <div className="col-span-12 md:col-span-6 flex flex-col justify-center px-6 md:px-12 py-10 bg-white space-y-6">
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                                Stay tuned!
+                            </h1>
+                            <p className="text-gray-600 text-sm md:text-base max-w-lg">
+                                Get the latest articles and business updates that you need to know,
+                                and receive special recommendations weekly.
+                            </p>
                         </div>
-                    ) : (
-                        <form
-                            onSubmit={handleSubscribe}
-                            className="flex w-full max-w-md border border-gray-300 rounded-xl overflow-hidden"
-                        >
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Your Email"
-                                className="flex-1 px-4 py-3 outline-none text-gray-700"
-                                required
-                            />
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="bg-[var(--color-orange)] text-white px-6 py-3 transition-colors duration-200 hover:bg-orange-500"
+
+                        {message ? (
+                            <div className="text-green-600 font-semibold bg-green-50 border border-green-200 px-4 py-3 rounded-lg w-full max-w-md">
+                                {message}
+                            </div>
+                        ) : (
+                            <form
+                                onSubmit={handleSubscribe}
+                                className="flex w-full max-w-md border border-gray-300 rounded-xl overflow-hidden"
                             >
-                                {loading ? '...' : 'Subscribe'}
-                            </button>
-                        </form>
-                    )}
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Your Email"
+                                    className="flex-1 px-4 py-3 outline-none text-gray-700"
+                                    required
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="bg-[var(--color-orange)] text-white px-6 py-3 transition-colors duration-200 hover:bg-orange-500"
+                                >
+                                    {loading ? '...' : 'Subscribe'}
+                                </button>
+                            </form>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

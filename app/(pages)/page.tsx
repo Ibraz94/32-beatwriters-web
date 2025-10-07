@@ -24,8 +24,8 @@ export default function Home() {
       <TrustedByPartners />
       <NewArticles />
       <PodcastsComponent />
-      <DeliveredToComponent />
       <SubscriptionComponent />
+      <DeliveredToComponent />
     </div>
   );
 } ``

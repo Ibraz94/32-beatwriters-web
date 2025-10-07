@@ -27,32 +27,25 @@ export default function Footer() {
                 : [...prev, section]
         );
     };
-
     const footerLinks = {
-        Navigation: [
+        "Main Links": [
             { label: "Home", href: "/" },
             { label: "Articles", href: "/articles" },
             { label: "Feed", href: "/nuggets" },
             { label: "Contact Us", href: "/contact-us" },
-
-
         ],
-        Information: [
+        Resources: [
             { label: "Players", href: "/players" },
             { label: "Podcast", href: "/podcasts" },
             /* { label: "About Us", href: "/about" }, */
-
         ],
-        Socials: [
-            { label: "Youtube", target: "_blank", href: "https://www.youtube.com/@32beatwriters" },
-            { label: "Apple", target: "_blank", href: "https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292" },
-            { label: "Twitter", target: "_blank", href: "https://x.com/32beatwriters" },
-            { label: "Spotify", target: "_blank", href: "https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c" }
-        ]
+        "Contact Info": [
+        ],
     };
 
+
     return (
-        <footer className="bg-background w-full overflow-x-hidden">
+        <footer className="bg-[var(--gray-background-color)] w-full overflow-x-hidden">
             {/* Newsletter Section */}
             {/* <div className="border-b bg-card">
                 <div className="container mx-auto px-4 py-12">
@@ -92,10 +85,10 @@ export default function Footer() {
             </div> */}
 
             {/* Main Footer Content */}
-            <div className="px-4 py-12 bg-[#2C204B]">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 container mx-auto">
+            <div className="px-4 py-12 bg-[var(--gray-background-color)] shadow-lg rounded-3xl mx-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-1 container mx-auto pb-8 pl-4 md:pl-14 text-left">
                     {/* Brand Section */}
-                    <div className="lg:col-span-2 text-center md:text-left">
+                    <div className="lg:col-span-2 text-left">
                         <div className="flex items-center gap-2">
                             <Link href="/" className="flex items-center justify-center md:justify-start space-x-3 mb-4">
                                 <Image
@@ -106,16 +99,69 @@ export default function Footer() {
                                     className="w-14 h-14"
                                 />
                             </Link>
-                            <div className="flex flex-col mb-4">
-                                <h1 className="text-white text-3xl font-bold">
-                                    32BeatWriters
-                                </h1>
-                                <p className="text-red-800 text-lg mr-6">NFL Insider Network</p>
-                            </div>
                         </div>
-                        <p className="text-muted-foreground mb-6 leading-relaxed w-96 text-lg">
-                        Unrivaled NFL Insights. Follow the Beat.
+                        <p className="text-[var(--color-gray)] mb-6 leading-relaxed w-96 text-md">
+                            Unrivaled NFL Insights. Follow the Beat.
                         </p>
+
+                        {/* Social Icons Row */}
+                        <div className="flex justify-center md:justify-start gap-1 mt-4">
+                            <Link
+                                href="https://instagram.com"
+                                target="_blank"
+                                className="bg-[var(--color-orange)] rounded-full p-2 flex items-center justify-center hover:opacity-90 transition w-10 h-10"
+                            >
+                                <Image
+                                    src="/footer-instagram.svg"
+                                    alt="Instagram"
+                                    width={22}
+                                    height={22}
+                                    className="invert brightness-0"
+                                />
+                            </Link>
+
+                            <Link
+                                href="https://facebook.com"
+                                target="_blank"
+                                className="bg-[var(--color-orange)] rounded-full p-2 flex items-center justify-center hover:opacity-90 transition w-10 h-10"
+                            >
+                                <Image
+                                    src="/footer-facebook.svg"
+                                    alt="Facebook"
+                                    width={22}
+                                    height={22}
+                                    className="invert brightness-0"
+                                />
+                            </Link>
+
+                            <Link
+                                href="https://youtube.com"
+                                target="_blank"
+                                className="bg-[var(--color-orange)] rounded-full p-2 flex items-center justify-center hover:opacity-90 transition w-10 h-10"
+                            >
+                                <Image
+                                    src="/footer-linkedin.svg"
+                                    alt="LinkedIn"
+                                    width={22}
+                                    height={22}
+                                    className="invert brightness-0"
+                                />
+                            </Link>
+
+                            <Link
+                                href="https://twitter.com"
+                                target="_blank"
+                                className="bg-[var(--color-orange)] rounded-full p-2 flex items-center justify-center hover:opacity-90 transition w-10 h-10"
+                            >
+                                <Image
+                                    src="/footer-twitter.svg"
+                                    alt="Twitter"
+                                    width={22}
+                                    height={22}
+                                    className="invert brightness-0"
+                                />
+                            </Link>
+                        </div>
                     </div>
 
                     {/* Footer Links */}
@@ -126,50 +172,95 @@ export default function Footer() {
                                 onClick={() => toggleSection(category)}
                                 className="md:hidden w-full flex items-center justify-between text-xl font-semibold text-foreground mb-4 py-2 border-b border-muted-foreground/20"
                             >
-                                <span className="text-white">{category}</span>
+                                <span className="text-[#1D212D]">{category}</span>
                                 {expandedSections.includes(category) ? (
-                                    <ChevronUp className="h-5 w-5 text-white" />
+                                    <ChevronUp className="h-5 w-5 text-[#1D212D]" />
                                 ) : (
-                                    <ChevronDown className="h-5 w-5 text-white" />
+                                    <ChevronDown className="h-5 w-5 text-[#1D212D]" />
                                 )}
                             </button>
 
-                            {/* Desktop: Regular Header */}
-                            <h4 className="hidden md:block text-3xl font-semibold text-[#DDDDDD] mb-4">{category}</h4>
+                            {/* Desktop Header */}
+                            <h4 className="hidden md:block text-2xl text-[#1D212D] mb-4">
+                                {category}
+                            </h4>
 
-                            {/* Links - Always visible on desktop, collapsible on mobile */}
-                            <ul className={`space-y-3 transition-all duration-200 ${expandedSections.includes(category) ? 'block' : 'hidden'
-                                } md:block`}>
+                            {/* Links */}
+                            <ul
+                                className={`space-y-3 transition-all duration-200 ${expandedSections.includes(category) ? "block" : "hidden"
+                                    } md:block`}
+                            >
                                 {links.map((link) => (
                                     <li key={link.label}>
                                         <Link
                                             href={link.href}
-                                            {...('target' in link && { target: (link as any).target })}
-                                            className="text-muted-foreground hover:text-red-600 transition-colors text-md"
+                                            {...("target" in link && { target: (link as any).target })}
+                                            className="text-[var(--color-gray)] hover:text-red-600 transition-colors text-md"
                                         >
                                             {link.label}
                                         </Link>
                                     </li>
                                 ))}
                             </ul>
+                            {/* Extra contact info below "Contact Info" */}
+                            {category === "Contact Info" && (
+                                <div
+                                    className={`mt-5 space-y-3 transition-all duration-200 ${expandedSections.includes(category) ? "block" : "hidden"
+                                        } md:block`}
+                                >
+                                    {/* Email Row */}
+                                    <div className="flex items-center gap-3">
+                                        <Image
+                                            src="/footer-mail.svg"
+                                            alt="Email Icon"
+                                            width={40}
+                                            height={40}
+                                            className="shrink-0 rounded-full p-2 bg-[#1D212D]"
+                                        />
+                                        <a
+                                            href="mailto:support@32beatwriters.com"
+                                            className="text-[var(--color-gray)] text-md hover:text-red-600 transition"
+                                        >
+                                            Info@32beats.it
+                                        </a>
+                                    </div>
+
+                                    {/* Phone Row */}
+                                    <div className="flex items-center gap-3">
+                                        <Image
+                                            src="/footer-call.svg"
+                                            alt="Phone Icon"
+                                            width={40}
+                                            height={40}
+                                            className="shrink-0 rounded-full p-2 bg-[#1D212D]"
+                                        />
+                                        <a
+                                            href="tel:+1234567890"
+                                            className="text-[var(--color-gray)] text-md hover:text-red-600 transition"
+                                        >
+                                            06 2180 2375
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
+
                         </div>
                     ))}
+
                 </div>
-            </div>
+                {/* Bottom Section */}
+                <div className="">
+                    <div className="container mx-auto px-4 py-6 border-t-1 border-[#CFD1D4]">
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                            <div className="text-lg text-[var(--color-gray)]">
+                                Copyright © 2025 32BeatWriters. All rights reserved.
+                            </div>
 
-            {/* Bottom Section */}
-            <div className="border-t border-white/20 bg-[#2C204B]">
-                <div className="container mx-auto px-4 py-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                        <div className="text-lg text-muted-foreground">
-                            Copyright © 2025 32BeatWriters. All rights reserved.
-                        </div>
-
-                        <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground">
-                            <div className="flex items-center justify-center gap-4 text-lg">
-                                <Link href="/privacy-policy" className="hover:text-red-600 transition-colors text-md">Privacy Policy</Link>
-                                <div className="w-2 h-2 bg-white rounded-full"></div>
-                                <Link href="/terms-and-conditions" className="hover:text-red-600 transition-colors text-md">Terms & Conditions</Link>
+                            <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground">
+                                <div className="flex items-center justify-center gap-4 text-lg">
+                                    <Link href="/privacy-policy" className="hover:text-red-600 transition-colors text-md text-[var(--color-gray)]">Privacy Policy</Link>
+                                    <Link href="/terms-and-conditions" className="hover:text-red-600 transition-colors text-md text-[var(--color-gray)]">Terms & Conditions</Link>
+                                </div>
                             </div>
                         </div>
                     </div>

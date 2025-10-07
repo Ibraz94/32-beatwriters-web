@@ -51,7 +51,7 @@ export default function SearchBar({
                     value={searchTerm}
                     onChange={(e) => handleChange(e.target.value)}
                     className={`filter-input w-full pl-10 ${buttonLabel ? "pr-24" : "pr-10"
-                        } rounded-4xl shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent ${sizeClasses} ${design}`}
+                        } rounded-full shadow-sm placeholder:text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-transparent ${sizeClasses} ${design}`}
                 />
 
                 {/* Clear Button */}

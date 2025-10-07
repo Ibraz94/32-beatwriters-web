@@ -27,7 +27,7 @@ export default function NewArticles() {
     return (
         <section className="container mx-auto px-4 md:px-6 py-10">
             {/* Section Heading */}
-            <h2 className="hidden md:flex text-center text-xl md:text-5xl tracking-tight text-gray-800 mb-8">
+            <h2 className="hidden md:flex justify-center text-center text-xl md:text-5xl tracking-tight text-gray-800 mb-8">
                 Our Articles
             </h2>
 

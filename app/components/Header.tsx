@@ -134,7 +134,7 @@ function Header() {
     return (
         <header className="header-main z-50 w-full border-gray-100 shadow-sm transition-colors duration-300 container mx-auto">
             <div>
-                <div className="md:flex h-[50px] lg:h-[50px] justify-center items-center px-2 lg:px-0 bg-[#1D212D]">
+                <div className="md:flex h-[50px] lg:h-[50px] justify-center items-center px-2 lg:px-0 bg-[#1D212D] dark:bg-[#3A3D48]">
                     {/* Logo and Social Links */}
 
                     <div className="flex items-center justify-center pt-2 md:pt-0">
@@ -212,7 +212,7 @@ function Header() {
                     {/* <ThemeToggle /> */}
                     <div>
                         <Link href="/">
-                            <Image src={"/32bw_logo_black.svg"} alt="Spotify" width={50} height={50} className="ml-3"/>
+                            <Image src={"/32bw_logo_black.svg"} alt="Spotify" width={50} height={50} className="ml-3" />
                         </Link>
                     </div>
 
@@ -227,7 +227,7 @@ function Header() {
                             {isMobileMenuOpen ? (
                                 <X />
                             ) : (
-                                <Menu/>
+                                <Menu />
                             )}
                         </button>
                     </div>
@@ -265,7 +265,7 @@ function Header() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="relative py-3 text-md font-oswald border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-medium text-(--color-gray)"
+                                className="font-medium text-(--color-gray) relative py-3 text-md font-oswald border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange)"
                             >
                                 {link.label}
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
@@ -273,7 +273,7 @@ function Header() {
                         ))}
 
                         {/* Feed Dropdown */}
-                        <div className="relative left-2" ref={feedDropdownRef}>
+                        <div className="relative left-1.5" ref={feedDropdownRef}>
                             <button
                                 onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
                                 className="relative py-3 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange)"
@@ -308,7 +308,7 @@ function Header() {
                                 onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
                                 className="relative py-3 text-md text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-normal"
                             >
-                                <span>TOOLS</span>
+                                <span>Tools</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                             </button>
@@ -401,13 +401,13 @@ function Header() {
                             <div className="flex items-center space-x-3">
                                 <Button
                                     variant="secondary"
-                                    className="rounded-4xl px-6"
+                                    className="rounded-4xl px-6 dark:bg-[var(--dark-theme-color)] dark:text-white"
                                 >
                                     <Link
                                         href="/login"
                                     // className="desktop-login-link hover:scale-102 transition-colors text-md"
                                     >
-                                        LOGIN
+                                        Login
                                     </Link>
                                 </Button>
                                 <Button variant="orange"
@@ -415,7 +415,7 @@ function Header() {
                                     <Link
                                         href="/subscribe"
                                     >
-                                        SUBSCRIBE
+                                        Subscribe
                                     </Link>
                                 </Button>
                                 <ThemeToggle />
