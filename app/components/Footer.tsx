@@ -13,10 +13,10 @@ export default function Footer() {
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
     const [mounted, setMounted] = useState(false);
 
-        // Prevent hydration mismatch by only applying theme after mounting
-        useEffect(() => {
-            setMounted(true);
-        }, []);
+    // Prevent hydration mismatch by only applying theme after mounting
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleNewsletterSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -51,9 +51,14 @@ export default function Footer() {
 
     const currentLogoSrc = mounted && theme === "dark" ? "/32bw_logo_white.png" : "/32bw_logo_black.svg";
 
+    const mailIcon =
+        theme === "dark" ? "/footer-mail-dark.svg" : "/footer-mail.svg";
+    const callIcon =
+        theme === "dark" ? "/footer-call-dark.svg" : "/footer-call.svg";
+
 
     return (
-        <footer className="bg-[var(--gray-background-color)] dark:bg-[#262829] w-full overflow-x-hidden">
+        <footer className="bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] w-full overflow-x-hidden">
             {/* Newsletter Section */}
             {/* <div className="border-b bg-card">
                 <div className="container mx-auto px-4 py-12">
@@ -93,7 +98,7 @@ export default function Footer() {
             </div> */}
 
             {/* Main Footer Content */}
-            <div className="px-4 py-12 bg-[var(--gray-background-color)] dark:bg-[#262829] shadow-lg rounded-3xl mx-6">
+            <div className="px-4 py-12 bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] shadow-lg rounded-3xl mx-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-1 container mx-auto pb-8 pl-4 md:pl-14 text-left">
                     {/* Brand Section */}
                     <div className="lg:col-span-2 text-left">
@@ -108,7 +113,7 @@ export default function Footer() {
                                 />
                             </Link>
                         </div>
-                        <p className="text-[var(--color-gray)] dark:text-white mb-6 leading-relaxed w-96 text-md">
+                        <p className="text-[var(--color-gray)] mb-6 leading-relaxed w-96 text-md dark:text-[#C7C8CB]">
                             Unrivaled NFL Insights. Follow the Beat.
                         </p>
 
@@ -180,16 +185,16 @@ export default function Footer() {
                                 onClick={() => toggleSection(category)}
                                 className="md:hidden w-full flex items-center justify-between text-xl font-semibold text-foreground mb-4 py-2 border-b border-muted-foreground/20"
                             >
-                                <span className="text-[#1D212D]">{category}</span>
+                                <span className="text-[#1D212D] dark:text-[#C7C8CB]">{category}</span>
                                 {expandedSections.includes(category) ? (
-                                    <ChevronUp className="h-5 w-5 text-[#1D212D]" />
+                                    <ChevronUp className="h-5 w-5 text-[#1D212D] dark:text-[#C7C8CB]" />
                                 ) : (
-                                    <ChevronDown className="h-5 w-5 text-[#1D212D]" />
+                                    <ChevronDown className="h-5 w-5 text-[#1D212D] dark:text-[#C7C8CB]" />
                                 )}
                             </button>
 
                             {/* Desktop Header */}
-                            <h4 className="hidden md:block text-2xl text-[#1D212D] dark:text-white mb-4">
+                            <h4 className="hidden md:block text-2xl text-[#1D212D] mb-4 dark:text-[#C7C8CB]">
                                 {category}
                             </h4>
 
@@ -203,11 +208,11 @@ export default function Footer() {
                                         <Link
                                             href={link.href}
                                             {...("target" in link && { target: (link as any).target })}
-                                            className="text-[var(--color-gray)] dark:text-white hover:text-orange-600 transition-colors text-md"
+                                            className="text-[var(--color-gray hover:text-orange-600 transition-colors text-md dark:text-[#C7C8CB]"
                                         >
                                             {link.label}
                                         </Link>
-                                    </li> 
+                                    </li>
                                 ))}
                             </ul>
                             {/* Extra contact info below "Contact Info" */}
@@ -219,15 +224,15 @@ export default function Footer() {
                                     {/* Email Row */}
                                     <div className="flex items-center gap-3">
                                         <Image
-                                            src="/footer-mail.svg"
+                                            src={mailIcon}
                                             alt="Email Icon"
                                             width={40}
                                             height={40}
-                                            className="shrink-0 rounded-full p-2 bg-[#1D212D] "
+                                            className="shrink-0 rounded-full p-2 bg-[#1D212D] dark:bg-white"
                                         />
                                         <a
-                                            href="mailto:support@32beatwriters.com"
-                                            className="text-[var(--color-gray)] dark:text-white text-md hover:text-orange-600 transition"
+                                            href="mailto:info@32beats.it"
+                                            className="text-[var(--color-gray)] text-md hover:text-orange-600 transition dark:text-[#C7C8CB]"
                                         >
                                             Info@32beats.it
                                         </a>
@@ -236,15 +241,15 @@ export default function Footer() {
                                     {/* Phone Row */}
                                     <div className="flex items-center gap-3">
                                         <Image
-                                            src="/footer-call.svg"
+                                            src={callIcon}
                                             alt="Phone Icon"
                                             width={40}
                                             height={40}
-                                            className="shrink-0 rounded-full p-2 bg-[#1D212D]"
+                                            className="shrink-0 rounded-full p-2 bg-[#1D212D] dark:bg-white"
                                         />
                                         <a
                                             href="tel:+1234567890"
-                                            className="text-[var(--color-gray)] dark:text-white text-md hover:text-orange-600 transition"
+                                            className="text-[var(--color-gray)] text-md hover:text-orange-600 transition dark:text-[#C7C8CB]"
                                         >
                                             06 2180 2375
                                         </a>
@@ -260,14 +265,14 @@ export default function Footer() {
                 <div className="">
                     <div className="container mx-auto px-4 py-6 border-t-1 border-[#CFD1D4]">
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                            <div className="text-lg text-[var(--color-gray)] dark:text-white">
-                                Copyright © 2025 32BeatWriters. All rights reserved.
+                            <div className="text-lg text-[var(--color-gray)] dark:text-[#C7C8CB] text-nowrap">
+                                <span className="hidden md:inline-block lg:inline-block">Copyright </span> © 2025 32BeatWriters. All rights reserved.
                             </div>
 
                             <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground">
                                 <div className="flex items-center justify-center gap-4 text-lg">
-                                    <Link href="/privacy-policy" className="hover:text-red-600 transition-colors text-md text-[var(--color-gray)] dark:text-white">Privacy Policy</Link>
-                                    <Link href="/terms-and-conditions" className="hover:text-red-600 transition-colors text-md text-[var(--color-gray)] dark:text-white">Terms & Conditions</Link>
+                                    <Link href="/privacy-policy" className="hover:text-red-600 transition-colors text-md text-[var(--color-gray)] dark:text-[#C7C8CB]">Privacy Policy</Link>
+                                    <Link href="/terms-and-conditions" className="hover:text-red-600 transition-colors text-md text-[var(--color-gray)] dark:text-[#C7C8CB]">Terms & Conditions</Link>
                                 </div>
                             </div>
                         </div>
