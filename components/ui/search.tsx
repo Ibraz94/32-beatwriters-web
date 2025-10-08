@@ -9,7 +9,7 @@ interface SearchBarProps {
     design?: string; // input styling
     width?: string; // Tailwind width classes
     className?: string; // outer wrapper custom classes
-    onSearchChange?: (value: string) => void;
+    onChange?: (value: string) => void;
     buttonLabel?: string;
     onButtonClick?: () => void;
 }
@@ -20,7 +20,7 @@ export default function SearchBar({
     design = "",
     width = "w-full",
     className = "",
-    onSearchChange,
+    onChange,
     buttonLabel,
     onButtonClick,
 }: SearchBarProps) {
@@ -35,7 +35,7 @@ export default function SearchBar({
 
     const handleChange = (value: string) => {
         setSearchTerm(value);
-        onSearchChange?.(value);
+        onChange?.(value);
     };
 
     return (

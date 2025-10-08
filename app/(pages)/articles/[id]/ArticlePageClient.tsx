@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Clock, User, Shield, Lock, Calendar, Eye } from 'lucide-react'
+import { ArrowLeft, Clock, User, Shield, Lock, Calendar, Eye, Gem } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import Image from 'next/image'
 import { useGetArticleQuery, getImageUrl, Article, useGetArticlesQuery } from '@/lib/services/articlesApi'
@@ -215,7 +215,23 @@ export default function ArticlePageClient({ id }: { id: string }) {
             }
 
             // If user has access, return full content
-            return <div dangerouslySetInnerHTML={{ __html: contentToRender }} />
+            if (contentToRender) {
+                // Split content into paragraphs to allow column layout
+                const paragraphs = contentToRender
+                    .split(/<\/p>/i)
+                    .filter(Boolean)
+                    .map((p, index) => (
+                        <div key={index} dangerouslySetInnerHTML={{ __html: p + "</p>" }} />
+                    ));
+
+                return (
+                    <div
+                        className="columns-1 md:columns-2 gap-8 [&>*]:break-inside-avoid"
+                    >
+                        {paragraphs}
+                    </div>
+                );
+            }
         } catch (error) {
             console.error('Error rendering article content:', error)
             return <div>Error loading content. Please refresh the page.</div>
@@ -239,9 +255,9 @@ export default function ArticlePageClient({ id }: { id: string }) {
                     src={imageUrl}
                     alt={article.title || 'Article image'}
                     width={1000}
-                    height={1000}
-                    className="rounded mb-12 shadow-lg max-w-4xl"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    height={500}
+                    className="mb-12 shadow-lg w-full lg:h-[500px] rounded-2xl h-[200px]"
+                    // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     onError={(e) => {
                         console.warn('Failed to load article image:', e)
                         // Hide the image on error
@@ -262,26 +278,74 @@ export default function ArticlePageClient({ id }: { id: string }) {
         // if (Math.random() < 0.1) throw new Error('Test error for error boundary')
     }
 
+
+    function getTimeAgo(isoString: string): string {
+        const publishedDate = new Date(isoString);
+        const now = new Date();
+        const diffMs = now.getTime() - publishedDate.getTime();
+
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+
+        if (diffMins < 1) return "Just now";
+        if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
+        if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+        return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+    }
+
+    function formatDate(isoString: string): string {
+        const date = new Date(isoString);
+        const options: Intl.DateTimeFormatOptions = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        };
+        return date.toLocaleDateString("en-US", options);
+    }
+
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="max-w-6xl mx-auto article-container">
+            <div className="max-w-6xl mx-auto ">
                 {/* Article Header */}
                 <div key={article.id}>
-                    <div className="flex justify-center">
+                    <div className="flex">
                         {renderArticleImage()}
                     </div>
-                    <h1 className="text-4xl font-bold mb-10">{article.title || 'Untitled Article'}</h1>
+                    <h1 className="text-4xl font-bold mb-10 text-[#1D212D] dark:text-[#D2D6E2]">{article.title || 'Untitled Article'}</h1>
+
+                    <div className="flex flex-wrap mb-5 gap-2">
+                        {/* Category */}
+                        <div className="flex items-center gap-2 bg-[#F6BCB2] rounded-full text-black px-5 py-1.5">
+                            <span className="font-medium">NFL</span>
+                        </div>
+
+                        {/* Published Time */}
+                        <div className="flex items-center gap-2 bg-[#F6BCB2] rounded-full text-black px-4 py-1.5">
+                            <Calendar size={16} className="text-black" />
+                            <span className="text-sm">{getTimeAgo(article.publishedAt!)}</span>
+                        </div>
+
+                        {/* Published Date */}
+                        <div className="flex items-center gap-2 bg-[#F6BCB2] rounded-full text-black px-4 py-1.5">
+                            <Clock size={16} className="text-black" />
+                            <span className="text-sm">{formatDate(article.publishedAt!)}</span>
+                        </div>
+                    </div>
+
 
                     {/* Display ArticleCTA only if user is not authenticated */}
                     {!isAuthenticated && article.access === 'public' && <ArticleCTA />}
-
-                    <div className="prose max-w-none prose">
-                        {renderArticleContent()}
+                    <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert mx-auto">
+                        <div className="columns-1 gap-8 [&>*]:break-inside-avoid">
+                            {renderArticleContent()}
+                        </div>
                     </div>
+
                 </div>
                 {/* Recent Articles */}
                 <div className="mt-12">
-                    <h3 className="text-2xl font-bold mb-6">Recent Articles</h3>
+                    <h3 className="text-4xl mb-6 text-center">Recent Articles</h3>
                     <div className="grid md:grid-cols-3 gap-6">
                         {recentArticlesData?.data?.articles
                             ?.filter((recentArticle: Article) => {
@@ -297,50 +361,59 @@ export default function ArticlePageClient({ id }: { id: string }) {
                                 if (!recentArticle?.id) return null
 
                                 return (
-                                    <Link
-                                        key={recentArticle.id}
-                                        href={`/articles/${recentArticle.id}`}
-                                        className="rounded-lg shadow-md border overflow-hidden hover:shadow-lg transition-shadow max-h-42"
-                                    >
-                                        <div className="relative h-42">
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <Image
-                                                    src={getImageUrl(recentArticle.featuredImage) || ''}
-                                                    alt={recentArticle.title || 'Article image'}
-                                                    width={1000}
-                                                    height={1000}
-                                                    className="object-cover w-full h-full"
-                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                    onError={(e) => {
-                                                        const target = e.target as HTMLImageElement
-                                                        if (target) target.style.display = 'none'
-                                                    }}
-                                                />
-                                            </div>
-                                            {recentArticle.access === 'pro' && (
-                                                <div className="absolute top-2 right-2 bg-red-800 text-white px-2 py-1 rounded text-xs font-semibold">
-                                                    Premium
+                                    <div className='rounded-3xl shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer group p-0 bg-white dark:bg-[#262829]'>
+                                        <Link href={`/articles/${recentArticle.id}`}>
+
+                                            {/* Article Image */}
+                                            <div className="relative aspect-video">
+                                                {article.featuredImage ? (
+                                                    <Image
+                                                        src={getImageUrl(article.featuredImage) || ''}
+                                                        alt={article.title}
+                                                        fill
+                                                        className="object-cover p-2 rounded-3xl"
+                                                        priority
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-sm">No Image</div>
+                                                )}
+
+
+                                                {/* Access Badge */}
+                                                <div className="absolute top-3 left-3 bg-white text-[var(--color-orange)] px-2 py-1 rounded-full font-semibold text-xs flex items-center shadow-md dark:bg-black">
+                                                    <Gem className="w-4 h-4 mr-1" />
+                                                    {article.access === 'public' ? 'Free' : 'Premium'}
                                                 </div>
-                                            )}
-                                        </div>
-                                        <div className="p-4">
-                                            <h4 className="font-bold mb-2 line-clamp-2 min-h-[3rem]">
-                                                {recentArticle.title || 'Untitled Article'}
-                                            </h4>
-                                            <p className="text-sm text-gray-600 line-clamp-3">
-                                                {recentArticle.content?.substring(0, 100) || 'No content available'}...
-                                            </p>
-                                            <div className="flex items-center justify-between mt-4 text-xs text-gray-500">
-                                                <div className="flex items-center gap-1">
-                                                    <Calendar className="w-3 h-3" />
-                                                    {recentArticle.publishedAt ?
-                                                        new Date(recentArticle.publishedAt).toLocaleDateString() :
-                                                        'Date not available'
-                                                    }
+
+
+
+                                                {/* Author Name */}
+                                                {article.authorName && (
+                                                    <div className="absolute bottom-5 right-5 text-white text-sm bg-[#ED7864] bg-opacity-50 px-2 py-1 rounded-full">
+                                                        {article.authorName}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Article Body */}
+                                            <div className="relative p-4 h-[250px] overflow-hidden">
+                                                <h2 className="text-lg font-semibold mb-2 line-clamp-1 text-[#3A3D48] dark:text-[#C7C8CB]">{article.title}</h2>
+
+                                                <div className="text-sm line-clamp-3 overflow-hidden relative z-10  text-[#72757C] dark:text-white">
+                                                    <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                                                </div>
+
+                                                {/* <div className="absolute bottom-0 left-0 w-full h-44 bg-gradient-to-t from-[#1A1330] to-transparent z-20 pointer-events-none" /> */}
+
+                                                {/* Hover Action Button */}
+                                                <div className="absolute bottom-5 left-0 rounded-full px-6 py-2 z-30 transition-opacity">
+                                                    <div className="bg-[var(--color-orange)] text-white text-center py-2 rounded-full px-6 hover:scale-105 transition-transform dark:text-black">
+                                                        Read Article
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Link>
+                                        </Link>
+                                    </div>
                                 )
                             })}
                     </div>

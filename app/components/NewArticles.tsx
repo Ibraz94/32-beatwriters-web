@@ -27,7 +27,7 @@ export default function NewArticles() {
     return (
         <section className="container mx-auto px-4 md:px-6 py-10">
             {/* Section Heading */}
-            <h2 className="hidden md:flex justify-center text-center text-xl md:text-5xl tracking-tight text-gray-800 mb-8 dark:text-white111">
+            <h2 className="hidden md:flex justify-center text-center text-xl md:text-5xl tracking-tight text-gray-800 mb-8 dark:text-white">
                 Our Articles
             </h2>
 
@@ -65,7 +65,7 @@ export default function NewArticles() {
                                 onClick={() => setActiveTab(tab as 'latest' | 'scheduled')}
                                 className={`w-1/2 text-center pb-2 font-medium text-base md:text-lg transition-all dark:text-white${activeTab === tab
                                     ? 'text-black border-b-3 border-[var(--color-orange)]'
-                                    : 'text-gray-500 hover:text-gray-700 border-b-3 border-[#1A1A1A]'
+                                    : 'text-gray-500 hover:text-gray-700 border-b-3 border-[#1A1A1A]  hover:cursor-pointer dark:hover:text-white'
                                     }`}
                             >
                                 {tab === 'latest' ? 'Latest Articles' : 'Schedule Articles'}
@@ -81,7 +81,7 @@ export default function NewArticles() {
                                     <Link
                                         href={`/articles/${article.id}`}
                                         key={article.id}
-                                        className="flex items-center gap-4 hover:bg-gray-50 px-3 rounded-xl transition-all h-24 md:h-28 border border-gray-100 dark:border-none"
+                                        className="flex items-center gap-4 hover:bg-gray-50 px-3 rounded-xl transition-all h-24 md:h-28 border border-gray-100 dark:border-none dark:hover:bg-[#1A1A1A]"
                                     >
                                         {/* Thumbnail */}
                                         <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden flex-shrink-0">

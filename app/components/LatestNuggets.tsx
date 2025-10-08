@@ -110,7 +110,7 @@ export default function LatestNuggets() {
           width="w-full md:w-1/2"
           buttonLabel="Search here"
           onButtonClick={() => alert("Button clicked!")}
-          onSearchChange={(val) => console.log(val)}
+          onChange={(val) => console.log(val)}
           className="flex justify-center items-center"
         />
       </div>
@@ -226,7 +226,7 @@ export default function LatestNuggets() {
 
               {/* View All Nuggets Button */}
               {latestNuggets.length > 0 && (
-                <div className="py-8 flex justify-center lg:hidden lg:ml-[440px] md:ml-[175px] w-full">
+                <div className="py-8 flex justify-center lg:hidden lg:ml-[440px] md:ml-[175px] w-full text-white">
                   <Button variant="orange">
                     <Link
                       href="/subscribe"
@@ -251,7 +251,7 @@ export default function LatestNuggets() {
 
       {/* View All Nuggets Button */}
       {latestNuggets.length > 0 && (
-        <div className="hidden py-8 md:flex justify-center lg:ml-[440px] md:ml-[175px]">
+        <div className="hidden py-8 md:flex justify-center lg:ml-[440px] md:ml-[175px] text-white">
           <Button variant="orange" 
           className='dark:hover:bg-[#FF8C5E]'
           >

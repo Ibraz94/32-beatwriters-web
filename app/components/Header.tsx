@@ -267,7 +267,7 @@ function Header() {
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="font-medium text-(--color-gray) relative py-3 text-md font-oswald border-1 border-[#E3E4E5] dark:border-none rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:text-white"
+                                className="font-medium text-(--color-gray) relative py-2 text-md font-oswald border-1 border-[#E3E4E5] dark:border-none rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:text-white"
                             >
                                 {link.label}
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
@@ -278,7 +278,7 @@ function Header() {
                         <div className="relative left-1.5" ref={feedDropdownRef}>
                             <button
                                 onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
-                                className="relative py-3 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
+                                className="relative py-2 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
                             >
                                 <span>Feeds</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
@@ -308,7 +308,7 @@ function Header() {
                         <div className="relative left-2" ref={toolsDropdownRef}>
                             <button
                                 onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-                                className="relative py-3 text-md text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-normal dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
+                                className="relative py-2 text-md text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-normal dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
                             >
                                 <span>Tools</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
