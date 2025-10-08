@@ -25,7 +25,6 @@ export default function Home() {
       <NewArticles />
       <PodcastsComponent />
       <SubscriptionComponent />
-      <DeliveredToComponent />
     </div>
   );
 } ``
