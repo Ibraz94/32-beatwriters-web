@@ -206,9 +206,6 @@ export default function SubscriptionComponent() {
                   </div>
                 </div>
               </div>
-
-
-
             )}
 
             {/* FastDraft Card (Mobile Only) */}
@@ -288,7 +285,7 @@ export default function SubscriptionComponent() {
         </div>
       </div>
 
-      <div className="hidden sm:block mx-auto relative z-10">
+      <div className="hidden lg:block mx-auto relative z-10">
         {/* Heading */}
         <div className="text-center font-oswald mb-16">
           <h1 className="text-6xl font-bold">Our Pricing Plan</h1>
@@ -296,10 +293,10 @@ export default function SubscriptionComponent() {
         </div>
 
 
-        <div className="flex gap-6 items-stretch">
+        <div className="gap-6 items-stretch hidden lg:flex">
 
           {/* CARD 1 - MONTHLY */}
-          <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105 dark:bg-[#1A1A1A]">
+          <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105 dark:bg-[#1A1A1A] dark:border-none">
 
             {/* Gradient background */}
             <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
@@ -319,14 +316,14 @@ export default function SubscriptionComponent() {
             <div className="relative z-10 flex flex-col h-full p-8">
               {/* Header */}
               <div className="flex justify-between">
-                <div className="inline-block bg-white text-gray-800 text-xl px-6 py-2 rounded-full mb-6 border border-gray-100">
+                <div className="inline-block bg-white text-gray-800 text-xl px-6 py-2 rounded-full mb-6 border border-gray-100 dark:text-[#D2D6E2] dark:bg-black dark:border-none">
                   Monthly
                 </div>
 
                 <div className="flex justify-center items-center mb-8">
                   <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} />
                   <div className="text-left">
-                    <h3 className="text-base font-semibold leading-tight">32BeatWriters</h3>
+                    <h3 className="text-base font-semibold leading-tight dark:text-[#D2D6E2]">32BeatWriters</h3>
                     <p className="text-sm text-gray-500">NFL Insider Network</p>
                   </div>
                 </div>
@@ -334,12 +331,12 @@ export default function SubscriptionComponent() {
 
               {/* Price Section */}
               <div className="text-left">
-                <p className="text-gray-500 text-sm mb-2 pt-2">Start at</p>
+                <p className="text-gray-500 text-sm mb-2 pt-2 dark:text-[#C7C8CB]">Start at</p>
                 <div className="mb-6">
-                  <span className="text-5xl">$9.99</span>
-                  <span className="text-xl text-black">/month</span>
+                  <span className="text-5xl dark:text-white">$9.99</span>
+                  <span className="text-xl text-black dark:text-white">/month</span>
                 </div>
-                <p className="text-gray-500 mb-8">
+                <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">
                   Signs up for exclusive access to all our reports, tools
                 </p>
               </div>
@@ -347,14 +344,14 @@ export default function SubscriptionComponent() {
               {/* Button */}
               <button
                 onClick={() => handleSubscribe(currentPlan!.id)}
-                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white"
+                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none"
               >
                 Join Monthly
               </button>
 
               {/* Features */}
-              <div className="mt-10 text-left border-t border-gray-200 pt-6">
-                <h4 className="font-semibold text-gray-800 mb-4 text-xl">Free, Forever</h4>
+              <div className="mt-10 text-left border-t border-gray-200 pt-6 dark:border-t-[#72757C]">
+                <h4 className="font-semibold text-gray-800 mb-4 text-xl dark:text-white">Free, Forever</h4>
                 <ul className="space-y-3 text-gray-600 text-sm">
                   {[
                     "Summaries All Offseason – The Best, Complete Reports in the Industry",
@@ -363,7 +360,7 @@ export default function SubscriptionComponent() {
                     "Playing in our Fantasy Football League",
                     "Access to all additional features as they roll out (no extra cost)",
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm">
+                    <li key={i} className="flex items-center gap-3 text-sm dark:text-[#C7C8CB]">
                       <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" />
                       <span>{text}</span>
                     </li>
@@ -374,10 +371,10 @@ export default function SubscriptionComponent() {
           </div>
 
           {/* CARD 2 - ONE TIME PLAN */}
-          <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto text-center text-black hover:scale-105">
+          <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105 dark:bg-[#1A1A1A] dark:border-none">
 
             {/* Gradient background */}
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(145deg,rgba(246,188,178,0.19)_0%,rgba(255,255,255,1)_100%)]"></div>
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
 
             {/* Background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
@@ -385,7 +382,7 @@ export default function SubscriptionComponent() {
             </div>
 
             {/* Header */}
-            <div className="flex justify-between items-center bg-[#F6BCB2] py-4 px-4 rounded-2xl z-10 relative m-4 mt-2">
+            <div className="flex justify-between items-center bg-[#F6BCB2] py-4 px-4 rounded-2xl z-10 relative m-4 mt-2 dark:bg-[#262829]">
               <div className="bg-[var(--color-orange)] text-white text-lg px-4 py-2 rounded-full border border-gray-100">
                 One time plan
               </div>
@@ -397,23 +394,22 @@ export default function SubscriptionComponent() {
             {/* Inner content */}
             <div className="relative z-10 flex flex-col h-full p-8 pt-2">
               <div className="text-left">
-                <p className="text-gray-500 text-sm mb-2">Start at</p>
+                <p className="text-gray-500 text-sm mb-2 pt-2 dark:text-[#C7C8CB]">Start at</p>
                 <div className="mb-6">
-                  <span className="text-5xl">$9.99</span>
-                  <span className="text-xl text-black">/after free month</span>
+                  <span className="text-5xl dark:text-white">$9.99</span>
+                  <span className="text-xl text-black dark:text-white">/after free month</span>
                 </div>
-                <p className="text-gray-500 mb-8">First month free with sign up</p>
+                <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">First month free with sign up</p>
               </div>
-
               <button
                 onClick={() => handleSubscribe(currentPlan!.id)}
-                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white"
+                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none"
               >
                 Join with FastDrive
               </button>
 
-              <div className="mt-10 text-left border-t border-gray-200 pt-6">
-                <h4 className="font-semibold text-gray-800 mb-4 text-xl text-nowrap">
+              <div className="mt-10 text-left border-t border-gray-200 pt-6 dark:border-t-[#72757C]">
+                <h4 className="font-semibold text-gray-800 mb-4 text-xl text-nowrap dark:text-white">
                   Up to $50 deposit match <span className="text-[var(--color-orange)] ml-0.5 text-lg">Use code “32BW”</span>
                 </h4>
                 <ul className="space-y-3 text-gray-600 text-sm">
@@ -422,8 +418,8 @@ export default function SubscriptionComponent() {
                     "Ability to search insights & updates on News Feed",
                     "Secure payment by Stripe – No hidden fees",
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-base">
-                      <div className="bg-[#FFE6E2] p-2 rounded-full flex items-center justify-center shrink-0">
+                    <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
+                      <div className="bg-[#FFE6E2] p-2 rounded-full flex items-center justify-center shrink-0 dark:bg-transparent">
                         <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" />
                       </div>
                       <span>{text}</span>
@@ -438,10 +434,10 @@ export default function SubscriptionComponent() {
           </div>
 
           {/* CARD 3 - YEARLY */}
-          <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto l text-center text-black hover:scale-105">
+          <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105 dark:bg-[#1A1A1A] dark:border-none">
 
             {/* Gradient background */}
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(145deg,rgba(246,188,178,0.19)_0%,rgba(255,255,255,1)_100%)]"></div>
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
 
             {/* Background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
@@ -451,38 +447,38 @@ export default function SubscriptionComponent() {
             {/* Inner content */}
             <div className="relative z-10 flex flex-col h-full p-8">
               <div className="flex justify-between">
-                <div className="inline-block bg-white text-gray-800 text-xl px-6 py-2 rounded-full mb-6 border border-gray-100">
+                <div className="inline-block bg-white text-gray-800 text-xl px-6 py-2 rounded-full mb-6 border border-gray-100 dark:text-[#D2D6E2] dark:bg-black dark:border-none">
                   Yearly
                 </div>
                 <div className="flex justify-center items-center mb-8">
                   <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} />
                   <div className="text-left">
-                    <h3 className="text-base font-semibold leading-tight">32BeatWriters</h3>
+                    <h3 className="text-base font-semibold leading-tight dark:text-[#D2D6E2]">32BeatWriters</h3>
                     <p className="text-sm text-gray-500">NFL Insider Network</p>
                   </div>
                 </div>
               </div>
 
               <div className="text-left">
-                <p className="text-gray-500 text-sm mb-2">Start at</p>
+                <p className="text-gray-500 text-sm mb-2 pt-2 dark:text-[#C7C8CB]">Start at</p>
                 <div className="mb-6">
-                  <span className="text-5xl">$99.99</span>
-                  <span className="text-xl text-black">/year</span>
+                  <span className="text-5xl dark:text-white">$99.99</span>
+                  <span className="text-xl text-black dark:text-white">/year</span>
                 </div>
-                <p className="text-gray-500 mb-8">
+                <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">
                   Signs up for exclusive access to all our reports, tools
                 </p>
               </div>
 
               <button
                 onClick={() => handleSubscribe(currentPlan!.id)}
-                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white"
+                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none"
               >
                 Join Yearly
               </button>
 
-              <div className="mt-10 text-left border-t border-gray-200 pt-6">
-                <h4 className="font-semibold text-gray-800 mb-4 text-xl">Everything in Monthly, plus:</h4>
+              <div className="mt-10 text-left border-t border-gray-200 pt-6 dark:border-t-[#72757C]">
+                <h4 className="font-semibold text-gray-800 mb-4 text-xl dark:text-white">Everything in Monthly, plus:</h4>
                 <ul className="space-y-3 text-gray-600 text-sm">
                   {[
                     "Discounted price (save big compared to monthly)",
@@ -491,7 +487,7 @@ export default function SubscriptionComponent() {
                     "Playing in our Fantasy Football League",
                     "Our Undying Love and Appreciation",
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-base">
+                    <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
                       <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" />
                       <span>{text}</span>
                     </li>

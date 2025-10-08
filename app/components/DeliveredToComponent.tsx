@@ -41,8 +41,10 @@ export default function DeliveredToComponent() {
     }
 
     return (
-        <div className='bg-[linear-gradient(to_bottom,white_50%,var(--gray-background-color)_50%)]'>
-            <div className="container mx-auto px-4 md:px-6 py-10">
+        <div className="
+  bg-[linear-gradient(to_bottom,white_50%,var(--gray-background-color)_50%)]
+  dark:bg-[linear-gradient(to_bottom,black_50%,#1A1A1A_50%)]
+">            <div className="container mx-auto px-4 md:px-6 py-10">
                 <div className="w-full grid grid-cols-1 md:grid-cols-12 md:rounded-3xl overflow-hidden bg-white rounded-3xl shadow-lg">
 
                     {/* Left Image Section (Full width on small, half on large) */}
