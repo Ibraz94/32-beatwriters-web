@@ -57,12 +57,12 @@ export default function DeliveredToComponent() {
                     </div>
 
                     {/* Right Content Section */}
-                    <div className="col-span-12 md:col-span-6 flex flex-col justify-center px-6 md:px-12 py-10 bg-white space-y-6">
+                    <div className="col-span-12 md:col-span-6 flex flex-col justify-center px-6 md:px-12 py-10 bg-white dark:bg-[#262829] space-y-6">
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
                                 Stay tuned!
                             </h1>
-                            <p className="text-gray-600 text-sm md:text-base max-w-lg">
+                            <p className="text-gray-600 dark:text-white text-sm md:text-base max-w-lg">
                                 Get the latest articles and business updates that you need to know,
                                 and receive special recommendations weekly.
                             </p>
@@ -82,7 +82,7 @@ export default function DeliveredToComponent() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Your Email"
-                                    className="flex-1 px-4 py-3 outline-none text-gray-700"
+                                    className="flex-1 px-4 py-3 outline-none text-gray-700 dark:text-white"
                                     required
                                 />
                                 <button
