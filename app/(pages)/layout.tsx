@@ -9,6 +9,7 @@ import { ToastProvider } from "../components/Toast";
 import IOSScrollFix from "../components/IOSScrollFix";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import GoogleAnalytics from "../../lib/analytics/GoogleAnalytics";
+import DeliveredToComponent from "../components/DeliveredToComponent";
 // import Head from "next/head"; // No longer needed for Open Graph with Metadata export
 
 // const cabin = Cabin({
@@ -95,6 +96,7 @@ export default function RootLayout({
                 <IOSScrollFix />
                 <Header />
                 {children}
+                <DeliveredToComponent />
                 <Footer />
               </ToastProvider>
             </ThemeProvider>

@@ -28,6 +28,8 @@ function Header() {
         setMounted(true);
     }, []);
 
+    const currentLogoSrc = mounted && theme === "dark" ? "/32bw_logo_white.png" : "/32bw_logo_black.svg";
+
     // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -212,7 +214,7 @@ function Header() {
                     {/* <ThemeToggle /> */}
                     <div>
                         <Link href="/">
-                            <Image src={"/32bw_logo_black.svg"} alt="Spotify" width={50} height={50} className="ml-3" />
+                            <Image src={currentLogoSrc} alt="Spotify" width={50} height={50} className="ml-3" />
                         </Link>
                     </div>
 
@@ -259,7 +261,7 @@ function Header() {
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center space-x-2">
                         <Link href="/">
-                            <Image src={"/32bw_logo_black.svg"} alt="Spotify" width={60} height={60} />
+                            <Image src={currentLogoSrc} alt="Spotify" width={60} height={60} />
                         </Link>
                         {navLinks.map((link) => (
                             <Link
@@ -291,7 +293,7 @@ function Header() {
                                             <Link
                                                 key={option.href}
                                                 href={option.href}
-                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black "
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black dark:text-white "
                                                 onClick={() => setIsFeedDropdownOpen(false)}
                                             >
                                                 {option.label}
@@ -319,11 +321,11 @@ function Header() {
                                             <Link
                                                 key={option.href}
                                                 href={option.href}
-                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black font-normal "
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black dark:text-white font-normal "
                                                 onClick={() => setIsToolsDropdownOpen(false)}
                                             >
                                                 {option.label}
-                                            </Link>
+                                            </Link> 
                                         ))}
                                     </div>
                                 </div>
