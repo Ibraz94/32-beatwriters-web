@@ -85,7 +85,7 @@ export default function SubscriptionComponent() {
           <div className="space-y-6">
             {/* Toggle Switch */}
             <div className="flex justify-center mb-6">
-              <div className="rounded-full p-1 flex border-1">
+              <div className="rounded-full p-1 flex border-1 dark:border-none">
                 <button
                   onClick={() => setSelectedPlan('monthly')}
                   className={`px-6 py-4 rounded-full text-sm font-medium transition-all duration-300 ${selectedPlan === 'monthly'
@@ -299,10 +299,10 @@ export default function SubscriptionComponent() {
         <div className="flex gap-6 items-stretch">
 
           {/* CARD 1 - MONTHLY */}
-          <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105">
+          <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105 dark:bg-[#1A1A1A]">
 
             {/* Gradient background */}
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)]"></div>
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
 
             {/* Top-right background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">

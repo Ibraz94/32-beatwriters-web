@@ -46,14 +46,14 @@ export default function PodcastsComponent() {
     };
 
     return (
-        <section className="podcast-section px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 container mx-auto">
-            <div className="bg-[var(--gray-background-color)] px-4 py-6 rounded-3xl">
+        <section className="px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 container mx-auto ">
+            <div className="bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] px-4 py-6 rounded-3xl">
                 {/* Header */}
                 <div className="text-center mb-8 md:mb-12">
                     <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl xl:text-6xl mb-3 md:mb-4">
                         Our Podcast Network
                     </h2>
-                    <p className="text-sm sm:text-base md:text-lg max-w-5xl mx-auto px-2 text-[var(--color-gray)] ">
+                    <p className="text-sm sm:text-base md:text-lg max-w-5xl mx-auto px-2 text-[var(--color-gray)] dark:text-[#C7C8CB]">
                         Fantasy analysis, beat writer interviews, and more!
                     </p>
                 </div>
@@ -105,7 +105,7 @@ export default function PodcastsComponent() {
                     {apiResponse?.podcasts && apiResponse.podcasts.length > 0 && (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 ">
                             {apiResponse.podcasts.map((podcast, index) => (
-                                <div key={podcast.id} className="group cursor-pointer bg-white p-2 rounded-xl">
+                                <div key={podcast.id} className="group cursor-pointer bg-white p-2 rounded-xl dark:bg-[#262829]">
                                     {/* Podcast Card */}
                                     <div className="relative mb-3 md:mb-4">
 
@@ -133,20 +133,20 @@ export default function PodcastsComponent() {
                                         <div className="flex justify-between">
                                             {/* <span>{podcast.hostedBy}</span>
                                             <span>-</span> */}
-                                            <div className="flex items-center gap-1 text-xs md:text-sm theme-muted">
+                                            <div className="flex items-center gap-1 text-xs md:text-sm theme-muted dark:text-[#C7C8CB]">
                                                 <Calendar size={18} />
                                                 <span>{formatTimeAgo(podcast.podcastTime)}</span>
                                             </div>
 
-                                            <div className="flex items-center gap-1 text-xs md:text-sm theme-muted">
+                                            <div className="flex items-center gap-1 text-xs md:text-sm theme-muted dark:text-[#C7C8CB]">
                                                 <Clock size={18} />
-                                                <span>29 Minutes</span>
+                                                <span className="dark:text-[#C7C8CB]">29 Minutes</span>
                                             </div>
                                         </div>
 
                                         {/* Title */}
                                         <Link href={`/podcasts/${podcast.id}`}>
-                                            <h4 className="text-lg sm:text-xl md:text-2xl theme-text transition-colors line-clamp-2">
+                                            <h4 className="text-lg sm:text-xl md:text-xl transition-colors line-clamp-2 dark:text-[#C7C8CB]">
                                                 {podcast.title}
                                             </h4>
                                         </Link>
@@ -158,11 +158,11 @@ export default function PodcastsComponent() {
 
                     {/* Navigation arrows - hidden on mobile */}
                     <div className="hidden md:flex justify-center items-center gap-2 mt-10">
-                        <button className="text-[var(--color-gray)] border-1 border-[var(--color-gray)] rounded-full p-4 md:p-3 hover:px-8 hover:rounded-4xl hover:border-1 hover:border-black hover:text-black">
-                            <ArrowLeft className="h-4 w-4 md:h-5 md:w-7 text-[var(--color-gray)]" />
+                        <button className="text-[var(--color-gray)] border-1 border-[var(--color-gray)] rounded-full p-4 md:p-3 hover:px-8 hover:rounded-4xl hover:border-1 hover:border-black hover:text-black dark:hover:border-white">
+                            <ArrowLeft className="h-4 w-4 md:h-5 md:w-7 text-[var(--color-gray)] dark:hover:text-white" />
                         </button>
-                        <button className="text-[var(--color-gray)] border-1 border-[var(--color-gray)]  rounded-full p-2 md:p-3 hover:px-8 hover:rounded-4xl hover:border-1 hover:border-black hover:text-black">
-                            <ArrowRight className="h-4 w-4 md:h-5 md:w-7 text-[var(--color-gray)]" />
+                        <button className="text-[var(--color-gray)] border-1 border-[var(--color-gray)]  rounded-full p-2 md:p-3 hover:px-8 hover:rounded-4xl hover:border-1 hover:border-black hover:text-black dark:hover:border-white">
+                            <ArrowRight className="h-4 w-4 md:h-5 md:w-7 text-[var(--color-gray)] dark:hover:text-white" />
                         </button>
                     </div>
 

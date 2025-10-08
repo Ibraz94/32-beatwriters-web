@@ -54,7 +54,7 @@ export default function LatestNuggets() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Latest Nuggets</h2>
+          <h2 className="text-3xl font-bold mb-4 ">Latest Nuggets</h2>
           <p className="text-xl max-w-4xl mx-auto">Loading latest nuggets...</p>
         </div>
         <div className="flex gap-6">
@@ -172,22 +172,22 @@ export default function LatestNuggets() {
                           )}
                         </div>
                       </div>
-                      <div className="mt-3 ml-4">
+                      <div className="mt-3 ml-4 dark:text-[#D2D6E2]">
                         <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
                       </div>
                       <div>
                         {nugget.fantasyInsight && (
-                          <div className='px-4 mt-2'>
+                          <div className='px-4 mt-2 dark:text-[#D2D6E2]'>
                             <h1 className='font-semibold mt-0 text-red-800'>Fantasy Insight:</h1>
                             {fantasyInsight(nugget.fantasyInsight)}
                           </div>
                         )}
                       </div>
 
-                      <div className="bg-[var(--gray-background-color)] rounded-full pr-3 pl-2 py-2 flex items-center justify-between mr-5 ml-5 mt-2">
+                      <div className="bg-[var(--gray-background-color)] rounded-full pr-3 pl-2 py-2 flex items-center justify-between mr-5 ml-5 mt-2 dark:bg-[var(--dark-theme-color)]">
                         {/* Left: Source */}
                         {nugget.sourceUrl && (
-                          <div className="flex items-center gap-1 bg-[var(--light-orange-background-color)] rounded-full px-3 py-1.5 w-fit">
+                          <div className="flex items-center gap-1 bg-[var(--light-orange-background-color)] rounded-full px-3 py-1.5 w-fit dark:text-black">
                             <span className="font-semibold text-sm">Source:</span>
                             <Link
                               href={
@@ -252,7 +252,9 @@ export default function LatestNuggets() {
       {/* View All Nuggets Button */}
       {latestNuggets.length > 0 && (
         <div className="hidden py-8 md:flex justify-center lg:ml-[440px] md:ml-[175px]">
-          <Button variant="orange">
+          <Button variant="orange" 
+          className='dark:hover:bg-[#FF8C5E]'
+          >
             <Link
               href="/subscribe"
             // className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-2"

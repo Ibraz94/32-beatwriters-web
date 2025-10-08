@@ -59,19 +59,20 @@ export default function TrendingPlayersSidebar() {
     }
 
     return (
-        <div className="bg-[var(--trending-background-color)] rounded-2xl py-4 px-2">
+        <div className="bg-[var(--trending-background-color)] rounded-2xl py-4 px-2 dark:bg-[var(--dark-theme-color)]">
             <div className='h-14 flex items-center justify-center'>
-                <h2 className="text-black font-semibold text-center text-2xl tracking-wider">Trending Players</h2>
+                <h2 className="text-black font-semibold text-center text-2xl tracking-wider dark:text-white">Trending Players</h2>
             </div>
             <div className="space-y-3">
                 {trendingPlayersData.data.map((player) => (
                     <Link
                         key={player.id}
                         href={`/players/${player.id}`}
-                        className="flex items-center justify-between p-3  bg-[var(--light-trending-background-color)] hover:bg-gray-50 dark:hover:bg-[#FFF6F5] transition-colors mx-3 rounded-2xl"
+                        className="flex items-center justify-between p-3 bg-[var(--light-trending-background-color)] hover:bg-gray-50 transition-colors mx-3 rounded-2xl dark:bg-[#1A1A1A] dark:hover:bg-gray-600"
                     >
                         <div className="flex items-center space-x-3">
-                            <div className="w-12 h-12 rounded-full overflow-hidden border-1 border-red-400 p-0.5">
+                            {/* Player image */}
+                            <div className="w-12 h-12 rounded-full overflow-hidden border border-red-400 p-0.5">
                                 <Image
                                     src={getImageUrl(player.headshotPic) || '/default-player.jpg'}
                                     alt={player.name}
@@ -80,28 +81,39 @@ export default function TrendingPlayersSidebar() {
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <span className="font-medium">{player.name}</span>
+
+                            {/* Player info */}
+                            <div className="flex flex-col justify-center">
+                                <span className="font-medium leading-tight">{player.name}</span>
+                                <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 space-x-1">
+                                    <span>{player.position}</span>
+                                    <span>•</span>
+                                    <span>{player.teamDetails.name || 'No team'}</span>
+                                </div>
+                            </div>
                         </div>
+
+                        {/* Team logo */}
                         {player.teamDetails && (
-                            <div className='flex flex-col items-end gap-1 text-sm text-gray-500'>
+                            <div className="flex flex-col items-end gap-1 text-sm text-gray-500">
                                 {(() => {
                                     const teamLogoUrl = getTeamLogoUrl(player.teamDetails.logo)
                                     return teamLogoUrl ? (
                                         <Image
                                             src={teamLogoUrl}
                                             alt={player.teamDetails.name || 'Team logo'}
-                                            width={24}
-                                            height={24}
+                                            width={34}
+                                            height={34}
                                             className="object-contain"
                                         />
                                     ) : null
                                 })()}
-                                <p>{player.teamDetails.name || 'No team'}</p>
                             </div>
                         )}
                     </Link>
                 ))}
             </div>
+
             <div className="text-center">
                 <button className="lg:hidden text-[var(--color-orange)] mt-5 underline underline-offset-6 font-semibold">
                     View all
