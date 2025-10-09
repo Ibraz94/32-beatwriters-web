@@ -5,12 +5,13 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Users, Search, X, Loader2 } from "lucide-react"
+import { Users, Search, X, Loader2, ArrowLeft, ArrowRight } from "lucide-react"
 import { useGetPlayersQuery, getImageUrl, Player, useFollowPlayerMutation, useUnfollowPlayerMutation } from '@/lib/services/playersApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import { useSearchParams, useRouter } from "next/navigation"
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useToast } from '@/app/components/Toast'
+import SearchBar from "@/components/ui/search"
 
 // PlayerCard component to handle individual player rendering with hooks
 function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollow, isAuthenticated, isLoading }: {
@@ -40,10 +41,10 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
     return (
         <Link
             href={`/players/${player.id}?page=${currentPage}`}
-            className="player-card rounded hover:shadow-lg transition-all duration-200 hover:scale-101 overflow-hidden p-1"
+            className="rounded-xl hover:shadow-lg transition-all duration-200 hover:scale-101 overflow-hidden p-1 bg-white dark:bg-[#262829] shadow-lg"
         >
             {/* Player Image */}
-            <div className="relative h-48 bg-linear-to-t from-[#876AD1] to-[#45366B]">
+            <div className="relative h-48 bg-[#E3E4E5] p-4 rounded-lg dark:bg-black">
                 <Image
                     src={imageUrl || '/default-player.jpg'}
                     alt={player.name}
@@ -62,26 +63,6 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                     <h3 className="text-2xl leading-tight font-oswald">
                         {player.name}
                     </h3>
-                    <button
-                        className={`text-foreground font-oswald text-xs border px-5 rounded-sm transition-colors hover:cursor-pointer flex items-center gap-1 ${isFollowing
-                                ? 'bg-red-800 border-red-800'
-                                : 'border-red-800 hover:bg-red-800'
-                            }`}
-                        onClick={e => {
-                            e.preventDefault(); // Prevent Link navigation
-                            onToggleFollow();
-                        }}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <>
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                                <span>...</span>
-                            </>
-                        ) : (
-                            isFollowing ? 'FOLLOWING' : 'FOLLOW'
-                        )}
-                    </button>
                 </div>
 
                 <div className="space-y-2">
@@ -100,6 +81,25 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
 
                         </div>
                     </div>
+                    <button
+                        className={`w-full text-xs border bg-[#E64A30] text-white text-center px-5 py-2 rounded-full transition-colors hover:cursor-pointer flex items-center justify-center gap-1 ${isFollowing ? 'bg-[#E64A30] hover:bg-gray-500' : 'hover:bg-gray-500 dark:border-none'
+                            }`}
+                        onClick={e => {
+                            e.preventDefault(); // Prevent Link navigation
+                            onToggleFollow();
+                        }}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                                <span>...</span>
+                            </>
+                        ) : (
+                            isFollowing ? 'Following' : 'Follow'
+                        )}
+                    </button>
+
                 </div>
             </div>
         </Link>
@@ -222,9 +222,9 @@ function PlayersContent() {
     }, [playersResponse]);
 
     useEffect(() => {
-         refetchPlayers();
+        refetchPlayers();
     }
-, [page, searchTerm, selectedPosition, selectedConference]);
+        , [page, searchTerm, selectedPosition, selectedConference]);
 
 
     // Toggle follow/unfollow
@@ -313,98 +313,97 @@ function PlayersContent() {
     const totalPages = playersResponse?.data?.pagination?.totalPages || 0;
 
     return (
-        <section className="container mx-auto max-w-7xl px-4 py-8">
-            <div className="text-center mb-8">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4 font-oswald">All Players</h1>
-            </div>
+        <div>
+            {/* Gray Background Section */}
+            <section className="container mx-auto max-w-7xl px-4 py-8">
+                <div className="text-center mb-8">
+                    <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">All Players</h1>
+                </div>
 
-            {/* Search Bar */}
-            <div className="mb-8 flex w-full">
-                <div className="relative w-full">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                    <input
-                        type="text"
-                        placeholder="Search players..."
-                        value={searchTerm}
-                        onChange={e => setSearchTerm(e.target.value)}
-                        className="filter-input w-full pl-10 pr-10 py-3 rounded shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+                <div className='flex justify-center mb-10'>
+                    <SearchBar
+                        placeholder="Search Players"
+                        size="md"
+                        width="w-full md:w-1/2"
+                        buttonLabel="Search here"
+                        onButtonClick={() => alert("Button clicked!")}
+                        onChange={(val) => console.log(val)}
                     />
-                    {searchTerm && (
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {players.map((player) => (
+                        <PlayerCard
+                            key={player.id}
+                            player={player}
+                            currentPage={page}
+                            teamsData={teamsData}
+                            isFollowing={followedPlayers[player.id]}
+                            onToggleFollow={() => toggleFollow(player.id.toString(), followedPlayers[player.id])}
+                            isAuthenticated={isAuthenticated}
+                            isLoading={loadingFollow[player.id] || false}
+                        />
+                    ))}
+                </div>
+
+                {players.length === 0 && (
+                    <div className="text-center py-12">
+                        <h3 className="text-xl font-semibold mb-2">No players found</h3>
+                        <p className="mb-4">Try adjusting your search criteria or filters</p>
                         <button
-                            type="button"
-                            onClick={() => setSearchTerm("")}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-600 focus:outline-none"
-                            aria-label="Clear search"
+                            onClick={clearAllFilters}
+                            className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
                         >
-                            <X className="w-5 h-5" />
+                            Clear Filters
                         </button>
-                    )}
-                </div>
-            </div>
+                    </div>
+                )}
+            </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {players.map((player) => (
-                    <PlayerCard
-                        key={player.id}
-                        player={player}
-                        currentPage={page}
-                        teamsData={teamsData}
-                        isFollowing={followedPlayers[player.id]}
-                        onToggleFollow={() => toggleFollow(player.id.toString(), followedPlayers[player.id])}
-                        isAuthenticated={isAuthenticated}
-                        isLoading={loadingFollow[player.id] || false}
-                    />
-                ))}
-            </div>
-
-            {/* No Results */}
-            {players.length === 0 && (
-                <div className="text-center py-12">
-                    <h3 className="text-xl font-semibold mb-2">No players found</h3>
-                    <p className="mb-4">Try adjusting your search criteria or filters</p>
-                    <button onClick={clearAllFilters} className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors">Clear Filters</button>
-                </div>
-            )}
-
-            {/* Pagination */}
+            {/* Black Background Pagination Section */}
             {totalPages > 1 && (
-                <div className="mt-8 flex justify-center">
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => handlePageChange(Math.max(1, page - 1))}
-                            disabled={page === 1}
-                            className="px-4 py-2 rounded-sm border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
-                        >
-                            Previous
-                        </button>
+                <div className="bg-transparent dark:bg-black py-6 mt-6">
+                    <div className="flex justify-center">
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => handlePageChange(Math.max(1, page - 1))}
+                                disabled={page === 1}
+                                className="px-3 py-2 rounded-full border-none disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all text-[#72757C] border-gray-500 bg-[#F1F2F2] dark:bg-[#262829] dark:text-[#C7C8CB]"
+                            >
+                                <ArrowLeft size={18}/>
+                            </button>
 
-                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                            const pageNum = Math.max(1, Math.min(totalPages - 4, page - 2)) + i
-                            return (
-                                <button
-                                    key={pageNum}
-                                    onClick={() => handlePageChange(pageNum)}
-                                    className={`px-4 py-2 rounded-sm border transition-colors ${pageNum === page
-                                            ? 'bg-red-800 text-white border-red-800'
-                                            : 'hover:scale-105 transition-all'
-                                        }`}
-                                >
-                                    {pageNum}
-                                </button>
-                            )
-                        })}
+                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                const pageNum = Math.max(1, Math.min(totalPages - 4, page - 2)) + i
+                                return (
+                                    <button
+                                        key={pageNum}
+                                        onClick={() => handlePageChange(pageNum)}
+                                        className={`px-4 py-2 rounded-full border transition-all bg-[#262829] ${pageNum === page
+                                                ? 'dark:bg-[#E64A30] dark:text-white border-[#E64A30] bg-[#E3E4E5]'
+                                                : 'text-[#72757C] hover:scale-105 bg-[#E3E4E5] border-none dark:border-gray-600 dark:bg-[#262829] dark:text-[#C7C8CB]'
+                                            }`}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                )
+                            })}
 
-                        <button
-                            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-                            disabled={page === totalPages}
-                            className="px-4 py-2 rounded-sm border disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
-                        >
-                            Next
-                        </button>
+                            <button
+                                onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
+                                disabled={page === totalPages}
+                                className="flex items-center justify-center gap-2 px-4 py-2 rounded-full border bg-[#E64A30] text-white dark:text-black dark:border-none font-medium 
+             disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all"
+                            >
+                                Next
+                                <ArrowRight size={18} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
-        </section>
+        </div>
+
     );
 }
 export default function Players() {

@@ -80,7 +80,7 @@ export const sanitizeAndStyleContent = (htmlContent: string): string => {
             .replace(/<em>/g, '<em class="italic">')
             
             // Style blockquotes
-            .replace(/<blockquote>/g, '<blockquote class="border-l-4 border-red-600 pl-4 my-4 italic ">')
+            .replace(/<blockquote>/g, '<blockquote class="border-l-4 border-[#F08F7E] pl-4 my-4 italic text-[#72757C] bg-[#F1F2F2] dark:bg-white dark:md:bg-black  dark:lg:bg-black dark:md:text-[#C7C8CB] dark:lg:text-[#C7C8CB]">')
             
             // Style code blocks
             .replace(/<code>/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">')

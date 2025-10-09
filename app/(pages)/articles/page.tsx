@@ -173,6 +173,9 @@ export default function ArticlesPage() {
             onChange={e => setSearchTerm(e.target.value)}
             className="filter-input w-full pl-10 pr-10 py-3 rounded shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
           /> */}
+          <div className='text-center mb-12'>
+            <h2 className="text-2xl md:text-5xl mb-4">Our Articles</h2>
+          </div>
           <div className='flex justify-center'>
             <SearchBar
               placeholder="Search articles..."

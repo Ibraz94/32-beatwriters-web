@@ -56,6 +56,8 @@ export default function Footer() {
     const callIcon =
         theme === "dark" ? "/footer-call-dark.svg" : "/footer-call.svg";
 
+    if (!mounted) return null;
+
 
     return (
         <footer className="bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] w-full overflow-x-hidden">

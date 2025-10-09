@@ -7,48 +7,57 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { renderRichTextContent } from '@/lib/utils/contentParser'
+import { Calendar } from 'lucide-react'
+import SearchBar from '@/components/ui/search'
 
 const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
   return (
-    <div className="rounded-md space-y-2 shadow-md player-card  overflow-hidden hover:shadow-lg transition-shadow group hover:scale-101 p-5 font-oswald">
+    <div className="rounded-xl space-y-2 shadow-md overflow-hidden hover:shadow-lg transition-shadow group hover:scale-101 p-3 bg-white/200 dark:bg-[#262829]">
       {/* Podcast Thumbnail */}
       <Link href={`/podcasts/${podcast.id}`}>
-      <div className="relative h-72 w-full ">
-        <Image 
-          src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"} 
-          alt={podcast.title}
-          fill
-          className="object-cover w-full h-full rounded-md"
-        />
-        {/* Duration Badge */}
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-sm px-2 py-1 rounded">
-          {podcast.duration}
+        <div className="relative h-72 w-full ">
+          <Image
+            src={getImageUrl(podcast.thumbnail) || "/bw-logo.webp"}
+            alt={podcast.title}
+            fill
+            className="object-cover w-full h-full rounded-xl"
+          />
+          {/* Duration Badge */}
+          <div className="absolute bottom-2 right-2 bg-[#ED7864] bg-opacity-75 text-white text-base px-6 py-1 rounded-full">
+            {podcast.duration}
+          </div>
         </div>
-      </div>
-      {/* Podcast Info */}
-      <div className="mt-4">
-        
-          <h3 className="font-bold text-2xl mb-2 line-clamp-2">
+        {/* Podcast Info */}
+        <div className="mt-4">
+
+          <h3 className="text-2xl mb-2 line-clamp-2">
             {podcast.title}
           </h3>
 
-        {/* <div className="text-lg mb-3 line-clamp-2 ">
+          {/* <div className="text-lg mb-3 line-clamp-2 ">
         {renderRichTextContent(podcast.description, true)}
         </div> */}
-         
-        <div className="flex justify-between items-center">
-        <p className="text-lg  mb-2">
-          Hosted by: {podcast.hostedBy}
-        </p>
-          <p className="text-lg">
-            {new Date(podcast.podcastTime).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}
-          </p>
+
+          <div className="w-full">
+            {/* First row */}
+            <p className="text-xl text-[#ED7864] mb-2">
+              Hosted by: {podcast.hostedBy}
+            </p>
+
+            {/* Second row (right-aligned badge) */}
+            <div className="flex justify-end w-full">
+              <p className="flex items-center justify-center gap-2 bg-[#ED7864] rounded-full px-6 py-2 text-white text-lg w-fit dark:text-black dark:border-1 dark:border-white">
+                <Calendar size={18} />
+                {new Date(podcast.podcastTime).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </p>
+            </div>
+          </div>
+
         </div>
-      </div>
       </Link>
     </div>
   )
@@ -68,15 +77,15 @@ export default function AllPodcastsPage() {
 
   const [searchTerm, setSearchTerm] = useState('')
 
-  const { 
-    data: apiResponse, 
-    isLoading, 
-    error 
+  const {
+    data: apiResponse,
+    isLoading,
+    error
   } = useGetEpisodesQuery(filters) as { data: ApiResponse | undefined, isLoading: boolean, error: any }
 
   // Handle search with debounce
   useEffect(() => {
-    const timeoutId = setTimeout(() => {  
+    const timeoutId = setTimeout(() => {
       setFilters(prev => ({
         ...prev,
         search: searchTerm,
@@ -126,8 +135,8 @@ export default function AllPodcastsPage() {
       ) : error ? (
         <div className="text-center py-12">
           <p className="text-gray-600 mb-4">Failed to load episodes. Please try again later.</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
           >
             Retry
@@ -135,6 +144,21 @@ export default function AllPodcastsPage() {
         </div>
       ) : apiResponse?.podcasts && apiResponse.podcasts.length > 0 ? (
         <>
+          <div className="text-center mb-12">
+            <h2 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">Our Podcasts</h2>
+          </div>
+
+          <div className='flex justify-center'>
+            <SearchBar
+              placeholder="Search any news that suits you"
+              size="md"
+              width="w-full md:w-1/2"
+              buttonLabel="Search here"
+              onButtonClick={() => alert("Button clicked!")}
+              onChange={(val) => console.log(val)}
+              className="flex justify-center items-center"
+            />
+          </div>
           {/* Results Count */}
           <div className="mb-6">
             Showing {apiResponse.podcasts.length} of {apiResponse.pagination.total} podcasts
@@ -158,24 +182,23 @@ export default function AllPodcastsPage() {
               >
                 Previous
               </button>
-              
+
               {Array.from({ length: Math.min(5, apiResponse.pagination.totalPages) }, (_, i) => {
                 const pageNum = Math.max(1, Math.min(apiResponse.pagination.totalPages - 4, filters.page - 2)) + i
                 return (
                   <button
                     key={pageNum}
                     onClick={() => handlePageChange(pageNum)}
-                    className={`px-4 py-2 rounded-lg border transition-colors ${
-                      pageNum === filters.page
-                        ? 'bg-red-800 text-white border-red-800'
-                        : 'hover:bg-gray-50'
-                    }`}
+                    className={`px-4 py-2 rounded-lg border transition-colors ${pageNum === filters.page
+                      ? 'bg-red-800 text-white border-red-800'
+                      : 'hover:bg-gray-50'
+                      }`}
                   >
                     {pageNum}
                   </button>
                 )
               })}
-              
+
               <button
                 onClick={() => handlePageChange(filters.page + 1)}
                 disabled={filters.page >= apiResponse.pagination.totalPages}
@@ -189,8 +212,8 @@ export default function AllPodcastsPage() {
       ) : (
         <div className="text-center py-12">
           <p className="text-gray-600 mb-4">
-            {filters.search || filters.category 
-              ? 'No episodes found matching your criteria.' 
+            {filters.search || filters.category
+              ? 'No episodes found matching your criteria.'
               : 'No episodes available at the moment.'
             }
           </p>
@@ -214,17 +237,17 @@ export default function AllPodcastsPage() {
       )}
     </div>
   )
-} 
+}
 
 
 
 
 
-{/* Filters */}
+{/* Filters */ }
 {/* <div className="rounded-lg shadow-sm border p-6 mb-8">
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4"> */}
-  {/* Search */}
-  {/* <div>
+{/* Search */ }
+{/* <div>
     <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
     <input
       type="text"
@@ -235,8 +258,8 @@ export default function AllPodcastsPage() {
     />
   </div> */}
 
-  {/* Category */}
-  {/* <div>
+{/* Category */ }
+{/* <div>
     <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
     <select
       value={filters.category}
@@ -250,8 +273,8 @@ export default function AllPodcastsPage() {
     </select>
   </div> */}
 
-  {/* Sort By */}
-  {/* <div>
+{/* Sort By */ }
+{/* <div>
     <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
     <select
       value={filters.sortBy}
@@ -265,8 +288,8 @@ export default function AllPodcastsPage() {
     </select>
   </div> */}
 
-  {/* Sort Order */}
-  {/* <div>
+{/* Sort Order */ }
+{/* <div>
     <label className="block text-sm font-medium text-gray-700 mb-2">Order</label>
     <select
       value={filters.sortOrder}
@@ -279,9 +302,9 @@ export default function AllPodcastsPage() {
   </div>
 </div> */}
 
-{/* Filter Toggles */}
-{/* <div className="flex flex-wrap gap-4"> */}
-  {/* <button
+{/* Filter Toggles */ }
+{/* <div className="flex flex-wrap gap-4"> */ }
+{/* <button
     onClick={() => handleFilterChange('isPremium', filters.isPremium === true ? undefined : true)}
     className={`px-4 py-2 rounded-lg border transition-colors ${
       filters.isPremium === true 
@@ -291,8 +314,8 @@ export default function AllPodcastsPage() {
   >
     Premium Only
   </button> */}
-  
-  {/* <button
+
+{/* <button
     onClick={() => handleFilterChange('isPremium', filters.isPremium === false ? undefined : false)}
     className={`px-4 py-2 rounded-lg border transition-colors ${
       filters.isPremium === false 
@@ -303,7 +326,7 @@ export default function AllPodcastsPage() {
     Free Only
   </button> */}
 
-  {/* <button
+{/* <button
     onClick={() => handleFilterChange('isExplicit', filters.isExplicit === false ? undefined : false)}
     className={`px-4 py-2 rounded-lg border transition-colors ${
       filters.isExplicit === false 
@@ -314,8 +337,8 @@ export default function AllPodcastsPage() {
     Clean Content
   </button> */}
 
-  {/* Clear Filters */}
-  {/* <button
+{/* Clear Filters */ }
+{/* <button
     onClick={() => {
       setFilters(prev => ({
         ...prev,

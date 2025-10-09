@@ -8,6 +8,31 @@ import Image from 'next/image'
 import { useGetArticleQuery, getImageUrl, Article, useGetArticlesQuery } from '@/lib/services/articlesApi'
 import ArticleCTA from '../../../components/ArticlesCTA'
 
+export function getTimeAgo(isoString: string): string {
+    const publishedDate = new Date(isoString);
+    const now = new Date();
+    const diffMs = now.getTime() - publishedDate.getTime();
+
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+    return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+}
+
+export function formatDate(isoString: string): string {
+    const date = new Date(isoString);
+    const options: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options);
+}
+
 export default function ArticlePageClient({ id }: { id: string }) {
     const { user, isAuthenticated, loading: authLoading, checkPremiumAccess } = useAuth()
     const hasPremiumAccess = checkPremiumAccess()
@@ -276,32 +301,6 @@ export default function ArticlePageClient({ id }: { id: string }) {
     if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
         // Test error boundary - uncomment to test
         // if (Math.random() < 0.1) throw new Error('Test error for error boundary')
-    }
-
-
-    function getTimeAgo(isoString: string): string {
-        const publishedDate = new Date(isoString);
-        const now = new Date();
-        const diffMs = now.getTime() - publishedDate.getTime();
-
-        const diffMins = Math.floor(diffMs / (1000 * 60));
-        const diffHours = Math.floor(diffMins / 60);
-        const diffDays = Math.floor(diffHours / 24);
-
-        if (diffMins < 1) return "Just now";
-        if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
-        if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
-        return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
-    }
-
-    function formatDate(isoString: string): string {
-        const date = new Date(isoString);
-        const options: Intl.DateTimeFormatOptions = {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        };
-        return date.toLocaleDateString("en-US", options);
     }
 
     return (
