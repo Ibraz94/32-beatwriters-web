@@ -354,7 +354,7 @@ function Header() {
                                     onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
                                     className="flex items-center space-x-3 px-4 py-2 hover:cursor-pointer text-white"
                                 >
-                                    <div className="flex items-center space-x-2">
+                                    <div className="flex items-center space-x-2 ">
                                         {user?.profilePicture ? (
                                             <Image
                                                 src={user.profilePicture}
@@ -374,12 +374,12 @@ function Header() {
                                             {getUserDisplayName()}
                                         </span>
                                     </div>
-                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-gray ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
                                 </button>
 
                                 {/* User Dropdown Menu */}
                                 {isUserDropdownOpen && (
-                                    <div className="absolute right-0 w-48 rounded-sm shadow-lg border border-white/20 bg-background/90 py-2 z-50">
+                                    <div className="absolute right-0 w-48 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[#262829] py-2 z-50">
                                         <div className="py-1">
                                             <Link
                                                 href="/account"
@@ -530,7 +530,7 @@ function Header() {
                         </div> */}
 
                         {/* User Actions */}
-                        <div className="px-4 space-y-3">
+                        <div className="px-4 space-y-3 z-index-10">
                             {isAuthenticated ? (
                                 <div className="space-y-3">
                                     <div className="mobile-menu-user-info flex items-center justify-center space-x-3 p-3 rounded-lg">

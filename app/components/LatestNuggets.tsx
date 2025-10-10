@@ -54,7 +54,6 @@ export default function LatestNuggets() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4 ">Latest Nuggets</h2>
           <p className="text-xl max-w-4xl mx-auto">Loading latest nuggets...</p>
         </div>
         <div className="flex gap-6">
@@ -119,7 +118,7 @@ export default function LatestNuggets() {
       {/* Main Content Area - Two Column Layout */}
       <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0 mt-10">
         {/* Feed Column */}
-        <div className="flex-1">
+        <div className="flex-1 relative">
           <div className="text-left mb-12 ml-4">
             <h2 className="text-2xl md:text-5xl mb-4">Latest Nuggets</h2>
             <p className="text-sm md:text-xl max-w-4xl text-(--primary-gray-color)">Stay updated with the most recent insights and analysis</p>
@@ -240,7 +239,20 @@ export default function LatestNuggets() {
             </div>
           )}
 
+          {/* View All Nuggets Button */}
+          {latestNuggets.length > 0 && (
+            <div className="hidden md:flex justify-end w-full py-8 text-white">
+              <Button
+                variant="orange"
+                className="dark:hover:bg-[#FF8C5E] whitespace-nowrap"
+              >
+                <Link href="/subscribe">
+                  Subscribe to See All the Latest News
+                </Link>
+              </Button>
+            </div>
 
+          )}
         </div>
 
         {/* Trending Players Sidebar */}
@@ -249,21 +261,7 @@ export default function LatestNuggets() {
         </div>
       </div>
 
-      {/* View All Nuggets Button */}
-      {latestNuggets.length > 0 && (
-        <div className="hidden py-8 md:flex justify-center lg:ml-[440px] md:ml-[175px] text-white">
-          <Button variant="orange" 
-          className='dark:hover:bg-[#FF8C5E]'
-          >
-            <Link
-              href="/subscribe"
-            // className="bg-red-800 text-white px-8 py-3 rounded font-semibold hover:bg-red-700 transition-colors inline-flex items-center gap-2"
-            >
-              Subscribe to See All the Latest News
-            </Link>
-          </Button>
-        </div>
-      )}
+
     </div>
   )
 }

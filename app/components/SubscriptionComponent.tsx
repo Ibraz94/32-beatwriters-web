@@ -120,8 +120,10 @@ export default function SubscriptionComponent() {
             {selectedPlan !== 'fastdraft' && currentPlan && (
               <div className="flex flex-col w-full bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative text-black dark:bg-[#1A1A1A] dark:border-[#72757C]">
                 {/* Gradient background */}
-                <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(145deg,rgba(246,188,178,0.19)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
-
+                <div className="absolute top-0 left-0 w-full h-1/2 
+    bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%),linear-gradient(to_bottom,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] 
+    bg-blend-overlay dark:bg-none">
+                </div>
                 {/* Background image */}
                 <div className="absolute top-0 right-0 pointer-events-none opacity-30">
                   <Image src={selectedPlan === "monthly" ? `/monthly-plan-bg.png` : `/onetime-plan-bg.png`} alt="Plan background" width={300} height={300} />
@@ -213,8 +215,10 @@ export default function SubscriptionComponent() {
               <div className="flex flex-col w-full lg:hidden bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative text-black dark:bg-[#1A1A1A] dark:border-[#72757C]">
 
                 {/* Gradient background */}
-                <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(145deg,rgba(246,188,178,0.19)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
-
+                <div className="absolute top-0 left-0 w-full h-1/2 
+    bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%),linear-gradient(to_bottom,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] 
+    bg-blend-overlay dark:bg-none">
+                </div>
                 {/* Background image */}
                 <div className="absolute top-0 right-0 pointer-events-none opacity-30">
                   <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} />
@@ -298,7 +302,10 @@ export default function SubscriptionComponent() {
           <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105 dark:bg-[#1A1A1A] dark:border-none">
 
             {/* Gradient background */}
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
+            <div className="absolute top-0 left-0 w-full h-1/2 
+    bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%),linear-gradient(to_bottom,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] 
+    bg-blend-overlay dark:bg-none">
+            </div>
 
             {/* Top-right background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
@@ -373,8 +380,10 @@ export default function SubscriptionComponent() {
           <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105 dark:bg-[#1A1A1A] dark:border-none">
 
             {/* Gradient background */}
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
-
+            <div className="absolute top-0 left-0 w-full h-1/2 
+    bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%),linear-gradient(to_bottom,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] 
+    bg-blend-overlay dark:bg-none">
+            </div>
             {/* Background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
               <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} />
@@ -436,8 +445,10 @@ export default function SubscriptionComponent() {
           <div className="flex flex-col w-1/3 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden relative mx-auto  text-center text-black hover:scale-105 dark:bg-[#1A1A1A] dark:border-none">
 
             {/* Gradient background */}
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] dark:bg-none"></div>
-
+            <div className="absolute top-0 left-0 w-full h-1/2 
+    bg-[linear-gradient(135deg,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%),linear-gradient(to_bottom,rgba(246,188,178,0.29)_0%,rgba(255,255,255,1)_100%)] 
+    bg-blend-overlay dark:bg-none">
+            </div>
             {/* Background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
               <Image src="/yearly-plan-bg.png" alt="Plan background" width={300} height={300} />

@@ -17,47 +17,43 @@ const TrustedByPartners = () => {
         {/* ✅ Mobile-first grid — expands responsively */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-4 justify-items-center">
           {/* Logo 1 */}
-          <div className="w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-42 lg:h-48 transition-all duration-300 dark:bg-[#262829]">
+          <div className="w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-42 lg:h-48 px-6 md:px-10 lg:px-12 transition-all duration-300 dark:bg-[#262829]">
             <Image
               src="/ESPN_logo.png"
               alt="ESPN Logo"
               width={300}
               height={180}
-              className="w-[120px] sm:w-[83px] md:w-[300px] h-auto"
-            />
+              className="w-full h-auto object-contain" />
           </div>
 
           {/* Logo 2 */}
-          <div className="w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-42 lg:h-48 transition-all duration-300 dark:bg-[#262829]">
+          <div className="w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-42 lg:h-48 px-6 md:px-10 lg:px-12 transition-all duration-300 dark:bg-[#262829]">
             <Image
               src="/CBS_logo.png"
               alt="CBS Logo"
               width={300}
               height={180}
-              className="w-[120px] sm:w-[83px] md:w-[300px] h-auto"
-            />
+              className="w-full h-auto object-contain" />
           </div>
 
           {/* Logo 3 */}
-          <div className="w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-42 lg:h-48 transition-all duration-300 dark:bg-[#262829]">
+          <div className="w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-42 lg:h-48 px-6 md:px-10 lg:px-12 transition-all duration-300 dark:bg-[#262829]">
             <Image
               src="/NBC_logo.png"
               alt="NBC Logo"
               width={300}
               height={180}
-              className="w-[120px] sm:w-[83px] md:w-[300px] h-auto"
-            />
+              className="w-full h-auto object-contain" />
           </div>
 
           {/* Logo 4 */}
-          <div className="w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-42 lg:h-48 transition-all duration-300 dark:bg-[#262829]">
+          <div className="w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-42 lg:h-48 px-6 md:px-10 lg:px-12 transition-all duration-300 dark:bg-[#262829]">
             <Image
               src="/sleeper_logo-min.png"
               alt="Sleeper Logo"
               width={300}
               height={180}
-              className="w-[120px] sm:w-[83px] md:w-[300px] h-auto"
-            />
+              className="w-full h-auto object-contain" />
           </div>
         </div>
       </div>

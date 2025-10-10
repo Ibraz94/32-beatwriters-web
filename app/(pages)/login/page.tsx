@@ -274,7 +274,7 @@ export default function Login() {
                                     value={formData.emailOrUsername}
                                     onChange={handleInputChange}
                                     className={`appearance-none relative block w-full pl-4 pr-3 dark:bg-[#262829] py-3 border ${errors.emailOrUsername ? 'border-destructive' : 'border-input'
-                                        } placeholder-muted-foreground text-foreground rounded-full focus:outline-none focus:ring focus:ring-ring focus:border-transparent bg-background/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                                        } placeholder-muted-foreground text-foreground rounded-full focus:outline-none focus:ring-2 focus:ring-[#E64A30] focus:border-[#E64A30] bg-background/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed *:`}
                                     placeholder="Enter your email or username"
                                 />
                             </div>
@@ -299,7 +299,7 @@ export default function Login() {
                                     value={formData.password}
                                     onChange={handleInputChange}
                                     className={`appearance-none relative block w-full pl-4 pr-10 dark:bg-[#262829] py-3 border ${errors.password ? 'border-destructive' : 'border-input'
-                                        } placeholder-muted-foreground text-foreground rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent bg-background/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                                        } placeholder-muted-foreground text-foreground rounded-full  focus:outline-none focus:ring-2 focus:ring-[#E64A30] focus:border-[#E64A30] bg-background/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                                     placeholder="Enter your password"
                                 />
                                 <button
@@ -375,7 +375,7 @@ export default function Login() {
                     <div className="mt-6">
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-border" />
+                                <div className="w-full" />
                             </div>
                             <div className="relative flex justify-center text-sm">
                                 <span className="px-2 bg-card text-muted-foreground">Or continue with</span>

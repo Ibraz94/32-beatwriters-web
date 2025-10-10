@@ -730,3 +730,20 @@ picture,
   background-color: #ED7864;
   border-radius: 10px;
 }
+
+/* Top background overlay for header + page top */
+.top-bg {
+  background-image: url('/background-image2.png'); /* 👈 your image path */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.top-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.6); /* Optional: soft white overlay for readability */
+  z-index: 0;
+}
