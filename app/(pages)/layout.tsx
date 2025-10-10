@@ -10,6 +10,7 @@ import IOSScrollFix from "../components/IOSScrollFix";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import GoogleAnalytics from "../../lib/analytics/GoogleAnalytics";
 import DeliveredToComponent from "../components/DeliveredToComponent";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 // import Head from "next/head"; // No longer needed for Open Graph with Metadata export
 
 // const cabin = Cabin({
@@ -98,6 +99,7 @@ export default function RootLayout({
                 {children}
                 <DeliveredToComponent />
                 <Footer />
+                <ScrollToTopButton /> 
               </ToastProvider>
             </ThemeProvider>
           </ReduxProvider>

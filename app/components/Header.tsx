@@ -287,7 +287,7 @@ function Header() {
 
                             {/* Feed Dropdown Menu */}
                             {isFeedDropdownOpen && (
-                                <div className="absolute top-full left-0 w-48 rounded-sm shadow-lg border border-white/20 bg-background/90 py-2 z-50">
+                                <div className="absolute top-full left-0 w-48 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[var(--dark-theme-color)] py-2 z-50">
                                     <div className="py-1">
                                         {feedOptions.map((option) => (
                                             <Link
@@ -315,7 +315,7 @@ function Header() {
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                             </button>
                             {isToolsDropdownOpen && (
-                                <div className="absolute top-full left-0 w-56 rounded-sm shadow-lg border border-white/20 bg-background/90 py-2 z-50">
+                                <div className="absolute top-full left-0 w-56 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[var(--dark-theme-color)] py-2 z-50">
                                     <div className="py-1">
                                         {toolOptions.map((option) => (
                                             <Link
@@ -345,7 +345,7 @@ function Header() {
 
                     {/* Desktop Actions */}
                     <div className="hidden lg:flex items-center space-x-4">
-                        <ThemeToggle />
+                        <ThemeToggle/>
 
                         {/* <div className="w-px h-7 bg-gray-300"></div> */}
                         {isAuthenticated ? (
@@ -370,7 +370,7 @@ function Header() {
                                                 </span>
                                             </div>
                                         )}
-                                        <span className="text-md">
+                                        <span className="text-md text-black dark:text-white">
                                             {getUserDisplayName()}
                                         </span>
                                     </div>
@@ -525,9 +525,9 @@ function Header() {
                         </div>
 
                         {/* Theme Toggle - Mobile */}
-                        <div className="px-4 flex justify-center">
+                        {/* <div className="px-4 flex justify-center">
                             <ThemeToggle />
-                        </div>
+                        </div> */}
 
                         {/* User Actions */}
                         <div className="px-4 space-y-3">

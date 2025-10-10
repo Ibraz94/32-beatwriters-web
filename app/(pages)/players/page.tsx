@@ -278,16 +278,27 @@ function PlayersContent() {
         return (
             <section className="container mx-auto max-w-7xl px-4 py-8">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">All Players</h1>
-                    <p className="text-xl max-w-4xl mx-auto mb-6">Loading players...</p>
+                    <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">All Players</h1>
+                    <p className="text-lg md:text-xl text-gray-600 dark:text-[#C7C8CB]">
+                        Loading players...
+                    </p>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {Array.from({ length: 12 }).map((_, index) => (
-                        <div key={index} className="animate-pulse">
-                            <div className="bg-gray-300 rounded-lg h-48 mb-4"></div>
-                            <div className="h-4 bg-gray-300 rounded mb-2"></div>
-                            <div className="h-3 bg-gray-300 rounded mb-2"></div>
-                            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                        <div
+                            key={index}
+                            className="animate-pulse rounded-2xl shadow-md overflow-hidden bg-white dark:bg-[#262829] p-3"
+                        >
+                            {/* Player Image Skeleton */}
+                            <div className="bg-gray-200 dark:bg-[#3A3D48] rounded-xl aspect-square mb-4"></div>
+
+                            {/* Player Info Skeleton */}
+                            <div className="space-y-2 px-2 pb-4">
+                                <div className="h-4 bg-gray-200 dark:bg-[#3A3D48] rounded w-5/6"></div>
+                                <div className="h-3 bg-gray-200 dark:bg-[#3A3D48] rounded w-3/4"></div>
+                                <div className="h-3 bg-gray-200 dark:bg-[#3A3D48] rounded w-2/3"></div>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -300,9 +311,19 @@ function PlayersContent() {
         return (
             <section className="container mx-auto max-w-7xl px-4 py-8">
                 <div className="text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">All Players</h1>
-                    <p className="text-xl text-red-600 mb-4">Failed to load players</p>
-                    <p className="text-gray-600">Please try again later.</p>
+                    <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">All Players</h1>
+                    <p className="text-xl text-red-600 dark:text-red-400 mb-4">
+                        Failed to load players
+                    </p>
+                    <p className="text-gray-600 dark:text-[#C7C8CB] mb-6">
+                        Please try again later.
+                    </p>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="bg-[var(--color-orange)] text-white dark:text-black px-6 py-2 rounded-full hover:scale-105 transition-transform"
+                    >
+                        Retry
+                    </button>
                 </div>
             </section>
         );
@@ -370,7 +391,7 @@ function PlayersContent() {
                                 disabled={page === 1}
                                 className="px-3 py-2 rounded-full border-none disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-all text-[#72757C] border-gray-500 bg-[#F1F2F2] dark:bg-[#262829] dark:text-[#C7C8CB]"
                             >
-                                <ArrowLeft size={18}/>
+                                <ArrowLeft size={18} />
                             </button>
 
                             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
@@ -380,8 +401,8 @@ function PlayersContent() {
                                         key={pageNum}
                                         onClick={() => handlePageChange(pageNum)}
                                         className={`px-4 py-2 rounded-full border transition-all bg-[#262829] ${pageNum === page
-                                                ? 'dark:bg-[#E64A30] dark:text-white border-[#E64A30] bg-[#E3E4E5]'
-                                                : 'text-[#72757C] hover:scale-105 bg-[#E3E4E5] border-none dark:border-gray-600 dark:bg-[#262829] dark:text-[#C7C8CB]'
+                                            ? 'dark:bg-[#E64A30] dark:text-white border-[#E64A30] bg-[#E3E4E5]'
+                                            : 'text-[#72757C] hover:scale-105 bg-[#E3E4E5] border-none dark:border-gray-600 dark:bg-[#262829] dark:text-[#C7C8CB]'
                                             }`}
                                     >
                                         {pageNum}

@@ -124,117 +124,128 @@ export default function AllPodcastsPage() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
           {Array.from({ length: 12 }).map((_, index) => (
-            <div key={index} className="animate-pulse">
-              <div className="bg-gray-300 rounded-lg h-48 mb-4"></div>
-              <div className="h-4 bg-gray-300 rounded mb-2"></div>
-              <div className="h-3 bg-gray-300 rounded mb-2"></div>
-              <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+            <div
+              key={index}
+              className="animate-pulse rounded-2xl shadow-md overflow-hidden bg-white dark:bg-[#262829] p-2"
+            >
+              {/* Image placeholder */}
+              <div className="bg-gray-200 dark:bg-[#3A3D48] rounded-xl aspect-video mb-4"></div>
+
+              {/* Text placeholders */}
+              <div className="space-y-2 px-2 pb-4">
+                <div className="h-4 bg-gray-200 dark:bg-[#3A3D48] rounded w-5/6"></div>
+                <div className="h-3 bg-gray-200 dark:bg-[#3A3D48] rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 dark:bg-[#3A3D48] rounded w-2/3"></div>
+              </div>
             </div>
           ))}
         </div>
       ) : error ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 mb-4">Failed to load episodes. Please try again later.</p>
+          <p className="text-gray-600 dark:text-[#C7C8CB] mb-4 text-sm md:text-base">
+            Failed to load episodes. Please try again later.
+          </p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
+            className="bg-[var(--color-orange)] text-white px-6 py-2 rounded-full hover:scale-105 transition-transform dark:text-black"
           >
             Retry
           </button>
         </div>
-      ) : apiResponse?.podcasts && apiResponse.podcasts.length > 0 ? (
-        <>
-          <div className="text-center mb-12">
-            <h2 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">Our Podcasts</h2>
-          </div>
-
-          <div className='flex justify-center'>
-            <SearchBar
-              placeholder="Search any news that suits you"
-              size="md"
-              width="w-full md:w-1/2"
-              buttonLabel="Search here"
-              onButtonClick={() => alert("Button clicked!")}
-              onChange={(val) => console.log(val)}
-              className="flex justify-center items-center"
-            />
-          </div>
-          {/* Results Count */}
-          <div className="mb-6">
-            Showing {apiResponse.podcasts.length} of {apiResponse.pagination.total} podcasts
-            {filters.search && ` for "${filters.search}"`}
-          </div>
-
-          {/* Episodes Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
-            {apiResponse.podcasts.map((podcast) => (
-              <PodcastCard key={podcast.id} podcast={podcast} />
-            ))}
-          </div>
-
-          {/* Pagination */}
-          {apiResponse.pagination.totalPages > 1 && (
-            <div className="flex justify-center items-center space-x-2">
-              <button
-                onClick={() => handlePageChange(filters.page - 1)}
-                disabled={filters.page <= 1}
-                className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-              >
-                Previous
-              </button>
-
-              {Array.from({ length: Math.min(5, apiResponse.pagination.totalPages) }, (_, i) => {
-                const pageNum = Math.max(1, Math.min(apiResponse.pagination.totalPages - 4, filters.page - 2)) + i
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className={`px-4 py-2 rounded-lg border transition-colors ${pageNum === filters.page
-                      ? 'bg-red-800 text-white border-red-800'
-                      : 'hover:bg-gray-50'
-                      }`}
-                  >
-                    {pageNum}
-                  </button>
-                )
-              })}
-
-              <button
-                onClick={() => handlePageChange(filters.page + 1)}
-                disabled={filters.page >= apiResponse.pagination.totalPages}
-                className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-              >
-                Next
-              </button>
+      )
+        : apiResponse?.podcasts && apiResponse.podcasts.length > 0 ? (
+          <>
+            <div className="text-center mb-12">
+              <h2 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">Our Podcasts</h2>
             </div>
-          )}
-        </>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-600 mb-4">
-            {filters.search || filters.category
-              ? 'No episodes found matching your criteria.'
-              : 'No episodes available at the moment.'
-            }
-          </p>
-          {(filters.search || filters.category) && (
-            <button
-              onClick={() => {
-                setFilters(prev => ({
-                  ...prev,
-                  search: '',
-                  category: '',
-                  page: 1
-                }))
-                setSearchTerm('')
-              }}
-              className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
-            >
-              Clear Filters
-            </button>
-          )}
-        </div>
-      )}
+
+            <div className='flex justify-center'>
+              <SearchBar
+                placeholder="Search any news that suits you"
+                size="md"
+                width="w-full md:w-1/2"
+                buttonLabel="Search here"
+                onButtonClick={() => alert("Button clicked!")}
+                onChange={(val) => console.log(val)}
+                className="flex justify-center items-center"
+              />
+            </div>
+            {/* Results Count */}
+            <div className="mb-6">
+              Showing {apiResponse.podcasts.length} of {apiResponse.pagination.total} podcasts
+              {filters.search && ` for "${filters.search}"`}
+            </div>
+
+            {/* Episodes Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
+              {apiResponse.podcasts.map((podcast) => (
+                <PodcastCard key={podcast.id} podcast={podcast} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {apiResponse.pagination.totalPages > 1 && (
+              <div className="flex justify-center items-center space-x-2">
+                <button
+                  onClick={() => handlePageChange(filters.page - 1)}
+                  disabled={filters.page <= 1}
+                  className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                >
+                  Previous
+                </button>
+
+                {Array.from({ length: Math.min(5, apiResponse.pagination.totalPages) }, (_, i) => {
+                  const pageNum = Math.max(1, Math.min(apiResponse.pagination.totalPages - 4, filters.page - 2)) + i
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`px-4 py-2 rounded-lg border transition-colors ${pageNum === filters.page
+                        ? 'bg-red-800 text-white border-red-800'
+                        : 'hover:bg-gray-50'
+                        }`}
+                    >
+                      {pageNum}
+                    </button>
+                  )
+                })}
+
+                <button
+                  onClick={() => handlePageChange(filters.page + 1)}
+                  disabled={filters.page >= apiResponse.pagination.totalPages}
+                  className="px-4 py-2 rounded-lg border disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-4">
+              {filters.search || filters.category
+                ? 'No episodes found matching your criteria.'
+                : 'No episodes available at the moment.'
+              }
+            </p>
+            {(filters.search || filters.category) && (
+              <button
+                onClick={() => {
+                  setFilters(prev => ({
+                    ...prev,
+                    search: '',
+                    category: '',
+                    page: 1
+                  }))
+                  setSearchTerm('')
+                }}
+                className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+        )}
     </div>
   )
 }

@@ -706,7 +706,7 @@ export default function PlayerPageClient({ id }: any) {
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Opportunity</h3>
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-[360px] md:w-[640px] lg:w-full">
+                                            <div className="overflow-x-auto orange-scroll w-[360px] md:w-[640px] lg:w-full">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#FFE6E2] dark:bg-[#3A3D48] text-center">
@@ -760,7 +760,7 @@ export default function PlayerPageClient({ id }: any) {
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Opportunity</h3>
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-[360px] md:w-[640px] lg:w-full">
+                                            <div className="overflow-x-auto orange-scroll w-[360px] md:w-[640px] lg:w-full">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#FFE6E2] dark:bg-[#3A3D48] text-center">
@@ -814,7 +814,7 @@ export default function PlayerPageClient({ id }: any) {
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Productivity</h3>
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-[360px] md:w-[640px] lg:w-full">
+                                            <div className="overflow-x-auto orange-scroll w-[360px] md:w-[640px] lg:w-full">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#FFE6E2] dark:bg-[#3A3D48] text-center">
@@ -868,7 +868,7 @@ export default function PlayerPageClient({ id }: any) {
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Efficiency</h3>
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-[360px] md:w-[640px] lg:w-full">
+                                            <div className="overflow-x-auto orange-scroll w-[360px] md:w-[640px] lg:w-full">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#FFE6E2] dark:bg-[#3A3D48] text-center">
@@ -922,7 +922,7 @@ export default function PlayerPageClient({ id }: any) {
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Efficiency</h3>
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-[360px] md:w-[640px] lg:w-full">
+                                            <div className="overflow-x-auto orange-scroll w-[360px] md:w-[640px] lg:w-full">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#FFE6E2] dark:bg-[#3A3D48] text-center">
@@ -977,7 +977,7 @@ export default function PlayerPageClient({ id }: any) {
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Efficiency</h3>
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-[360px] md:w-[640px] lg:w-full">
+                                            <div className="overflow-x-auto orange-scroll w-[360px] md:w-[640px] lg:w-full">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#FFE6E2] dark:bg-[#3A3D48] text-center">
@@ -1073,7 +1073,7 @@ export default function PlayerPageClient({ id }: any) {
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Zone vs Man</h3>
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-[360px] md:w-[640px] lg:w-full">
+                                            <div className="overflow-x-auto orange-scroll w-[360px] md:w-[640px] lg:w-full">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#FFE6E2] dark:bg-[#3A3D48] text-center">
@@ -1392,12 +1392,12 @@ export default function PlayerPageClient({ id }: any) {
                                     {/* Season Stats Table */}
                                     <div className="space-y-4">
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-full">
+                                            <div className="overflow-x-auto orange-scroll w-full">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#0F0724] text-center">
                                                             {visibleColumns.map((column) => (
-                                                                <th key={column.key} className="text-xs font-semibold p-3 text-gray-300">
+                                                                <th key={column.key} className="text-xs font-semibold p-3 text-[#1D212D] bg-[#F6BCB2] dark:bg-[#3A3D48] dark:text-[#C7C8CB]">
                                                                     {column.name}
                                                                 </th>
                                                             ))}
@@ -1409,7 +1409,7 @@ export default function PlayerPageClient({ id }: any) {
                                                             const yearData = seasonStats[year];
 
                                                             return (
-                                                                <tr key={year} className="bg-[#2C204B] text-center">
+                                                                <tr key={year} className="bg-[#FFE6E2] text-center dark:bg-[#262829]">
                                                                     {visibleColumns.map((column) => {
                                                                         let value;
                                                                         if (column.type === 'calculated') {
@@ -1428,7 +1428,7 @@ export default function PlayerPageClient({ id }: any) {
                                                                         }
 
                                                                         return (
-                                                                            <td key={column.key} className="p-3 text-white">
+                                                                            <td key={column.key} className="p-3 text-[#1D212D] dark:text-[#C7C8CB]">
                                                                                 {value}
                                                                             </td>
                                                                         );
@@ -1513,12 +1513,12 @@ export default function PlayerPageClient({ id }: any) {
                                     <div className="space-y-4">
                                         <h3 className="text-xl font-bold">Game Log for {selectedYear}</h3>
                                         <div className="bg-white dark:bg-gray-800 rounded shadow-md overflow-hidden w-[360px] md:w-[640px] lg:w-full">
-                                            <div className="overflow-x-auto w-full">
+                                            <div className="overflow-x-auto w-full orange-scroll">
                                                 <table className="w-full">
                                                     <thead>
                                                         <tr className="bg-[#0F0724] text-center">
                                                             {gameLogcolumns.map((column) => (
-                                                                <th key={column.key} className="text-xs font-semibold p-3 text-gray-300">
+                                                                <th key={column.key} className="text-xs font-semibold p-3  bg-[#F6BCB2] text-[#1D212D] dark:bg-[#3A3D48] dark:text-white">
                                                                     {column.name}
                                                                 </th>
                                                             ))}
@@ -1530,7 +1530,7 @@ export default function PlayerPageClient({ id }: any) {
                                                             const weekData = selectedYearData[week];
 
                                                             return (
-                                                                <tr key={week} className="bg-[#2C204B] text-center">
+                                                                <tr key={week} className="text-center bg-[#FFE6E2] dark:bg-[#262829]">
                                                                     {gameLogcolumns.map((column) => {
                                                                         let value = weekData[column.key] || '-'; // Default to '-' if no data
 
@@ -1540,7 +1540,7 @@ export default function PlayerPageClient({ id }: any) {
                                                                         }
 
                                                                         return (
-                                                                            <td key={column.key} className="p-3 text-white">
+                                                                            <td key={column.key} className="p-3 text-[#1D212D] dark:text-white">
                                                                                 {value}
                                                                             </td>
                                                                         );

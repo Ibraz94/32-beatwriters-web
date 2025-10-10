@@ -716,3 +716,17 @@ picture,
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom orange scrollbar */
+.orange-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.orange-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.orange-scroll::-webkit-scrollbar-thumb {
+  background-color: #ED7864;
+  border-radius: 10px;
+}

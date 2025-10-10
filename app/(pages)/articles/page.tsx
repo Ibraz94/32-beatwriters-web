@@ -127,18 +127,25 @@ export default function ArticlesPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <p className="text-xl max-w-4xl mx-auto">Loading articles...</p>
+          <p className="text-xl max-w-4xl mx-auto dark:text-[#C7C8CB] text-[#3A3D48]">
+            Loading articles...
+          </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Loading skeleton */}
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="rounded-xl border shadow-lg overflow-hidden animate-pulse">
-              <div className="aspect-video bg-gray-200"></div>
-              <div className="p-6">
-                <div className="h-6 bg-gray-200 rounded mb-3"></div>
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded mb-4 w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded"></div>
+            <div
+              key={i}
+              className="animate-pulse rounded-3xl shadow-md overflow-hidden bg-white dark:bg-[#262829] p-2"
+            >
+              {/* Image placeholder */}
+              <div className="aspect-video bg-gray-200 dark:bg-[#3A3D48] rounded-3xl mb-4"></div>
+
+              {/* Text placeholders */}
+              <div className="space-y-3 px-4 pb-4">
+                <div className="h-5 bg-gray-200 dark:bg-[#3A3D48] rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-[#3A3D48] rounded w-1/2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-[#3A3D48] rounded w-2/3"></div>
               </div>
             </div>
           ))}
@@ -150,15 +157,25 @@ export default function ArticlesPage() {
   // Error state
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-12">
         <div className="text-center">
-          <p className="text-xl text-red-600 mb-4">Failed to load articles</p>
-          <p className="text-gray-600">Error details: {JSON.stringify(error)}</p>
-          <p className="text-gray-600">Please try again later.</p>
+          <p className="text-xl mb-4 font-semibold text-red-600">
+            Failed to load articles
+          </p>
+          <p className="text-gray-600 dark:text-[#C7C8CB] mb-6">
+            Please try again later.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-[var(--color-orange)] text-white px-6 py-2 rounded-full hover:scale-105 transition-transform dark:text-black"
+          >
+            Retry
+          </button>
         </div>
       </div>
     )
   }
+
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Check } from 'lucide-react'
 import { API_CONFIG, buildApiUrl } from '../../../lib/config/api'
 import GoogleOAuthButton from '@/app/components/GoogleOAuthButton'
+import Image from 'next/image'
 
 interface SubscriptionOption {
   id: string
@@ -105,7 +106,7 @@ function PremiumSignupForm() {
 
   // Specific plan IDs to display
   const allowedPlanIds = ['price_1RZZFRAToc8YZruPw5uzOh1n', 'price_1RltPxAToc8YZruP4TJLGvPR']
-  
+
   // Monthly plan ID (first one in the array)
   const monthlyPlanId = 'price_1RZZFRAToc8YZruPw5uzOh1n'
 
@@ -145,11 +146,11 @@ function PremiumSignupForm() {
   const checkGoogleAuth = async (user: any) => {
     console.log('checkGoogleAuth called with user:', user)
     console.log('Current selectedPriceId:', selectedPriceId)
-    
+
     // Ensure we have a selected price ID, default to monthly if not set
     const priceIdToUse = selectedPriceId || monthlyPlanId
     console.log('Using price ID for Google auth:', priceIdToUse)
-    
+
     setGoogleAuthLoading(true)
     try {
       const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.AUTH_GOOGLE_CHECK), {
@@ -157,7 +158,7 @@ function PremiumSignupForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           email: user.email,
           googleId: user.id,
           firstName: user.given_name,
@@ -165,18 +166,18 @@ function PremiumSignupForm() {
           profilePicture: user.picture
         }),
       })
-      
+
       console.log('Google auth check response status:', response.status)
       const data = await response.json()
       console.log('Google auth check response data:', data)
-      
+
       if (data.success && data.userExists === false) {
         // User doesn't exist, can proceed with Google OAuth signup
         console.log('User does not exist, proceeding with Google OAuth signup')
         setGoogleUser(user)
         setUseGoogleAuth(true)
         setGoogleAuthChecked(true)
-        
+
         // Pre-fill form with Google data
         setFormData(prev => ({
           ...prev,
@@ -185,7 +186,7 @@ function PremiumSignupForm() {
           email: user.email || '',
           username: user.email?.split('@')[0] || '',
         }))
-        
+
         // Show success message and redirect to Stripe checkout
         console.log('About to call handleGoogleSubscribe')
         setTimeout(() => {
@@ -213,19 +214,19 @@ function PremiumSignupForm() {
     const googleUserParam = searchParams.get('google_user')
     const error = searchParams.get('error')
     const message = searchParams.get('message')
-    
+
     // Handle OAuth errors
     if (error) {
       console.error('Google OAuth error:', error, message)
       setErrors({ general: message || 'Google authentication failed. Please try again.' })
       return
     }
-    
+
     if (googleAuth === 'true' && googleUserParam) {
       try {
         const user = JSON.parse(decodeURIComponent(googleUserParam))
         console.log('Google OAuth callback - user data:', user)
-        
+
         // Call the Google auth check API
         checkGoogleAuth(user)
       } catch (error) {
@@ -304,24 +305,24 @@ function PremiumSignupForm() {
 
   const handleGoogleSubscribe = async (userData?: any) => {
     const user = userData || googleUser
-    
+
     if (!user) {
       console.log('Missing Google user data')
       return
     }
-    
+
     // Ensure we have a selected price ID, default to monthly if not set
     const priceIdToUse = selectedPriceId || monthlyPlanId
     console.log('Using price ID for Google subscribe:', priceIdToUse)
-    
+
     // Update the selectedPriceId state if it's not set
     if (!selectedPriceId) {
       setSelectedPriceId(priceIdToUse)
     }
-    
+
     console.log('Starting Google OAuth subscription process...')
     setIsLoading(true)
-    
+
     const payload = {
       email: user.email,
       firstName: user.given_name || user.name || '',
@@ -344,10 +345,10 @@ function PremiumSignupForm() {
       googleId: user.id,
       profilePicture: user.picture
     }
-    
+
     console.log('Google OAuth payload being sent to /api/stripe/create-google-checkout-session:', payload)
     console.log('API URL:', buildApiUrl('/api/stripe/create-google-checkout-session'))
-    
+
     try {
       const response = await fetch(buildApiUrl('/api/stripe/create-google-checkout-session'), {
         method: 'POST',
@@ -356,18 +357,18 @@ function PremiumSignupForm() {
         },
         body: JSON.stringify(payload),
       })
-      
+
       console.log('Stripe API response status:', response.status)
-      
+
       const responseData = await response.json()
       console.log('Stripe API response data:', responseData)
-      
+
       if (!response.ok) {
         console.error('Stripe API error:', response.status, response.statusText, responseData)
         setErrors({ general: `Failed to create checkout session. ${responseData.error || responseData.message || response.statusText}` })
         return
       }
-      
+
       if (responseData.url) {
         console.log('Redirecting to Stripe checkout:', responseData.url)
         // Use window.location.replace for more reliable redirect
@@ -388,7 +389,7 @@ function PremiumSignupForm() {
     e.preventDefault()
     if (!validateForm() || !selectedPriceId) return
     setIsLoading(true)
-    
+
     const payload = {
       ...formData,
       priceId: selectedPriceId,
@@ -398,10 +399,10 @@ function PremiumSignupForm() {
       authType: useGoogleAuth ? 'google' : 'regular',
       inviteActivationKey: inviteActivationKey || undefined
     }
-    
+
     console.log('Payload being sent to /api/stripe/create-checkout-session:', payload)
     console.log('API URL:', buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CREATE_CHECKOUT_SESSION))
-    
+
     try {
       const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CREATE_CHECKOUT_SESSION), {
         method: 'POST',
@@ -410,16 +411,16 @@ function PremiumSignupForm() {
         },
         body: JSON.stringify(payload),
       })
-      
+
       console.log('Response status:', response.status)
       console.log('Response headers:', response.headers)
-      
+
       const responseData = await response.json()
       console.log('Response data:', responseData)
-      
+
       const { url } = responseData
       console.log('Extracted URL:', url)
-      
+
       window.location.href = url
     } catch (error) {
       console.error('Error creating checkout session:', error)
@@ -576,68 +577,32 @@ function PremiumSignupForm() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           <div className="space-y-4 sm:space-y-6">
-            <h3 className="text-xl sm:text-2xl font-bold">What you'll get:</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-[#1D212D] dark:text-white">
+              What you'll get:
+            </h3>
 
             <div className="space-y-3 sm:space-y-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+              {[
+                { title: "Exclusive Content", text: "Summaries All Offseason - The Best, Complete Reports in the Industry That's Used By Industry Leaders." },
+                { title: "Feed Access", text: "A feed of all the most important NFL and player news. This can replace social media if you want." },
+                { title: "Early Access", text: "Ability to search insight and updates. Access to all our Premium articles." },
+                { title: "Community Access", text: "Join our exclusive Discord community of subscribers and connect with like-minded people." },
+                { title: "Player Pages", text: "Complete player breakdown from their news to their stats to their key fantasy metrics." },
+              ].map(({ title, text }) => (
+                <div key={title} className="flex items-start space-x-3">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 flex items-center justify-center rounded-full bg-[#FFE6E2] p-1 dark:bg-[#262829]">
+                    <Image src="/tick-mark.svg" alt="tick" className="" width={14} height={14} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-sm sm:text-sm text-[#1D212D] dark:text-white truncate">
+                      {title}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-[#72757C] dark:text-[#C7C8CB]">
+                      {text}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-sm sm:text-base">Exclusive Content</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">Summaries All Offseason - The Best, Complete Reports in the Industry That's Used By Industry Leaders.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm sm:text-base">Feed Access</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">A feed of all the most important NFL and player news.  This can replace social media if you want.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm sm:text-base">Early Access</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">Ability to search insight and updates. Access to all our Premium articles.</p>
-                </div>
-              </div>
-
-              {/* <div className="flex items-start space-x-3">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm sm:text-base">Special</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">Exclusive podcast episodes. Playing in our Fantasy Football Leagues. Our Undying Love and Appreciation </p>
-                </div>
-              </div> */}
-
-              <div className="flex items-start space-x-3">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm sm:text-base">Community Access</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">Join our exclusive Discord community of subscribers and connect with like-minded people.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-3">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-sm sm:text-base">Player Pages</h4>
-                  <p className="text-gray-500 text-sm sm:text-base">Complete player breakdown from their news to their stats to their key fantasy metrics.</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -649,40 +614,61 @@ function PremiumSignupForm() {
                     <p className="text-sm text-destructive">{errors.general}</p>
                   </div>
                 )}
+
                 <div className="space-y-4">
                   <h2 className="text-2xl font-semibold text-foreground font-oswald">Choose Your Plan</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {subscriptionOptions?.data.map((price) => {
-                      const basePrice = price.unit_amount / 100
+                      const basePrice = price.unit_amount / 100;
                       const discountedPrice = promoDiscount
                         ? calculateDiscountedPrice(basePrice, promoDiscount)
-                        : basePrice
+                        : basePrice;
                       const discountText = promoDiscount
                         ? formatDiscountText(basePrice, promoDiscount)
-                        : ''
+                        : '';
+
+                      const isSelected = selectedPriceId === price.id;
 
                       return (
                         <div
                           key={price.id}
-                          className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPriceId === price.id
-                            ? 'border-2 border-gray-400 scale-105 bg-[#2c204b]'
-                            : 'border-border hover:border-primary/50 bg-accent '
-                            }`}
                           onClick={() => setSelectedPriceId(price.id)}
+                          className={`border rounded-lg p-4 cursor-pointer transition-all
+            ${isSelected
+                              ? 'bg-[#ED7864] border-[#E64A30] text-white dark:text-[#1D212D]'
+                              : 'bg-[#F1F2F2] text-[#1D212D] dark:bg-[#262829] dark:text-white border-transparent hover:border-primary/50'
+                            }`}
                         >
                           <div className="flex justify-between items-center gap-2">
                             <div>
-                              <h3 className="font-semibold text-white">
+                              <h3
+                                className={`font-semibold ${isSelected
+                                  ? 'text-white dark:text-[#1D212D]'
+                                  : 'text-[#1D212D] dark:text-white'
+                                  }`}
+                              >
                                 {price.recurring.interval === 'month' ? 'Monthly' : 'Annual'}
                               </h3>
-                              <p className="text-muted-foreground">
-                                {price.recurring.interval === 'month' ? 'Billed monthly' : 'Billed annually'}
+                              <p
+                                className={`text-sm ${isSelected
+                                  ? 'text-white dark:text-[#1D212D]'
+                                  : 'text-[#72757C]'
+                                  }`}
+                              >
+                                {price.recurring.interval === 'month'
+                                  ? 'Billed monthly'
+                                  : 'Billed annually'}
                               </p>
                             </div>
                             <div className="text-right">
                               {promoDiscount ? (
                                 <div>
-                                  <p className="text-2xl font-bold text-white">
+                                  <p
+                                    className={`text-2xl font-bold ${isSelected
+                                      ? 'text-white dark:text-[#1D212D]'
+                                      : 'text-[#1D212D] dark:text-white'
+                                      }`}
+                                  >
                                     ${discountedPrice.toFixed(2)}
                                   </p>
                                   <p className="text-sm text-green-400 font-medium">
@@ -690,17 +676,27 @@ function PremiumSignupForm() {
                                   </p>
                                 </div>
                               ) : (
-                                <p className="text-2xl font-bold text-white">
+                                <p
+                                  className={`text-2xl font-bold ${isSelected
+                                    ? 'text-white dark:text-[#1D212D]'
+                                    : 'text-[#1D212D] dark:text-white'
+                                    }`}
+                                >
                                   ${basePrice.toFixed(2)}
                                 </p>
                               )}
-                              <p className="text-sm text-muted-foreground">
+                              <p
+                                className={`text-sm ${isSelected
+                                  ? 'text-white dark:text-[#1D212D]'
+                                  : 'text-[#72757C]'
+                                  }`}
+                              >
                                 per {price.recurring.interval}
                               </p>
                             </div>
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
                 </div>
@@ -724,7 +720,7 @@ function PremiumSignupForm() {
                         type="button"
                         onClick={() => handlePromoCodeValidation()}
                         disabled={promoLoading}
-                        className=" bg-red-800 w-full text-white hover:scale-101 py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50"
+                        className=" bg-[#E64A30] w-full text-white hover:scale-101 py-3 px-4 rounded-full font-medium transition-colors disabled:opacity-50"
                       >
                         {promoLoading ? 'Validating...' : 'Validate Promo Code'}
                       </button>
@@ -737,19 +733,19 @@ function PremiumSignupForm() {
                     )}
                   </div>
 
-                  
+
                 </div>
 
                 {/* Google OAuth Section */}
                 {!useGoogleAuth && (
                   <div className="space-y-4">
                     <div className="text-center">
-                      <GoogleOAuthButton 
+                      <GoogleOAuthButton
                         text={googleAuthLoading ? "Checking Google Account..." : "Continue with Google"}
                         variant="signup"
                         onSuccess={handleGoogleAuthSuccess}
                         onError={handleGoogleAuthError}
-                        className="w-full"
+                        className="w-full rounded-full dark:bg-[#262829]"
                         disabled={googleAuthLoading}
                       />
                     </div>
@@ -758,7 +754,9 @@ function PremiumSignupForm() {
                         <div className="w-full border-t border-border" />
                       </div>
                       <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-background text-muted-foreground">Or fill out the form below</span>
+                        <span className="px-2 bg-background dark:bg-[#262829] text-muted-foreground">
+                          Or fill out the form below
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -768,9 +766,9 @@ function PremiumSignupForm() {
                 {useGoogleAuth && googleUser && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                     <div className="flex items-center space-x-3">
-                      <img 
-                        src={googleUser.picture} 
-                        alt="Google Profile" 
+                      <img
+                        src={googleUser.picture}
+                        alt="Google Profile"
                         className="w-10 h-10 rounded-full"
                       />
                       <div>
@@ -785,7 +783,7 @@ function PremiumSignupForm() {
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600 mr-2"></div>
                               <span className="text-sm text-green-600">Please wait...</span>
                             </div>
-                            <button 
+                            <button
                               onClick={() => handleGoogleSubscribe(googleUser)}
                               className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
                             >
@@ -812,7 +810,7 @@ function PremiumSignupForm() {
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-md ${errors.firstName ? 'border-destructive' : 'border-input'
+                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.firstName ? 'border-destructive' : 'border-input'
                             }`}
                           required
                         />
@@ -829,7 +827,7 @@ function PremiumSignupForm() {
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-md ${errors.lastName ? 'border-destructive' : 'border-input'
+                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.lastName ? 'border-destructive' : 'border-input'
                             }`}
                           required
                         />
@@ -847,7 +845,7 @@ function PremiumSignupForm() {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.email ? 'border-destructive' : 'border-input'
+                        className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.email ? 'border-destructive' : 'border-input'
                           }`}
                         required
                       />
@@ -864,7 +862,7 @@ function PremiumSignupForm() {
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.phoneNumber ? 'border-destructive' : 'border-input'
+                        className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.phoneNumber ? 'border-destructive' : 'border-input'
                           }`}
                         required
                       />
@@ -874,6 +872,7 @@ function PremiumSignupForm() {
                     </div>
                   </div>
                 )}
+
                 {/* Address Information - Hide for Google OAuth users */}
                 {!useGoogleAuth && (
                   <div className="space-y-4">
@@ -887,7 +886,7 @@ function PremiumSignupForm() {
                         name="address1"
                         value={formData.address1}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.address1 ? 'border-destructive' : 'border-input'
+                        className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.address1 ? 'border-destructive' : 'border-input'
                           }`}
                         required
                       />
@@ -905,7 +904,7 @@ function PremiumSignupForm() {
                           name="city"
                           value={formData.city}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-md ${errors.city ? 'border-destructive' : 'border-input'
+                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.city ? 'border-destructive' : 'border-input'
                             }`}
                           required
                         />
@@ -922,7 +921,7 @@ function PremiumSignupForm() {
                           name="state"
                           value={formData.state}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-md ${errors.state ? 'border-destructive' : 'border-input'
+                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.state ? 'border-destructive' : 'border-input'
                             }`}
                           required
                         />
@@ -941,7 +940,7 @@ function PremiumSignupForm() {
                           name="zipCode"
                           value={formData.zipCode}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-md ${errors.zipCode ? 'border-destructive' : 'border-input'
+                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.zipCode ? 'border-destructive' : 'border-input'
                             }`}
                           required
                         />
@@ -957,7 +956,7 @@ function PremiumSignupForm() {
                           name="country"
                           value={formData.country}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-input rounded-md"
+                          className="w-full px-4 py-2 border border-input rounded-full dark:bg-[#262829]"
                           required
                         >
                           <option value="US">United States</option>
@@ -968,6 +967,7 @@ function PremiumSignupForm() {
                     </div>
                   </div>
                 )}
+
                 {/* Account Information - Hide for Google OAuth users */}
                 {!useGoogleAuth && (
                   <div className="space-y-4">
@@ -981,7 +981,7 @@ function PremiumSignupForm() {
                         name="username"
                         value={formData.username}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-2 border rounded-md ${errors.username ? 'border-destructive' : 'border-input'
+                        className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.username ? 'border-destructive' : 'border-input'
                           }`}
                         required
                       />
@@ -1000,7 +1000,7 @@ function PremiumSignupForm() {
                           name="password"
                           value={formData.password}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-md ${errors.password ? 'border-destructive' : 'border-input'
+                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.password ? 'border-destructive' : 'border-input'
                             }`}
                           required
                         />
@@ -1017,7 +1017,7 @@ function PremiumSignupForm() {
                           name="confirmPassword"
                           value={formData.confirmPassword}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-md ${errors.confirmPassword ? 'border-destructive' : 'border-input'
+                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.confirmPassword ? 'border-destructive' : 'border-input'
                             }`}
                           required
                         />
@@ -1028,12 +1028,13 @@ function PremiumSignupForm() {
                     </>
                   </div>
                 )}
+
                 {/* Subscribe Button - Hide for Google OAuth users */}
                 {!useGoogleAuth && (
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-red-800 text-white hover:scale-101 py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-50"
+                    className="w-full bg-[#E64A30] text-white hover:scale-101 py-3 px-4 rounded-full font-medium transition-colors disabled:opacity-50"
                   >
                     {isLoading ? 'Processing...' : 'Subscribe Now'}
                   </button>

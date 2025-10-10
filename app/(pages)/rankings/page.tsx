@@ -140,49 +140,50 @@ function RankingsContent() {
         <p className="mt-3 text-sm text-muted-foreground">Vegas prop driven. Expect more props to be added as the week progresses.</p>
       </div>
 
-      <div className="overflow-x-auto border border-border rounded-md">
-        <table className="min-w-full text-sm">
-          <thead className="bg-accent/40">
-            <tr>
-              <th className="px-3 py-2 text-left">#</th>
-              <th className="px-3 py-2 text-left">Player</th>
-              <th className="px-3 py-2 text-left">Proj. Pts</th>
-              <th className="px-3 py-2 text-left">Pass Yds</th>
-              <th className="px-3 py-2 text-left">Pass TDs</th>
-              <th className="px-3 py-2 text-left">Rush Yds</th>
-              <th className="px-3 py-2 text-left">TDs</th>
+      <div className="overflow-x-auto w-full orange-scroll">
+        <table className="w-full min-w-[700px]">
+          <thead>
+            <tr className="bg-[#F6BCB2] dark:bg-[#3A3D48] text-[#1D212D] dark:text-white text-center text-xs font-semibold">
+              <th className="p-3 text-left">#</th>
+              <th className="p-3 text-left">Player</th>
+              <th className="p-3 text-left">Proj. Pts</th>
+              <th className="p-3 text-left">Pass Yds</th>
+              <th className="p-3 text-left">Pass TDs</th>
+              <th className="p-3 text-left">Rush Yds</th>
+              <th className="p-3 text-left">TDs</th>
             </tr>
           </thead>
           <tbody>
             {error && (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-destructive">{error}</td>
+                <td colSpan={7} className="p-6 text-center text-destructive">{error}</td>
               </tr>
             )}
             {!error && loading && (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">Loading…</td>
+                <td colSpan={7} className="p-6 text-center text-muted-foreground">Loading…</td>
               </tr>
             )}
             {!error && !loading && normalized.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">No data</td>
+                <td colSpan={7} className="p-6 text-center text-muted-foreground">No data</td>
               </tr>
             )}
             {!error && !loading && normalized.map((row) => (
-              <tr key={`${row.rank}-${row.playerName}`} className="border-t border-border">
-                <td className="px-3 py-2">{row.rank}</td>
-                <td className="px-3 py-2 font-medium">{row.playerName}</td>
-                <td className="px-3 py-2">{row.proj ?? '—'}</td>
-                <td className="px-3 py-2">{row.passY ?? '—'}</td>
-                <td className="px-3 py-2">{row.passTd ?? '—'}</td>
-                <td className="px-3 py-2">{row.rushY ?? '—'}</td>
-                <td className="px-3 py-2">{row.tds ?? '—'}</td>
+              <tr key={`${row.rank}-${row.playerName}`} className="text-center bg-[#FFE6E2] dark:bg-[#262829] border-t border-border">
+                <td className="p-3 text-[#1D212D] dark:text-white">{row.rank}</td>
+                <td className="p-3 font-medium text-[#1D212D] dark:text-white">{row.playerName}</td>
+                <td className="p-3 text-[#1D212D] dark:text-white">{row.proj ?? '—'}</td>
+                <td className="p-3 text-[#1D212D] dark:text-white">{row.passY ?? '—'}</td>
+                <td className="p-3 text-[#1D212D] dark:text-white">{row.passTd ?? '—'}</td>
+                <td className="p-3 text-[#1D212D] dark:text-white">{row.rushY ?? '—'}</td>
+                <td className="p-3 text-[#1D212D] dark:text-white">{row.tds ?? '—'}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
     </div>
   )
 }

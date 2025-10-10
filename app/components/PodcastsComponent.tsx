@@ -77,11 +77,32 @@ export default function PodcastsComponent() {
                     {isLoading && (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                             {Array.from({ length: 3 }).map((_, index) => (
-                                <div key={index} className="animate-pulse">
-                                    <div className="bg-gray-700 rounded-xl aspect-video mb-4"></div>
-                                    <div className="space-y-2">
-                                        <div className="h-4 bg-gray-700 rounded w-3/4"></div>
-                                        <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+                                <div
+                                    key={index}
+                                    className="group animate-pulse bg-white dark:bg-[#262829] p-2 rounded-xl"
+                                >
+                                    {/* Image Placeholder */}
+                                    <div className="relative mb-3 md:mb-4">
+                                        <div className="relative w-full aspect-video overflow-hidden rounded-xl bg-[#FFE6E2] dark:bg-[#1A1A1A]" />
+                                    </div>
+
+                                    {/* Text placeholders */}
+                                    <div className="space-y-3 md:space-y-4">
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-4 h-4 bg-[#F9D2CC] dark:bg-[#333] rounded-full"></div>
+                                                <div className="w-20 h-3 bg-[#F9D2CC] dark:bg-[#333] rounded"></div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-4 h-4 bg-[#F9D2CC] dark:bg-[#333] rounded-full"></div>
+                                                <div className="w-16 h-3 bg-[#F9D2CC] dark:bg-[#333] rounded"></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <div className="h-4 bg-[#F9D2CC] dark:bg-[#333] rounded w-5/6"></div>
+                                            <div className="h-4 bg-[#F9D2CC] dark:bg-[#333] rounded w-3/4"></div>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -90,16 +111,19 @@ export default function PodcastsComponent() {
 
                     {/* Error State */}
                     {error && (
-                        <div className="text-center py-8 md:py-12">
-                            <p className="text-gray-400 mb-4 text-sm md:text-base">Failed to load latest episodes. Please try again later.</p>
+                        <div className="flex flex-col items-center justify-center py-10 bg-[#FFE6E2] dark:bg-[#1A1A1A] rounded-xl">
+                            <p className="text-[#E64A30] dark:text-[#C7C8CB] mb-4 text-base md:text-lg text-center">
+                                Failed to load latest episodes. Please try again later.
+                            </p>
                             <button
                                 onClick={() => window.location.reload()}
-                                className="bg-red-600 text-white px-4 md:px-6 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm md:text-base"
+                                className="bg-[#E64A30] text-white px-5 py-2 rounded-full hover:bg-[#d1442b] transition-colors text-sm md:text-base"
                             >
                                 Retry
                             </button>
                         </div>
                     )}
+
 
                     {/* Episodes Grid */}
                     {apiResponse?.podcasts && apiResponse.podcasts.length > 0 && (

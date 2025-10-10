@@ -274,8 +274,8 @@ function AccountContent() {
                         interval: stripeSubscription.plan?.interval || stripeSubscription.items?.data?.[0]?.price?.recurring?.interval,
                         currentPeriodEnd: stripeSubscription.items?.data?.[0]?.current_period_end,
                         // Handle next billing date for both active and cancelled subscriptions
-                        nextBillingDate: stripeSubscription.cancel_at_period_end 
-                            ? stripeSubscription.cancel_at 
+                        nextBillingDate: stripeSubscription.cancel_at_period_end
+                            ? stripeSubscription.cancel_at
                             : stripeSubscription.items?.data?.[0]?.current_period_end,
                         // Additional useful data
                         customerEmail: stripeSubscription.customer?.email,
@@ -403,30 +403,43 @@ function AccountContent() {
 
                 {/* Navigation Tabs */}
                 <div className="mb-8">
-                    <div className="border-b border-border flex flex-col sm:flex-row justify-between items-center gap-2">
-                        <nav className="-mb-px flex space-x-8">
+                    {/* Container */}
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-2 border border-[#C7C8CB] rounded-full p-1 bg-white dark:bg-[#262829]">
+
+                        {/* Tabs: always visible */}
+                        <nav className="flex space-x-2 overflow-x-auto">
                             {[
                                 { id: 'profile', label: 'Profile', icon: User },
                                 { id: 'update-password', label: 'Update Password', icon: Shield },
                                 { id: 'subscription', label: 'Subscription', icon: CreditCard }
-                            ].map(({ id, label, icon: Icon }) => (
-                                <button
-                                    key={id}
-                                    onClick={() => setActiveTab(id)}
-                                    className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === id
-                                        ? 'border-red-800 text-red-800'
-                                        : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground'
-                                        }`}
-                                >
-                                    <div className="flex items-center space-x-2">
-                                        <Icon className="h-4 w-4" />
+                            ].map(({ id, label, icon: Icon }) => {
+                                const isActive = activeTab === id;
+                                const textColor = isActive ? 'text-white' : 'text-[#72757C]';
+                                const bgColor = isActive ? 'bg-[#E64A30]' : 'bg-transparent';
+                                return (
+                                    <button
+                                        key={id}
+                                        onClick={() => setActiveTab(id)}
+                                        className={`flex items-center space-x-2 px-4 py-2 rounded-full font-medium text-sm transition-colors ${bgColor} ${textColor} whitespace-nowrap`}
+                                    >
+                                        <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-[#72757C]'}`} />
                                         <span>{label}</span>
-                                    </div>
-                                </button>
-                            ))}
-
+                                    </button>
+                                );
+                            })}
                         </nav>
-                        <div className='w-full sm:w-auto'>
+
+                        {/* Discord Button for md and above */}
+                        <div className="hidden md:block w-auto">
+                            <div className="rounded-full overflow-hidden">
+                                <DiscordButton />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Discord Button for sm and below */}
+                    <div className="flex justify-center mt-2 md:hidden w-full">
+                        <div className="rounded-full overflow-hidden w-1/2 sm:w-auto">
                             <DiscordButton />
                         </div>
                     </div>
@@ -442,11 +455,14 @@ function AccountContent() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Full Name */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Full Name
-                                    </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                    <div className="flex items-center gap-2 mb-2">
                                         <User className="h-5 w-5 text-muted-foreground" />
+                                        <label className="text-sm font-medium">
+                                            Full Name
+                                        </label>
+                                    </div>
+
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         {editMode.name ? (
                                             <div className="flex-1 flex items-center space-x-2">
                                                 <input
@@ -490,11 +506,13 @@ function AccountContent() {
 
                                 {/* Email Address */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Email Address
-                                    </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                    <div className="flex items-center gap-2 mb-2">
                                         <Mail className="h-5 w-5 text-muted-foreground" />
+                                        <label className="text-sm font-medium">
+                                            Email Address
+                                        </label>
+                                    </div>
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         {editMode.email ? (
                                             <div className="flex-1 flex items-center space-x-2">
                                                 <input
@@ -538,11 +556,13 @@ function AccountContent() {
 
                                 {/* Member Since */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Member Since
-                                    </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                    <div className="flex items-center gap-2 mb-2">
                                         <Calendar className="h-5 w-5 text-muted-foreground" />
+                                        <label className="text-sm font-medium">
+                                            Member Since
+                                        </label>
+                                    </div>
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <span className="text-foreground">
                                             {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                                         </span>
@@ -551,11 +571,13 @@ function AccountContent() {
 
                                 {/* Account Status */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Membership Status
-                                    </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                    <div className="flex items-center gap-2 mb-2">
                                         <Crown className="h-5 w-5 text-yellow-500" />
+                                        <label className="text-sm font-medium">
+                                            Membership Status
+                                        </label>
+                                    </div>
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <span className="text-foreground">
                                             {user.memberships.type}
                                         </span>
@@ -564,11 +586,13 @@ function AccountContent() {
 
                                 {/* Account Status */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Account Status
-                                    </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                    <div className="flex items-center gap-2 mb-2">
                                         <Badge className="h-5 w-5 text-red-800" />
+                                        <label className="text-sm font-medium">
+                                            Account Status
+                                        </label>
+                                    </div>
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <span className="text-foreground">
                                             {user.role}
                                         </span>
@@ -577,18 +601,20 @@ function AccountContent() {
 
                                 {/* Discord Connection Status */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2">
-                                        Discord Connection
-                                    </label>
-                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                    <div className="flex items-center gap-2 mb-2">
                                         <svg
-                                            className="h-5 w-5 text-[#5865F2]"
+                                            className="h-5 w-5 text-[#1D212D]"
                                             fill="currentColor"
                                             viewBox="0 0 24 24"
                                             xmlns="http://www.w3.org/2000/svg"
                                         >
                                             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
                                         </svg>
+                                        <label className="text-sm font-medium">
+                                            Discord Connection
+                                        </label>
+                                    </div>
+                                    <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                         <span className="text-foreground">
                                             {discordStatusLoading ? (
                                                 <span className="text-muted-foreground">Loading...</span>
@@ -615,12 +641,15 @@ function AccountContent() {
                                 onSubmit={handlePasswordSubmit}
                                 className="space-y-4">
                                 <div>
-                                    <label htmlFor="currentPassword" className="block text-sm font-medium mb-2">
-                                        Current Password
-                                    </label>
+                                    <div className="flex items-center gap-2 mb-2">
+
+                                        <Lock className="h-5 w-5 text-muted-foreground" />
+                                        <label htmlFor="currentPassword" className="text-sm font-medium">
+                                            Current Password
+                                        </label>
+                                    </div>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <Lock className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <input
                                             id="currentPassword"
@@ -650,12 +679,14 @@ function AccountContent() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="newPassword" className="block text-sm font-medium mb-2">
-                                        New Password
-                                    </label>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Lock className="h-5 w-5 text-muted-foreground" />
+                                        <label htmlFor="newPassword" className="text-sm font-medium">
+                                            New Password
+                                        </label>
+                                    </div>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <Lock className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <input
                                             id="newPassword"
@@ -685,12 +716,14 @@ function AccountContent() {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="confirmPassword" className="block text-sm font-medium mb-2">
-                                        Confirm New Password
-                                    </label>
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <Lock className="h-5 w-5 text-muted-foreground" />
+                                        <label htmlFor="confirmPassword" className="text-sm font-medium">
+                                            Confirm New Password
+                                        </label>
+                                    </div>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <Lock className="h-5 w-5 text-muted-foreground" />
                                         </div>
                                         <input
                                             id="confirmPassword"
@@ -726,7 +759,7 @@ function AccountContent() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full md:w-auto px-6 py-3 bg-red-800 text-white rounded-lg hover:scale-102 hover:cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full md:w-auto px-6 py-3 bg-[#E64A30] text-white rounded-full hover:scale-102 hover:cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? (
                                         <div className="flex items-center">
@@ -755,102 +788,115 @@ function AccountContent() {
                                     {/* Subscription Status */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium mb-2">
-                                                Plan
-                                            </label>
-                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                            <div className="flex items-center gap-2 mb-2">
                                                 <CreditCard className="h-5 w-5 text-muted-foreground" />
+                                                <label className="text-sm font-medium">
+                                                    Plan
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center justify-between p-3 border border-input rounded-lg bg-background/20">
                                                 <span className="text-foreground font-medium">
                                                     {subscription.planName || 'Premium Plan'}
                                                 </span>
-                                                                                                 <span className={`px-2 py-1 rounded-full text-xs ${subscription.isCancelled
-                                                     ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
-                                                     : subscription.status === 'active'
-                                                         ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-700'
-                                                         : subscription.status === 'canceled'
-                                                             ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                                                             : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-                                                     }`}>
-                                                     {subscription.isCancelled ? 'Active (Cancelled)' : subscription.status?.charAt(0).toUpperCase() + subscription.status?.slice(1)}
-                                                 </span>
+                                                <span
+                                                    className={`px-2 py-1 rounded-full text-xs ${subscription.isCancelled
+                                                        ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
+                                                        : subscription.status === 'active'
+                                                            ? 'bg-[#E64A30] text-white dark:bg-[#E64A30] dark:text-white'
+                                                            : subscription.status === 'canceled'
+                                                                ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                                                                : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                                                        }`}
+                                                >
+                                                    {subscription.isCancelled
+                                                        ? 'Active (Cancelled)'
+                                                        : subscription.status?.charAt(0).toUpperCase() + subscription.status?.slice(1)}
+                                                </span>
                                             </div>
+
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium mb-2">
-                                                Amount
-                                            </label>
-                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                            <div className="flex items-center gap-2 mb-2">
                                                 <CreditCard className="h-5 w-5 text-muted-foreground" />
+                                                <label className="block text-sm font-medium mb-2">
+                                                    Amount
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                                 <span className="text-foreground">
                                                     ${subscription.amount ? (subscription.amount / 100).toFixed(2) : '0.00'} / {subscription.interval || 'month'}
                                                 </span>
                                             </div>
                                         </div>
 
-                                                                                 <div>
-                                             <label className="block text-sm font-medium mb-2">
-                                                 {subscription.isCancelled ? 'Access Until' : 'Next Billing Date'}
-                                             </label>
-                                             <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
-                                                 <Calendar className="h-5 w-5 text-muted-foreground" />
-                                                 <span className="text-foreground">
-                                                     {subscription.nextBillingDate
-                                                         ? new Date(subscription.nextBillingDate * 1000).toLocaleDateString()
-                                                         : 'N/A'
-                                                     }
-                                                 </span>
-                                                 {subscription.isCancelled && (
-                                                     <span className="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 px-2 py-1 rounded">
-                                                         Cancelled
-                                                     </span>
-                                                 )}
-                                             </div>
-                                         </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <Calendar className="h-5 w-5 text-muted-foreground" />
+                                                <label className="block text-sm font-medium mb-2">
+                                                    {subscription.isCancelled ? 'Access Until' : 'Next Billing Date'}
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                                <span className="text-foreground">
+                                                    {subscription.nextBillingDate
+                                                        ? new Date(subscription.nextBillingDate * 1000).toLocaleDateString()
+                                                        : 'N/A'
+                                                    }
+                                                </span>
+                                                {subscription.isCancelled && (
+                                                    <span className="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 px-2 py-1 rounded">
+                                                        Cancelled
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
 
                                         <div>
-                                            <label className="block text-sm font-medium mb-2">
-                                                Subscription ID
-                                            </label>
-                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                            <div className="flex items-center gap-2 mb-2">
                                                 <Shield className="h-5 w-5 text-muted-foreground" />
+                                                <label className="block text-sm font-medium mb-2">
+                                                    Subscription ID
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
                                                 <span className="text-foreground text-sm font-mono">
                                                     {subscription.subscriptionId ? subscription.subscriptionId.slice(-8) : 'N/A'}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
-
-                                                                         {/* Cancel Subscription Section */}
-                                     {subscription.status === 'active' && !subscription.isCancelled && (
-                                        <div className="border border-red-200 dark:border-red-800 rounded-lg p-6 bg-red-50 dark:bg-red-900/10">
+                                    {/* Cancel Subscription Section */}
+                                    {subscription.status === 'active' && !subscription.isCancelled && (
+                                        <div className="rounded-lg p-6 border transition-colors
+                    bg-[#FFE6E2] border-[#E64A30] dark:bg-[#262829] dark:border-[#72757C]">
                                             <div className="flex items-start space-x-3">
-                                                <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5" />
+                                                <AlertTriangle className="h-5 w-5 text-[#E64A30] dark:text-white mt-0.5" />
                                                 <div className="flex-1">
-                                                    <h3 className="text-lg font-medium">
+                                                    <h3 className="text-lg font-medium text-[#E64A30] dark:text-white">
                                                         Cancel Subscription
                                                     </h3>
-                                                    <p className="mt-2 text-sm text-red-800 ">
+                                                    <p className="mt-2 text-sm text-[#E64A30] dark:text-[#C7C8CB]">
                                                         Cancelling your subscription will stop all future charges. You will retain access to premium features until the end of your current billing period.
                                                     </p>
 
                                                     {!showCancelConfirm ? (
                                                         <button
                                                             onClick={() => setShowCancelConfirm(true)}
-                                                            className="mt-4 px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                                            className="mt-4 px-6 py-2 bg-[#E64A30] text-white rounded-full hover:bg-red-700 transition-colors"
                                                         >
                                                             Cancel Subscription
                                                         </button>
                                                     ) : (
                                                         <div className="mt-4 space-y-3">
-                                                            <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                                                            <p className="text-sm font-medium text-[#E64A30] dark:text-white">
                                                                 Are you sure you want to cancel your subscription?
                                                             </p>
                                                             <div className="flex space-x-3">
                                                                 <button
                                                                     onClick={handleCancelSubscription}
                                                                     disabled={cancellingSubscription}
-                                                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                    className="px-6 py-2 bg-[#E64A30] text-white rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                                 >
                                                                     {cancellingSubscription ? (
                                                                         <div className="flex items-center">
@@ -863,7 +909,7 @@ function AccountContent() {
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setShowCancelConfirm(false)}
-                                                                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                                                                    className="px-6 py-2 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 transition-colors"
                                                                 >
                                                                     Keep Subscription
                                                                 </button>
@@ -875,31 +921,6 @@ function AccountContent() {
                                         </div>
                                     )}
 
-                                                                         {(subscription.status === 'canceled' || subscription.isCancelled) && (
-                                        <div className="border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 bg-yellow-50 dark:bg-yellow-900/10">
-                                            <div className="flex items-start space-x-3">
-                                                <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
-                                                <div>
-                                                    <h3 className="text-lg font-medium text-yellow-900 dark:text-yellow-200">
-                                                        Subscription Cancelled
-                                                    </h3>
-                                                                                                         <p className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
-                                                         Your subscription has been cancelled. You will retain access to premium features until{' '}
-                                                         {subscription.nextBillingDate
-                                                             ? new Date(subscription.nextBillingDate * 1000).toLocaleDateString()
-                                                             : 'the end of your billing period'
-                                                         }.
-                                                     </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {errors.subscription && (
-                                        <div className="border border-red-200 dark:border-red-800 rounded-lg p-4 bg-red-50 dark:bg-red-900/10">
-                                            <p className="text-sm text-red-700 dark:text-red-300">{errors.subscription}</p>
-                                        </div>
-                                    )}
                                 </div>
                             ) : (
                                 <div className="text-center py-12">
