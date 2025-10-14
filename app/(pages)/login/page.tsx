@@ -236,7 +236,7 @@ export default function Login() {
                 <div
                     className="
       hidden md:flex absolute 
-left-[-12px] right-[-12px] 
+left-0 right-0 
        h-[200%] 
       bg-cover bg-center bg-no-repeat 
       bg-[url('/background-image2.png')] 

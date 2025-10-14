@@ -432,7 +432,7 @@ function Header() {
 
 
                 {/* Mobile Menu */}
-                <div className={`mobile-menu-container lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen
+                <div className={`bg-transparent dark:bg-[#262829] rounded-lg lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${isMobileMenuOpen
                     ? 'max-h-screen opacity-100 translate-y-0'
                     : 'max-h-0 opacity-0 -translate-y-2'
                     }`}>
