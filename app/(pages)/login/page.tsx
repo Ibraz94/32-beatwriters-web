@@ -230,8 +230,25 @@ export default function Login() {
     }
 
     return (
-        <div className="flex items-center justify-center px-4 sm:px-6 lg:px-8 mt-20 mb-26">
+        <div className="flex items-center justify-center px-3 sm:px-6 lg:px-7 mt-20 mb-26">
             <div className="max-w-sm w-full space-y-12">
+
+                <div
+                    className="
+      hidden md:flex absolute 
+left-[-12px] right-[-12px] 
+       h-[200%] 
+      bg-cover bg-center bg-no-repeat 
+      bg-[url('/background-image2.png')] 
+      opacity-10 dark:opacity-5
+  "
+                    style={{
+                        transform: "scaleY(-1)",
+                        zIndex: -50,
+                        top: '-100px'
+                    }}
+
+                ></div>
                 {/* Header */}
                 <div className="text-center">
                     {/* <div className="flex justify-center">
@@ -399,10 +416,10 @@ export default function Login() {
                             ) : (
                                 <>
                                     <Image src='/google-colored.svg' alt='Google SVG' width={16} height={16} />
-                                        <span className="ml-2">Continue with Google</span>
-                                    </>
+                                    <span className="ml-2">Continue with Google</span>
+                                </>
                             )}
-                                </button>
+                        </button>
                     </div>
                 </div>
 

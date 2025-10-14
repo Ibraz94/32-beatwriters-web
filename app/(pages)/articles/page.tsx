@@ -178,7 +178,7 @@ export default function ArticlesPage() {
 
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-3 py-8">
       {/* Search Bar */}
       <div className="mb-8 flex w-full">
         <div className="relative w-full">
@@ -190,19 +190,38 @@ export default function ArticlesPage() {
             onChange={e => setSearchTerm(e.target.value)}
             className="filter-input w-full pl-10 pr-10 py-3 rounded shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
           /> */}
-          <div className='text-center mb-12'>
-            <h2 className="text-2xl md:text-5xl mb-4">Our Articles</h2>
-          </div>
-          <div className='flex justify-center'>
-            <SearchBar
-              placeholder="Search articles..."
-              size="md"
-              width="w-full md:w-1/2"
-              buttonLabel="Search here"
-              onButtonClick={() => alert("Button clicked!")}
-              onChange={(value) => setSearchTerm(value)}
-              className="flex justify-center items-center"
-            />
+          <div className="relative">
+            {/* ✅ Background Layer */}
+            <div
+              className="
+      hidden md:flex absolute 
+left-[-12px] right-[-12px] 
+       h-[300%] 
+      bg-cover bg-center bg-no-repeat 
+      bg-[url('/background-image2.png')] 
+      opacity-10 dark:opacity-5
+  "
+              style={{
+                transform: "scaleY(-1)",
+                zIndex: -50,
+                top: '-110px'
+              }}
+
+            ></div>
+            <div className='text-center mb-12'>
+              <h2 className="text-2xl md:text-5xl mb-4">Our Articles</h2>
+            </div>
+            <div className='flex justify-center'>
+              <SearchBar
+                placeholder="Search articles..."
+                size="md"
+                width="w-full md:w-1/2"
+                buttonLabel="Search here"
+                onButtonClick={() => alert("Button clicked!")}
+                onChange={(value) => setSearchTerm(value)}
+                className="flex justify-center items-center"
+              />
+            </div>
           </div>
           {searchTerm && (
             <button

@@ -503,61 +503,37 @@ export default function SavedNuggetsPage() {
 
     return (
         <>
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-3 py-7">
                 {/* Mobile Feed Tabs */}
                 <MobileFeedTabs />
 
-                {/* Search Bar + Filter Button in One Line */}
-                <div className="flex items-center md:hidden gap-3 w-full mb-5">
+                <div className='relative'>
+                    <div
+                        className="
+      hidden md:flex absolute 
+left-[-12px] right-[-12px] 
+       h-[400%] 
+      bg-cover bg-center bg-no-repeat 
+      bg-[url('/background-image2.png')] 
+      opacity-10 dark:opacity-5
+  "
+                        style={{
+                            transform: "scaleY(-1)",
+                            zIndex: -50,
+                            top: '-100px'
+                        }}
 
-                    {/* Search Bar */}
-                    <div className="w-full border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
-                        <div className="relative w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
-                            />
-                            <button
-                                type="button"
-                                className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl"
-                                style={{ backgroundColor: '#E64A30' }}
-                            >
-                                Search
-                            </button>
-                        </div>
-                    </div>
+                    ></div>
+                    {/* Search Bar + Filter Button in One Line */}
+                    <div className="flex items-center md:hidden gap-3 w-full mb-5">
 
-                    {/* Mobile Filter Toggle Button */}
-                    <button
-                        onClick={() => setShowMobileFilters(!showMobileFilters)}
-                        className="flex items-center gap-2 px-4 py-2 border border-[#E64A30] text-[#E64A30] rounded-full dark:border-none dark:bg-[#262829] lg:hidden transition-colors hover:bg-[#E64A30] hover:text-white"
-                        title="Filters"
-                    >
-                        <Filter className="w-5 h-5" />
-                        <span className="text-sm font-medium">Filters</span>
-                        {(filters.position || filters.team || selectedDate || filters.rookie || searchTerm) && (
-                            <span className="bg-[#E64A30] text-white text-xs px-2 py-1 rounded-full">
-                                {[filters.position, filters.team, selectedDate, filters.rookie, searchTerm].filter(Boolean).length}
-                            </span>
-                        )}
-                    </button>
-                </div>
-
-
-                {/* Filters in One Line */}
-                <div className={`mb-6 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
-                    <div className="flex flex-col lg:flex-row items-center justify-center gap-3 w-full">
                         {/* Search Bar */}
-                        <div className="hidden md:flex w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
+                        <div className="w-full border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
                             <div className="relative w-full">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                                 <input
                                     type="text"
                                     placeholder="Search..."
-                                    value={searchTerm}
-                                    onChange={(e) => handleSearch(e.target.value)}
                                     className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
                                 />
                                 <button
@@ -570,109 +546,151 @@ export default function SavedNuggetsPage() {
                             </div>
                         </div>
 
-                        {/* Date Filter */}
-                        <div className="flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829]">
-                            <Popover open={open} onOpenChange={setOpen}>
-                                <PopoverTrigger asChild className="flex-1">
+                        {/* Mobile Filter Toggle Button */}
+                        <button
+                            onClick={() => setShowMobileFilters(!showMobileFilters)}
+                            className="flex items-center gap-2 px-4 py-2 border border-[#E64A30] text-[#E64A30] rounded-full dark:border-none dark:bg-[#262829] lg:hidden transition-colors hover:bg-[#E64A30] hover:text-white"
+                            title="Filters"
+                        >
+                            <Filter className="w-5 h-5" />
+                            <span className="text-sm font-medium">Filters</span>
+                            {(filters.position || filters.team || selectedDate || filters.rookie || searchTerm) && (
+                                <span className="bg-[#E64A30] text-white text-xs px-2 py-1 rounded-full">
+                                    {[filters.position, filters.team, selectedDate, filters.rookie, searchTerm].filter(Boolean).length}
+                                </span>
+                            )}
+                        </button>
+                    </div>
+
+
+                    {/* Filters in One Line */}
+                    <div className={`mb-6 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
+                        <div className="flex flex-col lg:flex-row items-center justify-center gap-3 w-full">
+                            {/* Search Bar */}
+                            <div className="hidden md:flex w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
+                                <div className="relative w-full">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        value={searchTerm}
+                                        onChange={(e) => handleSearch(e.target.value)}
+                                        className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl"
+                                        style={{ backgroundColor: '#E64A30' }}
+                                    >
+                                        Search
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Date Filter */}
+                            <div className="flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829]">
+                                <Popover open={open} onOpenChange={setOpen}>
+                                    <PopoverTrigger asChild className="flex-1">
+                                        <Button
+                                            variant="outline"
+                                            className="filter-button justify-between text-left font-normal h-10 !border-none !border-0 shadow-none flex items-center gap-2 !bg-transparent"
+                                        >
+                                            {date ? date.toLocaleDateString() : <span>Select By Date</span>}
+                                            <ChevronDown className="h-4 w-4 text-gray-500" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0 bg-[#1D212D]" align="start" side="bottom">
+                                        <Calendar
+                                            mode="single"
+                                            selected={date}
+                                            onSelect={(selectedCalendarDate: Date | undefined) => {
+                                                setDate(selectedCalendarDate);
+                                                if (selectedCalendarDate) {
+                                                    const year = selectedCalendarDate.getFullYear();
+                                                    const month = String(selectedCalendarDate.getMonth() + 1).padStart(2, '0');
+                                                    const day = String(selectedCalendarDate.getDate()).padStart(2, '0');
+                                                    const dateString = `${year}-${month}-${day}`;
+                                                    setSelectedDate(dateString);
+                                                } else {
+                                                    setSelectedDate('');
+                                                }
+                                                setOpen(false);
+                                            }}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+
+                                {date && (
                                     <Button
                                         variant="outline"
-                                        className="filter-button justify-between text-left font-normal h-10 !border-none !border-0 shadow-none flex items-center gap-2 !bg-transparent"
+                                        onClick={clearDateFilter}
+                                        className="filter-button h-10 px-3 border-none !bg-transparent"
+                                        title="Clear date filter"
                                     >
-                                        {date ? date.toLocaleDateString() : <span>Select By Date</span>}
-                                        <ChevronDown className="h-4 w-4 text-gray-500" />
+                                        <X className="h-4 w-4" />
                                     </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0 bg-[#1D212D]" align="start" side="bottom">
-                                    <Calendar
-                                        mode="single"
-                                        selected={date}
-                                        onSelect={(selectedCalendarDate: Date | undefined) => {
-                                            setDate(selectedCalendarDate);
-                                            if (selectedCalendarDate) {
-                                                const year = selectedCalendarDate.getFullYear();
-                                                const month = String(selectedCalendarDate.getMonth() + 1).padStart(2, '0');
-                                                const day = String(selectedCalendarDate.getDate()).padStart(2, '0');
-                                                const dateString = `${year}-${month}-${day}`;
-                                                setSelectedDate(dateString);
-                                            } else {
-                                                setSelectedDate('');
-                                            }
-                                            setOpen(false);
-                                        }}
-                                        initialFocus
-                                    />
-                                </PopoverContent>
-                            </Popover>
+                                )}
+                            </div>
 
-                            {date && (
-                                <Button
-                                    variant="outline"
-                                    onClick={clearDateFilter}
-                                    className="filter-button h-10 px-3 border-none !bg-transparent"
-                                    title="Clear date filter"
+                            {/* Position Filter */}
+                            <div className="border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:bg-[#262829]">
+                                <Select value={filters.position || "all"} onValueChange={handlePositionFilterChange}>
+                                    <SelectTrigger className="h-10 w-40 !border-none !border-0 flex items-center gap-2">
+                                        <ListCheck className="w-4 h-4" />
+                                        <SelectValue placeholder="All Positions" />
+                                    </SelectTrigger>
+                                    <SelectContent className="border-none">
+                                        <SelectGroup>
+                                            <SelectItem value="all">All Positions</SelectItem>
+                                            {['QB', 'WR', 'RB', 'FB', 'TE'].map(position => (
+                                                <SelectItem key={position} value={position}>{position}</SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Team Filter */}
+                            <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829] transition-colors">
+                                <Select value={filters.team || "all"} onValueChange={handleTeamFilterChange}>
+                                    <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:ring-0 focus:outline-none">
+                                        <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                                        <SelectValue placeholder="All Teams" />
+                                        <ChevronDown className="ml-auto h-4 w-4 text-gray-500" />
+                                    </SelectTrigger>
+                                    <SelectContent className="border-none bg-white dark:bg-[#1D212D] text-black dark:text-white rounded-xl shadow-md">
+                                        <SelectGroup>
+                                            <SelectItem value="all">All Teams</SelectItem>
+                                            {teamsData?.teams.map(team => (
+                                                <SelectItem key={team.name} value={team.name}>{team.name}</SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Rookie Checkbox */}
+                            <div className="border border-[#C7C8CB] rounded-full flex items-center gap-2 px-8 py-4 dark:bg-[#262829]">
+                                <input
+                                    type="checkbox"
+                                    id="rookie-filter"
+                                    checked={filters.rookie || false}
+                                    onChange={(e) => handleRookieFilterChange(e.target.checked)}
+                                    className="w-4 h-4 cursor-pointer"
+                                />
+                                <label htmlFor="rookie-filter" className="text-sm font-medium cursor-pointer">Rookie</label>
+                            </div>
+
+                            {/* Clear Filters Button */}
+                            <div className="w-full lg:w-auto text-center">
+                                <button
+                                    onClick={clearFilters}
+                                    className="whitespace-nowrap flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-full border border-[#E64A30] text-[#E64A30] bg-white dark:!bg-[#262829] hover:bg-[#fff4f2] dark:hover:bg-[#303234] transition-colors dark:border-none"
                                 >
-                                    <X className="h-4 w-4" />
-                                </Button>
-                            )}
-                        </div>
-
-                        {/* Position Filter */}
-                        <div className="border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:bg-[#262829]">
-                            <Select value={filters.position || "all"} onValueChange={handlePositionFilterChange}>
-                                <SelectTrigger className="h-10 w-40 !border-none !border-0 flex items-center gap-2">
-                                    <ListCheck className="w-4 h-4" />
-                                    <SelectValue placeholder="All Positions" />
-                                </SelectTrigger>
-                                <SelectContent className="border-none">
-                                    <SelectGroup>
-                                        <SelectItem value="all">All Positions</SelectItem>
-                                        {['QB', 'WR', 'RB', 'FB', 'TE'].map(position => (
-                                            <SelectItem key={position} value={position}>{position}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Team Filter */}
-                        <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829] transition-colors">
-                            <Select value={filters.team || "all"} onValueChange={handleTeamFilterChange}>
-                                <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:ring-0 focus:outline-none">
-                                    <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-                                    <SelectValue placeholder="All Teams" />
-                                    <ChevronDown className="ml-auto h-4 w-4 text-gray-500" />
-                                </SelectTrigger>
-                                <SelectContent className="border-none bg-white dark:bg-[#1D212D] text-black dark:text-white rounded-xl shadow-md">
-                                    <SelectGroup>
-                                        <SelectItem value="all">All Teams</SelectItem>
-                                        {teamsData?.teams.map(team => (
-                                            <SelectItem key={team.name} value={team.name}>{team.name}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Rookie Checkbox */}
-                        <div className="border border-[#C7C8CB] rounded-full flex items-center gap-2 px-8 py-4 dark:bg-[#262829]">
-                            <input
-                                type="checkbox"
-                                id="rookie-filter"
-                                checked={filters.rookie || false}
-                                onChange={(e) => handleRookieFilterChange(e.target.checked)}
-                                className="w-4 h-4 cursor-pointer"
-                            />
-                            <label htmlFor="rookie-filter" className="text-sm font-medium cursor-pointer">Rookie</label>
-                        </div>
-
-                        {/* Clear Filters Button */}
-                        <div className="w-full lg:w-auto text-center">
-                            <button
-                                onClick={clearFilters}
-                                className="whitespace-nowrap flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-full border border-[#E64A30] text-[#E64A30] bg-white dark:!bg-[#262829] hover:bg-[#fff4f2] dark:hover:bg-[#303234] transition-colors dark:border-none"
-                            >
-                                Clear Filters
-                            </button>
+                                    Clear Filters
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -96,27 +96,52 @@ export default function LatestNuggets() {
   const latestNuggets = latestNuggetsData?.data || []
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto py-8">
 
-      <div className="text-center mb-12">
-        <h2 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">Stay Ahead of the Game with<br></br> Real-Time NFL Updates.</h2>
+
+      <div className="relative">
+        {/* ✅ Background Layer */}
+        <div
+          className="
+    hidden md:flex absolute inset-0 
+    bg-cover bg-center bg-no-repeat 
+    bg-[url('/background-image2.png')] 
+    opacity-10 dark:opacity-5
+  "
+          style={{
+            transform: "scaleY(-1)",
+            top: "-110px",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: -50,
+            height: "300%",
+          }}
+        ></div>
+        {/* ✅ Page Content */}
+        <div className="relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">
+              Stay Ahead of the Game with<br /> Real-Time NFL Updates.
+            </h2>
+          </div>
+
+          <div className="flex justify-center">
+            <SearchBar
+              placeholder="Search any news that suits you"
+              size="md"
+              width="w-full md:w-1/2"
+              buttonLabel="Search here"
+              onButtonClick={() => alert('Button clicked!')}
+              onChange={(val) => console.log(val)}
+              className="flex justify-center items-center"
+            />
+          </div>
+        </div>
       </div>
-
-      <div className='flex justify-center'>
-        <SearchBar
-          placeholder="Search any news that suits you"
-          size="md"
-          width="w-full md:w-1/2"
-          buttonLabel="Search here"
-          onButtonClick={() => alert("Button clicked!")}
-          onChange={(val) => console.log(val)}
-          className="flex justify-center items-center"
-        />
-      </div>
-
 
       {/* Main Content Area - Two Column Layout */}
-      <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0 mt-10">
+      <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0 mt-10 px-4">
         {/* Feed Column */}
         <div className="flex-1 relative">
           <div className="text-left mb-12 ml-4">
@@ -260,7 +285,6 @@ export default function LatestNuggets() {
           <TrendingPlayersSidebar />
         </div>
       </div>
-
 
     </div>
   )

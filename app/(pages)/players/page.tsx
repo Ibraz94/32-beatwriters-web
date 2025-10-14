@@ -336,20 +336,38 @@ function PlayersContent() {
     return (
         <div>
             {/* Gray Background Section */}
-            <section className="container mx-auto max-w-7xl px-4 py-8">
-                <div className="text-center mb-8">
-                    <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">All Players</h1>
-                </div>
+            <section className="container mx-auto max-w-7xl px-3 py-8">
+                <div className="relative">
+                    <div
+                        className="
+      hidden md:flex absolute 
+left-[-12px] right-[-12px] 
+       h-[300%] 
+      bg-cover bg-center bg-no-repeat 
+      bg-[url('/background-image2.png')] 
+      opacity-10 dark:opacity-5
+  "
+                        style={{
+                            transform: "scaleY(-1)",
+                            zIndex: -50,
+                            top: '-100px'
+                        }}
 
-                <div className='flex justify-center mb-10'>
-                    <SearchBar
-                        placeholder="Search Players"
-                        size="md"
-                        width="w-full md:w-1/2"
-                        buttonLabel="Search here"
-                        onButtonClick={() => alert("Button clicked!")}
-                        onChange={(val) => console.log(val)}
-                    />
+                    ></div>
+                    <div className="text-center mb-8">
+                        <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">All Players</h1>
+                    </div>
+
+                    <div className='flex justify-center mb-10'>
+                        <SearchBar
+                            placeholder="Search Players"
+                            size="md"
+                            width="w-full md:w-1/2"
+                            buttonLabel="Search here"
+                            onButtonClick={() => alert("Button clicked!")}
+                            onChange={(val) => console.log(val)}
+                        />
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

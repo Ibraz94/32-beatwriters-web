@@ -6,6 +6,25 @@ export const dynamic = 'force-dynamic'
 export default function About() {
     return (
         <section className="container mx-auto flex items-center justify-between mt-6 mb-28">
+            <div className="relative">
+                <div
+                    className="
+    hidden md:flex absolute inset-0 
+    bg-cover bg-center bg-no-repeat 
+    bg-[url('/background-image2.png')] 
+    opacity-10 dark:opacity-5
+  "
+                    style={{
+                        transform: "scaleY(-1)",
+                        top: "-110px",
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: -50,
+                        height: "300%",
+                    }}
+                ></div>
+            </div>
             <div className="flex flex-col gap-20">
                 <div className="flex items-center justify-center gap-10">
                     <div className="w-full mt-4 flex">

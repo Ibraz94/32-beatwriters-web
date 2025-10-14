@@ -114,7 +114,7 @@ export default function AllPodcastsPage() {
   const categories = ['NFL Analysis', 'Fantasy Football', 'Draft Coverage', 'Trade Analysis', 'Player Interviews']
 
   return (
-    <div className="container mx-auto mt-6 mb-28 p-3">
+    <div className="container mx-auto mt-6 mb-28 p-3 ">
       {/* Header */}
       <div className="mb-8">
 
@@ -155,23 +155,41 @@ export default function AllPodcastsPage() {
       )
         : apiResponse?.podcasts && apiResponse.podcasts.length > 0 ? (
           <>
-            <div className="text-center mb-12">
-              <h2 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">Our Podcasts</h2>
-            </div>
+            <div className='relative p-3'>
+              <div
+                className="
+      hidden md:flex absolute
+      left-[-12px] right-[-12px] 
+      h-[300%]
+      bg-cover bg-center bg-no-repeat 
+      bg-[url('/background-image2.png')] 
+      opacity-10 dark:opacity-5
+  "
+                style={{
+                  transform: "scaleY(-1)",
+                  zIndex: -50,
+                  top: '-140px',
+                }}
 
-            <div className='flex justify-center'>
-              <SearchBar
-                placeholder="Search any news that suits you"
-                size="md"
-                width="w-full md:w-1/2"
-                buttonLabel="Search here"
-                onButtonClick={() => alert("Button clicked!")}
-                onChange={(val) => console.log(val)}
-                className="flex justify-center items-center"
-              />
+              ></div>
+              <div className="text-center mb-12">
+                <h2 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">Our Podcasts</h2>
+              </div>
+
+              <div className='flex justify-center'>
+                <SearchBar
+                  placeholder="Search any news that suits you"
+                  size="md"
+                  width="w-full md:w-1/2"
+                  buttonLabel="Search here"
+                  onButtonClick={() => alert("Button clicked!")}
+                  onChange={(val) => console.log(val)}
+                  className="flex justify-center items-center"
+                />
+              </div>
             </div>
             {/* Results Count */}
-            <div className="mb-6">
+            <div className="mb-6 px-3">
               Showing {apiResponse.podcasts.length} of {apiResponse.pagination.total} podcasts
               {filters.search && ` for "${filters.search}"`}
             </div>

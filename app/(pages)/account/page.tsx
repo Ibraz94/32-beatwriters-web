@@ -374,73 +374,91 @@ function AccountContent() {
     return (
         <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8">
             <div className="max-w-4xl mx-auto mt-8">
-                {/* Header */}
-                <div className="text-center mb-8">
-                    <div className="flex justify-center mb-4">
-                        {mounted ? (
-                            <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={80} height={80} />
-                        ) : (
-                            <Image src="/logo-small.webp" alt="logo" width={80} height={80} />
-                        )}
+                <div className='relative'>
+                    <div
+                        className="
+      hidden md:flex absolute 
+ left-1/2 -translate-x-1/2 
+      w-screen h-[400%] 
+      bg-cover bg-center bg-no-repeat 
+      bg-[url('/background-image2.png')] 
+      opacity-10 dark:opacity-5
+    "
+                        style={{
+                            transform: "scaleY(-1)", // keeps it upside down
+                            zIndex: -50,
+                            top: '-130px'
+                        }}
+                    ></div>
+
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <div className="flex justify-center mb-4">
+                            {mounted ? (
+                                <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={80} height={80} />
+                            ) : (
+                                <Image src="/logo-small.webp" alt="logo" width={80} height={80} />
+                            )}
+                        </div>
+                        <h1 className="text-3xl font-bold text-foreground">Account Settings</h1>
+                        <p className="text-muted-foreground">Manage your account</p>
                     </div>
-                    <h1 className="text-3xl font-bold text-foreground">Account Settings</h1>
-                    <p className="text-muted-foreground">Manage your account</p>
-                </div>
 
-                {/* Success Message */}
-                {successMessage && (
-                    <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-800 rounded-lg">
-                        <p className="text-green-800 dark:text-green-400">{successMessage}</p>
-                    </div>
-                )}
+                    {/* Success Message */}
+                    {successMessage && (
+                        <div className="mb-6 p-4 bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-800 rounded-lg">
+                            <p className="text-green-800 dark:text-green-400">{successMessage}</p>
+                        </div>
+                    )}
 
-                {/* Discord Error Message */}
-                {errors.discord && (
-                    <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg">
-                        <p className="text-red-800 dark:text-red-400">{errors.discord}</p>
-                    </div>
-                )}
+                    {/* Discord Error Message */}
+                    {errors.discord && (
+                        <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-lg">
+                            <p className="text-red-800 dark:text-red-400">{errors.discord}</p>
+                        </div>
+                    )}
 
-                {/* Navigation Tabs */}
-                <div className="mb-8">
-                    {/* Container */}
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-2 border border-[#C7C8CB] rounded-full p-1 bg-white dark:bg-[#262829]">
+                    {/* Navigation Tabs */}
+                    <div className="mb-8">
+                        {/* Container */}
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-2 border border-[#C7C8CB] rounded-full p-1 bg-white dark:bg-[#262829]">
 
-                        {/* Tabs: always visible */}
-                        <nav className="flex space-x-2 overflow-x-auto">
-                            {[
-                                { id: 'profile', label: 'Profile', icon: User },
-                                { id: 'update-password', label: 'Update Password', icon: Shield },
-                                { id: 'subscription', label: 'Subscription', icon: CreditCard }
-                            ].map(({ id, label, icon: Icon }) => {
-                                const isActive = activeTab === id;
-                                const textColor = isActive ? 'text-white' : 'text-[#72757C]';
-                                const bgColor = isActive ? 'bg-[#E64A30]' : 'bg-transparent';
-                                return (
-                                    <button
-                                        key={id}
-                                        onClick={() => setActiveTab(id)}
-                                        className={`flex items-center space-x-2 px-4 py-2 rounded-full font-medium text-sm transition-colors ${bgColor} ${textColor} whitespace-nowrap`}
-                                    >
-                                        <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-[#72757C]'}`} />
-                                        <span>{label}</span>
-                                    </button>
-                                );
-                            })}
-                        </nav>
+                            {/* Tabs: always visible */}
+                            <nav className="flex space-x-2 overflow-x-auto">
+                                {[
+                                    { id: 'profile', label: 'Profile', icon: User },
+                                    { id: 'update-password', label: 'Update Password', icon: Shield },
+                                    { id: 'subscription', label: 'Subscription', icon: CreditCard }
+                                ].map(({ id, label, icon: Icon }) => {
+                                    const isActive = activeTab === id;
+                                    const textColor = isActive ? 'text-white' : 'text-[#72757C]';
+                                    const bgColor = isActive ? 'bg-[#E64A30]' : 'bg-transparent';
+                                    return (
+                                        <button
+                                            key={id}
+                                            onClick={() => setActiveTab(id)}
+                                            className={`flex items-center space-x-2 px-4 py-2 rounded-full font-medium text-sm transition-colors ${bgColor} ${textColor} whitespace-nowrap`}
+                                        >
+                                            <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-[#72757C]'}`} />
+                                            <span>{label}</span>
+                                        </button>
+                                    );
+                                })}
+                            </nav>
 
-                        {/* Discord Button for md and above */}
-                        <div className="hidden md:block w-auto">
-                            <div className="rounded-full overflow-hidden">
-                                <DiscordButton />
+                            {/* Discord Button for md and above */}
+                            <div className="hidden md:block w-auto">
+                                <div className="rounded-full overflow-hidden">
+                                    <DiscordButton />
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Discord Button for sm and below */}
-                    <div className="flex justify-center mt-2 md:hidden w-full">
-                        <div className="rounded-full overflow-hidden w-1/2 sm:w-auto">
-                            <DiscordButton />
+                        {/* Discord Button for sm and below */}
+                        <div className="flex justify-center mt-2 md:hidden w-full">
+                            <div className="rounded-full overflow-hidden w-1/2 sm:w-auto">
+                                <DiscordButton />
+                            </div>
                         </div>
                     </div>
                 </div>

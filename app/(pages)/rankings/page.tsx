@@ -92,52 +92,70 @@ function RankingsContent() {
   }, [data])
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-      <div className="mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
-            {/* Week Dropdown */}
-            <label className="text-sm text-muted-foreground">Week</label>
-            <select
-              value={week ?? ''}
-              onChange={(e) => setWeek(Number(e.target.value))}
-              className="px-3 py-2 border border-border rounded-md bg-background"
-            >
-              <option value="" disabled>Select week</option>
-              {weeks.map((w) => (
-                <option key={w} value={w}>Week {w}</option>
-              ))}
-            </select>
+    <div className="container mx-auto max-w-7xl px-3 sm:px-6 lg:px-7 py-7">
+      <div className='relative py-5'>
+        <div
+          className="
+      hidden md:flex absolute 
+left-[-28px] right-[-28px] 
+       h-[300%] 
+      bg-cover bg-center bg-no-repeat 
+      bg-[url('/background-image2.png')] 
+      opacity-10 dark:opacity-5
+  "
+          style={{
+            transform: "scaleY(-1)",
+            zIndex: -50,
+            top: '-100px'
+          }}
 
-            {/* Position Tabs */}
-            <div className="ml-3 flex items-center gap-1 bg-accent/40 rounded-md p-1">
-              {['', 'QB', 'RB', 'WR'].map((pos) => (
-                <button
-                  key={pos || 'ALL'}
-                  onClick={() => setPosition(pos as any)}
-                  className={`px-3 py-1 rounded ${position === pos ? 'bg-red-800 text-white' : 'text-foreground hover:bg-accent'}`}
-                >
-                  {pos || 'ALL'}
-                </button>
-              ))}
+        ></div>
+        <div className="mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {/* Week Dropdown */}
+              <label className="text-sm text-muted-foreground">Week</label>
+              <select
+                value={week ?? ''}
+                onChange={(e) => setWeek(Number(e.target.value))}
+                className="px-3 py-2 border border-border rounded-md dark:bg-[#262829]"
+              >
+                <option value="" disabled>Select week</option>
+                {weeks.map((w) => (
+                  <option key={w} value={w}>Week {w}</option>
+                ))}
+              </select>
+
+              {/* Position Tabs */}
+              <div className="ml-3 flex items-center gap-1 bg-accent/40 rounded-md p-1">
+                {['', 'QB', 'RB', 'WR'].map((pos) => (
+                  <button
+                    key={pos || 'ALL'}
+                    onClick={() => setPosition(pos as any)}
+                    className={`px-3 py-1 rounded ${position === pos ? 'bg-[#E64A30] rounded-full text-white' : 'text-foreground hover:bg-accent'}`}
+                  >
+                    {pos || 'ALL'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Format Dropdown (right side) */}
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-muted-foreground">Format</label>
+              <select
+                value={format}
+                onChange={(e) => setFormat(e.target.value as any)}
+                className="px-3 py-2 border border-border rounded-md dark:bg-[#262829]"
+              >
+                <option value="ppr">PPR</option>
+                <option value="halfPPR">Half PPR</option>
+                <option value="standard">Standard</option>
+              </select>
             </div>
           </div>
-
-          {/* Format Dropdown (right side) */}
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-muted-foreground">Format</label>
-            <select
-              value={format}
-              onChange={(e) => setFormat(e.target.value as any)}
-              className="px-3 py-2 border border-border rounded-md bg-background"
-            >
-              <option value="ppr">PPR</option>
-              <option value="halfPPR">Half PPR</option>
-              <option value="standard">Standard</option>
-            </select>
-          </div>
+          <p className="mt-3 text-sm text-muted-foreground">Vegas prop driven. Expect more props to be added as the week progresses.</p>
         </div>
-        <p className="mt-3 text-sm text-muted-foreground">Vegas prop driven. Expect more props to be added as the week progresses.</p>
       </div>
 
       <div className="overflow-x-auto w-full orange-scroll">
