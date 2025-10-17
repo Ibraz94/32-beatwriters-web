@@ -1,3 +1,4 @@
+import Image from "next/image";
 
 
 
@@ -29,13 +30,13 @@ export default function About() {
                 <div className="flex items-center justify-center gap-10">
                     <div className="w-full mt-4 flex">
                         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                            <iframe
+                            <Image
                                 className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                                // src="https://www.youtube.com/embed/tpj_nbg5DtE"
-                                title="32BeatWriters Introduction"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
+                                src={"/image-1.jpg"}
+                                width={600}
+                                height={600}
+                                alt="image-1"
+                            />
                         </div>
                     </div>
 
@@ -56,13 +57,13 @@ export default function About() {
                     <div className="w-full mt-4 flex">
                         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
 
-                            <iframe
+                            <Image
                                 className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                                // src="https://www.youtube.com/embed/tpj_nbg5DtE"
-                                title="32BeatWriters Introduction"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
+                                src={"/image-2.jpg"}
+                                width={600}
+                                height={600}
+                                alt="image-2"
+                            />
                         </div>
                     </div>
                 </div>
@@ -70,13 +71,13 @@ export default function About() {
                 <div className="flex items-center justify-center gap-10">
                     <div className="w-full mt-4 flex">
                         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                            <iframe
+                            <Image
                                 className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                                // src="https://www.youtube.com/embed/tpj_nbg5DtE"
-                                title="32BeatWriters Introduction"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
+                                src={"/image-4.jpg"}
+                                width={600}
+                                height={600}
+                                alt="image-4"
+                            />
                         </div>
                     </div>
 
@@ -97,13 +98,13 @@ export default function About() {
                     <div className="w-full mt-4 flex">
                         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
 
-                            <iframe
+                            <Image
                                 className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                                // src="https://www.youtube.com/embed/tpj_nbg5DtE"
-                                title="32BeatWriters Introduction"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
+                                src={"/image-3.jpg"}
+                                width={600}
+                                height={600}
+                                alt="image-3"
+                            />
                         </div>
                     </div>
                 </div>
