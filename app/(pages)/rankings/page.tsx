@@ -92,7 +92,7 @@ function RankingsContent() {
   }, [data])
 
   return (
-    <div className="container mx-auto max-w-7xl px-3 sm:px-6 lg:px-7 py-7">
+    <div className="container mx-auto px-3 sm:px-6 lg:px-7 py-7">
       <div className='relative py-5'>
         <div
           className="
