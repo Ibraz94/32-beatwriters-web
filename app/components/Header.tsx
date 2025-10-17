@@ -345,8 +345,6 @@ function Header() {
 
                         {/* Desktop Actions */}
                         <div className="hidden lg:flex items-center space-x-4">
-                            <ThemeToggle />
-
                             {/* <div className="w-px h-7 bg-gray-300"></div> */}
                             {isAuthenticated ? (
                                 <div className="relative" ref={dropdownRef}>
