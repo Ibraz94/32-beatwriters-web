@@ -41,7 +41,7 @@ function ProspectsContent() {
                 if (position) params.set('position', position)
                 params.set('page', String(currentPage))
                 params.set('pageSize', String(pageSize))
-                const res = await fetch(`http://localhost:4004/api/nfl-prospects?${params.toString()}`, { cache: 'no-store' })
+                const res = await fetch(buildApiUrl(`/api/nfl-prospects?${params.toString()}`), { cache: 'no-store' })
                 if (!res.ok) throw new Error('Failed to load prospects')
                 const json = await res.json()
                 const prospects = json?.data?.prospects
