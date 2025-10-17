@@ -127,6 +127,7 @@ function Header() {
 
     const toolOptions = [
         { href: "/rankings", label: "Rankings" },
+        { href: "/prospects", label: "Prospects" },
     ];
 
     // const toolNavLink = [
@@ -362,7 +363,7 @@ function Header() {
                                                     className="w-6 h-6 rounded-full object-cover"
                                                 />
                                             ) : (
-                                                <div className="w-8 h-8 bg-red-800 rounded-full flex items-center justify-center">
+                                                <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center">
                                                     <span className="text-white text-md">
                                                         {getUserInitials()}
                                                     </span>
@@ -390,7 +391,7 @@ function Header() {
 
                                                 <button
                                                     onClick={handleLogout}
-                                                    className="flex items-center w-full px-4 py-2 text-md text-red-800 hover:cursor-pointer"
+                                                    className="flex items-center w-full px-4 py-2 text-md text-orange-600 hover:cursor-pointer"
                                                 >
                                                     <LogOut className="h-5 w-5 mr-2" />
                                                     Log out
@@ -420,12 +421,16 @@ function Header() {
                                             Subscribe
                                         </Link>
                                     </Button>
-                                    <ThemeToggle />
+                                  
                                 </div>
+                                 
                             )}
+                            <ThemeToggle />
                         </div>
+                        
                     </div>
 
+                   
                 {/* <div className="hero-bg h-screen max-w-7xl mx-auto" /> */}
 
 
@@ -531,7 +536,7 @@ function Header() {
                         <div className="px-4 space-y-3 z-index-10">
                             {isAuthenticated ? (
                                 <div className="space-y-3">
-                                    <div className="mobile-menu-user-info flex items-center justify-center space-x-3 p-3 rounded-lg">
+                                    <div className="flex items-center justify-center space-x-3 p-3 rounded-full border border-[#E64A30]">
                                         {user?.profilePicture ? (
                                             <Image
                                                 src={user.profilePicture}
@@ -541,7 +546,7 @@ function Header() {
                                                 className="w-10 h-10 rounded-full object-cover"
                                             />
                                         ) : (
-                                            <div className="w-10 h-10 bg-red-800 rounded-full flex items-center justify-center">
+                                            <div className="w-10 h-10 bg-[#E64A30] rounded-full flex items-center justify-center">
                                                 <span className="text-white font-medium">
                                                     {getUserInitials()}
                                                 </span>
@@ -558,7 +563,7 @@ function Header() {
                                     </div>
                                     <Link
                                         href="/account"
-                                        className="mobile-menu-account-link flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
+                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-full transition-all duration-200 text-center transform hover:scale-105 bg-[#E64A30]"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         <User className="h-4 w-4" />
@@ -569,7 +574,7 @@ function Header() {
                                             setIsMobileMenuOpen(false);
                                             handleLogout();
                                         }}
-                                        className="mobile-menu-logout-button flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
+                                        className="flex items-center justify-center space-x-2 w-full py-3 px-4 font-medium rounded-full transition-all duration-200 text-center transform hover:scale-105 border border-[#E64A30] text-[#E64A30]"
                                     >
                                         <LogOut className="h-4 w-4" />
                                         <span>Log out</span>
