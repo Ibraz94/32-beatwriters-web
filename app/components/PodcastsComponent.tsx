@@ -54,7 +54,7 @@ export default function PodcastsComponent() {
                         Our Podcast Network
                     </h2>
                     <p className="text-sm sm:text-base md:text-lg max-w-5xl mx-auto px-2 text-[var(--color-gray)] dark:text-[#C7C8CB]">
-                        Fantasy analysis, beat writer interviews, and more!
+                    Exclusive Beat Writer Interviews, Indepth Player Analyst, Integral Offseason Insight and More!
                     </p>
                 </div>
 
@@ -164,7 +164,7 @@ export default function PodcastsComponent() {
 
                                             <div className="flex items-center gap-1 text-xs md:text-sm theme-muted dark:text-[#C7C8CB]">
                                                 <Clock size={18} />
-                                                <span className="dark:text-[#C7C8CB]">29 Minutes</span>
+                                                <span className="dark:text-[#C7C8CB]">{formatTimeAgo(podcast.duration)}</span>
                                             </div>
                                         </div>
 

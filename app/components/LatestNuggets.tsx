@@ -121,14 +121,14 @@ export default function LatestNuggets() {
         {/* ✅ Page Content */}
         <div className="relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">
-              Stay Ahead of the Game with<br /> Real-Time NFL Updates.
+            <h2 className="text-xl leading-8 mb-4 md:text-[40px] md:leading-14">
+              Get All the Most Important Insider Information <br/> Straight From the Sources All Offseason
             </h2>
           </div>
 
           <div className="flex justify-center">
             <SearchBar
-              placeholder="Search any news that suits you"
+              placeholder="Search any player"
               size="md"
               width="w-full md:w-1/2"
               buttonLabel="Search here"
@@ -145,7 +145,7 @@ export default function LatestNuggets() {
         {/* Feed Column */}
         <div className="flex-1 relative">
           <div className="text-left mb-12 ml-4">
-            <h2 className="text-2xl md:text-5xl mb-4">Latest Nuggets</h2>
+            <h2 className="text-2xl md:text-[40px] mb-4">Latest Insider Info</h2>
             <p className="text-sm md:text-xl max-w-4xl text-(--primary-gray-color)">Stay updated with the most recent insights and analysis</p>
           </div>
           {latestNuggets.length === 0 ? (

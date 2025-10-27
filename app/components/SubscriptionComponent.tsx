@@ -43,17 +43,6 @@ export default function SubscriptionComponent() {
     router.push('/subscribe')
   }
 
-  const benefits = [
-    "Summaries All Offseason – The Best, Complete Reports in the Industry That's Used By Industry Leaders",
-    "Ability to search insight and updates on our News Feed",
-    "Access to all our Premium articles",
-    "Exclusive podcast episodes",
-    "Playing in our Fantasy Football Leagues",
-    "Our Undying Love and Appreciation",
-    "Secure Payment By Stripe - No Hidden Fees",
-    "Access to all additional features as they roll out for no additional cost"
-  ]
-
   if (!subscriptionOptions) {
     return (
       <div className="container mx-auto max-w-full px-4 sm:px-6 lg:px-8 py-16">
@@ -75,8 +64,8 @@ export default function SubscriptionComponent() {
       <div className="lg:hidden container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
 
         <div className="text-center font-oswald mb-16">
-          <h1 className="text-6xl font-bold ">Our Pricing Plan</h1>
-          <p className="text-xl mt-6">Signs up for exclusive access to all our reports, tools</p>
+          <h1 className="text-3xl">Our Pricing Plan</h1>
+          <p className="mt-5">Signs up for exclusive access to all our reports, tools</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -102,7 +91,7 @@ export default function SubscriptionComponent() {
                     : 'text-gray hover:text-gray-300'
                     }`}
                 >
-                  One time plan
+                  First Month Free
                 </button>
                 <button
                   onClick={() => setSelectedPlan('yearly')}
@@ -227,7 +216,7 @@ export default function SubscriptionComponent() {
                 {/* Header */}
                 <div className="flex justify-between items-center bg-[#F6BCB2] py-3 px-4 rounded-2xl z-10 relative m-3 dark:bg-[#262829]">
                   <div className="bg-[var(--color-orange)] text-white text-sm sm:text-base px-3 py-1.5 rounded-full border border-gray-100 dark:border-none">
-                    One time plan
+                    First Month Free
                   </div>
                   <div className="flex items-center">
                     <Image
@@ -357,16 +346,18 @@ export default function SubscriptionComponent() {
 
               {/* Features */}
               <div className="mt-10 text-left border-t border-gray-200 pt-6 dark:border-t-[#72757C]">
-                <h4 className="font-semibold text-gray-800 mb-4 text-xl dark:text-white">Free, Forever</h4>
+                <h4 className="font-semibold text-gray-800 mb-4 text-xl dark:text-white">Monthly Plan</h4>
                 <ul className="space-y-3 text-gray-600 text-sm">
                   {[
-                    "Summaries All Offseason – The Best, Complete Reports in the Industry",
-                    "Full access to all Premium articles",
-                    "Exclusive podcast episodes",
-                    "Playing in our Fantasy Football League",
-                    "Access to all additional features as they roll out (no extra cost)",
+                    "Locked in Offseason Coverage From January to September",
+                    "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
+                    "In Season Fantasy Analysis from Zareh Kantzabedian",
+                    "Full Prospect Coverage from TJ Wengert",
+                    "Access to Prospect and Fantasy Tools",
+                    "Full Access to All Our Premium Articles",
+                    "Secure Payment By Stripe - No Hidden Fees",
                   ].map((text, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm dark:text-[#C7C8CB]">
+                    <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
                       <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" />
                       <span>{text}</span>
                     </li>
@@ -392,7 +383,7 @@ export default function SubscriptionComponent() {
             {/* Header */}
             <div className="flex justify-between items-center bg-[#F6BCB2] py-4 px-4 rounded-2xl z-10 relative m-4 mt-2 dark:bg-[#262829]">
               <div className="bg-[var(--color-orange)] text-white text-lg px-4 py-2 rounded-full border border-gray-100">
-                One time plan
+                First Month Free
               </div>
               <div className="flex items-center">
                 <Image src="/fast-draft-plan.svg" alt="Logo" height={150} width={150} className="object-contain" />
@@ -488,14 +479,16 @@ export default function SubscriptionComponent() {
               </button>
 
               <div className="mt-10 text-left border-t border-gray-200 pt-6 dark:border-t-[#72757C]">
-                <h4 className="font-semibold text-gray-800 mb-4 text-xl dark:text-white">Everything in Monthly, plus:</h4>
+                <h4 className="font-semibold text-gray-800 mb-4 text-xl dark:text-white">Yearly Plan</h4>
                 <ul className="space-y-3 text-gray-600 text-sm">
                   {[
-                    "Discounted price (save big compared to monthly)",
-                    "Extended access to archives & bonus content",
-                    "Priority access to new features & updates",
-                    "Playing in our Fantasy Football League",
-                    "Our Undying Love and Appreciation",
+                    "Locked in Offseason Coverage From January to September",
+                    "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
+                    "In Season Fantasy Analysis from Zareh Kantzabedian",
+                    "Full Prospect Coverage from TJ Wengert",
+                    "Access to Prospect and Fantasy Tools",
+                    "Full Access to All Our Premium Articles",
+                    "Secure Payment By Stripe - No Hidden Fees",
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
                       <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" />

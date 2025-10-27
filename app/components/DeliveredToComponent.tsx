@@ -61,12 +61,11 @@ export default function DeliveredToComponent() {
                     {/* Right Content Section */}
                     <div className="col-span-12 md:col-span-6 flex flex-col justify-center px-6 md:px-12 py-10 bg-white dark:bg-[#262829] space-y-6">
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                                Stay tuned!
+                            <h1 className="text-3xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                                Insiders News Delivered To Your Inbox
                             </h1>
                             <p className="text-gray-600 dark:text-white text-sm md:text-base max-w-lg">
-                                Get the latest articles and business updates that you need to know,
-                                and receive special recommendations weekly.
+                                Get the key news, articles and videos sent directly to your inbox so you don’t miss a beat!
                             </p>
                         </div>
 

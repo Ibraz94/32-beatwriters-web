@@ -14,7 +14,7 @@ export const API_CONFIG = {
     PLAYERS: '/api/players',
     TRENDING_PLAYERS: '/api/players/trending',
     PODCASTS: '/api/podcasts',
-    SUBSCRIPTION: '/api/subscription',
+    SUBSCRIPTION: '/api/subscription', 
     TEAMS: '/api/teams',
     TOOLS: '/api/tools',
     STRIPE: {

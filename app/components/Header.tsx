@@ -116,7 +116,8 @@ function Header() {
         { href: "/", label: "Home" },
         { href: "/articles", label: "Articles" },
         { href: "/podcasts", label: "Podcast" },
-        { href: "/players", label: "Player" },
+        { href: "/players", label: "Players" },
+        { href: "/prospects", label: "Prospects" },
     ];
 
     const feedOptions = [
@@ -126,8 +127,7 @@ function Header() {
     ];
 
     const toolOptions = [
-        { href: "/rankings", label: "Rankings" },
-        { href: "/prospects", label: "Prospects" },
+        { href: "/rankings", label: "Player Prop Rankings" },
     ];
 
     // const toolNavLink = [

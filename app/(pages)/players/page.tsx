@@ -65,7 +65,7 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                     </h3>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             {playerTeam && (
@@ -78,7 +78,6 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                                 />
                             )}
                             <h1 className="text-sm font-oswald">{player.team || 'Free Agent'}  {player.position}</h1>
-
                         </div>
                     </div>
                     <button
@@ -276,7 +275,7 @@ function PlayersContent() {
     // Loading state
     if (playersLoading) {
         return (
-            <section className="container mx-auto max-w-7xl px-4 py-8">
+            <section className="container mx-auto px-4 py-8">
                 <div className="text-center mb-8">
                     <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">All Players</h1>
                     <p className="text-lg md:text-xl text-gray-600 dark:text-[#C7C8CB]">
@@ -309,7 +308,7 @@ function PlayersContent() {
     // Error state
     if (playersError) {
         return (
-            <section className="container mx-auto max-w-7xl px-4 py-8">
+            <section className="container mx-auto px-4 py-8">
                 <div className="text-center">
                     <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">All Players</h1>
                     <p className="text-xl text-red-600 dark:text-red-400 mb-4">
@@ -336,17 +335,10 @@ function PlayersContent() {
     return (
         <div>
             {/* Gray Background Section */}
-            <section className="container mx-auto max-w-7xl px-3 py-8">
+            <section className="container mx-auto px-3 py-8">
                 <div className="relative">
                     <div
-                        className="
-      hidden md:flex absolute 
-left-[-12px] right-[-12px] 
-       h-[300%] 
-      bg-cover bg-center bg-no-repeat 
-      bg-[url('/background-image2.png')] 
-      opacity-10 dark:opacity-5
-  "
+                        className="hidden md:flex absolute left-[-12px] right-[-12px] h-[300%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
                         style={{
                             transform: "scaleY(-1)",
                             zIndex: -50,
@@ -448,7 +440,7 @@ left-[-12px] right-[-12px]
 export default function Players() {
     return (
         <Suspense fallback={
-            <section className="container mx-auto max-w-7xl px-4 py-8">
+            <section className="container mx-auto px-4 py-8">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
                         All <span className="text-red-800">Players</span>

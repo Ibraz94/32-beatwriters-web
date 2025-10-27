@@ -24,6 +24,20 @@ export default function NewArticles() {
     const latestArticles = allArticles.slice(1, 4);
     const scheduledArticles = allArticles.filter(a => a.status === "draft");
 
+    const formatTimeAgo = (dateString: string) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+
+        if (diffInHours < 1) return "Just now";
+        if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+
+        const diffInDays = Math.floor(diffInHours / 24);
+        if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+
+        return date.toLocaleDateString();
+    };
+
     return (
         <section className="container mx-auto px-4 md:px-6 py-10">
             {/* Section Heading */}
@@ -58,8 +72,8 @@ export default function NewArticles() {
                 {/* RIGHT - Tabs + Article List */}
                 <div className="col-span-5 flex flex-col justify-between h-96 md:h-[450px]">
                     {/* Tabs */}
-                    <div className="flex mb-4">
-                        {['latest', 'scheduled'].map(tab => (
+                    <div className="flex w-full items-center justify-center text-3xl">
+                        {/* {['latest'].map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab as 'latest' | 'scheduled')}
@@ -70,7 +84,9 @@ export default function NewArticles() {
                             >
                                 {tab === 'latest' ? 'Latest Articles' : 'Schedule Articles'}
                             </button>
-                        ))}
+                        ))} */}
+                        <h1>Latest Articles</h1>
+
                     </div>
 
                     {/* Articles List */}
@@ -104,7 +120,7 @@ export default function NewArticles() {
                                                     NFL
                                                 </span>
                                                 <span className="flex items-center gap-1 text-gray-400 text-xs dark:text-[#C7C8CB]">
-                                                    <Clock className="h-3 w-3" /> 29 Minutes
+                                                    <Clock className="h-3 w-3" /> {formatTimeAgo(article.createdAt)}
                                                 </span>
                                             </div>
                                             <p

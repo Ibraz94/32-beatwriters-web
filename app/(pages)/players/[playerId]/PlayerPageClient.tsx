@@ -1689,7 +1689,7 @@ export default function PlayerPageClient({ id }: any) {
                                     `HT/WT: ${player?.Core?.Height || '-'} , ${player?.Core?.Weight || '-'}`,
                                     `Age: ${player?.Core?.Age || '-'}`,
                                     `Draft Info: ${player?.Core?.['Draft Pick'] || '-'} (${player?.Core?.['Draft Year'] || '-'})`,
-                                    `Status: ${player?.Core?.Active ? 'Active' : 'Inactive'}`,
+                                    // `Status: ${player?.Core?.Active ? 'Active' : 'Inactive'}`,
                                     `College: ${player?.Core?.College || '-'}`,
                                 ].map((text, i) => (
                                     <div
