@@ -18,6 +18,14 @@ interface RankingRow {
   [key: string]: any
 }
 
+type PositionType = 'QB' | 'RB' | 'WR' | 'TE' | 'Flex'
+
+interface Column {
+  key: string
+  label: string
+  width?: string
+}
+
 function RankingsContent() {
   const [data, setData] = useState<RankingRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -25,7 +33,7 @@ function RankingsContent() {
   const [weeks, setWeeks] = useState<number[]>([])
   const [week, setWeek] = useState<number | undefined>(undefined)
   const [format, setFormat] = useState<'standard' | 'halfPPR' | 'ppr'>('ppr')
-  const [position, setPosition] = useState<'' | 'QB' | 'RB' | 'WR'>('')
+  const [position, setPosition] = useState<PositionType>('QB')
 
   // Load weeks and set current week
   useEffect(() => {
@@ -71,38 +79,84 @@ function RankingsContent() {
   const normalized = useMemo(() => {
     return data.map((r, idx) => {
       const playerName = r.player || r.name || r.Player || r.player_name || '—'
-      // From integration doc, data.players[i].projections.ppr and stats
       const projections = (r as any)?.projections || {}
       const stats = (r as any)?.stats || {}
-      const proj = projections?.ppr ?? null
-      const passY = stats?.passingYards ?? null
-      const passTd = stats?.passingTDs ?? null
-      const rushY = stats?.rushingYards ?? null
-      const tds = (stats?.rushingTDs ?? 0) + (stats?.receivingTDs ?? 0)
+      const proj = projections?.[format] ?? projections?.ppr ?? null
+      
       return {
         rank: idx + 1,
         playerName,
         proj,
-        passY,
-        passTd,
-        rushY,
-        tds,
+        passY: stats?.passingYards ?? null,
+        passTd: stats?.passingTDs ?? null,
+        rushY: stats?.rushingYards ?? null,
+        recY: stats?.receivingYards ?? null,
+        rec: stats?.receptions ?? null,
+        // Use totalTDs (probability-based) if available, otherwise sum rushing and receiving TDs
+        tds: stats?.totalTDs ?? (stats?.rushingTDs ?? 0) + (stats?.receivingTDs ?? 0),
       }
     })
-  }, [data])
+  }, [data, format])
+
+  // Get columns based on position
+  const getColumns = (pos: PositionType): Column[] => {
+    const baseColumns: Column[] = [
+      { key: 'rank', label: '#' },
+      { key: 'playerName', label: 'Player' },
+      { key: 'proj', label: 'Proj. Pts' }
+    ]
+
+    switch (pos) {
+      case 'QB':
+        return [
+          ...baseColumns,
+          { key: 'passY', label: 'Pass Yds' },
+          { key: 'passTd', label: 'Pass TDs' },
+          { key: 'rushY', label: 'Rush Yds' },
+          { key: 'tds', label: 'TDs' }
+        ]
+      case 'RB':
+        return [
+          ...baseColumns,
+          { key: 'rushY', label: 'Rush Yds' },
+          { key: 'tds', label: 'TDs' },
+          { key: 'recY', label: 'Rec Yds' },
+          { key: 'rec', label: 'Receptions' }
+        ]
+      case 'WR':
+        return [
+          ...baseColumns,
+          { key: 'tds', label: 'TDs' },
+          { key: 'recY', label: 'Rec Yds' },
+          { key: 'rec', label: 'Receptions' }
+        ]
+      case 'TE':
+        return [
+          ...baseColumns,
+          { key: 'tds', label: 'TDs' },
+          { key: 'recY', label: 'Rec Yds' },
+          { key: 'rec', label: 'Receptions' }
+        ]
+      case 'Flex':
+        return [
+          ...baseColumns,
+          { key: 'rushY', label: 'Rush Yds' },
+          { key: 'tds', label: 'TDs' },
+          { key: 'recY', label: 'Rec Yds' },
+          { key: 'rec', label: 'Receptions' }
+        ]
+      default:
+        return baseColumns
+    }
+  }
+
+  const columns = getColumns(position)
 
   return (
-    <div className="container mx-auto max-w-7xl px-3 sm:px-6 lg:px-7 py-7">
+    <div className="container mx-auto px-3 sm:px-6 lg:px-7 py-7">
       <div className='relative py-5'>
         <div
-          className="
-      hidden md:flex absolute 
-left-[-28px] right-[-28px] 
-       h-[300%] 
-      bg-cover bg-center bg-no-repeat 
-      bg-[url('/background-image2.png')] 
-      opacity-10 dark:opacity-5
-  "
+          className="hidden md:flex absolute left-[-28px] right-[-28px] h-[300%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
           style={{
             transform: "scaleY(-1)",
             zIndex: -50,
@@ -128,13 +182,13 @@ left-[-28px] right-[-28px]
 
               {/* Position Tabs */}
               <div className="ml-3 flex items-center gap-1 bg-accent/40 rounded-md p-1">
-                {['', 'QB', 'RB', 'WR'].map((pos) => (
+                {(['QB', 'RB', 'WR', 'TE', 'Flex'] as PositionType[]).map((pos) => (
                   <button
-                    key={pos || 'ALL'}
-                    onClick={() => setPosition(pos as any)}
+                    key={pos}
+                    onClick={() => setPosition(pos)}
                     className={`px-3 py-1 rounded ${position === pos ? 'bg-[#E64A30] rounded-full text-white' : 'text-foreground hover:bg-accent'}`}
                   >
-                    {pos || 'ALL'}
+                    {pos}
                   </button>
                 ))}
               </div>
@@ -162,40 +216,43 @@ left-[-28px] right-[-28px]
         <table className="w-full min-w-[700px]">
           <thead>
             <tr className="bg-[#F6BCB2] dark:bg-[#3A3D48] text-[#1D212D] dark:text-white text-center text-xs font-semibold">
-              <th className="p-3 text-left">#</th>
-              <th className="p-3 text-left">Player</th>
-              <th className="p-3 text-left">Proj. Pts</th>
-              <th className="p-3 text-left">Pass Yds</th>
-              <th className="p-3 text-left">Pass TDs</th>
-              <th className="p-3 text-left">Rush Yds</th>
-              <th className="p-3 text-left">TDs</th>
+              {columns.map((col) => (
+                <th key={col.key} className="p-3 text-center">{col.label}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {error && (
               <tr>
-                <td colSpan={7} className="p-6 text-center text-destructive">{error}</td>
+                <td colSpan={columns.length} className="p-6 text-center text-destructive">{error}</td>
               </tr>
             )}
             {!error && loading && (
               <tr>
-                <td colSpan={7} className="p-6 text-center text-muted-foreground">Loading…</td>
+                <td colSpan={columns.length} className="p-6 text-center text-muted-foreground">Loading…</td>
               </tr>
             )}
             {!error && !loading && normalized.length === 0 && (
               <tr>
-                <td colSpan={7} className="p-6 text-center text-muted-foreground">No data</td>
+                <td colSpan={columns.length} className="p-6 text-center text-muted-foreground">No data</td>
               </tr>
             )}
             {!error && !loading && normalized.map((row) => (
               <tr key={`${row.rank}-${row.playerName}`} className="text-center bg-[#FFE6E2] dark:bg-[#262829] border-t border-border">
-                <td className="p-3 text-[#1D212D] dark:text-white">{row.rank}</td>
-                <td className="p-3 font-medium text-[#1D212D] dark:text-white">{row.playerName}</td>
-                <td className="p-3 text-[#1D212D] dark:text-white">{row.proj ?? '—'}</td>
-                <td className="p-3 text-[#1D212D] dark:text-white">{row.passY ?? '—'}</td>
-                <td className="p-3 text-[#1D212D] dark:text-white">{row.passTd ?? '—'}</td>
-                <td className="p-3 text-[#1D212D] dark:text-white">{row.rushY ?? '—'}</td>
-                <td className="p-3 text-[#1D212D] dark:text-white">{row.tds ?? '—'}</td>
+                {columns.map((col) => {
+                  const value = (row as any)[col.key]
+                  let displayValue = value ?? '—'
+                  
+                  // Format numbers with 1 decimal place
+                  if (typeof value === 'number') {
+                    displayValue = value.toFixed(1)
+                  }
+                  return (
+                    <td key={col.key} className="p-3 text-[#1D212D] dark:text-white">
+                      {col.key === 'playerName' ? <span className="font-medium">{displayValue}</span> : displayValue}
+                    </td>
+                  )
+                })}
               </tr>
             ))}
           </tbody>
