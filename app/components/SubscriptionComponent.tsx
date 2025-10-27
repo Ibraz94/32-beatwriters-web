@@ -167,19 +167,22 @@ export default function SubscriptionComponent() {
                     <ul className="space-y-3 text-gray-600 text-sm dark:text-[#C7C8CB]">
                       {(selectedPlan === "monthly"
                         ? [
-                          "Summaries All Offseason – The Best, Complete Reports in the Industry",
-                          "Full access to all Premium articles",
-                          "Exclusive podcast episodes",
-                          "Playing in our Fantasy Football League",
-                          "Access to all additional features as they roll out (no extra cost)",
+                          "Locked in Offseason Coverage From January to September",
+                          "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
+                          "In Season Fantasy Analysis from Zareh Kantzabedian",
+                          "Full Prospect Coverage from TJ Wengert",
+                          "Access to Prospect and Fantasy Tools",
+                          "Full Access to All Our Premium Articles",
+                          "Secure Payment By Stripe - No Hidden Fees",
                         ]
                         : [
-                          "Everything in Monthly, plus:",
-                          "Discounted price (save big compared to monthly)",
-                          "Extended access to archives & bonus content",
-                          "Priority access to new features & updates",
-                          "Playing in our Fantasy Football League",
-                          "Our Undying Love and Appreciation",
+                          "Locked in Offseason Coverage From January to September",
+                          "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
+                          "In Season Fantasy Analysis from Zareh Kantzabedian",
+                          "Full Prospect Coverage from TJ Wengert",
+                          "Access to Prospect and Fantasy Tools",
+                          "Full Access to All Our Premium Articles",
+                          "Secure Payment By Stripe - No Hidden Fees",
                         ]
                       ).map((text, i) => (
                         <li key={i} className="flex items-start gap-2 leading-snug">
