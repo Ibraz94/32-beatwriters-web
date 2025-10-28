@@ -41,7 +41,34 @@ function ProspectsContent() {
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [totalProspects, setTotalProspects] = useState(0)
+    const [expandedAnalysis, setExpandedAnalysis] = useState<Set<string>>(new Set())
+    const [expandedWriteUp, setExpandedWriteUp] = useState<Set<string>>(new Set())
     const pageSize = 50 // As per API response pagination.pageSize
+
+    // Toggle functions for accordion
+    const toggleAnalysis = (prospectId: string) => {
+        setExpandedAnalysis(prev => {
+            const newSet = new Set(prev)
+            if (newSet.has(prospectId)) {
+                newSet.delete(prospectId)
+            } else {
+                newSet.add(prospectId)
+            }
+            return newSet
+        })
+    }
+
+    const toggleWriteUp = (prospectId: string) => {
+        setExpandedWriteUp(prev => {
+            const newSet = new Set(prev)
+            if (newSet.has(prospectId)) {
+                newSet.delete(prospectId)
+            } else {
+                newSet.add(prospectId)
+            }
+            return newSet
+        })
+    }
 
     // Debounce search term
     useEffect(() => {
@@ -241,8 +268,9 @@ left-[-28px] right-[-28px]
                         >
                             {/* Rank Number (where profile picture was) */}
                             <div className="col-span-1 flex items-start justify-center">
-                                <div className="flex items-center justify-center w-16 h-16 rounded-3xl bg-[#E64A30] text-white font-bold text-2xl">
-                                  #{prospect.rank !== null ? prospect.rank + 1 : index + 1}
+                                <div className="flex flex-col items-center justify-center w-16 h-16 rounded-3xl bg-[#E64A30] text-white">
+                                    <span className="text-xs">Rank</span>
+                                    <span className="text-2xl font-bold">{prospect.rank !== null ? prospect.rank + 1 : index + 1}</span>
                                 </div>
                             </div>
 
@@ -280,15 +308,6 @@ left-[-28px] right-[-28px]
                                             )}
                                         </div>
 
-                                        {/* Analysis/Write-up */}
-                                        {(prospect.analysis || prospect.writeUp) && (
-                                            <div className="mt-3 text-sm dark:text-[#D2D6E2]">
-                                                <p className="line-clamp-3">
-                                                    {prospect.analysis || prospect.writeUp}
-                                                </p>
-                                            </div>
-                                        )}
-
                                         {/* Rating */}
                                         {prospect.rating && (
                                             <div className="mt-3 flex items-center gap-2">
@@ -305,7 +324,63 @@ left-[-28px] right-[-28px]
                                             </div>
                                         )}
                                     </div>
+
+                                    {/* Analysis and WriteUp Buttons */}
+                                    <div className="flex gap-2 ml-4">
+                                        {prospect.analysis && (
+                                            <button
+                                                onClick={() => toggleAnalysis(prospect.id)}
+                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                                                    expandedAnalysis.has(prospect.id)
+                                                        ? 'bg-[#E64A30] text-white'
+                                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                                }`}
+                                            >
+                                                Analysis
+                                            </button>
+                                        )}
+                                        {prospect.writeUp && (
+                                            <button
+                                                onClick={() => toggleWriteUp(prospect.id)}
+                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                                                    expandedWriteUp.has(prospect.id)
+                                                        ? 'bg-[#E64A30] text-white'
+                                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                                }`}
+                                            >
+                                                WriteUp
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
+
+                                {/* Sliding Analysis Content */}
+                                {prospect.analysis && (
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                        expandedAnalysis.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                    }`}>
+                                        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                                            <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
+                                            <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
+                                                {prospect.analysis}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Sliding WriteUp Content */}
+                                {prospect.writeUp && (
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                        expandedWriteUp.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                    }`}>
+                                        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                                            <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Write-Up</h3>
+                                            <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
+                                                {prospect.writeUp}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
