@@ -1,7 +1,17 @@
 'use client'
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
+import Image from 'next/image'
+import { Search, ChevronDown } from 'lucide-react'
 import { buildApiUrl } from '@/lib/config/api'
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 interface ProspectRow {
     id: string
@@ -26,12 +36,23 @@ function ProspectsContent() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string>('')
     const [position, setPosition] = useState<string | undefined>(undefined)
+    const [searchTerm, setSearchTerm] = useState('')
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [totalProspects, setTotalProspects] = useState(0)
     const pageSize = 50 // As per API response pagination.pageSize
 
-    // Load prospects when week/format/position changes
+    // Debounce search term
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm)
+        }, 500)
+
+        return () => clearTimeout(timer)
+    }, [searchTerm])
+
+    // Load prospects when position, search, or page changes
     useEffect(() => {
         const loadProspects = async () => {
             setLoading(true)
@@ -39,6 +60,7 @@ function ProspectsContent() {
             try {
                 const params = new URLSearchParams()
                 if (position) params.set('position', position)
+                if (debouncedSearchTerm) params.set('search', debouncedSearchTerm)
                 params.set('page', String(currentPage))
                 params.set('pageSize', String(pageSize))
                 const res = await fetch(buildApiUrl(`/api/nfl-prospects?${params.toString()}`), { cache: 'no-store' })
@@ -59,7 +81,7 @@ function ProspectsContent() {
             }
         }
         loadProspects()
-    }, [position, currentPage]) // Depend on position and currentPage for re-fetching
+    }, [position, debouncedSearchTerm, currentPage]) // Depend on position, search, and currentPage for re-fetching
 
     const normalized = useMemo(() => {
         return data.map((r, idx) => {
@@ -99,92 +121,196 @@ left-[-28px] right-[-28px]
                     }}
 
                 ></div>
-                <div className="mb-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            {/* Position Tabs */}
-                            <div className="ml-3 flex items-center gap-1 bg-accent/40 rounded-md p-1">
-                                {['', 'QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'OT', 'IOL', 'S', 'CB', 'K', 'P', 'LS'].map((pos) => (
-                                    <button
-                                        key={pos || 'ALL'}
-                                        onClick={() => setPosition(pos as any)}
-                                        className={`px-3 py-1 rounded ${position === pos ? 'bg-[#E64A30] rounded-full text-white' : 'text-foreground hover:bg-accent'}`}
-                                    >
-                                        {pos || 'ALL'}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
 
-                        {/* Pagination Controls (top right) */}
-                        <div className='flex flex-col items-end'>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                                    disabled={currentPage === 1 || loading}
-                                    className="px-3 py-1 bg-[#E64A30] text-white rounded-md disabled:opacity-50 text-sm"
-                                >
-                                    Previous
-                                </button>
-                                <span className="text-sm text-muted-foreground">
-                                    Page {currentPage} of {totalPages}
-                                </span>
-                                <button
-                                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                                    disabled={currentPage === totalPages || loading}
-                                    className="px-3 py-1 bg-[#E64A30] text-white rounded-md disabled:opacity-50 text-sm"
-                                >
-                                    Next
-                                </button>
-                            </div>
-                            <p className="mt-3 ml-3 text-sm text-muted-foreground">Total Prospects: {totalProspects}</p>
+                {/* Header */}
+                <div className="mb-6 flex flex-col items-center justify-center">
+                    <h1 className="text-3xl font-bold mb-4">NFL Draft Prospects</h1>
+                    <p className="text-muted-foreground mb-6">Explore top NFL draft prospects and their rankings</p>
+                </div>
+
+                {/* Search Bar and Position Filter */}
+                <div className="mb-6 flex flex-col sm:flex-row tems-center justify-center gap-3">
+                    {/* Search Bar */}
+                    <div className="flex-1 w-full sm:max-w-md h-12 border border-[#C7C8CB] rounded-full px-4 bg-white dark:bg-[#262829]">
+                        <div className="relative w-full">
+                            <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <input
+                                type="text"
+                                placeholder="Search prospects..."
+                                value={searchTerm}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value)
+                                    setCurrentPage(1)
+                                }}
+                                className="w-full pl-8 pr-4 py-3 bg-transparent placeholder:text-gray-400 focus:outline-none text-base"
+                            />
                         </div>
                     </div>
 
+                    {/* Position Dropdown */}
+                    <div className="border border-[#C7C8CB] h-12 rounded-full px-3 bg-white dark:bg-[#262829]">
+                        <Select
+                            value={position || "all"}
+                            onValueChange={(value) => {
+                                setPosition(value === "all" ? undefined : value)
+                                setCurrentPage(1)
+                            }}
+                        >
+                            <SelectTrigger className="h-10 w-28 !border-none !border-0 flex items-center gap-2">
+                                <SelectValue placeholder="All Positions" />
+                            </SelectTrigger>
+                            <SelectContent className="border-none">
+                                <SelectGroup>
+                                    <SelectItem value="all">All Positions</SelectItem>
+                                    {['QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'OT', 'IOL', 'S', 'CB', 'K', 'P', 'LS'].map((pos) => (
+                                        <SelectItem key={pos} value={pos}>
+                                            {pos}
+                                        </SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+
+                {/* Pagination Controls */}
+                <div className='flex flex-col sm:flex-row items-center justify-between gap-4 mb-6'>
+                    <p className="text-sm text-muted-foreground">
+                        Total Prospects: <span className="font-semibold">{totalProspects}</span>
+                    </p>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                            disabled={currentPage === 1 || loading}
+                            className="px-4 py-2 bg-[#E64A30] text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors hover:bg-[#d14429]"
+                        >
+                            Previous
+                        </button>
+                        <span className="text-sm font-medium">
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                            disabled={currentPage === totalPages || loading}
+                            className="px-4 py-2 bg-[#E64A30] text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors hover:bg-[#d14429]"
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div className="overflow-x-auto w-full orange-scroll">
-                <table className="w-full min-w-[700px]">
-                    <thead>
-                        <tr className="bg-[#F6BCB2] dark:bg-[#3A3D48] text-[#1D212D] dark:text-white text-center text-xs font-semibold">
-                            <th className="p-3 text-left">#</th>
-                            <th className="p-3 text-left">Player</th>
-                            <th className="p-3 text-left">School</th>
-                            <th className="p-3 text-left">Position</th>
-                            <th className="p-3 text-left">Stars</th>
-                            <th className="p-3 text-left">Overall Rank</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {error && (
-                            <tr>
-                                <td colSpan={6} className="p-6 text-center text-destructive">{error}</td>
-                            </tr>
-                        )}
-                        {!error && loading && (
-                            <tr>
-                                <td colSpan={6} className="p-6 text-center text-muted-foreground">Loading…</td>
-                            </tr>
-                        )}
-                        {!error && !loading && normalized.length === 0 && (
-                            <tr>
-                                <td colSpan={6} className="p-6 text-center text-muted-foreground">No data</td>
-                            </tr>
-                        )}
-                        {!error && !loading && normalized.map((row) => (
-                            <tr key={`${row.rank}-${row.playerName}`} className="text-start bg-[#FFE6E2] dark:bg-[#262829] border-t border-border">
-                                <td className="p-3 text-[#1D212D] dark:text-white">{row.rank}</td>
-                                <td className="p-3 font-medium text-[#1D212D] dark:text-white">{row.playerName}</td>
-                                <td className="p-3 text-[#1D212D] dark:text-white">{row.school}</td>
-                                <td className="p-3 text-[#1D212D] dark:text-white">{row.position}</td>
-                                <td className="p-3 text-[#1D212D] dark:text-white">{row.stars}</td>
-                                <td className="p-3 text-[#1D212D] dark:text-white">{row.overallRank}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+            {/* Error State */}
+            {error && (
+                <div className="text-center py-12">
+                    <p className="text-xl text-destructive">{error}</p>
+                </div>
+            )}
+
+            {/* Loading State */}
+            {!error && loading && (
+                <div className="space-y-4">
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className="grid grid-cols-6 md:grid-cols-12 border-b pb-4 border-border animate-pulse">
+                            <div className="col-span-1">
+                                <div className="w-15 h-15 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+                            </div>
+                            <div className="col-span-5 md:col-span-11 ml-4">
+                                <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
+                                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4"></div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Empty State */}
+            {!error && !loading && normalized.length === 0 && (
+                <div className="text-center py-12">
+                    <p className="text-xl text-muted-foreground">No prospects found</p>
+                </div>
+            )}
+
+            {/* Player Cards */}
+            {!error && !loading && normalized.length > 0 && (
+                <div className="space-y-4">
+                    {data.map((prospect, index) => (
+                        <div
+                            key={`${prospect.id}-${index}`}
+                            className="grid grid-cols-6 md:grid-cols-12 border-b pb-4 border-[var(--color-gray)] hover:bg-accent/5 transition-colors rounded-lg p-2"
+                        >
+                            {/* Rank Number (where profile picture was) */}
+                            <div className="col-span-1 flex items-start justify-center">
+                                <div className="flex items-center justify-center w-16 h-16 rounded-3xl bg-[#E64A30] text-white font-bold text-2xl">
+                                  #{prospect.rank !== null ? prospect.rank + 1 : index + 1}
+                                </div>
+                            </div>
+
+                            {/* Player Details */}
+                            <div className="col-span-5 md:col-span-11 ml-4">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                        {/* Player Name & School Logo */}
+                                        <div className="flex items-center gap-3 mb-1">
+                                            <h2 className="text-xl font-bold">{prospect.name}</h2>
+                                            {/* School Logo/Badge (where rank badge was) */}
+                                            <div className="flex items-center gap-2 px-3 py-1 bg-accent/50 rounded-full">
+                                                <span className="text-sm font-semibold">{prospect.school}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Position, Stars, Eligibility */}
+                                        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-2">
+                                            <span className="font-medium text-foreground">{prospect.position}</span>
+                                            {prospect.stars && (
+                                                <>
+                                                    <span>•</span>
+                                                    <div className="flex items-center gap-1">
+                                                        {[...Array(prospect.stars)].map((_, i) => (
+                                                            <span key={i} className="text-yellow-500">★</span>
+                                                        ))}
+                                                    </div>
+                                                </>
+                                            )}
+                                            {prospect.eligibility && (
+                                                <>
+                                                    <span>•</span>
+                                                    <span>{prospect.eligibility}</span>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        {/* Analysis/Write-up */}
+                                        {(prospect.analysis || prospect.writeUp) && (
+                                            <div className="mt-3 text-sm dark:text-[#D2D6E2]">
+                                                <p className="line-clamp-3">
+                                                    {prospect.analysis || prospect.writeUp}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {/* Rating */}
+                                        {prospect.rating && (
+                                            <div className="mt-3 flex items-center gap-2">
+                                                <span className="text-sm font-semibold">Rating:</span>
+                                                <div className="flex items-center gap-1">
+                                                    <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full bg-[#E64A30]"
+                                                            style={{ width: `${(prospect.rating / 10) * 100}%` }}
+                                                        ></div>
+                                                    </div>
+                                                    <span className="text-sm font-medium">{prospect.rating}/10</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
 
         </div>
     )

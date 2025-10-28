@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { ReduxProvider } from "../../lib/providers/ReduxProvider";
+import { QueryProvider } from "../../lib/providers/QueryProvider";
 import { ToastProvider } from "../components/Toast";
 import IOSScrollFix from "../components/IOSScrollFix";
 import ErrorBoundary from "../../components/ErrorBoundary";
@@ -86,22 +87,24 @@ export default function RootLayout({
       >
         <ErrorBoundary>
           <ReduxProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <ToastProvider>
-                <GoogleAnalytics />
-                <IOSScrollFix />
-                <Header />
-                {children}
-                <DeliveredToComponent />
-                <Footer />
-                <ScrollToTopButton /> 
-              </ToastProvider>
-            </ThemeProvider>
+            <QueryProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <ToastProvider>
+                  <GoogleAnalytics />
+                  <IOSScrollFix />
+                  <Header />
+                  {children}
+                  <DeliveredToComponent />
+                  <Footer />
+                  <ScrollToTopButton /> 
+                </ToastProvider>
+              </ThemeProvider>
+            </QueryProvider>
           </ReduxProvider>
         </ErrorBoundary>
       </body>

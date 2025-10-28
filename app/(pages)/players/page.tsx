@@ -111,9 +111,10 @@ function PlayersContent() {
     const { isAuthenticated } = useAuth();
     const { showToast } = useToast();
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedPosition, setSelectedPosition] = useState("all");
-    const [selectedConference, setSelectedConference] = useState("all");
+    // Initialize state from URL params immediately
+    const [searchTerm, setSearchTerm] = useState(() => searchParams?.get("search") || "");
+    const [selectedPosition, setSelectedPosition] = useState(() => searchParams?.get("position") || "all");
+    const [selectedConference, setSelectedConference] = useState(() => searchParams?.get("conference") || "all");
     const [page, setPage] = useState(() => {
         const pageFromUrl = searchParams?.get("page");
         return pageFromUrl ? parseInt(pageFromUrl, 10) : 1;
@@ -172,19 +173,6 @@ function PlayersContent() {
         setPage(newPage)
         updateURL(newPage, "", "all", "all")
     }
-
-    // Initialize from URL parameters on mount
-    useEffect(() => {
-        const urlPage = searchParams?.get('page')
-        const urlSearch = searchParams?.get('search')
-        const urlPosition = searchParams?.get('position')
-        const urlConference = searchParams?.get('conference')
-
-        if (urlPage) setPage(parseInt(urlPage, 10))
-        if (urlSearch) setSearchTerm(urlSearch)
-        if (urlPosition) setSelectedPosition(urlPosition)
-        if (urlConference) setSelectedConference(urlConference)
-    }, [searchParams])
 
     // Handle search term changes with debouncing
     useEffect(() => {
@@ -356,8 +344,12 @@ function PlayersContent() {
                             size="md"
                             width="w-full md:w-1/2"
                             buttonLabel="Search here"
-                            onButtonClick={() => alert("Button clicked!")}
-                            onChange={(val) => console.log(val)}
+                            value={searchTerm}
+                            onChange={(value) => setSearchTerm(value)}
+                            onButtonClick={() => {
+                                setPage(1);
+                                updateURL(1, searchTerm, selectedPosition, selectedConference);
+                            }}
                         />
                     </div>
                 </div>

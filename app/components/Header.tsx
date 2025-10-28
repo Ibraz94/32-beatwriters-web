@@ -124,6 +124,7 @@ function Header() {
         { href: "/nuggets", label: "Latest" },
         { href: "/saved-nuggets", label: "Saved Nuggets" },
         { href: "/players-nuggets", label: "My Players" },
+        { href: "/leagues", label: "Leagues" },
     ];
 
     const toolOptions = [

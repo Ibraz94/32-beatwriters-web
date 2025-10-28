@@ -266,7 +266,7 @@ export default function LatestNuggets() {
 
           {/* View All Nuggets Button */}
           {latestNuggets.length > 0 && (
-            <div className="hidden md:flex justify-end w-full py-8 text-white">
+            <div className="hidden md:flex justify-end w-full py-8 text-white pr-[220px]">
               <Button
                 variant="orange"
                 className="dark:hover:bg-[#FF8C5E] whitespace-nowrap"

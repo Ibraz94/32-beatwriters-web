@@ -9,6 +9,7 @@ interface SearchBarProps {
     design?: string; // input styling
     width?: string; // Tailwind width classes
     className?: string; // outer wrapper custom classes
+    value?: string; // controlled value
     onChange?: (value: string) => void;
     buttonLabel?: string;
     onButtonClick?: () => void;
@@ -20,11 +21,15 @@ export default function SearchBar({
     design = "",
     width = "w-full",
     className = "",
+    value: controlledValue,
     onChange,
     buttonLabel,
     onButtonClick,
 }: SearchBarProps) {
-    const [searchTerm, setSearchTerm] = useState("");
+    const [internalSearchTerm, setInternalSearchTerm] = useState("");
+    
+    // Use controlled value if provided, otherwise use internal state
+    const searchTerm = controlledValue !== undefined ? controlledValue : internalSearchTerm;
 
     const sizeClasses =
         size === "sm"
@@ -34,8 +39,17 @@ export default function SearchBar({
                 : "py-3 text-base";
 
     const handleChange = (value: string) => {
-        setSearchTerm(value);
+        // Only update internal state if not controlled
+        if (controlledValue === undefined) {
+            setInternalSearchTerm(value);
+        }
         onChange?.(value);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && onButtonClick) {
+            onButtonClick();
+        }
     };
 
     return (
@@ -50,6 +64,7 @@ export default function SearchBar({
                     placeholder={placeholder}
                     value={searchTerm}
                     onChange={(e) => handleChange(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     className={`filter-input w-full pl-10 ${buttonLabel ? "pr-24" : "pr-10"
                         } rounded-full shadow-sm placeholder:text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-transparent ${sizeClasses} ${design}`}
                 />

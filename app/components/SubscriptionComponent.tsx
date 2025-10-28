@@ -247,7 +247,7 @@ export default function SubscriptionComponent() {
                     onClick={() => handleSubscribe(currentPlan!.id)}
                     className="w-full text-lg py-3 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md dark:text-[#C7C8CB] dark:border-[#72757C]"
                   >
-                    Join with FastDrive
+                    Join with FastDraft
                   </button>
 
                   <div className="mt-8 text-left border-t border-gray-200 pt-5">
@@ -283,8 +283,8 @@ export default function SubscriptionComponent() {
       <div className="hidden lg:block mx-auto relative z-10">
         {/* Heading */}
         <div className="text-center font-oswald mb-16">
-          <h1 className="text-6xl font-bold">Our Pricing Plan</h1>
-          <p className="text-xl mt-6">Sign up for exclusive access to all our reports, tools</p>
+          <h1 className="text-5xl">Our Pricing Plan</h1>
+          <p className="text-sm sm:text-base md:text-lg max-w-5xl mx-auto px-2 text-[var(--color-gray)] dark:text-[#C7C8CB] mt-6">Sign up for exclusive access to all our reports, tools</p>
         </div>
 
 
@@ -401,13 +401,13 @@ export default function SubscriptionComponent() {
                   <span className="text-5xl dark:text-white">$9.99</span>
                   <span className="text-xl text-black dark:text-white">/after free month</span>
                 </div>
-                <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">First month free with sign up</p>
+                <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">First month is free with sign up then $9.99 a month after</p>
               </div>
               <button
                 onClick={() => handleSubscribe(currentPlan!.id)}
                 className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none"
               >
-                Join with FastDrive
+                Join with FastDraft
               </button>
 
               <div className="mt-10 text-left border-t border-gray-200 pt-6 dark:border-t-[#72757C]">
