@@ -183,7 +183,7 @@ left-[-28px] right-[-28px]
                                 setCurrentPage(1)
                             }}
                         >
-                            <SelectTrigger className="h-10 w-28 !border-none !border-0 flex items-center gap-2">
+                            <SelectTrigger className="h-10 w-32 !border-none !border-0 flex items-center gap-2">
                                 <SelectValue placeholder="All Positions" />
                             </SelectTrigger>
                             <SelectContent className="border-none">
@@ -302,12 +302,10 @@ left-[-28px] right-[-28px]
                                             <h1>Position :</h1>
                                             <span className="font-semibold text-foreground">{prospect.position}</span>
 
-                                            {prospect.eligibility && (
-                                                <>
-                                                    <span>Eligibilty : </span>
-                                                    <span className="font-semibold text-foreground">{prospect.eligibility}</span>
-                                                </>
-                                            )}
+                                            <span>Eligibilty : </span>
+                                            <span className="font-semibold text-foreground">
+                                                {prospect.eligibility && prospect.eligibility.trim() !== '' ? prospect.eligibility : 'N/A'}
+                                            </span>
                                         </div>
 
                                         {/* Rating */}
