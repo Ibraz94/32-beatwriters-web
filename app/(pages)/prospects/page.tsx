@@ -19,6 +19,8 @@ interface ProspectRow {
     name: string
     school: string
     position: string
+    positionGroup: string
+    logo: string | null
     picture: string | null
     rank: number | null
     writeUp: string | null
@@ -167,8 +169,8 @@ left-[-28px] right-[-28px]
 
                 {/* Header */}
                 <div className="mb-6 flex flex-col items-center justify-center">
-                    <h1 className="text-3xl font-bold mb-4">NFL Draft Prospects</h1>
-                    <p className="text-muted-foreground mb-6">Explore top NFL draft prospects and their rankings</p>
+                    <h1 className="text-3xl font-bold mb-4">NFL Prospects</h1>
+                    <p className="text-muted-foreground mb-6">Explore top NFL prospects and their rankings</p>
                 </div>
 
                 {/* Search Bar, Position Filter, and Sort */}
@@ -315,8 +317,19 @@ left-[-28px] right-[-28px]
                             <div className="col-span-5 md:col-span-11 ml-4">
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
-                                        {/* Player Name & School Logo */}
+                                        {/* School Logo & Player Name */}
                                         <div className="flex items-center gap-3 mb-1">
+                                            {/* School Logo */}
+                                            {prospect.logo && (
+                                                <div className="relative w-12 h-12 flex-shrink-0">
+                                                    <Image
+                                                        src={prospect.logo}
+                                                        alt={`${prospect.school} logo`}
+                                                        fill
+                                                        className="object-contain"
+                                                    />
+                                                </div>
+                                            )}
                                             <h2 className="text-3xl font-bold">{prospect.name}</h2>
                                             {prospect.stars && (
                                                 <>
@@ -330,16 +343,27 @@ left-[-28px] right-[-28px]
                                             )}
                                         </div>
 
-                                        {/* Position, Stars, Eligibility */}
+                                        {/* School, Position, Position Group, Eligibility */}
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2 mt-3">
 
-                                            {/* School Logo/Badge (where rank badge was) */}
+                                            {/* School */}
                                             <h1>School :</h1>
                                             <span className="text-sm font-semibold">{prospect.school} </span>
+
+                                            {/* Position */}
                                             <h1>Position :</h1>
                                             <span className="font-semibold text-foreground">{prospect.position}</span>
 
-                                            <span>Eligibilty : </span>
+                                            {/* Position Group */}
+                                            {prospect.positionGroup && (
+                                                <>
+                                                    <span>•</span>
+                                                    <span className="font-semibold text-foreground">{prospect.positionGroup}</span>
+                                                </>
+                                            )}
+
+                                            {/* Eligibility */}
+                                            <span>Eligibility : </span>
                                             <span className="font-semibold text-foreground">
                                                 {prospect.eligibility && prospect.eligibility.trim() !== '' ? prospect.eligibility : 'N/A'}
                                             </span>
