@@ -38,6 +38,7 @@ function ProspectsContent() {
     const [position, setPosition] = useState<string | undefined>(undefined)
     const [searchTerm, setSearchTerm] = useState('')
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+    const [sortBy, setSortBy] = useState<'rank' | 'name'>('rank')
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [totalProspects, setTotalProspects] = useState(0)
@@ -95,7 +96,22 @@ function ProspectsContent() {
                 const json = await res.json()
                 const prospects = json?.data?.prospects
                 const pagination = json?.data?.pagination
-                const rows: ProspectRow[] = Array.isArray(prospects) ? prospects : []
+                let rows: ProspectRow[] = Array.isArray(prospects) ? prospects : []
+
+                // Filter only active prospects
+                rows = rows.filter(prospect => prospect.status === 'active')
+
+                // Apply client-side sorting
+                if (sortBy === 'name') {
+                    rows = [...rows].sort((a, b) => a.name.localeCompare(b.name))
+                } else if (sortBy === 'rank') {
+                    rows = [...rows].sort((a, b) => {
+                        const rankA = a.rank ?? Infinity
+                        const rankB = b.rank ?? Infinity
+                        return rankA - rankB
+                    })
+                }
+
                 setData(rows)
                 if (pagination) {
                     setTotalPages(pagination.totalPages)
@@ -108,7 +124,7 @@ function ProspectsContent() {
             }
         }
         loadProspects()
-    }, [position, debouncedSearchTerm, currentPage]) // Depend on position, search, and currentPage for re-fetching
+    }, [position, debouncedSearchTerm, currentPage, sortBy]) // Depend on position, search, currentPage, and sortBy for re-fetching
 
     const normalized = useMemo(() => {
         return data.map((r, idx) => {
@@ -155,8 +171,8 @@ left-[-28px] right-[-28px]
                     <p className="text-muted-foreground mb-6">Explore top NFL draft prospects and their rankings</p>
                 </div>
 
-                {/* Search Bar and Position Filter */}
-                <div className="mb-6 flex flex-col sm:flex-row tems-center justify-center gap-3">
+                {/* Search Bar, Position Filter, and Sort */}
+                <div className="mb-6 flex flex-col sm:flex-row items-center justify-center gap-3">
                     {/* Search Bar */}
                     <div className="flex-1 w-full sm:max-w-md h-12 border border-[#C7C8CB] rounded-full px-4 bg-white dark:bg-[#262829]">
                         <div className="relative w-full">
@@ -198,13 +214,34 @@ left-[-28px] right-[-28px]
                             </SelectContent>
                         </Select>
                     </div>
+
+                    {/* Sort Dropdown */}
+                    <div className="border border-[#C7C8CB] h-12 rounded-full px-3 bg-white dark:bg-[#262829]">
+                        <Select
+                            value={sortBy}
+                            onValueChange={(value: 'rank' | 'name') => {
+                                setSortBy(value)
+                                setCurrentPage(1)
+                            }}
+                        >
+                            <SelectTrigger className="h-10 w-40 !border-none !border-0 flex items-center gap-2">
+                                <SelectValue placeholder="Sort By" />
+                            </SelectTrigger>
+                            <SelectContent className="border-none">
+                                <SelectGroup>
+                                    <SelectItem value="rank">Sort by Rank</SelectItem>
+                                    <SelectItem value="name">Sort by Name</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
 
                 {/* Pagination Controls */}
-                <div className='flex flex-col sm:flex-row items-center justify-between gap-4 mb-6'>
-                    <p className="text-sm text-muted-foreground">
+                <div className='flex flex-col sm:flex-row items-center justify-end gap-4 mb-6'>
+                    {/* <p className="text-sm text-muted-foreground">
                         Total Prospects: <span className="font-semibold">{totalProspects}</span>
-                    </p>
+                    </p> */}
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
@@ -270,7 +307,7 @@ left-[-28px] right-[-28px]
                             <div className="col-span-1 flex items-start justify-center">
                                 <div className="flex flex-col items-center justify-center w-16 h-16 rounded-3xl bg-[#E64A30] text-white">
                                     <span className="text-xs">Rank</span>
-                                    <span className="text-2xl font-bold">{prospect.rank !== null ? prospect.rank + 1 : index + 1}</span>
+                                    <span className="text-2xl font-bold">{prospect.rank || index + 1}</span>
                                 </div>
                             </div>
 
