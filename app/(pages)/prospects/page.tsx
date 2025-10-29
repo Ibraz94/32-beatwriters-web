@@ -280,16 +280,7 @@ left-[-28px] right-[-28px]
                                     <div className="flex-1">
                                         {/* Player Name & School Logo */}
                                         <div className="flex items-center gap-3 mb-1">
-                                            <h2 className="text-xl font-bold">{prospect.name}</h2>
-                                            {/* School Logo/Badge (where rank badge was) */}
-                                            <div className="flex items-center gap-2 px-3 py-1 bg-accent/50 rounded-full">
-                                                <span className="text-sm font-semibold">{prospect.school}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Position, Stars, Eligibility */}
-                                        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-2">
-                                            <span className="font-medium text-foreground">{prospect.position}</span>
+                                            <h2 className="text-3xl font-bold">{prospect.name}</h2>
                                             {prospect.stars && (
                                                 <>
                                                     <span>•</span>
@@ -300,18 +291,29 @@ left-[-28px] right-[-28px]
                                                     </div>
                                                 </>
                                             )}
+                                        </div>
+
+                                        {/* Position, Stars, Eligibility */}
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2 mt-3">
+
+                                            {/* School Logo/Badge (where rank badge was) */}
+                                            <h1>School :</h1>
+                                            <span className="text-sm font-semibold">{prospect.school} </span>
+                                            <h1>Position :</h1>
+                                            <span className="font-semibold text-foreground">{prospect.position}</span>
+
                                             {prospect.eligibility && (
                                                 <>
-                                                    <span>•</span>
-                                                    <span>{prospect.eligibility}</span>
+                                                    <span>Eligibilty : </span>
+                                                    <span className="font-semibold text-foreground">{prospect.eligibility}</span>
                                                 </>
                                             )}
                                         </div>
 
                                         {/* Rating */}
-                                        {prospect.rating && (
+                                        {prospect.rating !== null && prospect.rating !== undefined && (
                                             <div className="mt-3 flex items-center gap-2">
-                                                <span className="text-sm font-semibold">Rating:</span>
+                                                <span className="text-sm font-semibold ">Rating:</span>
                                                 <div className="flex items-center gap-1">
                                                     <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                                         <div
@@ -330,11 +332,10 @@ left-[-28px] right-[-28px]
                                         {prospect.analysis && (
                                             <button
                                                 onClick={() => toggleAnalysis(prospect.id)}
-                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-                                                    expandedAnalysis.has(prospect.id)
-                                                        ? 'bg-[#E64A30] text-white'
-                                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                                }`}
+                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${expandedAnalysis.has(prospect.id)
+                                                    ? 'bg-[#E64A30] text-white'
+                                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                                    }`}
                                             >
                                                 Analysis
                                             </button>
@@ -342,11 +343,10 @@ left-[-28px] right-[-28px]
                                         {prospect.writeUp && (
                                             <button
                                                 onClick={() => toggleWriteUp(prospect.id)}
-                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-                                                    expandedWriteUp.has(prospect.id)
-                                                        ? 'bg-[#E64A30] text-white'
-                                                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                                }`}
+                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${expandedWriteUp.has(prospect.id)
+                                                    ? 'bg-[#E64A30] text-white'
+                                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                                    }`}
                                             >
                                                 WriteUp
                                             </button>
@@ -356,9 +356,8 @@ left-[-28px] right-[-28px]
 
                                 {/* Sliding Analysis Content */}
                                 {prospect.analysis && (
-                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                        expandedAnalysis.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                                    }`}>
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedAnalysis.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                        }`}>
                                         <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
                                             <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
                                             <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
@@ -370,9 +369,8 @@ left-[-28px] right-[-28px]
 
                                 {/* Sliding WriteUp Content */}
                                 {prospect.writeUp && (
-                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                        expandedWriteUp.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                                    }`}>
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedWriteUp.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                        }`}>
                                         <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
                                             <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Write-Up</h3>
                                             <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
