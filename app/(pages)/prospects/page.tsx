@@ -45,6 +45,7 @@ function ProspectsContent() {
     const [totalPages, setTotalPages] = useState(1)
     const [totalProspects, setTotalProspects] = useState(0)
     const [expandedAnalysis, setExpandedAnalysis] = useState<Set<string>>(new Set())
+    const [expandedWriteUp, setExpandedWriteUp] = useState<Set<string>>(new Set())
     const pageSize = 50 // As per API response pagination.pageSize
 
     // Toggle functions for accordion
@@ -60,7 +61,17 @@ function ProspectsContent() {
         })
     }
 
-    // Removed write-up toggle (write-up hidden per spec)
+    const toggleWriteUp = (prospectId: string) => {
+        setExpandedWriteUp(prev => {
+            const newSet = new Set(prev)
+            if (newSet.has(prospectId)) {
+                newSet.delete(prospectId)
+            } else {
+                newSet.add(prospectId)
+            }
+            return newSet
+        })
+    }
 
     // Debounce search term
     useEffect(() => {
@@ -123,12 +134,14 @@ function ProspectsContent() {
             const overallRank = r.rank ?? '—' // Use existing rank, or '—' if null
             const school = r.school || '—'
             const position = r.position || '—'
+            const stars = r.stars ?? '—'
             return {
                 rank: idx + 1,
                 playerName,
                 overallRank,
                 school,
                 position,
+                stars,
                 // Add prospect-specific normalized fields here
             }
         })
@@ -318,19 +331,92 @@ left-[-28px] right-[-28px]
                                                 </div>
                                             )}
                                             <h2 className="text-3xl font-bold">{prospect.name}</h2>
+                                            {prospect.stars && (
+                                                <>
+                                                    <span>•</span>
+                                                    <div className="flex items-center gap-1">
+                                                        {[...Array(prospect.stars)].map((_, i) => (
+                                                            <span key={i} className="text-yellow-500">★</span>
+                                                        ))}
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
 
-                                        {/* Removed School/Position/Eligibility per spec */}
+                                        {/* School, Position, Position Group, Eligibility */}
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2 mt-3">
 
-                                        {/* Removed Rating and Stars per spec */}
+                                            {/* School */}
+                                            <h1>School :</h1>
+                                            <span className="text-sm font-semibold">{prospect.school} </span>
+
+                                            {/* Position */}
+                                            <h1>Position :</h1>
+                                            <span className="font-semibold text-foreground">{prospect.position}</span>
+
+                                            {/* Position Group */}
+                                            {prospect.positionGroup && (
+                                                <>
+                                                    <span>•</span>
+                                                    <span className="font-semibold text-foreground">{prospect.positionGroup}</span>
+                                                </>
+                                            )}
+
+                                            {/* Eligibility */}
+                                            <span>Eligibility : </span>
+                                            <span className="font-semibold text-foreground">
+                                                {prospect.eligibility && prospect.eligibility.trim() !== '' ? prospect.eligibility : 'N/A'}
+                                            </span>
+                                        </div>
+
+                                        {/* Rating */}
+                                        {prospect.rating !== null && prospect.rating !== undefined && (
+                                            <div className="mt-3 flex items-center gap-2">
+                                                <span className="text-sm font-semibold ">Rating:</span>
+                                                <div className="flex items-center gap-1">
+                                                    <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full bg-[#E64A30]"
+                                                            style={{ width: `${(prospect.rating / 10) * 100}%` }}
+                                                        ></div>
+                                                    </div>
+                                                    <span className="text-sm font-medium">{prospect.rating}/10</span>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
-                                    {/* Removed buttons; Analysis auto-shows when present */}
+                                    {/* Analysis and WriteUp Buttons */}
+                                    <div className="flex gap-2 ml-4">
+                                        {prospect.analysis && (
+                                            <button
+                                                onClick={() => toggleAnalysis(prospect.id)}
+                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${expandedAnalysis.has(prospect.id)
+                                                    ? 'bg-[#E64A30] text-white'
+                                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                                    }`}
+                                            >
+                                                Analysis
+                                            </button>
+                                        )}
+                                        {prospect.writeUp && (
+                                            <button
+                                                onClick={() => toggleWriteUp(prospect.id)}
+                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${expandedWriteUp.has(prospect.id)
+                                                    ? 'bg-[#E64A30] text-white'
+                                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                                                    }`}
+                                            >
+                                                WriteUp
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
 
-                                {/* Analysis auto-visible when available */}
+                                {/* Sliding Analysis Content */}
                                 {prospect.analysis && (
-                                    <div>
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedAnalysis.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                        }`}>
                                         <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
                                             <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
                                             <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
@@ -340,7 +426,18 @@ left-[-28px] right-[-28px]
                                     </div>
                                 )}
 
-                                {/* Write-up removed per spec */}
+                                {/* Sliding WriteUp Content */}
+                                {prospect.writeUp && (
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedWriteUp.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                        }`}>
+                                        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                                            <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Write-Up</h3>
+                                            <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
+                                                {prospect.writeUp}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
