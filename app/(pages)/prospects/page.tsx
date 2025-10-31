@@ -44,34 +44,10 @@ function ProspectsContent() {
     const [currentPage, setCurrentPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [totalProspects, setTotalProspects] = useState(0)
-    const [expandedAnalysis, setExpandedAnalysis] = useState<Set<string>>(new Set())
-    const [expandedWriteUp, setExpandedWriteUp] = useState<Set<string>>(new Set())
+    
     const pageSize = 50 // As per API response pagination.pageSize
 
-    // Toggle functions for accordion
-    const toggleAnalysis = (prospectId: string) => {
-        setExpandedAnalysis(prev => {
-            const newSet = new Set(prev)
-            if (newSet.has(prospectId)) {
-                newSet.delete(prospectId)
-            } else {
-                newSet.add(prospectId)
-            }
-            return newSet
-        })
-    }
-
-    const toggleWriteUp = (prospectId: string) => {
-        setExpandedWriteUp(prev => {
-            const newSet = new Set(prev)
-            if (newSet.has(prospectId)) {
-                newSet.delete(prospectId)
-            } else {
-                newSet.add(prospectId)
-            }
-            return newSet
-        })
-    }
+    // Removed toggle state and handlers for Analysis/Write-Up as Analysis auto-shows and Write-Up is removed
 
     // Debounce search term
     useEffect(() => {
@@ -347,11 +323,11 @@ left-[-28px] right-[-28px]
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2 mt-3">
 
                                             {/* School */}
-                                            <h1>School :</h1>
+                                            {/* <h1>School :</h1> */}
                                             <span className="text-sm font-semibold">{prospect.school} </span>
 
                                             {/* Position */}
-                                            <h1>Position :</h1>
+                                            {/* <h1>Position :</h1> */}
                                             <span className="font-semibold text-foreground">{prospect.position}</span>
 
                                             {/* Position Group */}
@@ -363,16 +339,16 @@ left-[-28px] right-[-28px]
                                             )}
 
                                             {/* Eligibility */}
-                                            <span>Eligibility : </span>
+                                            {/* <span>Eligibility : </span> */}
                                             <span className="font-semibold text-foreground">
-                                                {prospect.eligibility && prospect.eligibility.trim() !== '' ? prospect.eligibility : 'N/A'}
+                                                {prospect.eligibility && prospect.eligibility.trim() !== '' ? prospect.eligibility : ''}
                                             </span>
                                         </div>
 
                                         {/* Rating */}
                                         {prospect.rating !== null && prospect.rating !== undefined && (
                                             <div className="mt-3 flex items-center gap-2">
-                                                <span className="text-sm font-semibold ">Rating:</span>
+                                                {/* <span className="text-sm font-semibold ">Rating:</span> */}
                                                 <div className="flex items-center gap-1">
                                                     <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                                         <div
@@ -386,58 +362,20 @@ left-[-28px] right-[-28px]
                                         )}
                                     </div>
 
-                                    {/* Analysis and WriteUp Buttons */}
-                                    <div className="flex gap-2 ml-4">
-                                        {prospect.analysis && (
-                                            <button
-                                                onClick={() => toggleAnalysis(prospect.id)}
-                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${expandedAnalysis.has(prospect.id)
-                                                    ? 'bg-[#E64A30] text-white'
-                                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                                    }`}
-                                            >
-                                                Analysis
-                                            </button>
-                                        )}
-                                        {prospect.writeUp && (
-                                            <button
-                                                onClick={() => toggleWriteUp(prospect.id)}
-                                                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${expandedWriteUp.has(prospect.id)
-                                                    ? 'bg-[#E64A30] text-white'
-                                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-                                                    }`}
-                                            >
-                                                WriteUp
-                                            </button>
-                                        )}
-                                    </div>
+                                    {/* Removed Analysis/Write-Up toggle buttons */}
                                 </div>
 
-                                {/* Sliding Analysis Content */}
+                                {/* Analysis auto-show when present */}
                                 {prospect.analysis && (
-                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedAnalysis.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                                        }`}>
-                                        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
-                                            <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
-                                            <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
-                                                {prospect.analysis}
-                                            </p>
-                                        </div>
+                                    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                                        <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
+                                        <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
+                                            {prospect.analysis}
+                                        </p>
                                     </div>
                                 )}
 
-                                {/* Sliding WriteUp Content */}
-                                {prospect.writeUp && (
-                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedWriteUp.has(prospect.id) ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                                        }`}>
-                                        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
-                                            <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Write-Up</h3>
-                                            <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
-                                                {prospect.writeUp}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
+                                {/* Write-Up removed */}
                             </div>
                         </div>
                     ))}
