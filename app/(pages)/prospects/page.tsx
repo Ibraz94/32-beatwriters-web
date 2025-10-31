@@ -325,7 +325,7 @@ left-[-28px] right-[-28px]
                                             {/* School */}
                                             {/* <h1>School :</h1> */}
                                             <span className="text-sm font-semibold">{prospect.school} </span>
-
+                                            <span>•</span>
                                             {/* Position */}
                                             {/* <h1>Position :</h1> */}
                                             <span className="font-semibold text-foreground">{prospect.position}</span>
@@ -337,7 +337,7 @@ left-[-28px] right-[-28px]
                                                     <span className="font-semibold text-foreground">{prospect.positionGroup}</span>
                                                 </>
                                             )}
-
+                                            <span>•</span>
                                             {/* Eligibility */}
                                             {/* <span>Eligibility : </span> */}
                                             <span className="font-semibold text-foreground">
