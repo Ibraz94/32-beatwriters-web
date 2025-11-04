@@ -34,6 +34,9 @@ function RankingsContent() {
   const [week, setWeek] = useState<number | undefined>(undefined)
   const [format, setFormat] = useState<'standard' | 'halfPPR' | 'ppr'>('ppr')
   const [position, setPosition] = useState<PositionType>('QB')
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [sortColumn, setSortColumn] = useState<string | null>(null)
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
   // Load weeks and set current week
   useEffect(() => {
@@ -77,31 +80,92 @@ function RankingsContent() {
   }, [week, format, position])
 
   const normalized = useMemo(() => {
-    return data.map((r, idx) => {
+    // First, map all data and calculate projection points
+    const playersWithProj = data.map((r) => {
       const playerName = r.player || r.name || r.Player || r.player_name || '—'
       const projections = (r as any)?.projections || {}
       const stats = (r as any)?.stats || {}
       const proj = projections?.[format] ?? projections?.ppr ?? null
       
       return {
-        rank: idx + 1,
         playerName,
-        proj,
+        proj: proj ?? 0, // Use 0 for sorting if null
         passY: stats?.passingYards ?? null,
         passTd: stats?.passingTDs ?? null,
         rushY: stats?.rushingYards ?? null,
         recY: stats?.receivingYards ?? null,
         rec: stats?.receptions ?? null,
-        // Use totalTDs (probability-based) if available, otherwise sum rushing and receiving TDs
-        tds: stats?.totalTDs ?? (stats?.rushingTDs ?? 0) + (stats?.receivingTDs ?? 0),
+        // Use tdDisplayValue (bookOdds like "-150", "+300") for display, fallback to calculated totalTDs
+        tds: stats?.tdDisplayValue ?? stats?.totalTDs ?? (stats?.rushingTDs ?? 0) + (stats?.receivingTDs ?? 0),
       }
     })
+    
+    // Sort by projection points (descending) to calculate rank
+    const sortedByProj = [...playersWithProj].sort((a, b) => {
+      const aProj = a.proj ?? 0
+      const bProj = b.proj ?? 0
+      return bProj - aProj // Descending order (highest first)
+    })
+    
+    // Create a map of playerName to rank based on projection points
+    const rankMap = new Map<string, number>()
+    sortedByProj.forEach((player, idx) => {
+      rankMap.set(player.playerName, idx + 1)
+    })
+    
+    // Map back to original data with ranks based on projection points
+    return playersWithProj.map((player) => ({
+      ...player,
+      rank: rankMap.get(player.playerName) ?? 999, // Default to 999 if not found
+      proj: player.proj === 0 ? null : player.proj, // Convert 0 back to null for display
+    }))
   }, [data, format])
+
+  // Filter normalized data by search term
+  const filteredData = useMemo(() => {
+    let filtered = normalized
+    
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase().trim()
+      filtered = filtered.filter(row => 
+        row.playerName.toLowerCase().includes(searchLower)
+      )
+    }
+    
+    // Apply sorting
+    if (sortColumn) {
+      filtered = [...filtered].sort((a, b) => {
+        const aValue = (a as any)[sortColumn]
+        const bValue = (b as any)[sortColumn]
+        
+        // Handle null/undefined values
+        if (aValue == null && bValue == null) return 0
+        if (aValue == null) return 1
+        if (bValue == null) return -1
+        
+        // Handle string values (for TDs bookOdds)
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return sortDirection === 'asc' 
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue)
+        }
+        
+        // Handle numeric values
+        const numA = typeof aValue === 'number' ? aValue : parseFloat(aValue) || 0
+        const numB = typeof bValue === 'number' ? bValue : parseFloat(bValue) || 0
+        
+        return sortDirection === 'asc' ? numA - numB : numB - numA
+      })
+    }
+    
+    return filtered
+  }, [normalized, searchTerm, sortColumn, sortDirection])
 
   // Get columns based on position
   const getColumns = (pos: PositionType): Column[] => {
     const baseColumns: Column[] = [
-      { key: 'rank', label: '#' },
+      { key: 'rank', label: 'Rank' },
       { key: 'playerName', label: 'Player' },
       { key: 'proj', label: 'Proj. Pts' }
     ]
@@ -152,6 +216,18 @@ function RankingsContent() {
 
   const columns = getColumns(position)
 
+  // Handle column sorting
+  const handleSort = (columnKey: string) => {
+    if (sortColumn === columnKey) {
+      // Toggle direction if clicking the same column
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      // Set new column and default to descending for numeric columns
+      setSortColumn(columnKey)
+      setSortDirection('desc')
+    }
+  }
+
   return (
     <div className="container mx-auto px-3 sm:px-6 lg:px-7 py-7">
       <div className='relative py-5'>
@@ -164,9 +240,9 @@ function RankingsContent() {
           }}
 
         ></div>
-        <div className="mb-6">
+        <div className="mb-1">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               {/* Week Dropdown */}
               <label className="text-sm text-muted-foreground">Week</label>
               <select
@@ -208,7 +284,21 @@ function RankingsContent() {
               </select>
             </div>
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">Vegas prop driven. Expect more props to be added as the week progresses.</p>
+
+          {/* Search Field and Description - Same row */}
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">Vegas prop driven. Expect more props to be added as the week progresses.</p>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-muted-foreground">Search</label>
+              <input
+                type="text"
+                placeholder="Player name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="px-3 py-2 border border-border rounded-md dark:bg-[#262829] min-w-[200px] max-w-[300px]"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -216,9 +306,31 @@ function RankingsContent() {
         <table className="w-full min-w-[700px]">
           <thead>
             <tr className="bg-[#F6BCB2] dark:bg-[#3A3D48] text-[#1D212D] dark:text-white text-center text-xs font-semibold">
-              {columns.map((col) => (
-                <th key={col.key} className="p-3 text-center">{col.label}</th>
-              ))}
+              {columns.map((col) => {
+                const isSortable = col.key === 'proj'
+                const isSorted = sortColumn === col.key
+                
+                return (
+                  <th 
+                    key={col.key} 
+                    className={`p-3 text-center ${isSortable ? 'cursor-pointer hover:bg-[#E8A89A] dark:hover:bg-[#4A4D58] select-none' : ''}`}
+                    onClick={() => isSortable && handleSort(col.key)}
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <span>{col.label}</span>
+                      {isSortable && (
+                        <span className="text-xs">
+                          {isSorted ? (
+                            sortDirection === 'asc' ? '↑' : '↓'
+                          ) : (
+                            <span className="opacity-30">↕</span>
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  </th>
+                )
+              })}
             </tr>
           </thead>
           <tbody>
@@ -232,21 +344,33 @@ function RankingsContent() {
                 <td colSpan={columns.length} className="p-6 text-center text-muted-foreground">Loading…</td>
               </tr>
             )}
-            {!error && !loading && normalized.length === 0 && (
+            {!error && !loading && filteredData.length === 0 && (
               <tr>
-                <td colSpan={columns.length} className="p-6 text-center text-muted-foreground">No data</td>
+                <td colSpan={columns.length} className="p-6 text-center text-muted-foreground">
+                  {searchTerm ? `No players found matching "${searchTerm}"` : 'No data'}
+                </td>
               </tr>
             )}
-            {!error && !loading && normalized.map((row) => (
+            {!error && !loading && filteredData.map((row, index) => (
               <tr key={`${row.rank}-${row.playerName}`} className="text-center bg-[#FFE6E2] dark:bg-[#262829] border-t border-border">
                 {columns.map((col) => {
                   const value = (row as any)[col.key]
-                  let displayValue = value ?? '—'
+                  let displayValue: string | number = value ?? '—'
                   
-                  // Format numbers with 1 decimal place
-                  if (typeof value === 'number') {
+                  // Rank column: always use rank based on projection points (not index)
+                  if (col.key === 'rank') {
+                    displayValue = typeof value === 'number' ? value.toString() : '—'
+                  }
+                  // Format numbers
+                  else if (typeof value === 'number') {
+                    // Show 1 decimal place for numeric values
                     displayValue = value.toFixed(1)
                   }
+                  // TDs column: display as string if it's bookOdds format (e.g., "-150", "+300")
+                  else if (col.key === 'tds' && typeof value === 'string') {
+                    displayValue = value // Already in bookOdds format, use as-is
+                  }
+                  
                   return (
                     <td key={col.key} className="p-3 text-[#1D212D] dark:text-white">
                       {col.key === 'playerName' ? <span className="font-medium">{displayValue}</span> : displayValue}
