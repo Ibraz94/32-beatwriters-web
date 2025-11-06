@@ -100,13 +100,14 @@ export default function NewArticles() {
                                         className="flex items-center gap-4 hover:bg-gray-50 px-3 rounded-xl transition-all h-24 md:h-28 border border-gray-100 dark:border-none dark:hover:bg-[#1A1A1A]"
                                     >
                                         {/* Thumbnail */}
-                                        <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden flex-shrink-0">
+                                        <div className="relative rounded-xl overflow-hidden flex-shrink-0">
                                             {article.featuredImage ? (
                                                 <Image
                                                     src={getImageUrl(article.featuredImage) || ""}
                                                     alt={article.title}
-                                                    fill
-                                                    className="object-cover"
+                                                    width={170}
+                                                    height={170}
+                                                    className="object-cover aspect-video"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-gray-200" />

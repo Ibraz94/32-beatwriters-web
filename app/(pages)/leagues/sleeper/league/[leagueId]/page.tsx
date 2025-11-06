@@ -1,22 +1,38 @@
 "use client";
 
-import { useSleeperRosters } from "@/lib/hooks/useSleeper";
+import { useSleeperRosters, useSleeperLeagueUsers, useSleeperPlayers, useSleeperLeague } from "@/lib/hooks/useSleeper";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Loader2, Trophy, TrendingUp } from "lucide-react";
+import { ArrowLeft, Loader2, Trophy, TrendingUp, BarChart3, ArrowLeftIcon, Users as UsersIcon } from "lucide-react";
 
 export default function LeagueRosterPage() {
   const params = useParams();
   const leagueId = params.leagueId as string;
 
+  const { data: league, isLoading: leagueLoading } = useSleeperLeague(leagueId);
   const { data: rosters, error, isLoading } = useSleeperRosters(leagueId);
+  const { data: users, isLoading: usersLoading } = useSleeperLeagueUsers(leagueId);
+  const { data: players, isLoading: playersLoading } = useSleeperPlayers();
 
-  if (isLoading) {
+  const getPlayerName = (playerId: string) => {
+    if (!players || !players[playerId]) return playerId;
+    return players[playerId].full_name || playerId;
+  };
+
+  const getTeamName = (ownerId: string) => {
+    if (!users) return "Team";
+    const user = users.find((u) => u.user_id === ownerId);
+    return user?.metadata?.team_name || user?.display_name || "Team";
+  };
+
+  const allLoading = isLoading || usersLoading || playersLoading || leagueLoading;
+
+  if (allLoading) {
     return (
       <div className="container mx-auto px-3 py-8">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-[#E64A30]" />
-          <p className="text-gray-600 dark:text-[#C7C8CB] text-xl">Loading rosters...</p>
+          <p className="text-gray-600 dark:text-[#C7C8CB] text-xl">Loading league data...</p>
         </div>
       </div>
     );
@@ -31,7 +47,7 @@ export default function LeagueRosterPage() {
             href="/leagues/sleeper"
             className="text-[#E64A30] hover:text-[#d43d24] font-medium"
           >
-            ← Back to Search
+          <ArrowLeftIcon/> Back to Search
           </Link>
         </div>
       </div>
@@ -39,34 +55,8 @@ export default function LeagueRosterPage() {
   }
 
   return (
-    <div className="container mx-auto px-3 py-8">
-      <div className="relative">
-        <div
-          className="hidden md:flex absolute left-[-12px] right-[-12px] h-[300%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
-          style={{
-            transform: "scaleY(-1)",
-            zIndex: -50,
-            top: '-100px'
-          }}
-        ></div>
-
-        <div className="mb-6">
-          <Link
-            href="/leagues/sleeper"
-            className="text-[#E64A30] hover:text-[#d43d24] inline-flex items-center font-medium"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Search
-          </Link>
-        </div>
-
-        <div className="text-center mb-8">
-          <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">
-            League Rosters
-          </h1>
-        </div>
-
-        {!rosters || rosters.length === 0 ? (
+    <>
+      {!rosters || rosters.length === 0 ? (
           <div className="text-center py-12">
             <Trophy className="w-16 h-16 mx-auto mb-4 text-gray-400" />
             <p className="text-gray-600 dark:text-[#C7C8CB] text-lg">
@@ -89,10 +79,10 @@ export default function LeagueRosterPage() {
                       </div>
                       <div>
                         <h2 className="text-xl font-bold font-oswald">
-                          Roster #{roster.roster_id}
+                          {getTeamName(roster.owner_id)}
                         </h2>
                         <p className="text-sm text-gray-600 dark:text-[#C7C8CB]">
-                          Owner: {roster.owner_id}
+                          Roster #{roster.roster_id}
                         </p>
                       </div>
                     </div>
@@ -122,12 +112,14 @@ export default function LeagueRosterPage() {
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {roster.starters?.map((playerId) => (
-                        <span
+                        <Link
                           key={playerId}
-                          className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800 px-3 py-1.5 rounded-full text-xs font-medium"
+                          href={`/leagues/sleeper/player/${playerId}`}
+                          className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors cursor-pointer"
+                          title={`View ${getPlayerName(playerId)} stats`}
                         >
-                          {playerId}
-                        </span>
+                          {getPlayerName(playerId)}
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -140,12 +132,14 @@ export default function LeagueRosterPage() {
                       {roster.players
                         ?.filter(id => !roster.starters?.includes(id))
                         .map((playerId) => (
-                          <span
+                          <Link
                             key={playerId}
-                            className="bg-[#E3E4E5] dark:bg-[#3A3D48] text-gray-700 dark:text-[#C7C8CB] px-3 py-1.5 rounded-full text-xs font-medium"
+                            href={`/leagues/sleeper/player/${playerId}`}
+                            className="bg-[#E3E4E5] dark:bg-[#3A3D48] text-gray-700 dark:text-[#C7C8CB] px-3 py-1.5 rounded-full text-xs font-medium hover:bg-gray-300 dark:hover:bg-[#4A4D58] transition-colors cursor-pointer"
+                            title={`View ${getPlayerName(playerId)} stats`}
                           >
-                            {playerId}
-                          </span>
+                            {getPlayerName(playerId)}
+                          </Link>
                         ))}
                     </div>
                   </div>
@@ -153,7 +147,6 @@ export default function LeagueRosterPage() {
               ))}
           </div>
         )}
-      </div>
-    </div>
+    </>
   );
 }

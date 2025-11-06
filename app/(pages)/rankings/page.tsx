@@ -86,7 +86,7 @@ function RankingsContent() {
       const projections = (r as any)?.projections || {}
       const stats = (r as any)?.stats || {}
       const proj = projections?.[format] ?? projections?.ppr ?? null
-      
+
       return {
         playerName,
         proj: proj ?? 0, // Use 0 for sorting if null
@@ -99,20 +99,20 @@ function RankingsContent() {
         tds: stats?.tdDisplayValue ?? stats?.totalTDs ?? (stats?.rushingTDs ?? 0) + (stats?.receivingTDs ?? 0),
       }
     })
-    
+
     // Sort by projection points (descending) to calculate rank
     const sortedByProj = [...playersWithProj].sort((a, b) => {
       const aProj = a.proj ?? 0
       const bProj = b.proj ?? 0
       return bProj - aProj // Descending order (highest first)
     })
-    
+
     // Create a map of playerName to rank based on projection points
     const rankMap = new Map<string, number>()
     sortedByProj.forEach((player, idx) => {
       rankMap.set(player.playerName, idx + 1)
     })
-    
+
     // Map back to original data with ranks based on projection points
     return playersWithProj.map((player) => ({
       ...player,
@@ -124,41 +124,41 @@ function RankingsContent() {
   // Filter normalized data by search term
   const filteredData = useMemo(() => {
     let filtered = normalized
-    
+
     // Apply search filter
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase().trim()
-      filtered = filtered.filter(row => 
+      filtered = filtered.filter(row =>
         row.playerName.toLowerCase().includes(searchLower)
       )
     }
-    
+
     // Apply sorting
     if (sortColumn) {
       filtered = [...filtered].sort((a, b) => {
         const aValue = (a as any)[sortColumn]
         const bValue = (b as any)[sortColumn]
-        
+
         // Handle null/undefined values
         if (aValue == null && bValue == null) return 0
         if (aValue == null) return 1
         if (bValue == null) return -1
-        
+
         // Handle string values (for TDs bookOdds)
         if (typeof aValue === 'string' && typeof bValue === 'string') {
-          return sortDirection === 'asc' 
+          return sortDirection === 'asc'
             ? aValue.localeCompare(bValue)
             : bValue.localeCompare(aValue)
         }
-        
+
         // Handle numeric values
         const numA = typeof aValue === 'number' ? aValue : parseFloat(aValue) || 0
         const numB = typeof bValue === 'number' ? bValue : parseFloat(bValue) || 0
-        
+
         return sortDirection === 'asc' ? numA - numB : numB - numA
       })
     }
-    
+
     return filtered
   }, [normalized, searchTerm, sortColumn, sortDirection])
 
@@ -183,31 +183,32 @@ function RankingsContent() {
         return [
           ...baseColumns,
           { key: 'rushY', label: 'Rush Yds' },
-          { key: 'tds', label: 'TDs' },
           { key: 'recY', label: 'Rec Yds' },
-          { key: 'rec', label: 'Receptions' }
+          { key: 'rec', label: 'Receptions' },
+          { key: 'tds', label: 'TDs' }
         ]
       case 'WR':
         return [
           ...baseColumns,
-          { key: 'tds', label: 'TDs' },
+
           { key: 'recY', label: 'Rec Yds' },
-          { key: 'rec', label: 'Receptions' }
+          { key: 'rec', label: 'Receptions' },
+          { key: 'tds', label: 'TDs' },
         ]
       case 'TE':
         return [
           ...baseColumns,
-          { key: 'tds', label: 'TDs' },
           { key: 'recY', label: 'Rec Yds' },
-          { key: 'rec', label: 'Receptions' }
+          { key: 'rec', label: 'Receptions' },
+          { key: 'tds', label: 'TDs' },
         ]
       case 'Flex':
         return [
           ...baseColumns,
           { key: 'rushY', label: 'Rush Yds' },
-          { key: 'tds', label: 'TDs' },
           { key: 'recY', label: 'Rec Yds' },
-          { key: 'rec', label: 'Receptions' }
+          { key: 'rec', label: 'Receptions' },
+          { key: 'tds', label: 'TDs' },
         ]
       default:
         return baseColumns
@@ -309,10 +310,10 @@ function RankingsContent() {
               {columns.map((col) => {
                 const isSortable = col.key === 'proj'
                 const isSorted = sortColumn === col.key
-                
+
                 return (
-                  <th 
-                    key={col.key} 
+                  <th
+                    key={col.key}
                     className={`p-3 text-center ${isSortable ? 'cursor-pointer hover:bg-[#E8A89A] dark:hover:bg-[#4A4D58] select-none' : ''}`}
                     onClick={() => isSortable && handleSort(col.key)}
                   >
@@ -356,7 +357,7 @@ function RankingsContent() {
                 {columns.map((col) => {
                   const value = (row as any)[col.key]
                   let displayValue: string | number = value ?? '—'
-                  
+
                   // Rank column: always use rank based on projection points (not index)
                   if (col.key === 'rank') {
                     displayValue = typeof value === 'number' ? value.toString() : '—'
@@ -370,7 +371,7 @@ function RankingsContent() {
                   else if (col.key === 'tds' && typeof value === 'string') {
                     displayValue = value // Already in bookOdds format, use as-is
                   }
-                  
+
                   return (
                     <td key={col.key} className="p-3 text-[#1D212D] dark:text-white">
                       {col.key === 'playerName' ? <span className="font-medium">{displayValue}</span> : displayValue}

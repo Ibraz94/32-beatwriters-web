@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { icons } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export default function LeaguesHome() {
   const leagueSites = [
@@ -21,7 +21,7 @@ export default function LeaguesHome() {
   ];
 
   return (
-    <div className="container mx-auto px-3 py-8">
+    <div className="container mx-auto min-h-screen px-3 py-8">
       <div className="relative">
         <div
           className="hidden md:flex absolute left-[-12px] right-[-12px] h-[300%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
@@ -46,31 +46,19 @@ export default function LeaguesHome() {
             <Link
               key={site.name}
               href={site.href}
-              className="group relative overflow-hidden rounded-xl shadow-lg bg-white dark:bg-[#262829] p-8 transition-all duration-300 hover:shadow-2xl hover:scale-105"
+              className="group relative overflow-hidden border border-[#262829]/20 rounded-md shadow-sm bg-white dark:bg-[#262829] p-8 transition-all duration-300 hover:shadow-lg"
             >
               <div className="flex flex-col items-center text-center space-y-4">
                 <div className="text-7xl mb-2">
                   <Image
                   src={site.icon}
-                  width={300}
-                  height={300}
+                  width={260}
+                  height={260}
                   alt=""
                 /></div>
                 <div className="mt-4 inline-flex items-center font-semibold group-hover:translate-x-1 transition-transform">
-                  Access {site.name}
-                  <svg
-                    className="ml-2 w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                  Access
+                  <ChevronRight/>
                 </div>
               </div>
             </Link>

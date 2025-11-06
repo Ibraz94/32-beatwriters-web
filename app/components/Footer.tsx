@@ -18,7 +18,7 @@ export default function Footer() {
 
     const contactInfo = {
         email: "info@32beatwriters.com",
-        phone: "818.308.5020",
+        phone: "818 308 5020",
         phoneHref: "tel:+18183085020"
     };
 

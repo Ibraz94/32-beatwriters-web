@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useSleeperUser } from "@/lib/hooks/useSleeper";
 import Link from "next/link";
-import { ArrowLeft, Search, Loader2 } from "lucide-react";
+import { ArrowLeft, Search, Loader2, ChevronRight } from "lucide-react";
 
 export default function SleeperHome() {
   const [username, setUsername] = useState("");
@@ -18,7 +18,7 @@ export default function SleeperHome() {
   };
 
   return (
-    <div className="container mx-auto px-3 py-8">
+    <div className="container mx-auto px-3 py-8 h-screen">
       <div className="relative">
         <div
           className="hidden md:flex absolute left-[-12px] right-[-12px] h-[300%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
@@ -54,7 +54,7 @@ export default function SleeperHome() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Username..."
+                placeholder="username..."
                 value={username}
                 onChange={(e) => {
                   setUsername(e.target.value);
@@ -89,9 +89,9 @@ export default function SleeperHome() {
           )}
 
           {user && (
-            <div className="mt-8 p-6 bg-white dark:bg-[#262829] rounded-xl shadow-lg">
+            <div className="mt-8 p-6 bg-white dark:bg-[#262829] border border-[#262829]/20 rounded-md shadow-sm max-w-sm mx-auto">
               <div className="flex items-center gap-4 mb-4">
-                {user.avatar && (
+                {user.avatar && ( 
                   <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
                     <img
                       src={`https://sleepercdn.com/avatars/thumbs/${user.avatar}`}
@@ -108,22 +108,9 @@ export default function SleeperHome() {
               
               <Link
                 href={`/leagues/sleeper/leagues/${user.user_id}`}
-                className="inline-flex items-center justify-center w-full bg-[#E64A30] hover:bg-[#d43d24] px-6 py-3 rounded-full text-white font-medium transition-colors"
+                className="inline-flex items-center justify-center bg-[#E64A30] hover:bg-[#d43d24] px-4 py-2 rounded-full text-white font-medium transition-colors"
               >
                 View Leagues
-                <svg
-                  className="ml-2 w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
               </Link>
             </div>
           )}

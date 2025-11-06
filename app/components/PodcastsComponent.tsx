@@ -50,7 +50,7 @@ export default function PodcastsComponent() {
             <div className="bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] px-4 py-6 rounded-3xl">
                 {/* Header */}
                 <div className="text-center mb-8 md:mb-12">
-                    <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl xl:text-5xl mb-3 md:mb-4">
+                    <h2 className="text-3xl md:text-5xl lg:text-5xl xl:text-5xl mb-3 md:mb-4">
                         Our Podcast Network
                     </h2>
                     <p className="text-sm sm:text-base md:text-lg max-w-5xl mx-auto px-2 text-[var(--color-gray)] dark:text-[#C7C8CB]">

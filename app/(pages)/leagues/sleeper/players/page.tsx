@@ -26,15 +26,6 @@ export default function PlayersPage() {
   return (
     <div className="container mx-auto px-3 py-8">
       <div className="relative">
-        <div
-          className="hidden md:flex absolute left-[-12px] right-[-12px] h-[300%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
-          style={{
-            transform: "scaleY(-1)",
-            zIndex: -50,
-            top: '-100px'
-          }}
-        ></div>
-
         <div className="mb-6">
           <Link
             href="/leagues/sleeper"

@@ -13,7 +13,7 @@ export default function LeaguesPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-3 py-8">
+      <div className="container mx-auto px-3 py-8 h-screen">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-[#E64A30]" />
           <p className="text-gray-600 dark:text-[#C7C8CB] text-xl">Loading leagues...</p>
@@ -24,7 +24,7 @@ export default function LeaguesPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto px-3 py-8">
+      <div className="container mx-auto px-3 py-8 h-screen">
         <div className="text-center">
           <p className="text-red-600 dark:text-red-400 text-xl mb-4">Failed to load leagues.</p>
           <Link
@@ -39,7 +39,7 @@ export default function LeaguesPage() {
   }
 
   return (
-    <div className="container mx-auto px-3 py-8">
+    <div className="container mx-auto px-3 py-8 h-screen">
       <div className="relative">
         <div
           className="hidden md:flex absolute left-[-12px] right-[-12px] h-[300%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
@@ -78,7 +78,7 @@ export default function LeaguesPage() {
             {leagues.map((league) => (
               <div
                 key={league.league_id}
-                className="bg-white dark:bg-[#262829] p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-102"
+                className="bg-white dark:bg-[#262829] p-6 border border-[#262829]/20 rounded-md shadow-sm hover:shadow-md transition-all duration-200 hover:scale-100"
               >
                 <div className="flex items-start justify-between mb-4">
                   <Trophy className="w-8 h-8 text-[#E64A30]" />
@@ -103,23 +103,10 @@ export default function LeaguesPage() {
                 </div>
 
                 <Link
-                  href={`/leagues/sleeper/league/${league.league_id}`}
+                  href={`/leagues/sleeper/league/${league.league_id}/matchups`}
                   className="inline-flex items-center justify-center w-full bg-[#E64A30] hover:bg-[#d43d24] px-4 py-2 rounded-full text-white font-medium transition-colors"
                 >
-                  View Rosters
-                  <svg
-                    className="ml-2 w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                  View
                 </Link>
               </div>
             ))}
