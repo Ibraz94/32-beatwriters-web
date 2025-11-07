@@ -43,7 +43,7 @@ function RankingsContent() {
   const isTuesdayOrWednesday = useMemo(() => {
     const today = new Date()
     const dayOfWeek = today.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    return dayOfWeek === 2 || dayOfWeek === 3 || dayOfWeek === 4 || dayOfWeek === 5 // Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5
+    return dayOfWeek === 2 || dayOfWeek === 3 // Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5
   }, [])
 
   // Check if we should show "Data Coming Soon"
