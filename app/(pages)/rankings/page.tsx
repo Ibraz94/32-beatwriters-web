@@ -43,7 +43,7 @@ function RankingsContent() {
   const isTuesdayOrWednesday = useMemo(() => {
     const today = new Date()
     const dayOfWeek = today.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    return dayOfWeek === 2 || dayOfWeek === 3  // Tuesday = 2, Wednesday = 3
+    return dayOfWeek === 2 || dayOfWeek === 3 || dayOfWeek === 4 || dayOfWeek === 5 // Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5
   }, [])
 
   // Check if we should show "Data Coming Soon"
@@ -369,8 +369,40 @@ function RankingsContent() {
             )}
             {!error && !loading && shouldShowDataComingSoon && (
               <tr>
-                <td colSpan={columns.length} className="p-6 text-center text-muted-foreground text-lg font-medium">
-                  Data Coming Soon
+                <td colSpan={columns.length} className="p-12">
+                  <div className="flex flex-col items-center justify-center py-12 px-6 bg-gradient-to-br from-[#FFE6E2] to-[#FFF4F2] dark:from-[#2A2D35] dark:to-[#1F2128] rounded-lg border-2 border-dashed border-[#E64A30]/30 dark:border-[#E64A30]/20 shadow-inner">
+                    <div className="relative mb-6">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-20 h-20 rounded-full bg-[#E64A30]/10 dark:bg-[#E64A30]/20 animate-pulse"></div>
+                      </div>
+                      <div className="relative flex items-center justify-center w-16 h-16 mx-auto">
+                        <svg 
+                          className="w-12 h-12 text-[#E64A30] dark:text-[#E64A30]" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            strokeWidth={2} 
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" 
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-bold text-[#1D212D] dark:text-white mb-2">
+                      Data Coming Soon
+                    </h3>
+                    <p className="text-base text-muted-foreground mb-4">
+                      Week {week} rankings will be available soon
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="w-2 h-2 rounded-full bg-[#E64A30] animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-[#E64A30] animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 rounded-full bg-[#E64A30] animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
                 </td>
               </tr>
             )}
