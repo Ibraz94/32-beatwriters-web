@@ -32,11 +32,24 @@ function RankingsContent() {
   const [error, setError] = useState<string>('')
   const [weeks, setWeeks] = useState<number[]>([])
   const [week, setWeek] = useState<number | undefined>(undefined)
+  const [currentWeek, setCurrentWeek] = useState<number | undefined>(undefined)
   const [format, setFormat] = useState<'standard' | 'halfPPR' | 'ppr'>('ppr')
   const [position, setPosition] = useState<PositionType>('QB')
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
+
+  // Check if today is Tuesday or Wednesday
+  const isTuesdayOrWednesday = useMemo(() => {
+    const today = new Date()
+    const dayOfWeek = today.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    return dayOfWeek === 2 || dayOfWeek === 3  // Tuesday = 2, Wednesday = 3
+  }, [])
+
+  // Check if we should show "Data Coming Soon"
+  const shouldShowDataComingSoon = useMemo(() => {
+    return isTuesdayOrWednesday && week !== undefined && currentWeek !== undefined && week === currentWeek
+  }, [isTuesdayOrWednesday, week, currentWeek])
 
   // Load weeks and set current week
   useEffect(() => {
@@ -44,10 +57,11 @@ function RankingsContent() {
       try {
         const weeksRes = await fetch(buildApiUrl('/api/rankings/weeks'), { cache: 'no-store' })
         const weeksJson = await weeksRes.json()
-        const currentWeek: number | undefined = weeksJson?.data?.currentWeek
+        const currentWeekValue: number | undefined = weeksJson?.data?.currentWeek
         const weeksArr: number[] = weeksJson?.data?.weeks || []
         setWeeks(weeksArr)
-        if (currentWeek) setWeek(currentWeek)
+        setCurrentWeek(currentWeekValue)
+        if (currentWeekValue) setWeek(currentWeekValue)
       } catch (e: any) {
         setError(e?.message || 'Failed to load weeks')
       }
@@ -59,6 +73,14 @@ function RankingsContent() {
   useEffect(() => {
     const loadRankings = async () => {
       if (!week) return
+      
+      // Skip loading if we should show "Data Coming Soon" (Tuesday/Wednesday for latest week)
+      if (shouldShowDataComingSoon) {
+        setLoading(false)
+        setData([])
+        return
+      }
+      
       setLoading(true)
       setError('')
       try {
@@ -77,7 +99,7 @@ function RankingsContent() {
       }
     }
     loadRankings()
-  }, [week, format, position])
+  }, [week, format, position, shouldShowDataComingSoon])
 
   const normalized = useMemo(() => {
     // First, map all data and calculate projection points
@@ -345,14 +367,21 @@ function RankingsContent() {
                 <td colSpan={columns.length} className="p-6 text-center text-muted-foreground">Loading…</td>
               </tr>
             )}
-            {!error && !loading && filteredData.length === 0 && (
+            {!error && !loading && shouldShowDataComingSoon && (
+              <tr>
+                <td colSpan={columns.length} className="p-6 text-center text-muted-foreground text-lg font-medium">
+                  Data Coming Soon
+                </td>
+              </tr>
+            )}
+            {!error && !loading && !shouldShowDataComingSoon && filteredData.length === 0 && (
               <tr>
                 <td colSpan={columns.length} className="p-6 text-center text-muted-foreground">
                   {searchTerm ? `No players found matching "${searchTerm}"` : 'No data'}
                 </td>
               </tr>
             )}
-            {!error && !loading && filteredData.map((row, index) => (
+            {!error && !loading && !shouldShowDataComingSoon && filteredData.map((row, index) => (
               <tr key={`${row.rank}-${row.playerName}`} className="text-center bg-[#FFE6E2] dark:bg-[#262829] border-t border-border">
                 {columns.map((col) => {
                   const value = (row as any)[col.key]
