@@ -94,9 +94,9 @@ export default function MyTeamPage() {
 
   if (!userId && !isLoading) {
     return (
-      <div className="container mx-auto px-3 py-8 h-screen">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold mb-4">Select Your Team</h2>
+      <div className="container mx-auto px-2 py-2 h-full">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">Select Your Team</h2>
           <p className="text-gray-600 dark:text-[#C7C8CB] mb-8">
             Choose which team you want to view
           </p>

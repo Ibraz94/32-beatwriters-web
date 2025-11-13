@@ -49,7 +49,7 @@ export default function LeagueStandingsPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-3 py-8 h-screen">
+      <div className="container mx-auto px-2 py-2 h-full">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-[#E64A30]" />
           <p className="text-gray-600 dark:text-[#C7C8CB] text-xl">Loading standings...</p>
@@ -59,7 +59,7 @@ export default function LeagueStandingsPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto h-screen">
+    <div className="max-w-5xl mx-auto">
           {/* Desktop Table View */}
           <div className="hidden md:block bg-white dark:bg-[#262829] border border-[#262829]/20 rounded-md shadow-sm overflow-hidden">
             <table className="w-full">
