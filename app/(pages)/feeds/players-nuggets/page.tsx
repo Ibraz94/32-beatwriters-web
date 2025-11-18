@@ -1,17 +1,18 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, X, ChevronLeft, ChevronRight, ChevronDown, Filter, Bookmark, Loader2, Clock, UsersRound, ListCheck } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight, ChevronDown, Filter, Bookmark, Loader2, UserPlus, Clock, UsersRound, ListCheck } from 'lucide-react'
 import Masonry from 'react-masonry-css'
 import { ReadMore } from '@/app/components/ReadMore'
 import {
-    useGetSavedNuggetsQuery,
+    useGetFollowedNuggetsQuery,
     getImageUrl,
     useSaveNuggetMutation,
-    useUnsaveNuggetMutation,
-    Nugget
+    useUnsaveNuggetMutation
 } from '@/lib/services/nuggetsApi'
 import {
     Select,
@@ -55,9 +56,11 @@ interface ImageModalData {
     currentIndex?: number
 }
 
-export default function SavedNuggetsPage() {
-    const pathname = usePathname();
+export default function PlayersNuggetsPage() {
+    // Add authentication check
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
+    const router = useRouter()
+    const pathname = usePathname();
     const [open, setOpen] = useState(false)
     const [date, setDate] = useState<Date | undefined>(undefined)
 
@@ -72,7 +75,7 @@ export default function SavedNuggetsPage() {
     const [selectedDate, setSelectedDate] = useState<string>('')
     const [searchTerm, setSearchTerm] = useState('')
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
-    const [allNuggets, setAllNuggets] = useState<Nugget[]>([])
+    const [allNuggets, setAllNuggets] = useState<any[]>([])
     const [hasMoreNuggets, setHasMoreNuggets] = useState(true)
     const [imageModal, setImageModal] = useState<ImageModalData | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
@@ -80,16 +83,6 @@ export default function SavedNuggetsPage() {
     const [showMobileFilters, setShowMobileFilters] = useState(false)
     const [bookmarkLoading, setBookmarkLoading] = useState<number | null>(null)
     const ITEMS_PER_PAGE = 15
-
-    // Get saved nuggets (calls /api/nuggets/saved/list with auth)
-    const { data: savedNuggetsData, isLoading: isLoadingSavedNuggets, error: savedNuggetsError, isFetching: isFetchingSavedNuggets } = useGetSavedNuggetsQuery()
-
-    // Teams query
-    const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
-
-    // Save/Unsave mutations
-    const [saveNugget] = useSaveNuggetMutation()
-    const [unsaveNugget] = useUnsaveNuggetMutation()
 
     // Debounce search term
     useEffect(() => {
@@ -107,7 +100,23 @@ export default function SavedNuggetsPage() {
         } else if (selectedDate && !date) {
             setDate(new Date(selectedDate))
         }
+
+
     }, [selectedDate, date])
+
+    // Get followed nuggets
+    const { data: followedNuggetsData, isLoading: isLoadingFollowedNuggets, error: followedNuggetsError, isFetching: isFetchingFollowedNuggets, refetch: refetchFollowedNuggets } = useGetFollowedNuggetsQuery()
+
+    useEffect(() => {
+        refetchFollowedNuggets()
+    }, [user?.id, debouncedSearchTerm, filters, selectedDate, currentPage])
+
+    // Teams query
+    const { data: teamsData, isLoading: isLoadingTeams } = useGetTeamsQuery()
+
+    // Save/Unsave mutations
+    const [saveNugget] = useSaveNuggetMutation()
+    const [unsaveNugget] = useUnsaveNuggetMutation()
 
     // Helper function to find team by abbreviation or name
     const findTeamByKey = (teamKey: string) => {
@@ -130,15 +139,6 @@ export default function SavedNuggetsPage() {
             } else {
                 await saveNugget(nuggetId).unwrap()
             }
-
-            // Update local state to reflect the change immediately
-            setAllNuggets(prevNuggets =>
-                prevNuggets.map(nugget =>
-                    nugget.id === nuggetId
-                        ? { ...nugget, isSaved: !isSaved }
-                        : nugget
-                )
-            )
         } catch (error) {
             console.error('Error saving/unsaving nugget:', error)
         } finally {
@@ -146,41 +146,39 @@ export default function SavedNuggetsPage() {
         }
     }
 
-    // Handle loading saved nuggets
-    useEffect(() => {
-        if (savedNuggetsData?.data?.nuggets) {
-            const newNuggets = savedNuggetsData.data.nuggets
-            setAllNuggets(newNuggets)
-            setHasMoreNuggets(false) // Saved nuggets don't have pagination
-            setIsLoadingMore(false)
-        }
-    }, [savedNuggetsData])
-
-    // Search functionality
+    // Handle search
     const handleSearch = (term: string) => {
         setSearchTerm(term)
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Clear date filter
     const clearDateFilter = () => {
-        setSelectedDate('')
         setDate(undefined)
+        setSelectedDate('')
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Handle position filter change
     const handlePositionFilterChange = (position: string) => {
         setFilters(prev => ({
             ...prev,
-            position: position === 'all' ? '' : position
+            position: position === 'All' ? '' : position
         }))
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Handle team filter change
     const handleTeamFilterChange = (team: string) => {
         setFilters(prev => ({
             ...prev,
-            team: team === 'all' ? '' : team
+            team: team === 'All' ? '' : team
         }))
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Handle rookie filter change
@@ -189,6 +187,8 @@ export default function SavedNuggetsPage() {
             ...prev,
             rookie: isRookie
         }))
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
     // Clear all filters
@@ -202,49 +202,17 @@ export default function SavedNuggetsPage() {
             team: ''
         })
         setSelectedDate('')
-        setDate(undefined)
         setSearchTerm('')
         setDebouncedSearchTerm('')
+        setDate(undefined)
+        setCurrentPage(1)
+        setAllNuggets([])
     }
 
-    // Filter nuggets based on search and filters
-    const filteredNuggets = useMemo(() => {
-        let filtered = allNuggets
-
-        // Search filter
-        if (debouncedSearchTerm) {
-            filtered = filtered.filter(nugget =>
-                nugget.content.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-                nugget.player.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-            )
-        }
-
-        // Position filter
-        if (filters.position) {
-            filtered = filtered.filter(nugget => nugget.player.position === filters.position)
-        }
-
-        // Team filter
-        if (filters.team) {
-            filtered = filtered.filter(nugget => nugget.player.team === filters.team)
-        }
-
-        // Date filter
-        if (selectedDate) {
-            const filterDate = new Date(selectedDate)
-            filtered = filtered.filter(nugget => {
-                const nuggetDate = new Date(nugget.createdAt)
-                return nuggetDate.toDateString() === filterDate.toDateString()
-            })
-        }
-
-        // Rookie filter
-        if (filters.rookie) {
-            filtered = filtered.filter(nugget => nugget.player.rookie)
-        }
-
-        return filtered
-    }, [allNuggets, debouncedSearchTerm, filters.position, filters.team, selectedDate, filters.rookie])
+    // Load more nuggets
+    const loadMoreNuggets = () => {
+        setCurrentPage(prev => prev + 1)
+    }
 
     // Image modal functions
     const openImageModal = (src: string, alt: string, images?: string[], currentIndex?: number) => {
@@ -256,7 +224,7 @@ export default function SavedNuggetsPage() {
     }
 
     const navigateImage = (direction: 'prev' | 'next') => {
-        if (!imageModal || !imageModal.images || imageModal.currentIndex === undefined) return
+        if (!imageModal?.images || imageModal.currentIndex === undefined) return
 
         const newIndex = direction === 'prev'
             ? (imageModal.currentIndex - 1 + imageModal.images.length) % imageModal.images.length
@@ -264,11 +232,12 @@ export default function SavedNuggetsPage() {
 
         setImageModal({
             ...imageModal,
-            src: getImageUrl(imageModal.images[newIndex]) || '',
+            src: imageModal.images[newIndex],
             currentIndex: newIndex
         })
     }
 
+    // Fantasy insight component
     const fantasyInsight = (fantasyInsight: string) => {
         if (fantasyInsight) {
             return <div dangerouslySetInnerHTML={{ __html: fantasyInsight }}></div>
@@ -278,25 +247,25 @@ export default function SavedNuggetsPage() {
         }
     }
 
-    // Handle keyboard navigation
+    // Keyboard navigation for image modal
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
-            if (!imageModal) return
-
-            if (e.key === 'Escape') {
-                closeImageModal()
-            } else if (e.key === 'ArrowLeft') {
-                navigateImage('prev')
-            } else if (e.key === 'ArrowRight') {
-                navigateImage('next')
+            if (imageModal) {
+                if (e.key === 'Escape') {
+                    closeImageModal()
+                } else if (e.key === 'ArrowLeft') {
+                    navigateImage('prev')
+                } else if (e.key === 'ArrowRight') {
+                    navigateImage('next')
+                }
             }
         }
 
-        window.addEventListener('keydown', handleKeyPress)
-        return () => window.removeEventListener('keydown', handleKeyPress)
+        document.addEventListener('keydown', handleKeyPress)
+        return () => document.removeEventListener('keydown', handleKeyPress)
     }, [imageModal])
 
-    // Trending Players Component
+    // Trending Players component
     const TrendingPlayers = () => {
         const { data: trendingPlayersData, isLoading, error } = useGetTrendingPlayersQuery();
 
@@ -387,13 +356,48 @@ export default function SavedNuggetsPage() {
         );
     };
 
-    // Combined loading states
-    const isLoading = isLoadingSavedNuggets || authLoading || isLoadingTeams
-    const error = savedNuggetsError
+    // Filter nuggets based on search and filters
+    const filteredNuggets = useMemo(() => {
+        let filtered = followedNuggetsData?.data?.nuggets || []
+
+        // Search filter
+        if (debouncedSearchTerm) {
+            filtered = filtered.filter(nugget =>
+                nugget.content.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                nugget.player.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+                nugget.player.team?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+            )
+        }
+
+        // Position filter
+        if (filters.position) {
+            filtered = filtered.filter(nugget => nugget.player.position === filters.position)
+        }
+
+        // Team filter
+        if (filters.team) {
+            filtered = filtered.filter(nugget => nugget.player.team === filters.team)
+        }
+
+        // Date filter
+        if (selectedDate) {
+            filtered = filtered.filter(nugget => {
+                const nuggetDate = new Date(nugget.createdAt).toISOString().split('T')[0]
+                return nuggetDate === selectedDate
+            })
+        }
+
+        // Rookie filter
+        if (filters.rookie) {
+            filtered = filtered.filter(nugget => nugget.player.rookie === true)
+        }
+
+        return filtered
+    }, [followedNuggetsData?.data?.nuggets, debouncedSearchTerm, filters.position, filters.team, selectedDate, filters.rookie])
+
     const displayNuggets = filteredNuggets
     const hasActiveFilters = debouncedSearchTerm || filters.position || filters.team || selectedDate || filters.rookie
 
-    // Show authentication required message if not authenticated
     // Show authentication required message if not authenticated or has insufficient membership
     if (!authLoading && (!isAuthenticated || (user?.memberships && user.memberships.id !== undefined && user.memberships.id < 2))) {
         return (
@@ -412,12 +416,12 @@ export default function SavedNuggetsPage() {
                             <Link href={{
                                 pathname: '/login',
                                 query: { redirect: pathname }
-                            }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+                            }} className="text-[#E64A30] hover:text-[#E64A30]/90 font-semibold">Login</Link>
                         </p>
                     )}
                     <Link
                         href="/subscribe"
-                        className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
+                        className="bg-[#E64A30] text-white px-6 py-3 rounded-full font-semibold"
                     >
                         Subscribe
                     </Link>
@@ -427,20 +431,18 @@ export default function SavedNuggetsPage() {
     }
 
     // Loading state
-    if (isLoading && allNuggets.length === 0) {
+    const isLoading = isLoadingFollowedNuggets || authLoading || isLoadingTeams
+    if (isLoading && displayNuggets.length === 0) {
         return (
             <div className="container mx-auto px-4 py-8">
-                {/* Header */}
                 <div className="text-center mb-12">
-                    <h1 className="text-3xl md:text-5xl font-bold mb-4">Saved Nuggets</h1>
-                    <p className="text-lg md:text-xl text-gray-600 dark:text-[#C7C8CB]">
-                        Loading your saved nuggets...
+                    <h1 className="text-3xl font-bold mb-4 dark:text-[#D2D6E2]">My Players Nuggets</h1>
+                    <p className="text-xl max-w-4xl mx-auto dark:text-gray-300">
+                        Loading nuggets from your followed players...
                     </p>
                 </div>
 
-                {/* Main Layout */}
-                <div className="flex gap-6 flex-col lg:flex-row">
-                    {/* Left Column - Nuggets List Skeleton */}
+                <div className="flex gap-6">
                     <div className="flex-1">
                         <Masonry
                             breakpointCols={{
@@ -454,50 +456,39 @@ export default function SavedNuggetsPage() {
                             {[...Array(6)].map((_, i) => (
                                 <div
                                     key={i}
-                                    className="rounded-2xl shadow-md overflow-hidden animate-pulse mb-6 bg-white dark:bg-[#262829]"
+                                    className="rounded-xl border border-gray-300 dark:border-gray-700 shadow-lg overflow-hidden animate-pulse mb-6 bg-gray-200 dark:bg-[#2B2B2B]"
                                 >
-                                    <div className="h-48 bg-gray-200 dark:bg-[#3A3D48]"></div>
-                                    <div className="p-5 space-y-3">
-                                        <div className="h-6 bg-gray-200 dark:bg-[#3A3D48] rounded"></div>
-                                        <div className="h-4 bg-gray-200 dark:bg-[#3A3D48] rounded"></div>
-                                        <div className="h-4 bg-gray-200 dark:bg-[#3A3D48] rounded w-3/4"></div>
-                                        <div className="h-4 bg-gray-200 dark:bg-[#3A3D48] rounded w-1/2"></div>
+                                    <div className="h-48 bg-gray-300 dark:bg-[#3A3A3A]"></div>
+                                    <div className="p-6">
+                                        <div className="h-6 bg-gray-300 dark:bg-[#3A3A3A] rounded mb-3"></div>
+                                        <div className="h-4 bg-gray-300 dark:bg-[#3A3A3A] rounded mb-2"></div>
+                                        <div className="h-4 bg-gray-300 dark:bg-[#3A3A3A] rounded mb-4 w-3/4"></div>
+                                        <div className="h-4 bg-gray-300 dark:bg-[#3A3A3A] rounded"></div>
                                     </div>
                                 </div>
                             ))}
                         </Masonry>
                     </div>
 
-                    {/* Right Column - Sidebar Placeholder */}
-                    <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0 hidden lg:block">
-                        <div className="bg-gray-200 dark:bg-[#3A3D48] rounded-xl h-96 animate-pulse shadow-md"></div>
+                    <div className="w-80 hidden lg:block">
+                        <div className="bg-gray-200 dark:bg-[#2B2B2B] rounded-lg h-96 animate-pulse border border-gray-300 dark:border-gray-700"></div>
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 
     // Error state
-    if (error) {
+    if (followedNuggetsError) {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="text-center">
-                    <h1 className="text-3xl md:text-5xl font-bold mb-4">Saved Nuggets</h1>
-                    <p className="text-xl text-red-600 dark:text-red-400 mb-4">
-                        Failed to load saved nuggets
-                    </p>
-                    <p className="text-gray-600 dark:text-[#C7C8CB] mb-6">
-                        Please try again later.
-                    </p>
-                    <button
-                        onClick={() => window.location.reload()}
-                        className="bg-[var(--color-orange)] text-white dark:text-black px-6 py-2 rounded-full hover:scale-105 transition-transform"
-                    >
-                        Retry
-                    </button>
+                    <h1 className="text-3xl font-bold mb-4 dark:text-[#D2D6E2]">My Players Nuggets</h1>
+                    <p className="text-xl text-red-600 dark:text-red-500 mb-4">Failed to load nuggets</p>
+                    <p className="text-gray-600 dark:text-gray-400">Please try again later.</p>
                 </div>
             </div>
-        );
+        )
     }
 
 
@@ -524,9 +515,8 @@ left-[-12px] right-[-12px]
                         }}
 
                     ></div>
-                    {/* Search Bar + Filter Button in One Line */}
-                    <div className="flex items-center md:hidden gap-3 w-full mb-5">
-
+                    {/* Mobile Filter Toggle Button */}
+                    <div className="lg:hidden mb-5 flex items-center gap-3 w-full">
                         {/* Search Bar */}
                         <div className="w-full border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
                             <div className="relative w-full">
@@ -534,6 +524,8 @@ left-[-12px] right-[-12px]
                                 <input
                                     type="text"
                                     placeholder="Search..."
+                                    value={searchTerm}
+                                    onChange={(e) => handleSearch(e.target.value)}
                                     className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
                                 />
                                 <button
@@ -546,45 +538,44 @@ left-[-12px] right-[-12px]
                             </div>
                         </div>
 
-                        {/* Mobile Filter Toggle Button */}
+                        {/* Filter Button */}
                         <button
                             onClick={() => setShowMobileFilters(!showMobileFilters)}
-                            className="flex items-center gap-2 px-4 py-2 border border-[#E64A30] text-[#E64A30] rounded-full dark:border-none dark:bg-[#262829] lg:hidden transition-colors hover:bg-[#E64A30] hover:text-white"
+                            className="relative flex items-center gap-2 px-4 py-2 border border-[#E64A30] text-[#E64A30] rounded-full dark:border-none dark:bg-[#262829] transition-colors"
                             title="Filters"
                         >
                             <Filter className="w-5 h-5" />
                             <span className="text-sm font-medium">Filters</span>
+
                             {(filters.position || filters.team || selectedDate || filters.rookie || searchTerm) && (
-                                <span className="bg-[#E64A30] text-white text-xs px-2 py-1 rounded-full">
+                                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
                                     {[filters.position, filters.team, selectedDate, filters.rookie, searchTerm].filter(Boolean).length}
                                 </span>
                             )}
                         </button>
                     </div>
 
-
                     {/* Filters in One Line */}
                     <div className={`mb-6 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
                         <div className="flex flex-col lg:flex-row items-center justify-center gap-3 w-full">
+
                             {/* Search Bar */}
-                            <div className="hidden md:flex w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
-                                <div className="relative w-full">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                                    <input
-                                        type="text"
-                                        placeholder="Search..."
-                                        value={searchTerm}
-                                        onChange={(e) => handleSearch(e.target.value)}
-                                        className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
-                                    />
-                                    <button
-                                        type="button"
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl"
-                                        style={{ backgroundColor: '#E64A30' }}
-                                    >
-                                        Search
-                                    </button>
-                                </div>
+                            <div className="relative w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829] hidden md:flex">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    value={searchTerm}
+                                    onChange={(e) => handleSearch(e.target.value)}
+                                    className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl"
+                                    style={{ backgroundColor: '#E64A30' }}
+                                >
+                                    Search
+                                </button>
                             </div>
 
                             {/* Date Filter */}
@@ -609,8 +600,7 @@ left-[-12px] right-[-12px]
                                                     const year = selectedCalendarDate.getFullYear();
                                                     const month = String(selectedCalendarDate.getMonth() + 1).padStart(2, '0');
                                                     const day = String(selectedCalendarDate.getDate()).padStart(2, '0');
-                                                    const dateString = `${year}-${month}-${day}`;
-                                                    setSelectedDate(dateString);
+                                                    setSelectedDate(`${year}-${month}-${day}`);
                                                 } else {
                                                     setSelectedDate('');
                                                 }
@@ -620,7 +610,6 @@ left-[-12px] right-[-12px]
                                         />
                                     </PopoverContent>
                                 </Popover>
-
                                 {date && (
                                     <Button
                                         variant="outline"
@@ -635,7 +624,10 @@ left-[-12px] right-[-12px]
 
                             {/* Position Filter */}
                             <div className="border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:bg-[#262829]">
-                                <Select value={filters.position || "all"} onValueChange={handlePositionFilterChange}>
+                                <Select
+                                    value={filters.position || 'all'}
+                                    onValueChange={handlePositionFilterChange}
+                                >
                                     <SelectTrigger className="h-10 w-40 !border-none !border-0 flex items-center gap-2">
                                         <ListCheck className="w-4 h-4" />
                                         <SelectValue placeholder="All Positions" />
@@ -643,8 +635,10 @@ left-[-12px] right-[-12px]
                                     <SelectContent className="border-none">
                                         <SelectGroup>
                                             <SelectItem value="all">All Positions</SelectItem>
-                                            {['QB', 'WR', 'RB', 'FB', 'TE'].map(position => (
-                                                <SelectItem key={position} value={position}>{position}</SelectItem>
+                                            {['QB', 'WR', 'RB', 'FB', 'TE'].map((position) => (
+                                                <SelectItem key={position} value={position}>
+                                                    {position}
+                                                </SelectItem>
                                             ))}
                                         </SelectGroup>
                                     </SelectContent>
@@ -653,7 +647,10 @@ left-[-12px] right-[-12px]
 
                             {/* Team Filter */}
                             <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829] transition-colors">
-                                <Select value={filters.team || "all"} onValueChange={handleTeamFilterChange}>
+                                <Select
+                                    value={filters.team || 'all'}
+                                    onValueChange={handleTeamFilterChange}
+                                >
                                     <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:ring-0 focus:outline-none">
                                         <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                         <SelectValue placeholder="All Teams" />
@@ -662,8 +659,10 @@ left-[-12px] right-[-12px]
                                     <SelectContent className="border-none bg-white dark:bg-[#1D212D] text-black dark:text-white rounded-xl shadow-md">
                                         <SelectGroup>
                                             <SelectItem value="all">All Teams</SelectItem>
-                                            {teamsData?.teams.map(team => (
-                                                <SelectItem key={team.name} value={team.name}>{team.name}</SelectItem>
+                                            {teamsData?.teams.map((team) => (
+                                                <SelectItem key={team.name} value={team.name}>
+                                                    {team.name}
+                                                </SelectItem>
                                             ))}
                                         </SelectGroup>
                                     </SelectContent>
@@ -679,7 +678,9 @@ left-[-12px] right-[-12px]
                                     onChange={(e) => handleRookieFilterChange(e.target.checked)}
                                     className="w-4 h-4 cursor-pointer"
                                 />
-                                <label htmlFor="rookie-filter" className="text-sm font-medium cursor-pointer">Rookie</label>
+                                <label htmlFor="rookie-filter" className="text-sm font-medium cursor-pointer">
+                                    Rookie
+                                </label>
                             </div>
 
                             {/* Clear Filters Button */}
@@ -695,168 +696,211 @@ left-[-12px] right-[-12px]
                     </div>
                 </div>
 
-
-                {/* Main Content Area - Two Column Layout */}
+                {/* Main Content */}
                 <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0">
-                    {/* Feed Column - Scrollable */}
+                    {/* Nuggets Grid */}
                     <div className="flex-1">
-                        {displayNuggets.length === 0 && !isLoading ? (
+                        {displayNuggets.length === 0 ? (
                             <div className="text-center py-12">
-                                <p className="text-xl text-gray-600 mb-4">
-                                    {hasActiveFilters ? 'No saved nuggets found for your filters.' : 'No saved nuggets available.'}
+                                <UserPlus className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                                <p className="text-xl text-gray-600 mb-4">No nuggets from followed players</p>
+                                <p className="text-gray-500 mb-8">
+                                    {hasActiveFilters
+                                        ? "No nuggets match your current filters. Try adjusting your search criteria."
+                                        : "Follow some players to see their nuggets here."
+                                    }
                                 </p>
-                                {hasActiveFilters && (
-                                    <button
-                                        onClick={clearFilters}
-                                        className="text-red-800 hover:cursor-pointer font-semibold"
+                                {!hasActiveFilters && (
+                                    <Link
+                                        href="/players"
+                                        className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
                                     >
-                                        Clear filters
-                                    </button>
+                                        Browse Players
+                                    </Link>
                                 )}
                             </div>
                         ) : (
-                            <div className="max-h-[calc(100vh-300px)] overflow-y-auto pr-4 custom-scrollbar">
-                                <div className="space-y-2">
-                                    {displayNuggets.map((nugget, index) => {
-                                        const playerTeam = findTeamByKey(nugget.player.team || '')
-                                        const router = useRouter()
-                                        return (
+                            <div className="space-y-4 pr-4">
+                                {displayNuggets.map((nugget, index) => {
+                                    const playerTeam = findTeamByKey(nugget.player.team || '');
+                                    return (
+                                        <div
+                                            key={`${nugget.id}-${index}`}
+                                            className="overflow-hidden grid grid-cols-6 md:grid-cols-12 border-b pb-4 border-[var(--color-gray)]"
+                                        >
+                                            {/* Player Image */}
                                             <div
-                                                key={`${nugget.id}-${index}`}
-                                                className="overflow-hidden grid grid-cols-6 md:grid-cols-12 border-b pb-4 border-[var(--color-gray)] shadow-md hover:shadow-xl transition-shadow"
+                                                className="cursor-pointer border rounded-full p-0 w-15 h-15 flex items-center justify-center relative col-span-1"
+                                                onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
                                             >
-                                                {/* Player Image */}
-                                                <div
-                                                    className="cursor-pointer border rounded-full p-0 w-15 h-15 flex items-center justify-center relative col-span-1"
-                                                    onClick={() => router.push(`/players/${nugget.player.id}`, { scroll: false })}
-                                                >
-                                                    <Image
-                                                        src={getImageUrl(nugget.player.headshotPic) || ''}
-                                                        alt={`${nugget.player.name} headshot`}
-                                                        fill
-                                                        className="rounded-full object-cover bg-background overflow-hidden"
-                                                    />
-                                                </div>
+                                                <Image
+                                                    src={getImageUrl(nugget.player.headshotPic) || ''}
+                                                    alt={`${nugget.player.name} headshot`}
+                                                    fill
+                                                    className="rounded-full object-cover bg-background overflow-hidden"
+                                                />
+                                            </div>
 
-                                                {/* Player Details + Content */}
-                                                <div className="col-span-5 md:col-span-11">
-                                                    {/* Header Section */}
-                                                    <div className="flex items-center gap-2 ml-4 mr-4 col-1">
-                                                        <div className="flex-1">
-                                                            <div className="flex items-center gap-2">
-                                                                <Link href={`/players/${nugget.player.id}`}>
-                                                                    <h1 className="text-xl">{nugget.player.name}</h1>
-                                                                </Link>
-                                                                {playerTeam && (
-                                                                    <div className="flex items-center">
-                                                                        <Image
-                                                                            src={getTeamLogoUrl(playerTeam.logo) || ''}
-                                                                            alt={`${playerTeam.name} logo`}
-                                                                            width={32}
-                                                                            height={24}
-                                                                            className="object-contain"
-                                                                        />
-                                                                    </div>
-                                                                )}
-                                                            </div>
-
-                                                            {nugget.player.team && (
-                                                                <p className="text-sm text-gray-500">
-                                                                    {nugget.player.position} • {nugget.player.team}
-                                                                </p>
+                                            {/* Player Details + Content */}
+                                            <div className="col-span-5 md:col-span-11">
+                                                {/* Header Section */}
+                                                <div className="flex items-center gap-2 ml-4 mr-4">
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <Link href={`/players/${nugget.player.id}`}>
+                                                                <h1 className="text-xl">{nugget.player.name}</h1>
+                                                            </Link>
+                                                            {playerTeam && (
+                                                                <div className="flex items-center">
+                                                                    <Image
+                                                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                                                        alt={`${playerTeam.name} logo`}
+                                                                        width={32}
+                                                                        height={24}
+                                                                        className="object-contain"
+                                                                    />
+                                                                </div>
                                                             )}
                                                         </div>
+                                                        {nugget.player.team && (
+                                                            <p className="text-sm text-gray-500">
+                                                                {nugget.player.position} • {nugget.player.team}
+                                                            </p>
+                                                        )}
+                                                    </div>
 
-                                                        {/* Bookmark Button */}
-                                                        <div className="flex items-center">
-                                                            <button
-                                                                onClick={() => handleBookmarkClick(nugget.id, nugget.isSaved || false)}
-                                                                className={`flex items-center gap-2 px-3 py-2 rounded-full transition-colors cursor-pointer ${bookmarkLoading === nugget.id
-                                                                    ? 'bg-[#E64A30]/70'
-                                                                    : nugget.isSaved
-                                                                        ? 'bg-[#E64A30]'
-                                                                        : 'bg-[#E64A30] hover:opacity-90'
-                                                                    }`}
-                                                                title={nugget.isSaved ? 'Remove from saved' : 'Save nugget'}
-                                                                disabled={bookmarkLoading === nugget.id}
+                                                    {/* Bookmark Button */}
+                                                    <div className="flex items-center">
+                                                        <button
+                                                            onClick={() => handleBookmarkClick(nugget.id, nugget.isSaved || false)}
+                                                            className={`flex items-center gap-2 px-3 py-2 rounded-full transition-colors cursor-pointer ${bookmarkLoading === nugget.id
+                                                                ? 'bg-[#E64A30]/70'
+                                                                : nugget.isSaved
+                                                                    ? 'bg-[#E64A30]'
+                                                                    : 'bg-[#E64A30] hover:opacity-90'
+                                                                }`}
+                                                            title={nugget.isSaved ? 'Remove from saved' : 'Save nugget'}
+                                                            disabled={bookmarkLoading === nugget.id}
+                                                        >
+                                                            <span className="text-sm font-medium text-white">
+                                                                {nugget.isSaved ? 'Saved' : 'Save'}
+                                                            </span>
+                                                            {bookmarkLoading === nugget.id ? (
+                                                                <Loader2 className="w-5 h-5 animate-spin text-white" />
+                                                            ) : (
+                                                                <Bookmark
+                                                                    strokeWidth={1}
+                                                                    className={`w-5 h-5 ${nugget.isSaved ? 'fill-white text-white' : 'text-white'}`}
+                                                                />
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {/* Content Section */}
+                                                <div className="mt-3 ml-4 dark:text-[#D2D6E2]">
+                                                    <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
+                                                </div>
+
+                                                {/* Fantasy Insight Section */}
+                                                {nugget.fantasyInsight && (
+                                                    <div className="px-4 mt-2 dark:text-[#D2D6E2]">
+                                                        <h1 className="font-semibold mt-0 text-red-800">Fantasy Insight:</h1>
+                                                        {fantasyInsight(nugget.fantasyInsight)}
+                                                    </div>
+                                                )}
+
+                                                {/* Source + Date Section */}
+                                                <div className="bg-[var(--gray-background-color)] rounded-full pr-3 pl-2 py-2 flex items-center justify-between mr-5 ml-5 mt-2 dark:bg-[var(--dark-theme-color)]">
+                                                    {/* Source */}
+                                                    {nugget.sourceUrl && (
+                                                        <div className="flex items-center gap-1 bg-[var(--light-orange-background-color)] rounded-full px-3 py-1.5 w-fit dark:text-black">
+                                                            <span className="font-semibold text-sm">Source:</span>
+                                                            <Link
+                                                                href={
+                                                                    nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
+                                                                        ? nugget.sourceUrl
+                                                                        : `https://${nugget.sourceUrl}`
+                                                                }
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-left hover:text-red-800 text-sm"
                                                             >
-                                                                <span className="text-sm font-medium text-white">
-                                                                    {nugget.isSaved ? 'Saved' : 'Save'}
-                                                                </span>
-
-                                                                {bookmarkLoading === nugget.id ? (
-                                                                    <Loader2 className="w-5 h-5 animate-spin text-white" />
-                                                                ) : (
-                                                                    <Bookmark
-                                                                        strokeWidth={1}
-                                                                        className={`w-5 h-5 ${nugget.isSaved ? 'fill-white text-white' : 'text-white'}`}
-                                                                    />
-                                                                )}
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Content Section */}
-                                                    <div className="mt-3 ml-4 dark:text-[#D2D6E2]">
-                                                        <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
-                                                    </div>
-
-                                                    {/* Fantasy Insight Section */}
-                                                    {nugget.fantasyInsight && (
-                                                        <div className="px-4 mt-2 dark:text-[#D2D6E2]">
-                                                            <h1 className="font-semibold mt-0 text-red-800">Fantasy Insight:</h1>
-                                                            {fantasyInsight(nugget.fantasyInsight)}
+                                                                {nugget.sourceName}
+                                                            </Link>
                                                         </div>
                                                     )}
 
-                                                    {/* Source + Date Section */}
-                                                    <div className="bg-[var(--gray-background-color)] rounded-full pr-3 pl-2 py-2 flex items-center justify-between mr-5 ml-5 mt-2 dark:bg-[var(--dark-theme-color)]">
-                                                        {/* Source */}
-                                                        {nugget.sourceUrl && (
-                                                            <div className="flex items-center gap-1 bg-[var(--light-orange-background-color)] rounded-full px-3 py-1.5 w-fit dark:text-black">
-                                                                <span className="font-semibold text-sm">Source:</span>
-                                                                <Link
-                                                                    href={
-                                                                        nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
-                                                                            ? nugget.sourceUrl
-                                                                            : `https://${nugget.sourceUrl}`
-                                                                    }
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="text-left hover:text-red-800 text-sm"
-                                                                >
-                                                                    {nugget.sourceName}
-                                                                </Link>
-                                                            </div>
-                                                        )}
-
-                                                        {/* Date */}
-                                                        <div className="flex flex-row gap-2 text-gray-400">
-                                                            <Clock size={18} />
-                                                            <h1 className="text-gray-400 text-sm">
-                                                                {new Date(nugget.createdAt).toLocaleDateString('en-US', {
-                                                                    year: 'numeric',
-                                                                    month: 'short',
-                                                                    day: 'numeric',
-                                                                })}
-                                                            </h1>
-                                                        </div>
+                                                    {/* Date */}
+                                                    <div className="flex flex-row gap-2 text-gray-400">
+                                                        <Clock size={18} />
+                                                        <h1 className="text-gray-400 text-sm">
+                                                            {new Date(nugget.createdAt).toLocaleDateString('en-US', {
+                                                                year: 'numeric',
+                                                                month: 'short',
+                                                                day: 'numeric',
+                                                            })}
+                                                        </h1>
                                                     </div>
                                                 </div>
                                             </div>
-
-                                        )
-                                    })}
-                                </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
 
-                    {/* Trending Players Sidebar */}
+                    {/* Sidebar */}
                     {/* <div className="w-full lg:w-80 xl:w-96 lg:flex-shrink-0">
                         <TrendingPlayers />
                     </div> */}
                 </div>
+
+                {/* Image Modal */}
+                {imageModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" onClick={closeImageModal}>
+                        <div className="relative max-w-4xl max-h-full p-4" onClick={(e) => e.stopPropagation()}>
+                            <button
+                                onClick={closeImageModal}
+                                className="absolute top-2 right-2 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 z-10"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+
+                            {imageModal.images && imageModal.images.length > 1 && (
+                                <>
+                                    <button
+                                        onClick={() => navigateImage('prev')}
+                                        className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 z-10"
+                                    >
+                                        <ChevronLeft className="w-6 h-6" />
+                                    </button>
+                                    <button
+                                        onClick={() => navigateImage('next')}
+                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 z-10"
+                                    >
+                                        <ChevronRight className="w-6 h-6" />
+                                    </button>
+                                </>
+                            )}
+
+                            <Image
+                                src={getImageUrl(imageModal.src) || ''}
+                                alt={imageModal.alt}
+                                width={800}
+                                height={600}
+                                className="max-w-full max-h-full object-contain"
+                            />
+
+                            {imageModal.images && imageModal.images.length > 1 && (
+                                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black bg-opacity-50 px-3 py-1 rounded-full text-sm">
+                                    {imageModal.currentIndex !== undefined ? imageModal.currentIndex + 1 : 1} / {imageModal.images.length}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </>
     )

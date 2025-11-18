@@ -8,7 +8,7 @@ export default function LeaguesHome() {
   const leagueSites = [
     {
       name: "Sleeper",
-      href: "/leagues/sleeper",
+      href: "/feeds/leagues/sleeper",
       icon: "/sleeper_logo.png",
     },
     // Add more league sites here in the future

@@ -36,6 +36,7 @@ const MainNav = () => {
         { href: "/nuggets", label: "Latest" },
         { href: "/saved-nuggets", label: "Saved Nuggets" },
         { href: "/players-nuggets", label: "My Players" },
+        { href: "/feeds/sleeper", label: "Sleeper" },
     ];
 
     const toolOptions = [

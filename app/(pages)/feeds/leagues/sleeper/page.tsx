@@ -31,7 +31,7 @@ export default function SleeperHome() {
 
         <div className="mb-6">
           <Link
-            href="/leagues"
+            href="/feeds/leagues"
             className="text-[#E64A30] hover:text-[#d43d24] inline-flex items-center font-medium"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -107,7 +107,7 @@ export default function SleeperHome() {
               </div>
               
               <Link
-                href={`/leagues/sleeper/leagues/${user.user_id}`}
+                href={`/feeds/leagues/sleeper/${user.user_id}`}
                 className="inline-flex items-center justify-center bg-[#E64A30] hover:bg-[#d43d24] px-4 py-2 rounded-full text-white font-medium transition-colors"
               >
                 View Leagues

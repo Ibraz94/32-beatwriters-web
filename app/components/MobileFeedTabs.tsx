@@ -14,19 +14,24 @@ export default function MobileFeedTabs() {
 
   const tabs: FeedTab[] = [
     {
-      href: '/nuggets',
+      href: '/feeds/nuggets',
       label: 'Latest',
       isActive: pathname === '/nuggets'
     },
     {
-      href: '/saved-nuggets',
+      href: '/feeds/saved-nuggets',
       label: 'Saved',
       isActive: pathname === '/saved-nuggets'
     },
     {
-      href: '/players-nuggets',
+      href: '/feeds/players-nuggets',
       label: 'My Players',
       isActive: pathname === '/players-nuggets'
+    },
+    {
+      href: '/feeds/sleeper',
+      label: 'Sleeper',
+      isActive: pathname.startsWith('/feeds/sleeper')
     }
   ]
 

@@ -121,10 +121,10 @@ function Header() {
     ];
 
     const feedOptions = [
-        { href: "/nuggets", label: "Latest" },
-        { href: "/saved-nuggets", label: "Saved Nuggets" },
-        { href: "/players-nuggets", label: "My Players" },
-        { href: "/leagues", label: "Leagues" },
+        { href: "/feeds/nuggets", label: "Latest" },
+        { href: "/feeds/saved-nuggets", label: "Saved Nuggets" },
+        { href: "/feeds/players-nuggets", label: "My Players" },
+        { href: "/feeds/leagues", label: "Leagues" },
     ];
 
     const toolOptions = [

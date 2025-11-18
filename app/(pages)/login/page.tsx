@@ -152,7 +152,7 @@ export default function Login() {
                 if (isFastDraftContext && !hasStripe) {
                     router.push('/fastdraft/complete-registration')
                 } else {
-                    router.push('/nuggets')
+                    router.push('/feeds/nuggets')
                 }
             } else {
                 setErrors({
@@ -369,7 +369,7 @@ left-0 right-0
                             <button
                                 type="submit"
                                 disabled={isLoading || isGoogleAuthInProgress}
-                                className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-full bg-[#E64A30] hover:scale-101 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-full bg-[#E64A30] hover:scale-100 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isLoading ? (
                                     <div className="flex items-center">
@@ -406,7 +406,7 @@ left-0 right-0
                             type="button"
                             onClick={handleGoogleAuth}
                             disabled={isGoogleLoading || isLoading}
-                            className="w-full inline-flex justify-center py-2 px-4 border border-border rounded-full shadow-sm bg-background text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full inline-flex justify-center py-2 px-4 border border-border rounded-full shadow-sm bg-background text-sm font-medium text-foreground hover:bg-accent hover:text-accent-foreground hover:cursor-pointer transition-colors disabled:opacity-50 "
                         >
                             {isGoogleLoading ? (
                                 <div className="flex items-center">
