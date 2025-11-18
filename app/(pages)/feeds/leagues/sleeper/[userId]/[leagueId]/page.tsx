@@ -644,8 +644,8 @@ export default function SleeperLeagueNuggetsPage() {
                         {/* Sleeper Team Name */}
                         {myTeamName && (
                           <div className="flex items-center gap-1 bg-[#E64A30]/10 dark:bg-[#E64A30]/20 rounded-full px-3 py-1.5">
-                            <span className="font-semibold text-sm text-[#E64A30]">Sleeper Team Name:</span>
-                            <span className="text-sm font-medium text-[#E64A30]">
+                            <span className="font-medium text-sm dark:text-white">Sleeper Team:</span>
+                            <span className="text-sm font-normal text-[#E64A30]">
                               {myTeamName}
                             </span>
                           </div>
