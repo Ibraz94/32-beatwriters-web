@@ -624,7 +624,7 @@ export default function NuggetsPage() {
                                     />
                                     <button
                                         type="button"
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl hover:cursor-pointer"
                                         style={{ backgroundColor: '#E64A30' }}
                                     >
                                         Search
@@ -647,10 +647,10 @@ export default function NuggetsPage() {
                                                 height={18}
                                             />
                                             {date ? date.toLocaleDateString() : <span>Select By Date</span>}
-                                            <ChevronDown className="h-4 w-4 text-gray-500" />
+                                            <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400"/>
                                         </Button>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0 bg-[#1D212D]" align="start" side="bottom">
+                                    <PopoverContent className="w-auto p-0 bg-white dark:bg-[#262829] mt-1" align="start" side="bottom">
                                         <Calendar
                                             mode="single"
                                             selected={date}
@@ -689,16 +689,16 @@ export default function NuggetsPage() {
                             </div>
 
                             {/* Position Filter */}
-                            <div className="border border-[#C7C8CB] rounded-full px-3 py-1.5  bg-white dark:bg-[#262829]">
+                            <div className="border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829]">
                                 <Select
                                     value={filters.position || "all"}
                                     onValueChange={handlePositionFilterChange}
                                 >
-                                    <SelectTrigger className="h-10 w-40 !border-none !border-0 flex items-center gap-2">
+                                    <SelectTrigger className="!border-none !border-0 flex items-center gap-2">
                                         <ListCheck className='w-4 h-4' />
                                         <SelectValue placeholder="All Positions" />
                                     </SelectTrigger>
-                                    <SelectContent className="border-none">
+                                    <SelectContent className="border-none bg-white dark:bg-[#262829]">
                                         <SelectGroup>
                                             <SelectItem value="all">All Positions</SelectItem>
                                             {['QB', 'WR', 'RB', 'FB', 'TE'].map(position => (
@@ -712,18 +712,18 @@ export default function NuggetsPage() {
                             </div>
 
                             {/* Team Filter */}
-                            <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829] transition-colors">
+                            <div className="flex  border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors">
                                 <Select
                                     value={filters.team || "all"}
                                     onValueChange={handleTeamFilterChange}
                                 >
-                                    <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:ring-0 focus:outline-none">
+                                    <SelectTrigger className="filter-select w-52 !border-none !border-0 text-sm !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
                                         <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                         <SelectValue placeholder="All Teams" />
-                                        <ChevronDown className="ml-auto h-4 w-4 text-gray-500" />
+                                        {/* <ChevronDown className="ml-auto h-4 w-4 text-gray-500" /> */}
                                     </SelectTrigger>
 
-                                    <SelectContent className="border-none bg-white dark:bg-[#1D212D] text-black dark:text-white rounded-xl shadow-md">
+                                    <SelectContent className="border-none bg-white dark:bg-[#262829] text-black dark:text-white rounded-xl">
                                         <SelectGroup>
                                             <SelectItem value="all">All Teams</SelectItem>
                                             {teamsData?.teams.map((team) => (
@@ -752,7 +752,7 @@ export default function NuggetsPage() {
 
                             {/* Clear Filters Button */}
                             <div className="w-full lg:w-auto text-center">
-                                <button onClick={clearFilters} className="whitespace-nowrap flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-full border border-[#E64A30] text-[#E64A30] bg-white dark:!bg-[#262829] hover:bg-[#fff4f2] dark:hover:bg-[#303234] transition-colors dark:border-none">
+                                <button onClick={clearFilters} className="whitespace-nowrap flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-full border border-[#E64A30] text-[#E64A30] bg-white dark:!bg-[#262829] hover:bg-[#fff4f2] dark:hover:bg-[#303234] transition-colors dark:border-none hover:cursor-pointer">
                                     Clear Filters
                                 </button>
                             </div>
@@ -765,7 +765,7 @@ export default function NuggetsPage() {
                     {/* Feed Column - Scrollable */}
                     <div className="flex-1">
                         {displayNuggets.length === 0 && !isLoading ? (
-                            <div className="text-center py-12">
+                            <div className="text-center py-12 hover:cursor-pointer">
                                 <p className="text-xl text-gray-600 mb-4">
                                     {hasActiveFilters ? 'No nuggets found for your filters.' : 'No nuggets available.'}
                                 </p>

@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar as CalendarComponent } from '@/components/ui/calendar'
+import { Calendar } from '@/components/ui/calendar'
 import { useTheme } from 'next-themes'
 
 interface NuggetFilters {
@@ -51,7 +51,7 @@ export default function SleeperLeagueNuggetsPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading: authLoading, user } = useAuth()
   const { theme } = useTheme()
-  
+
   const userId = params.userId as string
   const leagueId = params.leagueId as string
 
@@ -101,10 +101,10 @@ export default function SleeperLeagueNuggetsPage() {
   const leaguePlayerIds = useMemo(() => {
     if (!myRoster) return []
     const playerIds = new Set<string>()
-    
+
     // Add all players from user's roster (starters + bench)
     myRoster.players?.forEach((playerId) => playerIds.add(playerId))
-    
+
     return Array.from(playerIds)
   }, [myRoster])
 
@@ -183,19 +183,19 @@ export default function SleeperLeagueNuggetsPage() {
   // be enhanced to accept an array of player IDs or names.
   const filteredNuggets = useMemo(() => {
     if (!nuggetsData?.data?.nuggets || !leaguePlayerNames.length) return []
-    
+
     // Create a Set of lowercase player names for faster lookup
     const leaguePlayerNamesSet = new Set(
       leaguePlayerNames.map(name => name.toLowerCase())
     )
-    
+
     const filtered = nuggetsData.data.nuggets.filter((nugget) => {
       const playerName = nugget?.player?.name
       if (!playerName) return false
-      
+
       return leaguePlayerNamesSet.has(playerName.toLowerCase())
     })
-    
+
     // Limit to ITEMS_PER_PAGE for proper pagination
     return filtered.slice(0, ITEMS_PER_PAGE)
   }, [nuggetsData, leaguePlayerNames])
@@ -403,10 +403,15 @@ export default function SleeperLeagueNuggetsPage() {
               <input
                 type="text"
                 placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
+                className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
               />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl hover:cursor-pointer"
+                style={{ backgroundColor: '#E64A30' }}
+              >
+                Search
+              </button>
             </div>
           </div>
 
@@ -414,52 +419,63 @@ export default function SleeperLeagueNuggetsPage() {
           <div className="flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829]">
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild className="flex-1">
-                <Button variant="outline" className="filter-button justify-between text-left font-normal h-10 !border-none !border-0 shadow-none flex items-center gap-2 !bg-transparent">
-                  <Image src={calendarIcon} alt="Calendar icon" width={18} height={18} />
+                <Button
+                  variant="outline"
+                  className="filter-button justify-between text-left font-normal h-10 !border-none !border-0 shadow-none flex items-center gap-2 !bg-transparent"
+                >
+                  <Image
+                    src={calendarIcon}
+                    alt="Calendar icon"
+                    width={18}
+                    height={18}
+                  />
                   {date ? date.toLocaleDateString() : <span>Select By Date</span>}
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-[#1D212D]" align="start" side="bottom">
-                <CalendarComponent
+              <PopoverContent className="w-auto p-0 bg-white dark:bg-[#262829] mt-1" align="start" side="bottom">
+                <Calendar
                   mode="single"
                   selected={date}
                   onSelect={(selectedCalendarDate: Date | undefined) => {
-                    setDate(selectedCalendarDate)
+                    setDate(selectedCalendarDate);
                     if (selectedCalendarDate) {
-                      const year = selectedCalendarDate.getFullYear()
-                      const month = String(selectedCalendarDate.getMonth() + 1).padStart(2, '0')
-                      const day = String(selectedCalendarDate.getDate()).padStart(2, '0')
-                      const dateString = `${year}-${month}-${day}`
-                      setSelectedDate(dateString)
-                      setCurrentPage(1)
-                      setAllNuggets([])
+                      const year = selectedCalendarDate.getFullYear();
+                      const month = String(selectedCalendarDate.getMonth() + 1).padStart(2, '0');
+                      const day = String(selectedCalendarDate.getDate()).padStart(2, '0');
+                      setSelectedDate(`${year}-${month}-${day}`);
                     } else {
-                      setSelectedDate('')
-                      setCurrentPage(1)
-                      setAllNuggets([])
+                      setSelectedDate('');
                     }
-                    setOpen(false)
+                    setOpen(false);
                   }}
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
             {date && (
-              <Button variant="outline" onClick={clearDateFilter} className="filter-button h-10 px-3 border-none !bg-transparent" title="Clear date filter">
+              <Button
+                variant="outline"
+                onClick={clearDateFilter}
+                className="filter-button h-10 px-3 border-none !bg-transparent"
+                title="Clear date filter"
+              >
                 <X className="h-4 w-4" />
               </Button>
             )}
           </div>
 
           {/* Position Filter */}
-          <div className="border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:bg-[#262829]">
-            <Select value={filters.position || 'all'} onValueChange={handlePositionFilterChange}>
-              <SelectTrigger className="h-10 w-40 !border-none !border-0 flex items-center gap-2">
+          <div className="border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829]">
+            <Select
+              value={filters.position || 'all'}
+              onValueChange={handlePositionFilterChange}
+            >
+              <SelectTrigger className="!border-none !border-0 flex items-center gap-2">
                 <ListCheck className="w-4 h-4" />
                 <SelectValue placeholder="All Positions" />
               </SelectTrigger>
-              <SelectContent className="border-none">
+              <SelectContent className="border-none bg-white dark:bg-[#262829]">
                 <SelectGroup>
                   <SelectItem value="all">All Positions</SelectItem>
                   {['QB', 'WR', 'RB', 'FB', 'TE'].map((position) => (
@@ -473,14 +489,17 @@ export default function SleeperLeagueNuggetsPage() {
           </div>
 
           {/* Team Filter */}
-          <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829] transition-colors">
-            <Select value={filters.team || 'all'} onValueChange={handleTeamFilterChange}>
-              <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:ring-0 focus:outline-none">
+          <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors">
+            <Select
+              value={filters.team || 'all'}
+              onValueChange={handleTeamFilterChange}
+            >
+              <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
                 <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                 <SelectValue placeholder="All Teams" />
-                <ChevronDown className="ml-auto h-4 w-4 text-gray-500" />
+                {/* <ChevronDown className="ml-auto h-4 w-4 text-gray-500" /> */}
               </SelectTrigger>
-              <SelectContent className="border-none bg-white dark:bg-[#1D212D] text-black dark:text-white rounded-xl shadow-md">
+              <SelectContent className="border-none bg-white dark:bg-[#262829] text-black dark:text-white rounded-xl shadow-md">
                 <SelectGroup>
                   <SelectItem value="all">All Teams</SelectItem>
                   {teamsData?.teams.map((team) => (
@@ -511,7 +530,7 @@ export default function SleeperLeagueNuggetsPage() {
           <div className="w-full lg:w-auto text-center">
             <button
               onClick={clearFilters}
-              className="whitespace-nowrap flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-full border border-[#E64A30] text-[#E64A30] bg-white dark:!bg-[#262829] hover:bg-[#fff4f2] dark:hover:bg-[#303234] transition-colors dark:border-none"
+              className="whitespace-nowrap flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-full border border-[#E64A30] text-[#E64A30] bg-white dark:!bg-[#262829] hover:bg-[#fff4f2] dark:hover:bg-[#303234] transition-colors dark:border-none hover:cursor-pointer"
             >
               Clear Filters
             </button>
@@ -587,13 +606,12 @@ export default function SleeperLeagueNuggetsPage() {
                         <div className="flex items-center">
                           <button
                             onClick={() => handleBookmarkClick(nugget.id, nugget.isSaved || false)}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-full transition-colors cursor-pointer ${
-                              bookmarkLoading === nugget.id
-                                ? 'bg-[#E64A30]/70'
-                                : nugget.isSaved
+                            className={`flex items-center gap-2 px-3 py-2 rounded-full transition-colors cursor-pointer ${bookmarkLoading === nugget.id
+                              ? 'bg-[#E64A30]/70'
+                              : nugget.isSaved
                                 ? 'bg-[#E64A30]'
                                 : 'bg-[#E64A30] hover:opacity-90'
-                            }`}
+                              }`}
                             title={nugget.isSaved ? 'Remove from saved' : 'Save nugget'}
                             disabled={bookmarkLoading === nugget.id}
                           >

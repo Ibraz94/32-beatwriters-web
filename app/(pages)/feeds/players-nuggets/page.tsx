@@ -35,6 +35,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import MobileFeedTabs from '@/app/components/MobileFeedTabs'
 import { useGetTrendingPlayersQuery } from '@/lib/services/playersApi'
+import { useTheme } from 'next-themes'
 
 interface NuggetFilters {
     sortBy?: 'createdAt' | 'playerName'
@@ -83,6 +84,10 @@ export default function PlayersNuggetsPage() {
     const [showMobileFilters, setShowMobileFilters] = useState(false)
     const [bookmarkLoading, setBookmarkLoading] = useState<number | null>(null)
     const ITEMS_PER_PAGE = 15
+    const { theme } = useTheme();
+
+    const calendarIcon =
+        theme === 'dark' ? '/calendar-nuggets-dark.svg' : '/calendar-nuggets.svg'
 
     // Debounce search term
     useEffect(() => {
@@ -560,22 +565,22 @@ left-[-12px] right-[-12px]
                         <div className="flex flex-col lg:flex-row items-center justify-center gap-3 w-full">
 
                             {/* Search Bar */}
-                            <div className="relative w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829] hidden md:flex">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                                <input
-                                    type="text"
-                                    placeholder="Search..."
-                                    value={searchTerm}
-                                    onChange={(e) => handleSearch(e.target.value)}
-                                    className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
-                                />
-                                <button
-                                    type="button"
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl"
-                                    style={{ backgroundColor: '#E64A30' }}
-                                >
-                                    Search
-                                </button>
+                            <div className="hidden md:flex w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
+                                <div className="relative w-full">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        className="w-full pl-10 pr-24 py-2 rounded-full placeholder:text-gray-400 focus:outline-none text-base"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 text-white text-sm rounded-2xl hover:cursor-pointer"
+                                        style={{ backgroundColor: '#E64A30' }}
+                                    >
+                                        Search
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Date Filter */}
@@ -586,11 +591,17 @@ left-[-12px] right-[-12px]
                                             variant="outline"
                                             className="filter-button justify-between text-left font-normal h-10 !border-none !border-0 shadow-none flex items-center gap-2 !bg-transparent"
                                         >
+                                            <Image
+                                                src={calendarIcon}
+                                                alt="Calendar icon"
+                                                width={18}
+                                                height={18}
+                                            />
                                             {date ? date.toLocaleDateString() : <span>Select By Date</span>}
-                                            <ChevronDown className="h-4 w-4 text-gray-500" />
+                                            <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                                         </Button>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0 bg-[#1D212D]" align="start" side="bottom">
+                                    <PopoverContent className="w-auto p-0 bg-white dark:bg-[#262829] mt-1" align="start" side="bottom">
                                         <Calendar
                                             mode="single"
                                             selected={date}
@@ -623,16 +634,16 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Position Filter */}
-                            <div className="border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:bg-[#262829]">
+                            <div className="border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829]">
                                 <Select
                                     value={filters.position || 'all'}
                                     onValueChange={handlePositionFilterChange}
                                 >
-                                    <SelectTrigger className="h-10 w-40 !border-none !border-0 flex items-center gap-2">
+                                    <SelectTrigger className="!border-none !border-0 flex items-center gap-2">
                                         <ListCheck className="w-4 h-4" />
                                         <SelectValue placeholder="All Positions" />
                                     </SelectTrigger>
-                                    <SelectContent className="border-none">
+                                    <SelectContent className="border-none bg-white dark:bg-[#262829]">
                                         <SelectGroup>
                                             <SelectItem value="all">All Positions</SelectItem>
                                             {['QB', 'WR', 'RB', 'FB', 'TE'].map((position) => (
@@ -646,17 +657,17 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Team Filter */}
-                            <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829] transition-colors">
+                            <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors">
                                 <Select
                                     value={filters.team || 'all'}
                                     onValueChange={handleTeamFilterChange}
                                 >
-                                    <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:ring-0 focus:outline-none">
+                                    <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
                                         <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                         <SelectValue placeholder="All Teams" />
-                                        <ChevronDown className="ml-auto h-4 w-4 text-gray-500" />
+                                        {/* <ChevronDown className="ml-auto h-4 w-4 text-gray-500" /> */}
                                     </SelectTrigger>
-                                    <SelectContent className="border-none bg-white dark:bg-[#1D212D] text-black dark:text-white rounded-xl shadow-md">
+                                    <SelectContent className="border-none bg-white dark:bg-[#262829] text-black dark:text-white rounded-xl shadow-md">
                                         <SelectGroup>
                                             <SelectItem value="all">All Teams</SelectItem>
                                             {teamsData?.teams.map((team) => (
@@ -687,7 +698,7 @@ left-[-12px] right-[-12px]
                             <div className="w-full lg:w-auto text-center">
                                 <button
                                     onClick={clearFilters}
-                                    className="whitespace-nowrap flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-full border border-[#E64A30] text-[#E64A30] bg-white dark:!bg-[#262829] hover:bg-[#fff4f2] dark:hover:bg-[#303234] transition-colors dark:border-none"
+                                    className="whitespace-nowrap flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-full border border-[#E64A30] text-[#E64A30] bg-white dark:!bg-[#262829] hover:bg-[#fff4f2] dark:hover:bg-[#303234] transition-colors dark:border-none hover:cursor-pointer"
                                 >
                                     Clear Filters
                                 </button>
