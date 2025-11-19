@@ -180,7 +180,7 @@ left-[-28px] right-[-28px]
                             <SelectTrigger className="h-10 w-32 !border-none !border-0 flex items-center gap-2">
                                 <SelectValue placeholder="All Positions" />
                             </SelectTrigger>
-                            <SelectContent className="border-none">
+                            <SelectContent className="border-none bg-white dark:bg-[#262829]">
                                 <SelectGroup>
                                     <SelectItem value="all">All Positions</SelectItem>
                                     {['QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'OT', 'IOL', 'S', 'CB', 'K', 'P', 'LS'].map((pos) => (
@@ -205,7 +205,7 @@ left-[-28px] right-[-28px]
                             <SelectTrigger className="h-10 w-40 !border-none !border-0 flex items-center gap-2">
                                 <SelectValue placeholder="Sort By" />
                             </SelectTrigger>
-                            <SelectContent className="border-none">
+                            <SelectContent className="border-none bg-white dark:bg-[#262829]">
                                 <SelectGroup>
                                     <SelectItem value="rank">Sort by Rank</SelectItem>
                                     <SelectItem value="name">Sort by Name</SelectItem>
