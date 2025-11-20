@@ -137,8 +137,8 @@ function ProspectsContent() {
 
                 {/* Header */}
                 <div className="mb-6 flex flex-col items-center justify-center">
-                    <h1 className="text-3xl font-bold mb-4">NFL Prospects</h1>
-                    <p className="text-muted-foreground mb-4">Explore top NFL prospects and their rankings</p>
+                    <h1 className="text-4xl lg:text-5xl mb-4">NFL Prospects</h1>
+                    <p className="text-lg lg:text-xl text-muted-foreground mb-4">Explore top NFL prospects and their rankings</p>
                 </div>
 
                 {/* Search Bar + Filter Button in One Line (Mobile) */}
