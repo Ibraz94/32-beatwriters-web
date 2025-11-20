@@ -360,7 +360,7 @@ function AccountContent() {
         return (
             <section className="container mx-auto mt-8 px-4 min-h-screen">
                 <div className="flex justify-center items-center min-h-[400px]">
-                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-800"></div>
+                    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#E64A30]"></div>
                 </div>
             </section>
         )
@@ -421,10 +421,10 @@ function AccountContent() {
                     {/* Navigation Tabs */}
                     <div className="mb-8">
                         {/* Container */}
-                        <div className="flex flex-col md:flex-row justify-between items-center gap-2 border border-[#C7C8CB] rounded-full p-1 bg-white dark:bg-[#262829]">
+                        <div className="flex justify-between items-center border border-[#C7C8CB] rounded-full p-1 bg-white dark:bg-[#262829]">
 
                             {/* Tabs: always visible */}
-                            <nav className="flex space-x-2 overflow-x-auto">
+                            <nav className="flex items-center justify-between gap-3 ml-1">
                                 {[
                                     { id: 'profile', label: 'Profile', icon: User },
                                     { id: 'update-password', label: 'Update Password', icon: Shield },
@@ -437,7 +437,7 @@ function AccountContent() {
                                         <button
                                             key={id}
                                             onClick={() => setActiveTab(id)}
-                                            className={`flex items-center space-x-2 px-4 py-2 rounded-full font-medium text-sm transition-colors ${bgColor} ${textColor} whitespace-nowrap`}
+                                            className={`flex items-center justify-center gap-0.5 px-2 py-2 rounded-full font-medium text-sm transition-colors ${bgColor} ${textColor} whitespace-nowrap`}
                                         >
                                             <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-[#72757C]'}`} />
                                             <span>{label}</span>
@@ -799,7 +799,7 @@ function AccountContent() {
 
                             {loadingSubscription ? (
                                 <div className="flex justify-center items-center py-12">
-                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-800"></div>
+                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E64A30]"></div>
                                 </div>
                             ) : subscription ? (
                                 <div className="space-y-6">

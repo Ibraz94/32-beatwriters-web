@@ -414,8 +414,8 @@ function Header() {
                                             Login
                                         </Link>
                                     </Button>
-                                    <Button variant="orange"
-                                        className="rounded-4xl px-8 hover:border-1 hover:border-[#E3E4E5] dark:border-none dark:hover:bg-[var(--dark-theme-color)]">
+                                    <Button 
+                                        className="rounded-4xl bg-[#E64A30] hover:bg-[#E64A30]/90 px-8 text-white hover:border-[#E3E4E5] dark:border-none dark:hover:bg-[var(--dark-theme-color)]">
                                         <Link
                                             href="/subscribe"
                                         >
@@ -585,14 +585,14 @@ function Header() {
                                 <div className="space-y-3">
                                     <Link
                                         href="/login"
-                                        className="mobile-menu-link block w-full py-3 px-4 font-medium rounded-lg transition-all duration-200 text-center transform hover:scale-105"
+                                        className="mobile-menu-link block w-full py-3 px-4 font-medium rounded-full transition-all duration-200 text-center transform hover:scale-105"
                                         onClick={handleMobileNavigation}
                                     >
                                         Login
                                     </Link>
                                     <Link
                                         href="/subscribe"
-                                        className="block w-full py-3 px-4 bg-red-800 text-white font-semibold rounded-lg transition-all duration-200 text-center transform hover:scale-102 hover:bg-red-900"
+                                        className="block w-full py-3 px-4 bg-[#E64A30] text-white font-semibold rounded-full transition-all duration-200 text-center transform hover:scale-102 hover:bg-red-900"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Subscribe Now

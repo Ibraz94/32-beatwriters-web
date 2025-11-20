@@ -639,11 +639,11 @@ export default function SleeperLeagueNuggetsPage() {
                       )}
 
                       {/* Source + Date + Team Section */}
-                      <div className="bg-[var(--gray-background-color)] rounded-full pr-3 pl-2 py-2 flex flex-wrap items-center gap-2 mr-5 ml-5 mt-2 dark:bg-[var(--dark-theme-color)]">
+                      <div className="lg:bg-[var(--gray-background-color)] rounded-full lg:pr-3 lg:pl-2 py-2 flex flex-wrap items-center gap-2 mr-5 ml-5 mt-2 lg:dark:bg-[var(--dark-theme-color)]">
                         {/* Source */}
                         {nugget.sourceUrl && (
-                          <div className="flex items-center gap-1 bg-[var(--light-orange-background-color)] rounded-full px-3 py-1.5 dark:text-black">
-                            <span className="font-semibold text-sm">Source:</span>
+                          <div className="flex items-center gap-1 bg-[var(--light-orange-background-color)] rounded-full px-3 py-1.5 dark:text-black text-xs lg:text-sm">
+                            <span className="font-semibold ">Source:</span>
                             <Link
                               href={
                                 nugget.sourceUrl.startsWith('http://') || nugget.sourceUrl.startsWith('https://')
@@ -662,15 +662,15 @@ export default function SleeperLeagueNuggetsPage() {
                         {/* Sleeper Team Name */}
                         {myTeamName && (
                           <div className="flex items-center gap-1 bg-[#E64A30]/10 dark:bg-[#E64A30]/20 rounded-full px-3 py-1.5">
-                            <span className="font-medium text-sm dark:text-white">Sleeper Team:</span>
-                            <span className="text-sm font-normal text-[#E64A30]">
+                            <span className="font-medium text-xs lg:text-sm dark:text-white">Sleeper Team:</span>
+                            <span className="text-xs lg:text-sm font-normal text-[#E64A30]">
                               {myTeamName}
                             </span>
                           </div>
                         )}
 
                         {/* Date */}
-                        <div className="flex flex-row gap-2 text-gray-400 ml-auto">
+                        <div className="flex flex-row gap-2 text-gray-400 lg:ml-auto">
                           <Clock size={18} />
                           <h1 className="text-gray-400 text-sm">
                             {new Date(nugget.createdAt).toLocaleDateString('en-US', {

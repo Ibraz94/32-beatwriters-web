@@ -16,20 +16,20 @@ export default function MobileFeedTabs() {
     {
       href: '/feeds/nuggets',
       label: 'Latest',
-      isActive: pathname === '/nuggets'
+      isActive: pathname === '/feeds/nuggets'
     },
     {
       href: '/feeds/saved-nuggets',
       label: 'Saved',
-      isActive: pathname === '/saved-nuggets'
+      isActive: pathname === '/feeds/saved-nuggets'
     },
     {
       href: '/feeds/players-nuggets',
       label: 'My Players',
-      isActive: pathname === '/players-nuggets'
+      isActive: pathname === '/feeds/players-nuggets'
     },
     {
-      href: '/feeds/sleeper',
+      href: '/feeds/leagues',
       label: 'Sleeper',
       isActive: pathname.startsWith('/feeds/sleeper')
     }
@@ -52,9 +52,9 @@ export default function MobileFeedTabs() {
           <Link
             key={tab.href}
             href={tab.href}
-            className={`flex-1 text-center py-2 px-4 rounded-full text-sm font-medium transition-all duration-200 ${tab.isActive
-                ? 'bg-[#E64A30] text-white'
-                : 'bg-transparent dark:bg-[#262829] text-gray-700 dark:text-gray-300 hover:bg-[#E64A30] hover:text-white'
+            className={`flex-1 text-center py-2 px-2 rounded-full text-sm font-medium transition-all duration-200 ${tab.isActive
+              ? 'bg-[#E64A30] text-white'
+              : 'bg-transparent dark:bg-[#262829] text-gray-700 dark:text-gray-300 hover:bg-[#E64A30] hover:text-white'
               }`}
             onClick={handleTabClick}
           >
