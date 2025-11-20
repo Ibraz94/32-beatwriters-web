@@ -73,14 +73,14 @@ function RankingsContent() {
   useEffect(() => {
     const loadRankings = async () => {
       if (!week) return
-      
+
       // Skip loading if we should show "Data Coming Soon" (Tuesday/Wednesday for latest week)
       if (shouldShowDataComingSoon) {
         setLoading(false)
         setData([])
         return
       }
-      
+
       setLoading(true)
       setError('')
       try {
@@ -263,7 +263,61 @@ function RankingsContent() {
           }}
 
         ></div>
-        <div className="mb-1">
+        {/* Mobile Filter Layout */}
+        <div className="mb-4 md:hidden flex flex-col gap-3">
+          {/* Row 1: Search + Week */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search player..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-3 py-2 border border-border rounded-md dark:bg-[#262829] text-sm"
+              />
+            </div>
+            <select
+              value={week ?? ''}
+              onChange={(e) => setWeek(Number(e.target.value))}
+              className="px-2 py-2 border border-border rounded-md dark:bg-[#262829] text-sm min-w-[90px]"
+            >
+              <option value="" disabled>Week</option>
+              {weeks.map((w) => (
+                <option key={w} value={w}>Week {w}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Row 2: Position + Format */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1 bg-accent/40 rounded-md p-1 overflow-x-auto no-scrollbar flex-1">
+              {(['QB', 'RB', 'WR', 'TE', 'Flex'] as PositionType[]).map((pos) => (
+                <button
+                  key={pos}
+                  onClick={() => setPosition(pos)}
+                  className={`px-3 py-1 rounded text-xs whitespace-nowrap flex-shrink-0 ${position === pos ? 'bg-[#E64A30] rounded-full text-white' : 'text-foreground hover:bg-accent'}`}
+                >
+                  {pos}
+                </button>
+              ))}
+            </div>
+
+            <select
+              value={format}
+              onChange={(e) => setFormat(e.target.value as any)}
+              className="px-2 py-2 border border-border rounded-md dark:bg-[#262829] text-sm min-w-[80px]"
+            >
+              <option value="ppr">PPR</option>
+              <option value="halfPPR">0.5 PPR</option>
+              <option value="standard">Std</option>
+            </select>
+          </div>
+
+          <p className="text-xs text-muted-foreground">Vegas prop driven. Expect more props to be added as the week progresses.</p>
+        </div>
+
+        {/* Desktop Filter Layout */}
+        <div className="mb-1 hidden md:block">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3 flex-wrap">
               {/* Week Dropdown */}
@@ -376,17 +430,17 @@ function RankingsContent() {
                         <div className="w-20 h-20 rounded-full bg-[#E64A30]/10 dark:bg-[#E64A30]/20 animate-pulse"></div>
                       </div>
                       <div className="relative flex items-center justify-center w-16 h-16 mx-auto">
-                        <svg 
-                          className="w-12 h-12 text-[#E64A30] dark:text-[#E64A30]" 
-                          fill="none" 
-                          stroke="currentColor" 
+                        <svg
+                          className="w-12 h-12 text-[#E64A30] dark:text-[#E64A30]"
+                          fill="none"
+                          stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
-                          <path 
-                            strokeLinecap="round" 
-                            strokeLinejoin="round" 
-                            strokeWidth={2} 
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" 
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
                       </div>

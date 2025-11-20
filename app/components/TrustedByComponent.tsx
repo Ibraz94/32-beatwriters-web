@@ -69,7 +69,7 @@ const TrustedByPartners = () => {
           </div>
       </div>
 
-      <Link href="/about">
+      <Link href="/trusted-by">
         <h2 className="font-semibold text-foreground mb-4 pt-3 sm:pt-5 font-oswald text-center hover:underline underline-offset-4">
           Learn About Why They Trust Us
         </h2>

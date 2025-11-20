@@ -209,7 +209,7 @@ left-[-12px] right-[-12px]
 
             ></div>
             <div className='text-center mb-12'>
-              <h2 className="text-2xl md:text-5xl mb-4">Our Articles</h2>
+              <h2 className="text-3xl md:text-5xl mb-4">Our Articles</h2>
             </div>
             <div className='flex justify-center'>
               <SearchBar
