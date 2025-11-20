@@ -3,56 +3,37 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useState } from "react";
-import { ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect, useState } from "react";
+
 
 export default function Footer() {
     const { theme } = useTheme();
-    const [email, setEmail] = useState("");
-    const [isSubscribed, setIsSubscribed] = useState(false);
-    const [expandedSections, setExpandedSections] = useState<string[]>([]);
+    const [mounted, setMounted] = useState(false);
 
-    const handleNewsletterSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle newsletter signup
-        setIsSubscribed(true);
-        setEmail("");
-        setTimeout(() => setIsSubscribed(false), 3000);
+    // Prevent hydration mismatch by only applying theme after mounting
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+
+    const contactInfo = {
+        email: "info@32beatwriters.com",
+        phone: "818 308 5020",
+        phoneHref: "tel:+18183085020"
     };
 
-    const toggleSection = (section: string) => {
-        setExpandedSections(prev =>
-            prev.includes(section)
-                ? prev.filter(s => s !== section)
-                : [...prev, section]
-        );
-    };
+    const currentLogoSrc = mounted && theme === "dark" ? "/32bw_logo_white.png" : "/32bw_logo_black.svg";
 
-    const footerLinks = {
-        Navigation: [
-            { label: "Home", href: "/" },
-            { label: "Articles", href: "/articles" },
-            { label: "Feed", href: "/nuggets" },
-            { label: "Contact Us", href: "/contact-us" },
+    const mailIcon =
+        theme === "dark" ? "/footer-mail-dark.svg" : "/footer-mail.svg";
+    const callIcon =
+        theme === "dark" ? "/footer-call-dark.svg" : "/footer-call.svg";
 
+    if (!mounted) return null;
 
-        ],
-        Information: [
-            { label: "Players", href: "/players" },
-            { label: "Podcast", href: "/podcasts" },
-            /* { label: "About Us", href: "/about" }, */
-
-        ],
-        Socials: [
-            { label: "Youtube", target: "_blank", href: "https://www.youtube.com/@32beatwriters" },
-            { label: "Apple", target: "_blank", href: "https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292" },
-            { label: "Twitter", target: "_blank", href: "https://x.com/32beatwriters" },
-            { label: "Spotify", target: "_blank", href: "https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c" }
-        ]
-    };
 
     return (
-        <footer className="bg-background w-full overflow-x-hidden">
+        <footer className="bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] w-full overflow-x-hidden">
             {/* Newsletter Section */}
             {/* <div className="border-b bg-card">
                 <div className="container mx-auto px-4 py-12">
@@ -92,84 +73,142 @@ export default function Footer() {
             </div> */}
 
             {/* Main Footer Content */}
-            <div className="px-4 py-12 bg-[#2C204B]">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 container mx-auto">
-                    {/* Brand Section */}
-                    <div className="lg:col-span-2 text-center md:text-left">
-                        <div className="flex items-center gap-2">
-                            <Link href="/" className="flex items-center justify-center md:justify-start space-x-3 mb-4">
+            <div className="px-6 md:px-12 py-12 bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] shadow-lg rounded-3xl mx-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 pb-8">
+                        {/* Brand Section */}
+                        <div className="text-center md:text-left">
+                            <Link href="/" className="inline-flex items-center justify-center md:justify-start mb-4">
                                 <Image
-                                    src={"/32bw_logo_white.png"}
+                                    src={currentLogoSrc}
                                     alt="32 Beat Writers"
                                     width={60}
                                     height={60}
                                     className="w-14 h-14"
                                 />
                             </Link>
-                            <div className="flex flex-col mb-4">
-                                <h1 className="text-white text-3xl font-bold">
-                                    32BeatWriters
-                                </h1>
-                                <p className="text-red-800 text-lg mr-6">NFL Insider Network</p>
+                            <p className="text-[var(--color-gray)] mb-6 leading-relaxed text-md dark:text-[#C7C8CB] max-w-md mx-auto md:mx-0">
+                                Unrivaled NFL Insights. Follow the Beat.
+                            </p>
+
+                            {/* Social Icons Row */}
+                            <div className="flex justify-center md:justify-start gap-2 mt-4">
+                                <Link
+                                    href="https://youtube.com/@32beatwriters"
+                                    target="_blank"
+                                    className="bg-[var(--color-orange)] rounded-full p-2 flex items-center justify-center hover:opacity-90 transition w-10 h-10"
+                                >
+                                    <Image
+                                        src="/youtube-white-logo.svg"
+                                        alt="youtube"
+                                        width={22}
+                                        height={22}
+                                        className="invert brightness-0"
+                                    />
+                                </Link>
+
+                                <Link
+                                    href="https://x.com/32beatwriters"
+                                    target="_blank"
+                                    className="bg-[var(--color-orange)] rounded-full p-2 flex items-center justify-center hover:opacity-90 transition w-10 h-10"
+                                >
+                                    <Image
+                                        src="/X-white-logo2.svg"
+                                        alt="Twitter (X)"
+                                        width={22}
+                                        height={22}
+                                        className="invert brightness-0"
+                                    />
+                                </Link>
+
+                                <Link
+                                    href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292"
+                                    target="_blank"
+                                    className="bg-[var(--color-orange)] rounded-full p-2 flex items-center justify-center hover:opacity-90 transition w-10 h-10"
+                                >
+                                    <Image
+                                        src="/apple-white-logo.svg"
+                                        alt="Apple Podcasts"
+                                        width={24}
+                                        height={24}
+                                        className="invert brightness-0"
+                                    />
+                                </Link>
+
+                                <Link
+                                    href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c"
+                                    target="_blank"
+                                    className="bg-[var(--color-orange)] rounded-full p-2 flex items-center justify-center hover:opacity-90 transition w-10 h-10"
+                                >
+                                    <Image
+                                        src="/spotify-white-logo.svg"
+                                        alt="Spotify"
+                                        width={22}
+                                        height={22}
+                                        className="invert brightness-0"
+                                    />
+                                </Link>
                             </div>
                         </div>
-                        <p className="text-muted-foreground mb-6 leading-relaxed w-96 text-lg">
-                        Unrivaled NFL Insights. Follow the Beat.
-                        </p>
+
+                        {/* Contact Info Section */}
+                        <div className="text-center md:text-left md:pl-8">
+                            <h4 className="text-2xl font-semibold text-[#1D212D] mb-6 dark:text-[#C7C8CB]">
+                                Contact Info
+                            </h4>
+                            <div className="space-y-4 flex flex-col items-start ml-12 lg:ml-0">
+                                {/* Email Row */}
+                                <div className="flex items-center gap-3 justify-center md:justify-start">
+                                    <Image
+                                        src={mailIcon}
+                                        alt="Email Icon"
+                                        width={40}
+                                        height={40}
+                                        className="shrink-0 rounded-full p-2 bg-[#1D212D] dark:bg-white"
+                                    />
+                                    <a
+                                        href={`mailto:${contactInfo.email}`}
+                                        className="text-[var(--color-gray)] text-md hover:text-orange-600 transition dark:text-[#C7C8CB] break-all"
+                                    >
+                                        {contactInfo.email}
+                                    </a>
+                                </div>
+
+                                {/* Phone Row */}
+                                <div className="flex items-center gap-3 justify-center md:justify-start">
+                                    <Image
+                                        src={callIcon}
+                                        alt="Phone Icon"
+                                        width={40}
+                                        height={40}
+                                        className="shrink-0 rounded-full p-2 bg-[#1D212D] dark:bg-white"
+                                    />
+                                    <a
+                                        href={contactInfo.phoneHref}
+                                        className="text-[var(--color-gray)] text-md hover:text-orange-600 transition dark:text-[#C7C8CB]"
+                                    >
+                                        {contactInfo.phone}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    {/* Footer Links */}
-                    {Object.entries(footerLinks).map(([category, links]) => (
-                        <div key={category} className="text-left">
-                            {/* Mobile: Collapsible Header */}
-                            <button
-                                onClick={() => toggleSection(category)}
-                                className="md:hidden w-full flex items-center justify-between text-xl font-semibold text-foreground mb-4 py-2 border-b border-muted-foreground/20"
-                            >
-                                <span className="text-white">{category}</span>
-                                {expandedSections.includes(category) ? (
-                                    <ChevronUp className="h-5 w-5 text-white" />
-                                ) : (
-                                    <ChevronDown className="h-5 w-5 text-white" />
-                                )}
-                            </button>
-
-                            {/* Desktop: Regular Header */}
-                            <h4 className="hidden md:block text-3xl font-semibold text-[#DDDDDD] mb-4">{category}</h4>
-
-                            {/* Links - Always visible on desktop, collapsible on mobile */}
-                            <ul className={`space-y-3 transition-all duration-200 ${expandedSections.includes(category) ? 'block' : 'hidden'
-                                } md:block`}>
-                                {links.map((link) => (
-                                    <li key={link.label}>
-                                        <Link
-                                            href={link.href}
-                                            {...('target' in link && { target: (link as any).target })}
-                                            className="text-muted-foreground hover:text-red-600 transition-colors text-md"
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
                 </div>
-            </div>
+                {/* Bottom Section */}
+                <div className="max-w-7xl mx-auto">
+                    <div className="px-4 py-6 border-t border-[#CFD1D4]">
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                            <div className="text-sm md:text-base text-[var(--color-gray)] dark:text-[#C7C8CB]">
+                                <span className="hidden md:inline-block">Copyright </span>© 2025 32BeatWriters. All rights reserved.
+                            </div>
 
-            {/* Bottom Section */}
-            <div className="border-t border-white/20 bg-[#2C204B]">
-                <div className="container mx-auto px-4 py-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                        <div className="text-lg text-muted-foreground">
-                            Copyright © 2025 32BeatWriters. All rights reserved.
-                        </div>
-
-                        <div className="flex flex-col md:flex-row items-center gap-6 text-sm text-muted-foreground">
-                            <div className="flex items-center justify-center gap-4 text-lg">
-                                <Link href="/privacy-policy" className="hover:text-red-600 transition-colors text-md">Privacy Policy</Link>
-                                <div className="w-2 h-2 bg-white rounded-full"></div>
-                                <Link href="/terms-and-conditions" className="hover:text-red-600 transition-colors text-md">Terms & Conditions</Link>
+                            <div className="flex items-center gap-6">
+                                <Link href="/privacy-policy" className="hover:text-orange-600 transition-colors text-sm md:text-base text-[var(--color-gray)] dark:text-[#C7C8CB]">
+                                    Privacy Policy
+                                </Link>
+                                <Link href="/terms-and-conditions" className="hover:text-orange-600 transition-colors text-sm md:text-base text-[var(--color-gray)] dark:text-[#C7C8CB]">
+                                    Terms & Conditions
+                                </Link>
                             </div>
                         </div>
                     </div>

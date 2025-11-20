@@ -1,26 +1,35 @@
 import type { Metadata, Viewport } from "next";
-import { Cabin, Oswald } from "next/font/google";
+import { Cabin, Oswald, PT_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { ReduxProvider } from "../../lib/providers/ReduxProvider";
+import { QueryProvider } from "../../lib/providers/QueryProvider";
 import { ToastProvider } from "../components/Toast";
 import IOSScrollFix from "../components/IOSScrollFix";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import GoogleAnalytics from "../../lib/analytics/GoogleAnalytics";
+import DeliveredToComponent from "../components/DeliveredToComponent";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 // import Head from "next/head"; // No longer needed for Open Graph with Metadata export
 
-const cabin = Cabin({
-  variable: "--font-cabin",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
+// const cabin = Cabin({
+//   variable: "--font-cabin",
+//   subsets: ["latin"],
+//   weight: ["400", "500", "600", "700"],
+// });
 
-const oswald = Oswald({
-  variable: "--font-oswald",
+// const oswald = Oswald({
+//   variable: "--font-oswald",
+//   subsets: ["latin"],
+//   weight: ["200", "300", "400", "500", "600", "700"],
+// });
+
+const product_sans = PT_Sans({
+  variable: "--font-product-sans",
   subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -44,11 +53,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: 'cover',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -74,24 +83,28 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${cabin.variable} ${oswald.variable} antialiased bg-white text-black dark:bg-[#18122B] dark:text-white`}
+        className={`${product_sans.variable} antialiased bg-white text-black dark:bg-[#18122B] dark:text-white`}
       >
         <ErrorBoundary>
           <ReduxProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <ToastProvider>
-                <GoogleAnalytics />
-                <IOSScrollFix />
-                <Header />
-                {children}
-                <Footer />
-              </ToastProvider>
-            </ThemeProvider>
+            <QueryProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <ToastProvider>
+                  <GoogleAnalytics />
+                  <IOSScrollFix />
+                  <Header />
+                  {children}
+                  <DeliveredToComponent />
+                  <Footer />
+                  <ScrollToTopButton /> 
+                </ToastProvider>
+              </ThemeProvider>
+            </QueryProvider>
           </ReduxProvider>
         </ErrorBoundary>
       </body>

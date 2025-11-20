@@ -8,6 +8,7 @@ import FeedComponent from "../components/FeedComponent";
 import SubscriptionComponent from "../components/SubscriptionComponent";
 import DeliveredToComponent from "../components/DeliveredToComponent";
 import TrustedByPartners from "../components/TrustedByComponent";
+import Hero from "../components/Hero";
 
 
 
@@ -18,11 +19,11 @@ import TrustedByPartners from "../components/TrustedByComponent";
 export default function Home() {
   return (
     <div>
+      {/* <Hero /> */}
       <LatestNuggets />
       <TrustedByPartners />
       <NewArticles />
       <PodcastsComponent />
-      <DeliveredToComponent />
       <SubscriptionComponent />
     </div>
   );

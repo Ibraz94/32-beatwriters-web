@@ -97,7 +97,7 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
             <ContentWithPlayerMentions content={endText} />
           </span>
           <span
-            className=' text-blue-700 ml-2 cursor-pointer hover:text-red-800'
+            className=' text-(--color-orange) underline ml-2 cursor-pointer hover:text-red-800'
             role="button"
             tabIndex={0}
             aria-expanded={isExpanded}

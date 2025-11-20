@@ -61,7 +61,7 @@ const config: Config = {
 
 		},
 		fontFamily: {
-			primary: ["var(--font-cabin)", "sans-serif"],
+			primary: ["var(--font-product-sans)", "sans-serif"],
 			oswald: ["var(--font-oswald)", "sans-serif"],
 		},
 

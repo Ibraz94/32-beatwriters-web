@@ -2,202 +2,144 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, ArrowRight, TrendingUp, Lock } from "lucide-react";
+import { useState } from "react";
+import { Lock, Clock } from "lucide-react";
 import { useGetArticlesQuery, Article, getImageUrl } from "@/lib/services/articlesApi";
-import { useMemo } from "react";
 
 export default function NewArticles() {
-    // Fetch all articles (public, pro, and lifetime) to show in the grid
+    const [activeTab, setActiveTab] = useState<'latest' | 'scheduled'>('latest');
+
     const { data: articles, isLoading, error } = useGetArticlesQuery({
         page: 1,
-        limit: 20, // Fetch more articles to ensure we have enough to show (1 featured + 10+ sidebar)
+        limit: 10,
         sortBy: 'publishedAt',
-        sortOrder: 'desc'
-    }, {
-        // Add polling: false to prevent automatic refetching
-        pollingInterval: 0,
-        refetchOnMountOrArgChange: false,
-        refetchOnFocus: false,
-        refetchOnReconnect: false
+        sortOrder: 'desc',
     });
 
-    // Helper function to format date
-    const formatDate = (dateString: string) => {
+    if (isLoading) return <p className="text-center text-gray-400 py-10">Loading...</p>;
+    if (error) return <p className="text-center text-red-500 py-10">Failed to load articles.</p>;
+
+    const allArticles = articles?.data.articles || [];
+    const featuredArticle = allArticles[0];
+    const latestArticles = allArticles.slice(1, 4);
+    const scheduledArticles = allArticles.filter(a => a.status === "draft");
+
+    const formatTimeAgo = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        const now = new Date();
+        const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+
+        if (diffInHours < 1) return "Just now";
+        if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+
+        const diffInDays = Math.floor(diffInHours / 24);
+        if (diffInDays < 7) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+
+        return date.toLocaleDateString();
     };
-
-    if (isLoading) {
-        return (
-            <section className="container mx-auto px-4 py-8 md:py-16">
-                <div className="animate-pulse space-y-6">
-                    <div className="h-6 md:h-8 bg-gray-200 rounded w-48 md:w-64 mx-auto"></div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                        {[...Array(6)].map((_, i) => (
-                            <div key={i} className="bg-gray-200 rounded-xl h-60 md:h-80"></div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-        );
-    };
-
-    if (error) {
-        return (
-            <section className="container mx-auto px-4 py-8 md:py-16">
-                <div className="text-center">
-                    <p className="text-red-600 font-medium text-sm md:text-base">Failed to load articles</p>
-                </div>
-            </section>
-        );
-    }
-
-    const displayArticles = articles?.data.articles || [];
-    const featuredArticle = displayArticles[0];
-    const sidebarArticles = displayArticles.slice(1, 11); // Show 10 articles in sidebar
 
     return (
-        <section className="mt-2 md:mt-12 px-4 md:px-0 container mx-auto">
-            <div className="bg-[#2C204B] rounded-lg">
-                <div className="flex flex-col lg:flex-row gap-6 md:gap-8">
+        <section className="container mx-auto px-4 md:px-6 py-10">
+            {/* Section Heading */}
+            <h2 className="hidden md:flex justify-center text-center text-xl md:text-5xl tracking-tight text-gray-800 mb-8 dark:text-white">
+                Our Articles
+            </h2>
 
-                    {/* Featured Article - First on mobile, Right side on desktop */}
-                    <div className="lg:w-1/2 lg:order-2">
-                        {featuredArticle && (
-                            <Link href={`/articles/${featuredArticle.id}`} className="block group">
-                                <div className="relative h-64 sm:h-80 md:h-96 lg:h-[600px] overflow-hidden rounded-t-lg lg:rounded-lg">
-                                    {/* Background Image */}
-                                    {featuredArticle.featuredImage ? (
-                                        <Image
-                                            src={getImageUrl(featuredArticle.featuredImage) || ''}
-                                            alt={featuredArticle.title}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-orange-400 to-red-600"></div>
-                                    )}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+                {/* LEFT - Featured Article */}
+                <div className="hidden md:grid relative w-full h-72 md:h-[450px] overflow-hidden group col-span-7 rounded-3xl">
+                    {featuredArticle?.featuredImage ? (
+                        <Image
+                            src={getImageUrl(featuredArticle.featuredImage) || ""}
+                            alt={featuredArticle.title}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-gray-200" />
+                    )}
 
-                                    {/* Overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                    {/* Dark Overlay */}
+                    <div className="absolute inset-0 bg-black/40" />
 
-                                    {/* Content Overlay */}
-                                    <div className="absolute inset-0 p-4 md:p-6 lg:p-8 flex flex-col justify-end">
-                                        {/* Trending Badge */}
-                                        <div className="mb-2 md:mb-4">
-                                            <span className="inline-flex items-center gap-1 md:gap-2 bg-red-800 opacity-60 text-white px-2 md:px-4 py-1 md:py-2 rounded-full text-xs md:text-sm font-bold">
-                                                <TrendingUp className="h-3 w-3 md:h-4 md:w-4" />
-                                                Trending
-                                            </span>
-                                        </div>
+                    {/* Lock + Text */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-6">
+                        <Lock className="h-10 w-10 mb-3 opacity-90" />
+                        <h3 className="text-2xl md:text-3xl font-semibold">Schedule Articles</h3>
+                    </div>
+                </div>
 
-                                        {/* Date */}
-                                        <p className="text-sm md:text-lg lg:text-2xl mb-2 md:mb-4 text-white">
-                                            {featuredArticle.publishedAt ? formatDate(featuredArticle.publishedAt) : 'Date not available'}
-                                        </p>
+                {/* RIGHT - Tabs + Article List */}
+                <div className="col-span-5 flex flex-col justify-between h-96 md:h-[450px]">
+                    {/* Tabs */}
+                    <div className="flex w-full items-center justify-center text-3xl">
+                        {/* {['latest'].map(tab => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab as 'latest' | 'scheduled')}
+                                className={`w-1/2 text-center pb-2 font-medium text-base md:text-lg transition-all dark:text-white${activeTab === tab
+                                    ? 'text-black border-b-3 border-[var(--color-orange)]'
+                                    : 'text-gray-500 hover:text-gray-700 border-b-3 border-[#1A1A1A]  hover:cursor-pointer dark:hover:text-white'
+                                    }`}
+                            >
+                                {tab === 'latest' ? 'Latest Articles' : 'Schedule Articles'}
+                            </button>
+                        ))} */}
+                        <h1>Latest Articles</h1>
 
-                                        {/* Title */}
-                                        <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-5xl font-bold text-white leading-tight mb-2 md:mb-4">
-                                            {featuredArticle.title}
-                                        </h2>
-
-                                    </div>
-                                </div>
-                            </Link>
-                        )}
                     </div>
 
-                    {/* Latest Articles - Second on mobile, Left side on desktop */}
-                    <div className="lg:w-1/2 lg:order-2 p-4 md:p-6 lg:p-8">
-                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-oswald font-bold text-white mb-4 md:mb-6 lg:mb-12">
-                            Latest Articles
-                        </h2>
-
-                        <div className="space-y-4 md:space-y-6 max-h-[400px] sm:max-h-[500px] md:max-h-[600px] lg:max-h-[410px] overflow-y-auto pr-0 lg:pr-2 custom-scrollbar">
-                            {sidebarArticles.map((article: Article) => (
-                                <Link
-                                    key={article.id}
-                                    href={`/articles/${article.id}`}
-                                    className="flex flex-col sm:flex-row gap-3 md:gap-4 hover:opacity-90 transition-opacity duration-300 group"
-                                >
-                                    {/* Article Image */}
-                                    <div className="relative h-40 sm:h-32 md:h-40 lg:h-48 w-full sm:w-32 md:w-48 lg:w-80 flex-shrink-0 overflow-hidden rounded-lg">
-                                        {article.featuredImage ? (
-                                            <Image
-                                                src={getImageUrl(article.featuredImage) || ''}
-                                                alt={article.title}
-                                                fill
-                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full bg-gray-600 flex items-center justify-center">
-                                                <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        )}
-
-                                    </div>
-
-                                    {/* Article Content */}
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-2xl mb-1 md:mb-2 line-clamp-2 leading-tight article-title-home">
-                                            {article.title}
-                                        </h3>
-                                        <div className="text-gray-300 text-sm sm:text-base md:text-lg line-clamp-2 md:line-clamp-3 mb-1 md:mb-2 article-content-home">
-                                            {(() => {
-                                                try {
-                                                    // Check if content starts with '{' and try to parse it as JSON
-                                                    if (article.content.trim().startsWith('{')) {
-                                                        const contentObj = JSON.parse(article.content);
-                                                        return <div dangerouslySetInnerHTML={{ __html: contentObj.content || article.content }} />;
-                                                    }
-                                                    // If not JSON or parsing fails, return original content
-                                                    return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
-                                                } catch (error) {
-                                                    // If JSON parsing fails, return original content
-                                                    console.error('Error parsing content:', error);
-                                                    return <div dangerouslySetInnerHTML={{ __html: article.content }} />;
-                                                }
-                                            })()}
+                    {/* Articles List */}
+                    <div className="space-y-2 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
+                        {(activeTab === 'latest' ? latestArticles : scheduledArticles).length > 0 ? (
+                            (activeTab === 'latest' ? latestArticles : scheduledArticles).map(
+                                (article: Article) => (
+                                    <Link
+                                        href={`/articles/${article.id}`}
+                                        key={article.id}
+                                        className="flex items-center gap-4 hover:bg-gray-50 px-3 rounded-xl transition-all h-24 md:h-28 border border-gray-100 dark:border-none dark:hover:bg-[#1A1A1A]"
+                                    >
+                                        {/* Thumbnail */}
+                                        <div className="relative rounded-xl overflow-hidden flex-shrink-0">
+                                            {article.featuredImage ? (
+                                                <Image
+                                                    src={getImageUrl(article.featuredImage) || ""}
+                                                    alt={article.title}
+                                                    width={170}
+                                                    height={170}
+                                                    className="object-cover aspect-video"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-gray-200" />
+                                            )}
                                         </div>
 
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
+                                        {/* Content */}
+                                        <div className="flex flex-col justify-center h-full overflow-hidden">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="text-xs font-medium bg-[#F6BCB2] dark:bg-[var(--color-orange)] text-black dark:text-white px-2 py-0.5 rounded-full">
+                                                    NFL
+                                                </span>
+                                                <span className="flex items-center gap-1 text-gray-400 text-xs dark:text-[#C7C8CB]">
+                                                    <Clock className="h-3 w-3" /> {formatTimeAgo(article.createdAt)}
+                                                </span>
+                                            </div>
+                                            <p
+                                                className="text-gray-800 text-sm md:text-base leading-snug line-clamp-2 dark:text-[#C7C8CB]"
+                                            >{article.title}</p>
+                                        </div>
+                                    </Link>
+                                )
+                            )
+                        ) : (
+                            <p className="text-gray-400 text-center py-6">
+                                No articles available.
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Show message if no articles */}
-            {displayArticles.length === 0 && (
-                <div className="text-center py-8 md:py-12">
-                    <div className="w-12 h-12 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-6 h-6 md:w-8 md:h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                        </svg>
-                    </div>
-                    <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-2">No Articles Available</h3>
-                    <p className="text-muted-foreground text-sm md:text-base">Check back soon for new content.</p>
-                </div>
-            )}
-
-            {/* Call to Action */}
-            {displayArticles.length > 0 && (
-                <div className="text-center mt-8 md:mt-12">
-                    <Link href="/articles">
-                        <button className="group bg-red-800 hover:scale-102 text-white px-8 md:px-12 py-3 md:py-4 rounded-md font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto text-sm md:text-base">
-                            View All Articles
-                            <ArrowRight className="h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform" />
-                        </button>
-                    </Link>
-                </div>
-            )}
         </section>
     );
 }

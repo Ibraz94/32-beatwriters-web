@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
         port: '',
+      },
+      {
+        protocol: 'http',
+        hostname: 'a.espncdn.com',
+        port: '',
       }
     ],
   },
