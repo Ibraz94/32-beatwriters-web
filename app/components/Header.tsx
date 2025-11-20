@@ -263,7 +263,7 @@ function Header() {
                         {/* Desktop Navigation */}
                         <nav className="hidden lg:flex items-center space-x-2">
                             <Link href="/">
-                                <Image src={currentLogoSrc} alt="Spotify" width={60} height={60} />
+                                <Image src={currentLogoSrc} alt="Spotify" width={45} height={45} />
                             </Link>
                             {navLinks.map((link) => (
                                 <Link
