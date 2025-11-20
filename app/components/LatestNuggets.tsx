@@ -130,7 +130,7 @@ export default function LatestNuggets() {
             <SearchBar
               placeholder="Search any player"
               size="md"
-              width="w-full md:w-1/2"
+              width="w-full md:w-1/2 p-1"
               buttonLabel="Search here"
               onButtonClick={() => alert('Button clicked!')}
               onChange={(val) => console.log(val)}
@@ -141,11 +141,11 @@ export default function LatestNuggets() {
       </div>
 
       {/* Main Content Area - Two Column Layout */}
-      <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0 mt-10 px-4">
+      <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0 mt-6 px-4">
         {/* Feed Column */}
         <div className="flex-1 relative">
           <div className="text-left mb-12 ml-4">
-            <h2 className="text-2xl md:text-[40px] mb-4">Latest Insider Info</h2>
+            <h2 className="text-2xl md:text-[40px] mb-2">Latest Insider Info</h2>
             <p className="text-sm md:text-xl max-w-4xl text-(--primary-gray-color)">Stay updated with the most recent insights and analysis</p>
           </div>
           {latestNuggets.length === 0 ? (
