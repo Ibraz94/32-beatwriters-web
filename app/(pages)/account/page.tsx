@@ -421,10 +421,10 @@ function AccountContent() {
                     {/* Navigation Tabs */}
                     <div className="mb-8">
                         {/* Container */}
-                        <div className="flex justify-between items-center border border-[#C7C8CB] rounded-full p-1 bg-white dark:bg-[#262829]">
+                        <div className="flex justify-center md:justify-between items-center border border-[#C7C8CB] rounded-full p-1 bg-white dark:bg-[#262829]">
 
                             {/* Tabs: always visible */}
-                            <nav className="flex items-center justify-between gap-3 ml-1">
+                            <nav className="flex items-center justify-center gap-1 md:gap-3 md:ml-1">
                                 {[
                                     { id: 'profile', label: 'Profile', icon: User },
                                     { id: 'update-password', label: 'Update Password', icon: Shield },
@@ -437,9 +437,9 @@ function AccountContent() {
                                         <button
                                             key={id}
                                             onClick={() => setActiveTab(id)}
-                                            className={`flex items-center justify-center gap-0.5 px-2 py-2 rounded-full font-medium text-sm transition-colors ${bgColor} ${textColor} whitespace-nowrap`}
+                                            className={`flex items-center justify-center gap-0.5 px-1.5 md:px-2 py-2 rounded-full font-medium text-xs md:text-sm transition-colors ${bgColor} ${textColor} whitespace-nowrap`}
                                         >
-                                            <Icon className={`h-4 w-4 ${isActive ? 'text-white' : 'text-[#72757C]'}`} />
+                                            <Icon className={`h-3 w-3 md:h-4 md:w-4 ${isActive ? 'text-white' : 'text-[#72757C]'}`} />
                                             <span>{label}</span>
                                         </button>
                                     );

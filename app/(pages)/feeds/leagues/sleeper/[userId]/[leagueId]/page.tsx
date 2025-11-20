@@ -652,7 +652,7 @@ export default function SleeperLeagueNuggetsPage() {
                               }
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-left hover:text-red-800 text-sm"
+                              className="text-left hover:text-red-800 text-xs lg:text-sm"
                             >
                               {nugget.sourceName}
                             </Link>
