@@ -3,8 +3,8 @@ import Link from "next/link";
 
 const TrustedByPartners = () => {
   return (
-    <section className="container mx-auto mt-4 p-4 bg-[var(--gray-background-color)] dark:bg-[#1A1A1A]">
-      <div className="text-center flex flex-col">
+    <section className="container mx-auto mt-4 p-4 bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] rounded-2xl">
+      <div className="text-center flex flex-col mb-4">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl text-foreground mb-8 pt-3 sm:pt-5 font-oswald">
           Trusted By
         </h2>
@@ -69,11 +69,11 @@ const TrustedByPartners = () => {
           </div>
       </div>
 
-      <Link href="/trusted-by">
+      {/* <Link href="/trusted-by">
         <h2 className="font-semibold text-foreground mb-4 pt-3 sm:pt-5 font-oswald text-center hover:underline underline-offset-4">
           Learn About Why They Trust Us
         </h2>
-      </Link>
+      </Link> */}
     </section>
 
 
