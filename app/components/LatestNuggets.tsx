@@ -13,9 +13,11 @@ import TrendingPlayersSidebar from '@/app/components/TrendingPlayersSidebar'
 import { Button } from '@/components/ui/button'
 import SearchBar from '@/components/ui/search'
 import { Clock } from 'lucide-react'
+import { useState } from 'react'
 
 export default function LatestNuggets() {
   const router = useRouter()
+  const [playerSearchTerm, setPlayerSearchTerm] = useState('')
 
   // Fetch latest nuggets
   const {
@@ -132,8 +134,15 @@ export default function LatestNuggets() {
               size="md"
               width="w-full md:w-1/2 p-1"
               buttonLabel="Search here"
-              onButtonClick={() => alert('Button clicked!')}
-              onChange={(val) => console.log(val)}
+              value={playerSearchTerm}
+              onChange={(val) => setPlayerSearchTerm(val)}
+              onButtonClick={() => {
+                if (playerSearchTerm.trim()) {
+                  router.push(`/players?search=${encodeURIComponent(playerSearchTerm.trim())}`)
+                } else {
+                  router.push('/players')
+                }
+              }}
               className="flex justify-center items-center"
             />
           </div>
