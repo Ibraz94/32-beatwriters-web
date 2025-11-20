@@ -466,7 +466,7 @@ export default function SubscriptionComponent() {
               <div className="text-left">
                 <p className="text-gray-500 text-sm mb-2 pt-2 dark:text-[#C7C8CB]">Start at</p>
                 <div className="mb-6">
-                  <span className="text-5xl dark:text-white">$99.99</span>
+                  <span className="text-5xl dark:text-white">$49.99</span>
                   <span className="text-xl text-black dark:text-white">/year</span>
                 </div>
                 <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">
