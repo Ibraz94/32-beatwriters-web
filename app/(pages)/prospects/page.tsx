@@ -47,6 +47,7 @@ function ProspectsContent() {
     const [showMobileFilters, setShowMobileFilters] = useState(false)
 
     const pageSize = 50 // As per API response pagination.pageSize
+    const maxProspects = 250 // Limit to top 250 prospects
 
     // Debounce search term
     useEffect(() => {
@@ -68,6 +69,7 @@ function ProspectsContent() {
                 if (debouncedSearchTerm) params.set('search', debouncedSearchTerm)
                 params.set('page', String(currentPage))
                 params.set('pageSize', String(pageSize))
+                params.set('limit', String(maxProspects)) // Limit to top 250
                 const res = await fetch(buildApiUrl(`/api/nfl-prospects?${params.toString()}`), { cache: 'no-store' })
                 if (!res.ok) throw new Error('Failed to load prospects')
                 const json = await res.json()
@@ -91,8 +93,11 @@ function ProspectsContent() {
 
                 setData(rows)
                 if (pagination) {
-                    setTotalPages(pagination.totalPages)
-                    setTotalProspects(pagination.total)
+                    // Calculate total pages based on maxProspects limit
+                    const effectiveTotal = Math.min(pagination.total, maxProspects)
+                    const calculatedTotalPages = Math.ceil(effectiveTotal / pageSize)
+                    setTotalPages(calculatedTotalPages)
+                    setTotalProspects(effectiveTotal)
                 }
             } catch (e: any) {
                 setError(e?.message || 'Failed to load prospects')
@@ -101,7 +106,7 @@ function ProspectsContent() {
             }
         }
         loadProspects()
-    }, [position, debouncedSearchTerm, currentPage, sortBy])
+    }, [position, debouncedSearchTerm, currentPage, sortBy, maxProspects, pageSize])
 
     const normalized = useMemo(() => {
         return data.map((r, idx) => {

@@ -159,7 +159,7 @@ export default function ArticlesPage() {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="text-center">
-          <p className="text-xl mb-4 font-semibold text-red-600">
+          <p className="text-xl mb-4 font-semibold text-orange-600">
             Failed to load articles
           </p>
           <p className="text-gray-600 dark:text-[#C7C8CB] mb-6">
@@ -227,7 +227,7 @@ left-[-12px] right-[-12px]
             <button
               type="button"
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-600 focus:outline-none"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-600 focus:outline-none"
               aria-label="Clear search"
             >
               <X className="w-5 h-5" />
@@ -327,9 +327,9 @@ left-[-12px] right-[-12px]
                   }
                 }}
                 disabled={isFetching}
-                className={`px-8 py-3 rounded-lg font-semibold transition-colors ${isFetching
+                className={`px-8 py-3 rounded-full font-semibold transition-colors ${isFetching
                   ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                  : 'bg-red-800 text-white hover:scale-102 hover:cursor-pointer'
+                  : 'bg-[#E64A30] text-white hover:scale-102 hover:cursor-pointer'
                   }`}
               >
                 {isFetching ? 'Loading...' : 'Load More Articles'}

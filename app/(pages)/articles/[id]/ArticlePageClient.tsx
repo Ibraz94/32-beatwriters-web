@@ -188,7 +188,7 @@ export default function ArticlePageClient({ id }: { id: string }) {
                         </div>
                         <div className="mb-12">
                             <div className="p-10 text-center rounded-2xl shadow-lg border">
-                                <h3 className="text-3xl font-extrabold text-red-800 mb-3">
+                                <h3 className="text-3xl font-extrabold text-[#E64A30] mb-3">
                                     Unlock Premium Content
                                 </h3>
                                 <p className="mb-6 max-w-lg mx-auto">
@@ -197,21 +197,21 @@ export default function ArticlePageClient({ id }: { id: string }) {
                                 </p>
 
                                 <div className="rounded-xl p-6 mb-6 border shadow-sm">
-                                    <h4 className="font-semibold mb-3 text-gray-800">
+                                    <h4 className="font-semibold mb-3 text-gray-800 dark:text-gray-600">
                                         Premium Includes:
                                     </h4>
-                                    <ul className="text-sm space-y-2 text-gray-600 text-left max-w-sm mx-auto">
+                                    <ul className="text-sm space-y-2 text-gray-600 dark:text-white text-left max-w-sm mx-auto">
                                         <li className="flex items-start gap-2">
-                                            <span className="text-red-700">✔</span> Exclusive NFL analysis & insider reports
+                                            <span className="text-[#E64A30]">✔</span> Exclusive NFL analysis & insider reports
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <span className="text-red-700">✔</span> Advanced stats & performance metrics
+                                            <span className="text-[#E64A30]">✔</span> Advanced stats & performance metrics
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <span className="text-red-700">✔</span> Early draft predictions & rankings
+                                            <span className="text-[#E64A30]">✔</span> Early draft predictions & rankings
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <span className="text-red-700">✔</span> Premium fantasy football content
+                                            <span className="text-[#E64A30]">✔</span> Premium fantasy football content
                                         </li>
                                     </ul>
                                 </div>
@@ -219,13 +219,13 @@ export default function ArticlePageClient({ id }: { id: string }) {
                                 <div className="space-y-3 max-w-sm mx-auto">
                                     <Link
                                         href="/subscribe"
-                                        className="w-full bg-red-700 border border-red-700 hover:bg-red-800 text-white py-3 px-6 rounded-xl font-semibold  block shadow-md"
+                                        className="w-full bg-[#E64A30] border hover:bg-[#ED7864] text-white py-3 px-6 rounded-xl font-semibold block shadow-lg"
                                     >
                                         Upgrade to Premium
                                     </Link>
                                     <Link
                                         href="/login"
-                                        className="w-full border border-red-700 text-red-700 py-3 px-6 rounded-xl font-semibold block"
+                                        className="w-full border border-[#E64A30] text-[#E64A30] py-3 px-6 rounded-xl font-semibold block"
                                     >
                                         Already Premium? Sign In
                                     </Link>
@@ -360,15 +360,15 @@ export default function ArticlePageClient({ id }: { id: string }) {
                                 if (!recentArticle?.id) return null
 
                                 return (
-                                    <div className='rounded-3xl shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer group p-0 bg-white dark:bg-[#262829]'>
+                                    <div key={recentArticle.id} className='rounded-3xl shadow-md overflow-hidden hover:shadow-xl transition-shadow hover:cursor-pointer group p-0 bg-white dark:bg-[#262829]'>
                                         <Link href={`/articles/${recentArticle.id}`}>
 
                                             {/* Article Image */}
                                             <div className="relative aspect-video">
-                                                {article.featuredImage ? (
+                                                {recentArticle.featuredImage ? (
                                                     <Image
-                                                        src={getImageUrl(article.featuredImage) || ''}
-                                                        alt={article.title}
+                                                        src={getImageUrl(recentArticle.featuredImage) || ''}
+                                                        alt={recentArticle.title}
                                                         fill
                                                         className="object-cover p-2 rounded-3xl"
                                                         priority
@@ -381,25 +381,25 @@ export default function ArticlePageClient({ id }: { id: string }) {
                                                 {/* Access Badge */}
                                                 <div className="absolute top-3 left-3 bg-white text-[var(--color-orange)] px-2 py-1 rounded-full font-semibold text-xs flex items-center shadow-md dark:bg-black">
                                                     <Gem className="w-4 h-4 mr-1" />
-                                                    {article.access === 'public' ? 'Free' : 'Premium'}
+                                                    {recentArticle.access === 'public' ? 'Free' : 'Premium'}
                                                 </div>
 
 
 
                                                 {/* Author Name */}
-                                                {article.authorName && (
+                                                {recentArticle.authorName && (
                                                     <div className="absolute bottom-5 right-5 text-white text-sm bg-[#ED7864] bg-opacity-50 px-2 py-1 rounded-full">
-                                                        {article.authorName}
+                                                        {recentArticle.authorName}
                                                     </div>
                                                 )}
                                             </div>
 
                                             {/* Article Body */}
                                             <div className="relative p-4 h-[250px] overflow-hidden">
-                                                <h2 className="text-lg font-semibold mb-2 line-clamp-1 text-[#3A3D48] dark:text-[#C7C8CB]">{article.title}</h2>
+                                                <h2 className="text-lg font-semibold mb-2 line-clamp-1 text-[#3A3D48] dark:text-[#C7C8CB]">{recentArticle.title}</h2>
 
                                                 <div className="text-sm line-clamp-3 overflow-hidden relative z-10  text-[#72757C] dark:text-white">
-                                                    <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                                                    <div dangerouslySetInnerHTML={{ __html: recentArticle.content }} />
                                                 </div>
 
                                                 {/* <div className="absolute bottom-0 left-0 w-full h-44 bg-gradient-to-t from-[#1A1330] to-transparent z-20 pointer-events-none" /> */}
