@@ -466,7 +466,7 @@ function Header() {
                                         animationDelay: isMobileMenuOpen ? `${(navLinks.length) * 50}ms` : '0ms'
                                     }}
                                 >
-                                    <span>FEEDS</span>
+                                    <span>Feeds</span>
                                     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
                                 </button>
 
@@ -497,7 +497,7 @@ function Header() {
                                         animationDelay: isMobileMenuOpen ? `${(navLinks.length + 1) * 50}ms` : '0ms'
                                     }}
                                 >
-                                    <span>TOOLS</span>
+                                    <span>Tools</span>
                                     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
                                 </button>
                                 <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isToolsDropdownOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
