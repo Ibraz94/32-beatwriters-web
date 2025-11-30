@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import Image from 'next/image'
-import { Search, ChevronDown, Filter } from 'lucide-react'
+import { Search, ChevronDown, Filter, ArrowUp, ArrowDown } from 'lucide-react'
 import { buildApiUrl } from '@/lib/config/api'
 import {
     Select,
@@ -23,6 +23,7 @@ interface ProspectRow {
     logo: string | null
     picture: string | null
     rank: number | null
+    rankChange: 'UP' | 'DOWN' | 'NOCHANGE' | null
     writeUp: string | null
     analysis: string | null
     rating: number | null
@@ -76,6 +77,15 @@ function ProspectsContent() {
                 const prospects = json?.data?.prospects
                 const pagination = json?.data?.pagination
                 let rows: ProspectRow[] = Array.isArray(prospects) ? prospects : []
+
+                // Debug: Log first prospect to check rankChange field
+                if (rows.length > 0) {
+                    console.log('Sample prospect data:', {
+                        name: rows[0].name,
+                        rank: rows[0].rank,
+                        rankChange: rows[0].rankChange
+                    })
+                }
 
                 // Filter only active prospects
                 rows = rows.filter(prospect => prospect.status === 'active')
@@ -310,11 +320,22 @@ function ProspectsContent() {
                             className="flex flex-row items-start gap-3 md:gap-4 border-b pb-4 border-[var(--color-gray)] hover:bg-accent/5 transition-colors rounded-lg p-2"
                         >
                             {/* Rank Number */}
-                            <div className="flex-shrink-0">
+                            <div className="flex-shrink-0 relative">
                                 <div className="flex flex-col items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl bg-[#E64A30] text-white">
                                     <span className="text-[10px] md:text-xs">Rank</span>
                                     <span className="text-lg md:text-2xl font-bold">{prospect.rank || index + 1}</span>
                                 </div>
+                                {/* Rank Change Indicator - Positioned outside the rank box */}
+                                {prospect.rankChange === 'UP' && (
+                                    <div className="absolute -top-1 -right-1.5 bg-[#10B981] rounded-full border p-0.5 md:p-1">
+                                        <ArrowUp className="w-3 h-3 md:w-4 md:h-4 text-white" strokeWidth={3} />
+                                    </div>
+                                )}
+                                {prospect.rankChange === 'DOWN' && (
+                                    <div className="absolute -top-1 -right-1.5 bg-red-500 rounded-full border p-0.5 md:p-1">
+                                        <ArrowDown className="w-3 h-3 md:w-4 md:h-4 text-white" strokeWidth={3} />
+                                    </div>
+                                )}
                             </div>
 
                             {/* Player Details */}
@@ -365,7 +386,7 @@ function ProspectsContent() {
                                         </div>
 
                                         {/* Rating */}
-                                        {prospect.rating !== null && prospect.rating !== undefined && (
+                                        {/* {prospect.rating !== null && prospect.rating !== undefined && (
                                             <div className="mt-2 md:mt-3 flex items-center gap-2">
                                                 <div className="flex items-center gap-1">
                                                     <div className="w-16 md:w-24 h-1.5 md:h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -377,7 +398,7 @@ function ProspectsContent() {
                                                     <span className="text-xs md:text-sm font-medium">{prospect.rating}/10</span>
                                                 </div>
                                             </div>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
 
@@ -387,6 +408,16 @@ function ProspectsContent() {
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
                                         <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
                                             {prospect.analysis}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Fantasy Outlook auto-show when present */}
+                                {prospect.writeUp && (
+                                    <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
+                                        <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Fantasy Outlook</h3>
+                                        <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
+                                            {prospect.writeUp}
                                         </p>
                                     </div>
                                 )}

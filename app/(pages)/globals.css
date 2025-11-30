@@ -706,6 +706,58 @@ picture,
   /* send it behind everything */
 }
 
+/* Player link styles - for linked player names in articles */
+.player-link {
+  color: #E64A30;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.player-link:hover {
+  color: #ED7864;
+  border-bottom-color: #ED7864;
+  text-decoration: none;
+}
+
+.dark .player-link {
+  color: #ED7864;
+}
+
+.dark .player-link:hover {
+  color: #F6BCB2;
+  border-bottom-color: #F6BCB2;
+}
+
+/* Ensure player links are visible in article content */
+.article-container .player-link,
+.content-preview .player-link,
+.prose .player-link {
+  color: #E64A30 !important;
+  font-weight: 700 !important;
+}
+
+.article-container .player-link:hover,
+.content-preview .player-link:hover,
+.prose .player-link:hover {
+  color: #ED7864 !important;
+  border-bottom-color: #ED7864 !important;
+}
+
+.dark .article-container .player-link,
+.dark .content-preview .player-link,
+.dark .prose .player-link {
+  color: #ED7864 !important;
+}
+
+.dark .article-container .player-link:hover,
+.dark .content-preview .player-link:hover,
+.dark .prose .player-link:hover {
+  color: #F6BCB2 !important;
+  border-bottom-color: #F6BCB2 !important;
+}
+
 /* ---break---*/
 
 @layer base {
