@@ -282,6 +282,7 @@ export default function ArticlePageClient({ id }: { id: string }) {
                     width={1000}
                     height={500}
                     className="mb-12 shadow-lg w-full lg:h-[500px] rounded-2xl h-[200px]"
+                    loader={({ src }) => src}
                     // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     onError={(e) => {
                         console.warn('Failed to load article image:', e)
@@ -372,6 +373,7 @@ export default function ArticlePageClient({ id }: { id: string }) {
                                                         fill
                                                         className="object-cover p-2 rounded-3xl"
                                                         priority
+                                                        loader={({ src }) => src}
                                                     />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-sm">No Image</div>

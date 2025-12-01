@@ -133,6 +133,7 @@ export default function PodcastPageClient({ id }: PodcastPageClientProps) {
                             fill
                             className="object-cover"
                             priority
+                            loader={({ src }) => src}
                         />
                     </div>
                 )}

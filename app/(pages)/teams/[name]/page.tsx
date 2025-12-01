@@ -163,6 +163,7 @@ export default function TeamPage() {
                   width={100}
                   height={100}
                   className="rounded-lg bg-white p-2"
+                  loader={({ src }) => src}
                 />
                 <div>
                   <h1 className="text-3xl md:text-4xl font-bold">{team.name}</h1>
@@ -223,7 +224,7 @@ export default function TeamPage() {
                       <a href={media.website} className=""><Globe strokeWidth={1} /></a>
                       <a href={media.facebook} className=""><Facebook strokeWidth={1} /></a>
                       <a href={media.instagram} className=""><Instagram strokeWidth={1} /></a>
-                      <a href={media.twitter} className=""><Image src="/twitter.svg" alt="Twitter" width={25} height={25} /></a>
+                      <a href={media.twitter} className=""><Image src="/twitter.svg" alt="Twitter" width={25} height={25} loader={({ src }) => src}/></a>
                     </div>
                   ))}
                 </div>
@@ -372,6 +373,7 @@ export default function TeamPage() {
                       width={300}
                       height={100}
                       className="rounded-md"
+                      loader={({ src }) => src}
                     />
 
                     <div>

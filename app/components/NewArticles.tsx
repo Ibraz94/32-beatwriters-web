@@ -54,6 +54,7 @@ export default function NewArticles() {
                             alt={featuredArticle.title}
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            loader={({ src }) => src}
                         />
                     ) : (
                         <div className="w-full h-full bg-gray-200" />
@@ -108,6 +109,7 @@ export default function NewArticles() {
                                                     width={170}
                                                     height={170}
                                                     className="object-cover aspect-video"
+                                                    loader={({ src }) => src}
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-gray-200" />

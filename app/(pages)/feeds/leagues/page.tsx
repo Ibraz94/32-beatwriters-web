@@ -55,6 +55,7 @@ export default function LeaguesHome() {
                   width={260}
                   height={260}
                   alt=""
+                  loader={({ src }) => src}
                 /></div>
                 <div className="mt-4 inline-flex items-center font-semibold group-hover:translate-x-1 transition-transform">
                   Access

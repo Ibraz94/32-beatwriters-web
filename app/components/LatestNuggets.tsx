@@ -176,6 +176,7 @@ export default function LatestNuggets() {
                         alt={`${nugget.player.name} headshot`}
                         fill
                         className='rounded-full object-cover bg-background overflow-hidden'
+                        loader={({ src }) => src}
                       />
                     </div>
 
@@ -193,7 +194,8 @@ export default function LatestNuggets() {
                                   alt={`${playerTeam.name} logo`}
                                   width={32}
                                   height={24}
-                                  className='object-contain '
+                                  className='object-contain'
+                                  loader={({ src }) => src}
                                 />
                               </div>
                             )}

@@ -395,7 +395,7 @@ function AccountContent() {
                     <div className="text-center mb-8">
                         <div className="flex justify-center mb-4">
                             {mounted ? (
-                                <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={80} height={80} />
+                                <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={80} height={80} loader={({ src }) => src} />
                             ) : (
                                 <Image src="/logo-small.webp" alt="logo" width={80} height={80} />
                             )}

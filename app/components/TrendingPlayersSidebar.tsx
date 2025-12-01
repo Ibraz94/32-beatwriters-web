@@ -84,6 +84,7 @@ export default function TrendingPlayersSidebar() {
                                     width={45}
                                     height={45}
                                     className="w-full h-full object-cover"
+                                    loader={({ src }) => src}
                                 />
                             </div>
 
@@ -110,6 +111,7 @@ export default function TrendingPlayersSidebar() {
                                             width={34}
                                             height={34}
                                             className="object-contain"
+                                            loader={({ src }) => src}
                                         />
                                     ) : null
                                 })()}

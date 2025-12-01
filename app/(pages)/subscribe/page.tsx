@@ -591,7 +591,7 @@ function PremiumSignupForm() {
               ].map(({ title, text }) => (
                 <div key={title} className="flex items-start space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 flex items-center justify-center rounded-full bg-[#FFE6E2] p-1 dark:bg-[#262829]">
-                    <Image src="/tick-mark.svg" alt="tick" className="" width={14} height={14} />
+                    <Image src="/tick-mark.svg" alt="tick" className="" width={14} height={14} loader={({ src }) => src}/>
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-sm sm:text-sm text-[#1D212D] dark:text-white truncate">

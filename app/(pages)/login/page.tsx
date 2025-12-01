@@ -415,7 +415,7 @@ left-0 right-0
                                 </div>
                             ) : (
                                 <>
-                                    <Image src='/google-colored.svg' alt='Google SVG' width={16} height={16} />
+                                    <Image src='/google-colored.svg' alt='Google SVG' width={16} height={16} loader={({ src }) => src}/>
                                     <span className="ml-2">Continue with Google</span>
                                 </>
                             )}

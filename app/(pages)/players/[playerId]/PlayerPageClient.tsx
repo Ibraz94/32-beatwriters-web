@@ -1237,6 +1237,7 @@ export default function PlayerPageClient({ id }: any) {
                                                     alt={`${nugget.player.name} headshot`}
                                                     fill
                                                     className="rounded-full object-cover bg-background overflow-hidden"
+                                                    loader={({ src }) => src}
                                                 />
                                             </div>
 
@@ -1259,6 +1260,7 @@ export default function PlayerPageClient({ id }: any) {
                                                                         width={32}
                                                                         height={24}
                                                                         className="object-contain"
+                                                                        loader={({ src }) => src}
                                                                     />
                                                                 </div>
                                                             )}
@@ -1631,6 +1633,7 @@ export default function PlayerPageClient({ id }: any) {
                                     width={360}
                                     height={360}
                                     className="overflow-visible"
+                                    loader={({ src }) => src}
                                 />
                             )}
                         </div>
@@ -1642,6 +1645,7 @@ export default function PlayerPageClient({ id }: any) {
                                 width={520}
                                 height={491}
                                 className="object-cover"
+                                loader={({ src }) => src}
                             />
                         </div>
                     </div>
@@ -1654,7 +1658,7 @@ export default function PlayerPageClient({ id }: any) {
 
                             {player?.Core?.ADP && (
                                 <div className="flex items-center gap-1 bg-[#F6BCB2] dark:bg-[#F6BCB2] text-black px-3 py-1 rounded-full text-sm">
-                                    <Image src="/underdog.webp" alt="ADP" width={20} height={14} />
+                                    <Image src="/underdog.webp" alt="ADP" width={20} height={14} loader={({ src }) => src}/>
                                     <span className="font-xl">ADP: {player.Core.ADP}</span>
                                 </div>
                             )}
@@ -1668,6 +1672,7 @@ export default function PlayerPageClient({ id }: any) {
                                     alt="Team Logo"
                                     width={27}
                                     height={21}
+                                    loader={({ src }) => src}
                                 />
                             </div>
                             <p className="text-[#3A3D48] dark:text-gray-300 text-xl">
@@ -1763,6 +1768,7 @@ export default function PlayerPageClient({ id }: any) {
                                     width={220}
                                     height={220}
                                     className="overflow-visible"
+                                    loader={({ src }) => src}
                                 />
                             )}
                         </div>
@@ -1775,6 +1781,7 @@ export default function PlayerPageClient({ id }: any) {
                                 width={520}
                                 height={491}
                                 className="object-cover"
+                                loader={({ src }) => src}
                             />
                         </div>
                     </div>
@@ -1788,7 +1795,7 @@ export default function PlayerPageClient({ id }: any) {
                             <h1 className="text-3xl md:text-4xl text-[#1D212D] dark:text-white">{playerName}</h1>
                             {player?.Core?.ADP && (
                                 <div className="flex items-center gap-1 bg-[#F6BCB2] text-black px-3 py-1 rounded-full text-sm dark:text-[#1D212D]">
-                                    <Image src="/underdog.webp" alt="ADP" width={20} height={14} />
+                                    <Image src="/underdog.webp" alt="ADP" width={20} height={14} loader={({ src }) => src}/>
                                     <span className="font-xl">ADP: {player.Core.ADP}</span>
                                 </div>
                             )}
@@ -1802,6 +1809,7 @@ export default function PlayerPageClient({ id }: any) {
                                     alt="Team Logo"
                                     width={27}
                                     height={21}
+                                    loader={({ src }) => src}
                                 />
                             </div>
                             <p className="text-[#3A3D48] text-lg md:text-xl dark:text-[#C7C8CB]">
@@ -1909,6 +1917,7 @@ export default function PlayerPageClient({ id }: any) {
                         width={30}
                         height={30}
                         alt="pp=logo"
+                        loader={({ src }) => src}
                     />
                 </Link>
             </div>

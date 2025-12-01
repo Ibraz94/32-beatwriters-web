@@ -157,6 +157,7 @@ function Header() {
                                             width={20}
                                             height={20}
                                             className="w-7 h-7 md:w-5 md:h-5"
+                                            loader={({ src }) => src}
                                         />
                                         <span className="text-white text-xs hidden md:inline lg:inline">YouTube</span>
                                     </Link>
@@ -172,6 +173,7 @@ function Header() {
                                             width={20}
                                             height={20}
                                             className="w-7 h-7 md:w-5 md:h-5"
+                                            loader={({ src }) => src}
                                         />
                                         <span className="text-white text-xs hidden md:inline lg:inline">Twitter</span>
                                     </Link>
@@ -187,6 +189,7 @@ function Header() {
                                             width={100}
                                             height={100}
                                             className="w-7 h-7 md:w-5 md:h-5"
+                                            loader={({ src }) => src}
                                         />
                                         <span className="text-white text-xs hidden md:inline lg:inline">Apple</span>
                                     </Link>
@@ -202,6 +205,7 @@ function Header() {
                                             width={30}
                                             height={30}
                                             className="w-7 h-7 md:w-5 md:h-5"
+                                            loader={({ src }) => src}
                                         />
                                         <span className="text-white text-xs hidden md:inline lg:inline">Spotify</span>
                                     </Link>
@@ -216,7 +220,7 @@ function Header() {
                     {/* <ThemeToggle /> */}
                     <div>
                         <Link href="/">
-                            <Image src={currentLogoSrc} alt="Spotify" width={50} height={50} className="ml-3" />
+                            <Image src={currentLogoSrc} alt="Spotify" width={50} height={50} className="ml-3" loader={({ src }) => src}/>
                         </Link>
                     </div>
 
@@ -244,18 +248,18 @@ function Header() {
                             {/* <h1 className="text-white text-xl font-bold">Social Links</h1> */}
                             <div className="flex items-center space-x-4">
                                 <Link href="https://youtube.com/@32beatwriters">
-                                    <Image src={"/icons-youtube.svg"} alt="Youtube" width={20} height={20} />
+                                    <Image src={"/icons-youtube.svg"} alt="Youtube" width={20} height={20} loader={({ src }) => src}/>
                                 </Link>
                                 <Link href="https://x.com/32beatwriters">
-                                    <Image src={"/icons-twitter.svg"} alt="Twitter" width={20} height={20} />
+                                    <Image src={"/icons-twitter.svg"} alt="Twitter" width={20} height={20} loader={({ src }) => src}/>
                                 </Link>
                             </div>
                             <div className="flex items-center space-x-4">
                                 <Link href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c">
-                                    <Image src={"/icons-spotify.svg"} alt="Spotify" width={20} height={20} />
+                                    <Image src={"/icons-spotify.svg"} alt="Spotify" width={20} height={20} loader={({ src }) => src}/>
                                 </Link>
                                 <Link href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292"    >
-                                    <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={20} height={20} />
+                                    <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={20} height={20} loader={({ src }) => src}/>
                                 </Link>
                             </div>
                         </div>
@@ -263,7 +267,7 @@ function Header() {
                         {/* Desktop Navigation */}
                         <nav className="hidden lg:flex items-center space-x-2">
                             <Link href="/">
-                                <Image src={currentLogoSrc} alt="Spotify" width={45} height={45} />
+                                <Image src={currentLogoSrc} alt="Spotify" width={45} height={45} loader={({ src }) => src}/>
                             </Link>
                             {navLinks.map((link) => (
                                 <Link
@@ -362,6 +366,7 @@ function Header() {
                                                     width={32}
                                                     height={32}
                                                     className="w-6 h-6 rounded-full object-cover"
+                                                    loader={({ src }) => src}
                                                 />
                                             ) : (
                                                 <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center">
@@ -545,6 +550,7 @@ function Header() {
                                                 width={40}
                                                 height={40}
                                                 className="w-10 h-10 rounded-full object-cover"
+                                                loader={({ src }) => src}
                                             />
                                         ) : (
                                             <div className="w-10 h-10 bg-[#E64A30] rounded-full flex items-center justify-center">

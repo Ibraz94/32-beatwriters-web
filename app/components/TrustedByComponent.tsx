@@ -1,3 +1,5 @@
+'use client'
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -19,7 +21,10 @@ const TrustedByPartners = () => {
                 alt="ESPN Logo"
                 width={300}
                 height={200}
-                className="h-auto object-contain" />
+                className="h-auto object-contain" 
+                loader={({ src }) => src}
+                />
+                
             </div>
 
             {/* Logo 2 */}
@@ -29,7 +34,9 @@ const TrustedByPartners = () => {
                 alt="CBS Logo"
                 width={300}
                 height={200}
-                className="h-auto object-contain" />
+                className="h-auto object-contain" 
+                loader={({ src }) => src}
+                />
             </div>
           </div>
 
@@ -41,7 +48,9 @@ const TrustedByPartners = () => {
                 alt="NBC Logo"
                 width={300}
                 height={200}
-                className="h-auto object-contain" />
+                className="h-auto object-contain" 
+                loader={({ src }) => src}
+                />
             </div>
 
             {/* Logo 4 */}
@@ -51,7 +60,9 @@ const TrustedByPartners = () => {
                 alt="Sleeper Logo"
                 width={300}
                 height={200}
-                className="h-auto object-contain" />
+                className="h-auto object-contain" 
+                loader={({ src }) => src}
+                />
             </div>
           </div>
 
@@ -63,7 +74,9 @@ const TrustedByPartners = () => {
                 alt="Athletic Logo"
                 width={300}
                 height={200}
-                className=" h-auto object-contain" />
+                className=" h-auto object-contain" 
+                loader={({ src }) => src}
+                />
           </div>
           </div>
           </div>

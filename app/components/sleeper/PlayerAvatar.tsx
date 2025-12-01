@@ -53,6 +53,7 @@ export default function PlayerAvatar({
         height={96}
         className="w-full h-full object-cover"
         onError={() => setImageError(true)}
+        loader={({ src }) => src}
       />
     </div>
   );

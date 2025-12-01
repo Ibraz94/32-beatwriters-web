@@ -21,6 +21,7 @@ const PodcastCard = ({ podcast }: { podcast: PodcastData }) => {
             alt={podcast.title}
             fill
             className="object-cover w-full h-full rounded-xl"
+            loader={({ src }) => src}
           />
           {/* Duration Badge */}
           <div className="absolute bottom-2 right-2 bg-[#ED7864] bg-opacity-75 text-white text-base px-6 py-1 rounded-full">

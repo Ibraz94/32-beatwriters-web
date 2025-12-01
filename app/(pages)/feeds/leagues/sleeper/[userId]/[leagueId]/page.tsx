@@ -428,6 +428,7 @@ export default function SleeperLeagueNuggetsPage() {
                     alt="Calendar icon"
                     width={18}
                     height={18}
+                    loader={({ src }) => src}
                   />
                   {date ? date.toLocaleDateString() : <span>Select By Date</span>}
                   <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
@@ -571,6 +572,7 @@ export default function SleeperLeagueNuggetsPage() {
                         alt={`${nugget.player.name} headshot`}
                         fill
                         className="rounded-full object-cover bg-background overflow-hidden"
+                        loader={({ src }) => src}
                       />
                     </div>
 
@@ -591,6 +593,7 @@ export default function SleeperLeagueNuggetsPage() {
                                   width={32}
                                   height={24}
                                   className="object-contain"
+                                  loader={({ src }) => src}
                                 />
                               </div>
                             )}

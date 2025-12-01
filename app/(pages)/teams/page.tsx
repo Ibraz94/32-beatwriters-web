@@ -46,6 +46,7 @@ export default function Teams() {
                                         width={80} 
                                         height={80} 
                                         className="rounded-lg"
+                                        loader={({ src }) => src}
                                     />
                                 </div>
                                 
@@ -101,6 +102,7 @@ export default function Teams() {
                                         width={80} 
                                         height={80} 
                                         className="rounded-lg"
+                                        loader={({ src }) => src}
                                     />
                                 </div>
                                 

@@ -36,6 +36,7 @@ export default function About() {
                                 width={600}
                                 height={600}
                                 alt="image-1"
+                                loader={({ src }) => src}
                             />
                         </div>
                     </div>
@@ -63,6 +64,7 @@ export default function About() {
                                 width={600}
                                 height={600}
                                 alt="image-2"
+                                loader={({ src }) => src}
                             />
                         </div>
                     </div>
@@ -77,6 +79,7 @@ export default function About() {
                                 width={600}
                                 height={600}
                                 alt="image-4"
+                                loader={({ src }) => src}
                             />
                         </div>
                     </div>
@@ -104,6 +107,7 @@ export default function About() {
                                 width={600}
                                 height={600}
                                 alt="image-3"
+                                loader={({ src }) => src}
                             />
                         </div>
                     </div>

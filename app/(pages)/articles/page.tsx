@@ -275,6 +275,7 @@ left-[-12px] right-[-12px]
                           fill
                           className="object-cover p-2 rounded-3xl"
                           priority
+                          loader={({ src }) => src}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-sm">No Image</div>

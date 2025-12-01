@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   images: {
     unoptimized: true,
+    loader: "custom",
     remotePatterns: [
       {
         protocol: 'https',
