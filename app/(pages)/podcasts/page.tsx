@@ -219,7 +219,7 @@ export default function AllPodcastsPage() {
                       key={pageNum}
                       onClick={() => handlePageChange(pageNum)}
                       className={`px-4 py-2 rounded-lg border transition-colors ${pageNum === filters.page
-                        ? 'bg-red-800 text-white border-red-800'
+                        ? 'bg-[#ED7864] text-white border-[#ED7864]/80'
                         : 'hover:bg-gray-50'
                         }`}
                     >
@@ -257,7 +257,7 @@ export default function AllPodcastsPage() {
                   }))
                   setSearchTerm('')
                 }}
-                className="bg-red-800 text-white px-6 py-2 rounded-lg hover:bg-red-900 transition-colors"
+                className="bg-[#ED7864] text-white px-6 py-2 rounded-lg hover:[#ED7864]/80 transition-colors"
               >
                 Clear Filters
               </button>
