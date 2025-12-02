@@ -311,7 +311,7 @@ function Header() {
                             </div>
 
                             {/* Tools Dropdown */}
-                            <div className="relative left-2" ref={toolsDropdownRef}>
+                            {/* <div className="relative left-2" ref={toolsDropdownRef}>
                                 <button
                                     onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
                                     className="relative py-2 text-md text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-normal dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
@@ -336,7 +336,7 @@ function Header() {
                                         </div>
                                     </div>
                                 )}
-                            </div>
+                            </div> */}
                             {/* {toolNavLink.map((link) => (
                             <Link
                                 key={link.href}
@@ -494,7 +494,7 @@ function Header() {
                             </div>
 
                             {/* Mobile Tools Dropdown */}
-                            <div className="space-y-1">
+                            {/* <div className="space-y-1">
                                 <button
                                     onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
                                     className="mobile-menu-nav-link w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 flex items-center justify-center space-x-2"
@@ -520,7 +520,7 @@ function Header() {
                                         </Link>
                                     ))}
                                 </div>
-                            </div>
+                            </div> */}
                             {/* {toolNavLink.map((link) => (
                                 <Link
                                     key={link.href}

@@ -185,7 +185,7 @@ const MainNav = () => {
                             <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
                             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                         </button>
-                        {isToolsDropdownOpen && (
+                        {/* {isToolsDropdownOpen && (
                             <div className="absolute top-full left-0 w-56 rounded-sm shadow-lg border border-white/20 bg-background/90 py-2 z-50">
                                 <div className="py-1">
                                     {toolOptions.map((option) => (
@@ -200,7 +200,7 @@ const MainNav = () => {
                                     ))}
                                 </div>
                             </div>
-                        )}
+                        )} */}
                     </div>
                     {/* {toolNavLink.map((link) => (
                             <Link
