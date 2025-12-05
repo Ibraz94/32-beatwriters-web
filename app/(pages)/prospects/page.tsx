@@ -48,7 +48,7 @@ function ProspectsContent() {
     const [showMobileFilters, setShowMobileFilters] = useState(false)
 
     const pageSize = 50 // As per API response pagination.pageSize
-    const maxProspects = 250 // Limit to top 250 prospects
+    const maxProspects = 50 // Limit to top 50 prospects
 
     // Debounce search term
     useEffect(() => {
