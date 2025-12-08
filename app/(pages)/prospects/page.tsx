@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import Image from 'next/image'
-import { Search, ChevronDown, Filter, ArrowUp, ArrowDown } from 'lucide-react'
+import { Search, Filter, ArrowUp, ArrowDown } from 'lucide-react'
 import { buildApiUrl } from '@/lib/config/api'
 import {
     Select,
@@ -42,13 +42,9 @@ function ProspectsContent() {
     const [searchTerm, setSearchTerm] = useState('')
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
     const [sortBy, setSortBy] = useState<'rank' | 'name'>('rank')
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
-    const [totalProspects, setTotalProspects] = useState(0)
     const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-    const pageSize = 50 // As per API response pagination.pageSize
-    const maxProspects = 50 // Limit to top 50 prospects
+    const maxProspects = 50 // Show only top 50 prospects
 
     // Debounce search term
     useEffect(() => {
@@ -59,56 +55,24 @@ function ProspectsContent() {
         return () => clearTimeout(timer)
     }, [searchTerm])
 
-    // Load prospects when position, search, or page changes
+    // Load prospects initially (only once on mount)
     useEffect(() => {
         const loadProspects = async () => {
             setLoading(true)
             setError('')
             try {
                 const params = new URLSearchParams()
-                if (position) params.set('position', position)
-                if (debouncedSearchTerm) params.set('search', debouncedSearchTerm)
-                params.set('page', String(currentPage))
-                params.set('pageSize', String(pageSize))
-                params.set('limit', String(maxProspects)) // Limit to top 250
+                params.set('limit', String(maxProspects)) // Limit to top 50
                 const res = await fetch(buildApiUrl(`/api/nfl-prospects?${params.toString()}`), { cache: 'no-store' })
                 if (!res.ok) throw new Error('Failed to load prospects')
                 const json = await res.json()
                 const prospects = json?.data?.prospects
-                const pagination = json?.data?.pagination
                 let rows: ProspectRow[] = Array.isArray(prospects) ? prospects : []
-
-                // Debug: Log first prospect to check rankChange field
-                if (rows.length > 0) {
-                    console.log('Sample prospect data:', {
-                        name: rows[0].name,
-                        rank: rows[0].rank,
-                        rankChange: rows[0].rankChange
-                    })
-                }
 
                 // Filter only active prospects
                 rows = rows.filter(prospect => prospect.status === 'active')
 
-                // Apply client-side sorting
-                if (sortBy === 'name') {
-                    rows = [...rows].sort((a, b) => a.name.localeCompare(b.name))
-                } else if (sortBy === 'rank') {
-                    rows = [...rows].sort((a, b) => {
-                        const rankA = a.rank ?? Infinity
-                        const rankB = b.rank ?? Infinity
-                        return rankA - rankB
-                    })
-                }
-
                 setData(rows)
-                if (pagination) {
-                    // Calculate total pages based on maxProspects limit
-                    const effectiveTotal = Math.min(pagination.total, maxProspects)
-                    const calculatedTotalPages = Math.ceil(effectiveTotal / pageSize)
-                    setTotalPages(calculatedTotalPages)
-                    setTotalProspects(effectiveTotal)
-                }
             } catch (e: any) {
                 setError(e?.message || 'Failed to load prospects')
             } finally {
@@ -116,10 +80,43 @@ function ProspectsContent() {
             }
         }
         loadProspects()
-    }, [position, debouncedSearchTerm, currentPage, sortBy, maxProspects, pageSize])
+    }, [maxProspects])
+
+    // Filter and sort data client-side
+    const filteredData = useMemo(() => {
+        let filtered = [...data]
+
+        // Apply search filter
+        if (debouncedSearchTerm) {
+            const searchLower = debouncedSearchTerm.toLowerCase()
+            filtered = filtered.filter(prospect => 
+                (prospect.name?.toLowerCase() || '').includes(searchLower) ||
+                (prospect.school?.toLowerCase() || '').includes(searchLower) ||
+                (prospect.position?.toLowerCase() || '').includes(searchLower)
+            )
+        }
+
+        // Apply position filter
+        if (position) {
+            filtered = filtered.filter(prospect => prospect.position === position)
+        }
+
+        // Apply client-side sorting
+        if (sortBy === 'name') {
+            filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+        } else if (sortBy === 'rank') {
+            filtered.sort((a, b) => {
+                const rankA = a.rank ?? Infinity
+                const rankB = b.rank ?? Infinity
+                return rankA - rankB
+            })
+        }
+
+        return filtered
+    }, [data, debouncedSearchTerm, position, sortBy])
 
     const normalized = useMemo(() => {
-        return data.map((r, idx) => {
+        return filteredData.map((r, idx) => {
             const playerName = r.name || '—'
             const overallRank = r.rank ?? '—' // Use existing rank, or '—' if null
             const school = r.school || '—'
@@ -135,7 +132,7 @@ function ProspectsContent() {
                 // Add prospect-specific normalized fields here
             }
         })
-    }, [data])
+    }, [filteredData])
 
     return (
         <div className="container mx-auto px-3 sm:px-6 lg:px-7 py-7">
@@ -166,10 +163,7 @@ function ProspectsContent() {
                                 type="text"
                                 placeholder="Search prospects..."
                                 value={searchTerm}
-                                onChange={(e) => {
-                                    setSearchTerm(e.target.value)
-                                    setCurrentPage(1)
-                                }}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full h-full pl-8 pr-4 bg-transparent placeholder:text-gray-400 focus:outline-none text-base"
                             />
                         </div>
@@ -196,10 +190,7 @@ function ProspectsContent() {
                                     type="text"
                                     placeholder="Search prospects..."
                                     value={searchTerm}
-                                    onChange={(e) => {
-                                        setSearchTerm(e.target.value)
-                                        setCurrentPage(1)
-                                    }}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
                                     className="w-full h-full pl-8 pr-4 bg-transparent placeholder:text-gray-400 focus:outline-none text-base"
                                 />
                             </div>
@@ -211,10 +202,7 @@ function ProspectsContent() {
                             <div className="flex-1 md:flex-none border border-[#C7C8CB] h-12 rounded-full px-3 bg-white dark:bg-[#262829]">
                                 <Select
                                     value={position || "all"}
-                                    onValueChange={(value) => {
-                                        setPosition(value === "all" ? undefined : value)
-                                        setCurrentPage(1)
-                                    }}
+                                    onValueChange={(value) => setPosition(value === "all" ? undefined : value)}
                                 >
                                     <SelectTrigger className="h-full w-full md:w-32 !border-none !border-0 flex items-center gap-2">
                                         <SelectValue placeholder="All Positions" />
@@ -236,10 +224,7 @@ function ProspectsContent() {
                             <div className="flex-1 md:flex-none border border-[#C7C8CB] h-12 rounded-full px-3 bg-white dark:bg-[#262829]">
                                 <Select
                                     value={sortBy}
-                                    onValueChange={(value: 'rank' | 'name') => {
-                                        setSortBy(value)
-                                        setCurrentPage(1)
-                                    }}
+                                    onValueChange={(value: 'rank' | 'name') => setSortBy(value)}
                                 >
                                     <SelectTrigger className="h-full w-full md:w-40 !border-none !border-0 flex items-center gap-2">
                                         <SelectValue placeholder="Sort By" />
@@ -256,28 +241,7 @@ function ProspectsContent() {
                     </div>
                 </div>
 
-                {/* Pagination Controls (Desktop) */}
-                <div className='hidden md:flex flex-col sm:flex-row items-center justify-end gap-4 mb-6'>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                            disabled={currentPage === 1 || loading}
-                            className="px-4 py-2 bg-[#E64A30] text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors hover:bg-[#d14429]"
-                        >
-                            Previous
-                        </button>
-                        <span className="text-sm font-medium">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        <button
-                            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                            disabled={currentPage === totalPages || loading}
-                            className="px-4 py-2 bg-[#E64A30] text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors hover:bg-[#d14429]"
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
+
             </div>
 
             {/* Error State */}
@@ -314,7 +278,7 @@ function ProspectsContent() {
             {/* Player Cards */}
             {!error && !loading && normalized.length > 0 && (
                 <div className="space-y-4">
-                    {data.map((prospect, index) => (
+                    {filteredData.map((prospect, index) => (
                         <div
                             key={`${prospect.id}-${index}`}
                             className="flex flex-row items-start gap-3 md:gap-4 border-b pb-4 border-[var(--color-gray)] hover:bg-accent/5 transition-colors rounded-lg p-2"
@@ -428,30 +392,7 @@ function ProspectsContent() {
                 </div>
             )}
 
-            {/* Pagination Controls (Mobile) */}
-            {!error && !loading && normalized.length > 0 && (
-                <div className='flex md:hidden flex-col items-center justify-center gap-4 mt-6 pb-8'>
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                            disabled={currentPage === 1 || loading}
-                            className="px-4 py-2 bg-[#E64A30] text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors hover:bg-[#d14429]"
-                        >
-                            Previous
-                        </button>
-                        <span className="text-sm font-medium">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        <button
-                            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                            disabled={currentPage === totalPages || loading}
-                            className="px-4 py-2 bg-[#E64A30] text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium transition-colors hover:bg-[#d14429]"
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
-            )}
+
 
         </div>
     )
