@@ -48,7 +48,7 @@ export default function HeroSection() {
                 <div
                     className="absolute bottom-0 left-0 w-full h-full"
                 >
-                    <Image src="/background-image.png" alt="NFL Player" fill className="relative inset-0 object-cover flex items-center justify-center" />
+                    <Image src="/background-image.png" alt="NFL Player" fill className="relative inset-0 object-cover flex items-center justify-center" loader={({ src }) => src}/>
 
                 </div>
             </div>
@@ -63,6 +63,7 @@ export default function HeroSection() {
                         fill 
                         className="object-cover object-center sm:object-top" 
                         priority
+                        loader={({ src }) => src}
                     />
                 </div>
 

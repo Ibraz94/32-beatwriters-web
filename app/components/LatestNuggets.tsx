@@ -176,6 +176,7 @@ export default function LatestNuggets() {
                         alt={`${nugget.player.name} headshot`}
                         fill
                         className='rounded-full object-cover bg-background overflow-hidden'
+                        loader={({ src }) => src}
                       />
                     </div>
 
@@ -193,7 +194,8 @@ export default function LatestNuggets() {
                                   alt={`${playerTeam.name} logo`}
                                   width={32}
                                   height={24}
-                                  className='object-contain '
+                                  className='object-contain'
+                                  loader={({ src }) => src}
                                 />
                               </div>
                             )}
@@ -278,7 +280,7 @@ export default function LatestNuggets() {
             <div className="hidden md:flex justify-end w-full py-8 text-white pr-[220px]">
               <Button
                 variant="orange"
-                className="dark:hover:bg-[#FF8C5E] whitespace-nowrap"
+                className="dark:hover:bg-[#FF8C5E] hover:text-black whitespace-nowrap"
               >
                 <Link href="/subscribe">
                   Subscribe to See All the Latest News

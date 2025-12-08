@@ -44,10 +44,12 @@ function PlayerCard({ player, isActive }: PlayerCardProps) {
                                 width={192}
                                 height={192}
                                 className="object-cover w-full h-full"
+                                loader={({ src }) => src}
                                 onError={(e) => {
                                     const target = e.target as HTMLImageElement;
                                     target.src = '/default-player.jpg';
                                 }}
+
                             />
                         </div>
                     </div>
@@ -69,6 +71,7 @@ function PlayerCard({ player, isActive }: PlayerCardProps) {
                                     width={24}
                                     height={24}
                                     className="object-contain"
+                                    loader={({ src }) => src}
                                 />
                             )}
                             <span className="text-sm md:text-[18px] font-medium">{teamName}</span>

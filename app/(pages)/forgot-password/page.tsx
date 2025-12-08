@@ -259,9 +259,9 @@ export default function ForgotPassword() {
                 <div className="text-center">
                     <div className="flex justify-center">
                         {mounted ? (
-                            <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={100} height={100} />
+                            <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={100} height={100} loader={({ src }) => src}/>
                         ) : (
-                            <Image src="/logo-small.webp" alt="logo" width={100} height={100} />
+                            <Image src="/logo-small.webp" alt="logo" width={100} height={100} loader={({ src }) => src}/>
                         )}
                     </div>
                    

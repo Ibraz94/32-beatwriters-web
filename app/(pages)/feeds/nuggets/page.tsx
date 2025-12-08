@@ -427,6 +427,7 @@ export default function NuggetsPage() {
                                         width={45}
                                         height={45}
                                         className="w-full h-full object-cover"
+                                        loader={({ src }) => src}
                                     />
                                 </div>
 
@@ -453,6 +454,7 @@ export default function NuggetsPage() {
                                                 width={34}
                                                 height={34}
                                                 className="object-contain"
+                                                loader={({ src }) => src}
                                             />
                                         ) : null;
                                     })()}
@@ -645,6 +647,7 @@ export default function NuggetsPage() {
                                                 alt="Calendar icon"
                                                 width={18}
                                                 height={18}
+                                                loader={({ src }) => src}
                                             />
                                             {date ? date.toLocaleDateString() : <span>Select By Date</span>}
                                             <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400"/>
@@ -798,6 +801,7 @@ export default function NuggetsPage() {
                                                         alt={`${nugget.player.name} headshot`}
                                                         fill
                                                         className="rounded-full object-cover bg-background overflow-hidden"
+                                                        loader={({ src }) => src}
                                                     />
                                                 </div>
 
@@ -818,6 +822,7 @@ export default function NuggetsPage() {
                                                                             width={32}
                                                                             height={24}
                                                                             className="object-contain"
+                                                                            loader={({ src }) => src}
                                                                         />
                                                                     </div>
                                                                 )}

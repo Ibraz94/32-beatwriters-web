@@ -316,6 +316,7 @@ function ProspectsContent() {
                                                         alt={`${prospect.school} logo`}
                                                         fill
                                                         className="object-contain"
+                                                        loader={({ src }) => src}
                                                     />
                                                 </div>
                                             )}

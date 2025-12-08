@@ -46,7 +46,7 @@ const DiscordButton = () => {
                     disabled
                     className="flex items-center justify-center gap-2 w-full sm:w-auto bg-[#F6BCB2] text-black text-sm sm:text-md py-2 sm:px-4 rounded-full transition-colors duration-200 cursor-not-allowed"
                 >
-                    <Image src="/discord-icon.svg" alt="Discord" width={20} height={20} />
+                    <Image src="/discord-icon.svg" alt="Discord" width={20} height={20} loader={({ src }) => src}/>
                     Connected
                 </button>
                 <span className="text-xs text-black sm:inline">{discordStatus.discordUsername}</span>
@@ -61,7 +61,7 @@ const DiscordButton = () => {
             disabled={isLoading || !loginUrlData?.url}
             className="flex items-center justify-center gap-2 w-full sm:w-auto bg-[#F6BCB2] text-black text-sm sm:text-md py-2 sm:px-4 rounded-full transition-colors duration-200 hover:bg-[#E6AC95] disabled:opacity-50 disabled:cursor-not-allowed"
         >
-            <Image src="/discord-icon.svg" alt="Discord" width={20} height={20} />
+            <Image src="/discord-icon.svg" alt="Discord" width={20} height={20} loader={({ src }) => src}/>
             {isLoading ? 'Connecting...' : 'Connect with Discord'}
         </button>
     );

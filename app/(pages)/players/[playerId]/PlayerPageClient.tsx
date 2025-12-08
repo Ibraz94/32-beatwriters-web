@@ -104,8 +104,19 @@ export default function PlayerPageClient({ id }: any) {
 
 
     // Year selection state for performance metrics
-    const [selectedYear, setSelectedYear] = useState('2024')
+    const [selectedYear, setSelectedYear] = useState('2025')
 
+    // Game Logs and Performance Metrics year selection logic
+    const currentYearDynamic = new Date().getFullYear();
+    const availableYearsDynamic = Array.from({ length: currentYearDynamic - 2018 }, (_, i) => (currentYearDynamic - i).toString());
+
+    useEffect(() => {
+        if (!selectedYear && availableYearsDynamic.includes('2025')) {
+            setSelectedYear('2025');
+        } else if (!selectedYear && availableYearsDynamic.length > 0) {
+            setSelectedYear(availableYearsDynamic[0]);
+        }
+    }, [availableYearsDynamic, selectedYear]);
 
     // Get the page number user came from (for back navigation)
     const fromPage = searchParams?.get('page')
@@ -1147,7 +1158,7 @@ export default function PlayerPageClient({ id }: any) {
                 }
 
                 const currentYears = new Date().getFullYear()
-                const availableYear = Array.from({ length: currentYears - 2024 }, (_, i) => (currentYears - i).toString())
+                const availableYear = Array.from({ length: currentYears - 2018 }, (_, i) => (currentYears - i).toString())
 
 
                 return (
@@ -1226,6 +1237,7 @@ export default function PlayerPageClient({ id }: any) {
                                                     alt={`${nugget.player.name} headshot`}
                                                     fill
                                                     className="rounded-full object-cover bg-background overflow-hidden"
+                                                    loader={({ src }) => src}
                                                 />
                                             </div>
 
@@ -1248,6 +1260,7 @@ export default function PlayerPageClient({ id }: any) {
                                                                         width={32}
                                                                         height={24}
                                                                         className="object-contain"
+                                                                        loader={({ src }) => src}
                                                                     />
                                                                 </div>
                                                             )}
@@ -1327,10 +1340,13 @@ export default function PlayerPageClient({ id }: any) {
 
             case 'season-stats':
                 const seasonStats = performancePlayer?.['Performance Metrics'];
-                const availableYearsSeasonStats = seasonStats ? Object.keys(seasonStats) : [];
+                const currentYearSeasonStats = new Date().getFullYear();
+                const generatedYears = Array.from({ length: currentYearSeasonStats - 2023 }, (_, i) => (currentYearSeasonStats - i).toString());
+                const yearsFromData = seasonStats ? Object.keys(seasonStats) : [];
+                const combinedYears = Array.from(new Set([...generatedYears, ...yearsFromData]));
 
                 // Sort the years in descending order to ensure the latest year is on top
-                const sortedYears = availableYearsSeasonStats.sort((a, b) => Number(b) - Number(a));
+                const sortedYears = combinedYears.sort((a, b) => Number(b) - Number(a));
 
                 // Create an array of column names that have data in any year
                 const columns = [
@@ -1373,7 +1389,10 @@ export default function PlayerPageClient({ id }: any) {
                 }
 
                 const columnHasData = (columnKey: string): boolean => {
-                    return sortedYears.some((year: string) => ((seasonStats as unknown) as SeasonStats)[year][columnKey] != null);
+                    return sortedYears.some((year: string) => {
+                        const yearData = ((seasonStats as unknown) as SeasonStats)[year];
+                        return yearData && yearData[columnKey] != null;
+                    });
                 };
 
                 // Filter out columns that have no data for all years
@@ -1406,25 +1425,27 @@ export default function PlayerPageClient({ id }: any) {
                                                     <tbody>
                                                         {/* Loop through all the years (sorted) and display data */}
                                                         {sortedYears.map((year) => {
-                                                            const yearData = seasonStats[year];
+                                                            const yearData = seasonStats?.[year] || {}; // Fallback to empty object if year data is missing
 
                                                             return (
                                                                 <tr key={year} className="bg-[#FFE6E2] text-center dark:bg-[#262829]">
                                                                     {visibleColumns.map((column) => {
-                                                                        let value;
-                                                                        if (column.type === 'calculated') {
+                                                                        let value: string | number = 'N/A'; // Default to 'N/A'
+                                                                        if (column.key === 'Season') {
+                                                                            value = year; // Display the year for the Season column
+                                                                        } else if (column.type === 'calculated') {
                                                                             if (column.key === 'Rush Yards / Rush Attempts') {
                                                                                 const rushAttempts = parseInt((yearData as any)['Rush Attempts']);
                                                                                 const rushYards = parseInt((yearData as any)['Rushing Yards']);
-                                                                                value = (rushYards / rushAttempts).toFixed(2);
+                                                                                value = (rushAttempts > 0 && rushYards != null) ? (rushYards / rushAttempts).toFixed(2) : 'N/A';
                                                                             } else if (column.key === 'Total Touchdowns') {
-                                                                                const rushingTouchdowns = parseInt(yearData['Rushing Touchdowns']);
-                                                                                const receivingTouchdowns = parseInt(yearData['Receiving TDs']);
-                                                                                value = rushingTouchdowns + receivingTouchdowns;
+                                                                                const rushingTouchdowns = parseInt(yearData['Rushing Touchdowns'] as string);
+                                                                                const receivingTouchdowns = parseInt(yearData['Receiving TDs'] as string);
+                                                                                value = (rushingTouchdowns != null || receivingTouchdowns != null) ? ( (isNaN(rushingTouchdowns) ? 0 : rushingTouchdowns) + (isNaN(receivingTouchdowns) ? 0 : receivingTouchdowns) ) : 'N/A';
                                                                             }
                                                                         } else {
                                                                             const rawValue = (yearData as SeasonPerformanceMetrics)[column.key];
-                                                                            value = typeof rawValue === 'string' ? parseInt(rawValue) || rawValue : rawValue;
+                                                                            value = (rawValue != null && rawValue !== '') ? (typeof rawValue === 'string' ? parseInt(rawValue) || rawValue : rawValue) : 'N/A';
                                                                         }
 
                                                                         return (
@@ -1456,8 +1477,7 @@ export default function PlayerPageClient({ id }: any) {
 
             case 'game-log':
                 const gameLogs = performancePlayer?.['Game Logs']; // Game log data
-                const availableYearsGameLogs = gameLogs ? Object.keys(gameLogs) : [];
-
+               
                 // Function to handle year change from the dropdown
                 interface YearChangeEvent {
                     target: {
@@ -1499,7 +1519,7 @@ export default function PlayerPageClient({ id }: any) {
                                     className="px-4 py-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
                                 >
                                     {/* Sort the years in descending order */}
-                                    {availableYearsGameLogs.sort((a, b) => Number(b) - Number(a)).map((year) => (
+                                    {availableYearsDynamic.sort((a, b) => Number(b) - Number(a)).map((year) => (
                                         <option key={year} value={year}>
                                             {year}
                                         </option>
@@ -1613,6 +1633,7 @@ export default function PlayerPageClient({ id }: any) {
                                     width={360}
                                     height={360}
                                     className="overflow-visible"
+                                    loader={({ src }) => src}
                                 />
                             )}
                         </div>
@@ -1624,6 +1645,7 @@ export default function PlayerPageClient({ id }: any) {
                                 width={520}
                                 height={491}
                                 className="object-cover"
+                                loader={({ src }) => src}
                             />
                         </div>
                     </div>
@@ -1636,7 +1658,7 @@ export default function PlayerPageClient({ id }: any) {
 
                             {player?.Core?.ADP && (
                                 <div className="flex items-center gap-1 bg-[#F6BCB2] dark:bg-[#F6BCB2] text-black px-3 py-1 rounded-full text-sm">
-                                    <Image src="/underdog.webp" alt="ADP" width={20} height={14} />
+                                    <Image src="/underdog.webp" alt="ADP" width={20} height={14} loader={({ src }) => src}/>
                                     <span className="font-xl">ADP: {player.Core.ADP}</span>
                                 </div>
                             )}
@@ -1650,6 +1672,7 @@ export default function PlayerPageClient({ id }: any) {
                                     alt="Team Logo"
                                     width={27}
                                     height={21}
+                                    loader={({ src }) => src}
                                 />
                             </div>
                             <p className="text-[#3A3D48] dark:text-gray-300 text-xl">
@@ -1745,6 +1768,7 @@ export default function PlayerPageClient({ id }: any) {
                                     width={220}
                                     height={220}
                                     className="overflow-visible"
+                                    loader={({ src }) => src}
                                 />
                             )}
                         </div>
@@ -1757,6 +1781,7 @@ export default function PlayerPageClient({ id }: any) {
                                 width={520}
                                 height={491}
                                 className="object-cover"
+                                loader={({ src }) => src}
                             />
                         </div>
                     </div>
@@ -1770,7 +1795,7 @@ export default function PlayerPageClient({ id }: any) {
                             <h1 className="text-3xl md:text-4xl text-[#1D212D] dark:text-white">{playerName}</h1>
                             {player?.Core?.ADP && (
                                 <div className="flex items-center gap-1 bg-[#F6BCB2] text-black px-3 py-1 rounded-full text-sm dark:text-[#1D212D]">
-                                    <Image src="/underdog.webp" alt="ADP" width={20} height={14} />
+                                    <Image src="/underdog.webp" alt="ADP" width={20} height={14} loader={({ src }) => src}/>
                                     <span className="font-xl">ADP: {player.Core.ADP}</span>
                                 </div>
                             )}
@@ -1784,6 +1809,7 @@ export default function PlayerPageClient({ id }: any) {
                                     alt="Team Logo"
                                     width={27}
                                     height={21}
+                                    loader={({ src }) => src}
                                 />
                             </div>
                             <p className="text-[#3A3D48] text-lg md:text-xl dark:text-[#C7C8CB]">
@@ -1891,6 +1917,7 @@ export default function PlayerPageClient({ id }: any) {
                         width={30}
                         height={30}
                         alt="pp=logo"
+                        loader={({ src }) => src}
                     />
                 </Link>
             </div>

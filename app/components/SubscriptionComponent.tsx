@@ -115,7 +115,7 @@ export default function SubscriptionComponent() {
                 </div>
                 {/* Background image */}
                 <div className="absolute top-0 right-0 pointer-events-none opacity-30">
-                  <Image src={selectedPlan === "monthly" ? `/monthly-plan-bg.png` : `/onetime-plan-bg.png`} alt="Plan background" width={300} height={300} />
+                  <Image src={selectedPlan === "monthly" ? `/monthly-plan-bg.png` : `/onetime-plan-bg.png`} alt="Plan background" width={300} height={300} loader={({ src }) => src}/>
                 </div>
 
                 {/* Header */}
@@ -130,6 +130,7 @@ export default function SubscriptionComponent() {
                       height={60}
                       width={60}
                       className="object-contain"
+                      loader={({ src }) => src}
                     />
                   </div>
                 </div>
@@ -192,6 +193,7 @@ export default function SubscriptionComponent() {
                             height={14}
                             alt="Tick"
                             className="mt-1"
+                            loader={({ src }) => src}
                           />
                           <span>{text}</span>
                         </li>
@@ -213,7 +215,7 @@ export default function SubscriptionComponent() {
                 </div>
                 {/* Background image */}
                 <div className="absolute top-0 right-0 pointer-events-none opacity-30">
-                  <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} />
+                  <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src}/>
                 </div>
 
                 {/* Header */}
@@ -228,6 +230,7 @@ export default function SubscriptionComponent() {
                       height={100}
                       width={100}
                       className="object-contain"
+                      loader={({ src }) => src}
                     />
                   </div>
                 </div>
@@ -263,7 +266,7 @@ export default function SubscriptionComponent() {
                         "Secure payment by Stripe – No hidden fees",
                       ].map((text, i) => (
                         <li key={i} className="flex items-start gap-2 leading-snug dark:text-[#C7C8CB]">
-                          <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" className="mt-1" />
+                          <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" className="mt-1" loader={({ src }) => src}/>
                           <span>{text}</span>
                         </li>
                       ))}
@@ -307,6 +310,7 @@ export default function SubscriptionComponent() {
                 width={300}
                 height={300}
                 className="object-contain object-right-top"
+                loader={({ src }) => src}
               />
             </div>
 
@@ -319,7 +323,7 @@ export default function SubscriptionComponent() {
                 </div>
 
                 <div className="flex justify-center items-center mb-8">
-                  <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} />
+                  <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} loader={({ src }) => src}/>
                   <div className="text-left">
                     <h3 className="text-base font-semibold leading-tight dark:text-[#D2D6E2]">32BeatWriters</h3>
                     <p className="text-sm text-gray-500">NFL Insider Network</p>
@@ -361,7 +365,7 @@ export default function SubscriptionComponent() {
                     "Secure Payment By Stripe - No Hidden Fees",
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
-                      <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" />
+                      <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" loader={({ src }) => src}/>
                       <span>{text}</span>
                     </li>
                   ))}
@@ -380,7 +384,7 @@ export default function SubscriptionComponent() {
             </div>
             {/* Background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
-              <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} />
+              <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src}/>
             </div>
 
             {/* Header */}
@@ -389,7 +393,7 @@ export default function SubscriptionComponent() {
                 First Month Free
               </div>
               <div className="flex items-center">
-                <Image src="/fast-draft-plan.svg" alt="Logo" height={150} width={150} className="object-contain" />
+                <Image src="/fast-draft-plan.svg" alt="Logo" height={150} width={150} className="object-contain" loader={({ src }) => src}/>
               </div>
             </div>
 
@@ -422,7 +426,7 @@ export default function SubscriptionComponent() {
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
                       <div className="bg-[#FFE6E2] p-2 rounded-full flex items-center justify-center shrink-0 dark:bg-transparent">
-                        <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" />
+                        <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" loader={({ src }) => src}/>
                       </div>
                       <span>{text}</span>
                     </li>
@@ -445,7 +449,7 @@ export default function SubscriptionComponent() {
             </div>
             {/* Background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
-              <Image src="/yearly-plan-bg.png" alt="Plan background" width={300} height={300} />
+              <Image src="/yearly-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src}/>
             </div>
 
             {/* Inner content */}
@@ -455,7 +459,7 @@ export default function SubscriptionComponent() {
                   Yearly
                 </div>
                 <div className="flex justify-center items-center mb-8">
-                  <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} />
+                  <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} loader={({ src }) => src}/>
                   <div className="text-left">
                     <h3 className="text-base font-semibold leading-tight dark:text-[#D2D6E2]">32BeatWriters</h3>
                     <p className="text-sm text-gray-500">NFL Insider Network</p>
@@ -466,7 +470,7 @@ export default function SubscriptionComponent() {
               <div className="text-left">
                 <p className="text-gray-500 text-sm mb-2 pt-2 dark:text-[#C7C8CB]">Start at</p>
                 <div className="mb-6">
-                  <span className="text-5xl dark:text-white">$99.99</span>
+                  <span className="text-5xl dark:text-white">$49.99</span>
                   <span className="text-xl text-black dark:text-white">/year</span>
                 </div>
                 <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">
@@ -494,7 +498,7 @@ export default function SubscriptionComponent() {
                     "Secure Payment By Stripe - No Hidden Fees",
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
-                      <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" />
+                      <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" loader={({ src }) => src}/>
                       <span>{text}</span>
                     </li>
                   ))}

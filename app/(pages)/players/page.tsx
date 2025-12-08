@@ -50,6 +50,7 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                     alt={player.name}
                     fill
                     className="object-cover"
+                    loader={({ src }) => src}
                     onError={(e) => {
                         const target = e.target as HTMLImageElement
                         target.src = '/default-player.jpg'
@@ -75,6 +76,7 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                                     width={24}
                                     height={18}
                                     className='object-contain'
+                                    loader={({ src }) => src}
                                 />
                             )}
                             <h1 className="text-sm font-oswald">{player.team || 'Free Agent'}  {player.position}</h1>

@@ -369,6 +369,7 @@ export default function SavedNuggetsPage() {
                                         width={40}
                                         height={40}
                                         className="w-full h-full object-cover"
+                                        loader={({ src }) => src}
                                     />
                                 </div>
                                 <span className="font-medium">{player.name}</span>
@@ -381,6 +382,7 @@ export default function SavedNuggetsPage() {
                                         width={24}
                                         height={24}
                                         className="object-contain"
+                                        loader={({ src }) => src}
                                     />
                                     <p>{player.teamDetails.name || 'No team'}</p>
                                 </div>
@@ -605,6 +607,7 @@ left-[-12px] right-[-12px]
                                                 alt="Calendar icon"
                                                 width={18}
                                                 height={18}
+                                                loader={({ src }) => src}
                                             />
                                             {date ? date.toLocaleDateString() : <span>Select By Date</span>}
                                             <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
@@ -746,6 +749,7 @@ left-[-12px] right-[-12px]
                                                         alt={`${nugget.player.name} headshot`}
                                                         fill
                                                         className="rounded-full object-cover bg-background overflow-hidden"
+                                                        loader={({ src }) => src}
                                                     />
                                                 </div>
 
@@ -766,6 +770,7 @@ left-[-12px] right-[-12px]
                                                                             width={32}
                                                                             height={24}
                                                                             className="object-contain"
+                                                                            loader={({ src }) => src}
                                                                         />
                                                                     </div>
                                                                 )}

@@ -60,6 +60,7 @@ const MobileNav = () => {
                 width={48} 
                 height={48}
                 className="w-full h-full object-contain"
+                loader={({ src }) => src}
               />
             </div>
             <h1 className="text-xl sm:text-2xl lg:text-4xl font-semibold text-center leading-tight">

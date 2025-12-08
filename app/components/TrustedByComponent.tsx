@@ -1,3 +1,5 @@
+'use client'
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -19,7 +21,10 @@ const TrustedByPartners = () => {
                 alt="ESPN Logo"
                 width={300}
                 height={200}
-                className="w-full h-auto object-contain" />
+                className="h-auto object-contain" 
+                loader={({ src }) => src}
+                />
+                
             </div>
 
             {/* Logo 2 */}
@@ -29,7 +34,9 @@ const TrustedByPartners = () => {
                 alt="CBS Logo"
                 width={300}
                 height={200}
-                className="w-full h-auto object-contain" />
+                className="h-auto object-contain" 
+                loader={({ src }) => src}
+                />
             </div>
           </div>
 
@@ -41,7 +48,9 @@ const TrustedByPartners = () => {
                 alt="NBC Logo"
                 width={300}
                 height={200}
-                className="w-full h-auto object-contain" />
+                className="h-auto object-contain" 
+                loader={({ src }) => src}
+                />
             </div>
 
             {/* Logo 4 */}
@@ -51,7 +60,9 @@ const TrustedByPartners = () => {
                 alt="Sleeper Logo"
                 width={300}
                 height={200}
-                className="w-full h-auto object-contain" />
+                className="h-auto object-contain" 
+                loader={({ src }) => src}
+                />
             </div>
           </div>
 
@@ -60,10 +71,12 @@ const TrustedByPartners = () => {
             <div className="w-[195px] lg:w-full bg-white flex justify-center items-center rounded-2xl h-24 md:h-36 lg:h-42 px-6 md:px-10 lg:px-12 transition-all duration-300 dark:bg-[#262829]">
               <Image
                 src="/the-athletic.png"
-                alt="Sleeper Logo"
+                alt="Athletic Logo"
                 width={300}
                 height={200}
-                className="w-full h-auto object-contain" />
+                className=" h-auto object-contain" 
+                loader={({ src }) => src}
+                />
           </div>
           </div>
           </div>

@@ -140,6 +140,7 @@ export default function PodcastsComponent() {
                                                 alt={podcast.title}
                                                 fill
                                                 className="object-cover"
+                                                loader={({ src }) => src}
                                             />
 
                                             {/* Play Button Overlay */}

@@ -105,10 +105,10 @@ function PremiumSignupForm() {
   }
 
   // Specific plan IDs to display
-  const allowedPlanIds = ['price_1RZZFRAToc8YZruPw5uzOh1n', 'price_1RltPxAToc8YZruP4TJLGvPR']
-
+  const allowedPlanIds = ['plan_SP4eIOlEaiqOH0', 'price_1SVegMAToc8YZruP2we5ooFx']
+  
   // Monthly plan ID (first one in the array)
-  const monthlyPlanId = 'price_1RZZFRAToc8YZruPw5uzOh1n'
+  const monthlyPlanId = 'plan_SP4eIOlEaiqOH0'
 
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
@@ -591,7 +591,7 @@ function PremiumSignupForm() {
               ].map(({ title, text }) => (
                 <div key={title} className="flex items-start space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 flex items-center justify-center rounded-full bg-[#FFE6E2] p-1 dark:bg-[#262829]">
-                    <Image src="/tick-mark.svg" alt="tick" className="" width={14} height={14} />
+                    <Image src="/tick-mark.svg" alt="tick" className="" width={14} height={14} loader={({ src }) => src}/>
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-sm sm:text-sm text-[#1D212D] dark:text-white truncate">

@@ -55,6 +55,7 @@ export default function DeliveredToComponent() {
                             width={800}
                             height={500}
                             className="w-full h-64 sm:h-80 md:h-full object-cover object-left"
+                            loader={({ src }) => src}
                         />
                     </div>
 
@@ -104,6 +105,7 @@ export default function DeliveredToComponent() {
                             width={800}
                             height={500}
                             className="w-full h-64 sm:h-80 md:h-full object-cover object-left rounded-b-4xl"
+                            loader={({ src }) => src}
                         />
                     </div>
 

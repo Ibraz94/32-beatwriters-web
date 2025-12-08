@@ -85,6 +85,7 @@ export default function Footer() {
                                     width={60}
                                     height={60}
                                     className="w-14 h-14"
+                                    loader={({ src }) => src}
                                 />
                             </Link>
                             <p className="text-[var(--color-gray)] mb-6 leading-relaxed text-md dark:text-[#C7C8CB] max-w-md mx-auto md:mx-0">
@@ -104,6 +105,7 @@ export default function Footer() {
                                         width={22}
                                         height={22}
                                         className="invert brightness-0"
+                                        loader={({ src }) => src}
                                     />
                                 </Link>
 
@@ -118,6 +120,7 @@ export default function Footer() {
                                         width={22}
                                         height={22}
                                         className="invert brightness-0"
+                                        loader={({ src }) => src}
                                     />
                                 </Link>
 
@@ -132,6 +135,7 @@ export default function Footer() {
                                         width={24}
                                         height={24}
                                         className="invert brightness-0"
+                                        loader={({ src }) => src}
                                     />
                                 </Link>
 
@@ -146,6 +150,7 @@ export default function Footer() {
                                         width={22}
                                         height={22}
                                         className="invert brightness-0"
+                                        loader={({ src }) => src}
                                     />
                                 </Link>
                             </div>
@@ -165,6 +170,7 @@ export default function Footer() {
                                         width={40}
                                         height={40}
                                         className="shrink-0 rounded-full p-2 bg-[#1D212D] dark:bg-white"
+                                        loader={({ src }) => src}
                                     />
                                     <a
                                         href={`mailto:${contactInfo.email}`}
@@ -182,6 +188,7 @@ export default function Footer() {
                                         width={40}
                                         height={40}
                                         className="shrink-0 rounded-full p-2 bg-[#1D212D] dark:bg-white"
+                                        loader={({ src }) => src}
                                     />
                                     <a
                                         href={contactInfo.phoneHref}

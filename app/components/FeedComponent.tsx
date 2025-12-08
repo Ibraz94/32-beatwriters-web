@@ -252,6 +252,7 @@ export default function FeedComponent() {
                                                     width={32}
                                                     height={32}
                                                     className="w-full h-full object-cover"
+                                                    loader={({ src }) => src}
                                                 />
                                             </div>
                                         )}
@@ -304,6 +305,7 @@ export default function FeedComponent() {
                                                     alt={`${item.title} image ${imageIndex + 1}`}
                                                     fill
                                                     className="object-cover"
+                                                    loader={({ src }) => src}
                                                 />
                                             </div>
                                         ))}
