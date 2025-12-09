@@ -210,7 +210,7 @@ function ProspectsContent() {
                                     <SelectContent className="border-none bg-white dark:bg-[#262829]">
                                         <SelectGroup>
                                             <SelectItem value="all">All Positions</SelectItem>
-                                            {['QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'OT', 'IOL', 'S', 'CB', 'K', 'P', 'LS'].map((pos) => (
+                                            {['QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'OT', 'OT', 'OL', 'C', 'S', 'DE', 'DT', 'LB', 'CB', 'K', 'P', 'LS', 'KR', 'PR'].map((pos) => (
                                                 <SelectItem key={pos} value={pos}>
                                                     {pos}
                                                 </SelectItem>
