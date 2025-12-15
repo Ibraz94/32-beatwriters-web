@@ -310,7 +310,7 @@ export default function ForgotPassword() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-lg bg-red-800 hover:scale-101 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-full bg-[#E64A30] hover:scale-101 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? (
                                         <div className="flex items-center">
@@ -346,7 +346,7 @@ export default function ForgotPassword() {
                                             value={digit}
                                             onChange={(e) => handleOtpChange(index, e.target.value)}
                                             onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                            className="w-12 h-12 text-center text-lg font-bold border border-input rounded-md focus:outline-none focus:ring focus:ring-ring focus:border-transparent bg-background/20 transition-colors"
+                                            className="w-12 h-12 text-center text-lg font-bold border rounded-md bg-background/20 transition-colors"
                                         />
                                     ))}
                                 </div>
@@ -386,7 +386,7 @@ export default function ForgotPassword() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-lg bg-red-800 hover:scale-101 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-full bg-[#E64A30] hover:scale-101 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? (
                                         <div className="flex items-center">
@@ -482,7 +482,7 @@ export default function ForgotPassword() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-lg bg-red-800 hover:scale-101 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="group relative w-full flex justify-center py-2 px-4 text-white border border-transparent font-medium rounded-full bg-[#E64A30] hover:scale-101 hover:cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading ? (
                                         <div className="flex items-center">
@@ -536,7 +536,7 @@ export default function ForgotPassword() {
         query: { redirect: pathname }  // Pass the current path as a query parameter
       }}
 
-                            className="inline-flex items-center text-sm font-medium text-primary hover:text-red-800 transition-colors"
+                            className="inline-flex items-center text-sm font-medium text-primary hover:text-[#E64A30] transition-colors"
                         >
                             <ArrowLeft className="h-4 w-4 mr-1" />
                             Back to login
