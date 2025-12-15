@@ -2,8 +2,11 @@
 
 import { useEffect, useMemo, useState, Suspense } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Search, Filter, ArrowUp, ArrowDown } from 'lucide-react'
 import { buildApiUrl } from '@/lib/config/api'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { usePathname } from 'next/navigation'
 import {
     Select,
     SelectContent,
@@ -35,6 +38,8 @@ interface ProspectRow {
 }
 
 function ProspectsContent() {
+    const pathname = usePathname()
+    const { isAuthenticated, isLoading: authLoading, user } = useAuth()
     const [data, setData] = useState<ProspectRow[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string>('')
@@ -133,6 +138,38 @@ function ProspectsContent() {
             }
         })
     }, [filteredData])
+
+    // Show authentication required message if not authenticated or has insufficient membership
+    if (!authLoading && (!isAuthenticated || (user?.memberships && user.memberships.id !== undefined && user.memberships.id < 2))) {
+        return (
+            <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
+                <div className="max-w-6xl mx-auto text-center">
+                    <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
+                    <p className="text-gray-600 mb-8">
+                        {!isAuthenticated
+                            ? "Please login to your account to view NFL prospects. Don't have a subscription? Please subscribe to access premium content."
+                            : "Please upgrade to a premium subscription to view NFL prospects."
+                        }
+                    </p>
+
+                    {!isAuthenticated && (
+                        <p className="text-gray-600 mb-8">
+                            <Link href={{
+                                pathname: '/login',
+                                query: { redirect: pathname }
+                            }} className="text-[#E64A30] hover:text-[#E64A30]/90 font-semibold">Login</Link>
+                        </p>
+                    )}
+                    <Link
+                        href="/subscribe"
+                        className="bg-[#E64A30] text-white px-6 py-3 rounded-full font-semibold"
+                    >
+                        Subscribe
+                    </Link>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="container mx-auto px-3 sm:px-6 lg:px-7 py-7">
