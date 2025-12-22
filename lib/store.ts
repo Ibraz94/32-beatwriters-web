@@ -10,6 +10,7 @@ import { subscriptionApi } from './services/subscriptionApi'
 import { contactApi } from './services/contactApi'
 import { beatWritersApi } from './services/beatWritersApi'
 import { discordApi } from './services/discordApi'
+import { bettingApi } from './services/bettingApi'
 import authSlice from './features/authSlice'
 import { playerProfilerApi } from './services/playersApi'
 
@@ -27,6 +28,7 @@ export const store = configureStore({
     [contactApi.reducerPath]: contactApi.reducer,
     [beatWritersApi.reducerPath]: beatWritersApi.reducer,
     [discordApi.reducerPath]: discordApi.reducer,
+    [bettingApi.reducerPath]: bettingApi.reducer,
     [playerProfilerApi.reducerPath]: playerProfilerApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -46,6 +48,7 @@ export const store = configureStore({
       contactApi.middleware,
       beatWritersApi.middleware,
       discordApi.middleware,
+      bettingApi.middleware,
       playerProfilerApi.middleware
     ),
   devTools: process.env.NODE_ENV !== 'production',

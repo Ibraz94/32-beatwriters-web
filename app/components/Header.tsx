@@ -118,6 +118,8 @@ function Header() {
         { href: "/podcasts", label: "Podcast" },
         { href: "/players", label: "Players" },
         { href: "/prospects", label: "Prospects" },
+        // { href: "/betting", label: "Betting" },
+
     ];
 
     const feedOptions = [
@@ -220,7 +222,7 @@ function Header() {
                     {/* <ThemeToggle /> */}
                     <div>
                         <Link href="/">
-                            <Image src={currentLogoSrc} alt="Spotify" width={50} height={50} className="ml-3" loader={({ src }) => src}/>
+                            <Image src={currentLogoSrc} alt="Spotify" width={50} height={50} className="ml-3" loader={({ src }) => src} />
                         </Link>
                     </div>
 
@@ -242,76 +244,76 @@ function Header() {
                 </div>
 
 
-                    <div className="hidden md:flex items-center justify-between px-2 lg:px-5 mb-1 mt-2">
-                        {/* Mobile Social Links - Only visible on mobile */}
-                        <div className="flex lg:hidden items-center justify-center w-full space-x-4">
-                            {/* <h1 className="text-white text-xl font-bold">Social Links</h1> */}
-                            <div className="flex items-center space-x-4">
-                                <Link href="https://youtube.com/@32beatwriters">
-                                    <Image src={"/icons-youtube.svg"} alt="Youtube" width={20} height={20} loader={({ src }) => src}/>
-                                </Link>
-                                <Link href="https://x.com/32beatwriters">
-                                    <Image src={"/icons-twitter.svg"} alt="Twitter" width={20} height={20} loader={({ src }) => src}/>
-                                </Link>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                <Link href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c">
-                                    <Image src={"/icons-spotify.svg"} alt="Spotify" width={20} height={20} loader={({ src }) => src}/>
-                                </Link>
-                                <Link href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292"    >
-                                    <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={20} height={20} loader={({ src }) => src}/>
-                                </Link>
-                            </div>
+                <div className="hidden md:flex items-center justify-between px-2 lg:px-5 mb-1 mt-2">
+                    {/* Mobile Social Links - Only visible on mobile */}
+                    <div className="flex lg:hidden items-center justify-center w-full space-x-4">
+                        {/* <h1 className="text-white text-xl font-bold">Social Links</h1> */}
+                        <div className="flex items-center space-x-4">
+                            <Link href="https://youtube.com/@32beatwriters">
+                                <Image src={"/icons-youtube.svg"} alt="Youtube" width={20} height={20} loader={({ src }) => src} />
+                            </Link>
+                            <Link href="https://x.com/32beatwriters">
+                                <Image src={"/icons-twitter.svg"} alt="Twitter" width={20} height={20} loader={({ src }) => src} />
+                            </Link>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <Link href="https://open.spotify.com/show/1b1yaE1OxyTuNDsWNIZr20?si=76f0d6a2fbf1430c">
+                                <Image src={"/icons-spotify.svg"} alt="Spotify" width={20} height={20} loader={({ src }) => src} />
+                            </Link>
+                            <Link href="https://podcasts.apple.com/us/podcast/32beatwriters-podcast-network/id1694023292"    >
+                                <Image src={"/icons-apple.svg"} alt="Apple Podcasts" width={20} height={20} loader={({ src }) => src} />
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Desktop Navigation */}
+                    <nav className="hidden lg:flex items-center space-x-2">
+                        <Link href="/">
+                            <Image src={currentLogoSrc} alt="Spotify" width={45} height={45} loader={({ src }) => src} />
+                        </Link>
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="font-medium text-(--color-gray) relative py-2 text-md font-oswald border-1 border-[#E3E4E5] dark:border-none rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:text-white"
+                            >
+                                {link.label}
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
+                            </Link>
+                        ))}
+
+                        {/* Feed Dropdown */}
+                        <div className="relative left-1.5" ref={feedDropdownRef}>
+                            <button
+                                onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
+                                className="relative py-2 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
+                            >
+                                <span>Feeds</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
+                            </button>
+
+                            {/* Feed Dropdown Menu */}
+                            {isFeedDropdownOpen && (
+                                <div className="absolute top-full left-0 w-48 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[var(--dark-theme-color)] py-2 z-50">
+                                    <div className="py-1">
+                                        {feedOptions.map((option) => (
+                                            <Link
+                                                key={option.href}
+                                                href={option.href}
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black dark:text-white "
+                                                onClick={() => setIsFeedDropdownOpen(false)}
+                                            >
+                                                {option.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
-                        {/* Desktop Navigation */}
-                        <nav className="hidden lg:flex items-center space-x-2">
-                            <Link href="/">
-                                <Image src={currentLogoSrc} alt="Spotify" width={45} height={45} loader={({ src }) => src}/>
-                            </Link>
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className="font-medium text-(--color-gray) relative py-2 text-md font-oswald border-1 border-[#E3E4E5] dark:border-none rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:text-white"
-                                >
-                                    {link.label}
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
-                                </Link>
-                            ))}
-
-                            {/* Feed Dropdown */}
-                            <div className="relative left-1.5" ref={feedDropdownRef}>
-                                <button
-                                    onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
-                                    className="relative py-2 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
-                                >
-                                    <span>Feeds</span>
-                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
-                                </button>
-
-                                {/* Feed Dropdown Menu */}
-                                {isFeedDropdownOpen && (
-                                    <div className="absolute top-full left-0 w-48 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[var(--dark-theme-color)] py-2 z-50">
-                                        <div className="py-1">
-                                            {feedOptions.map((option) => (
-                                                <Link
-                                                    key={option.href}
-                                                    href={option.href}
-                                                    className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black dark:text-white "
-                                                    onClick={() => setIsFeedDropdownOpen(false)}
-                                                >
-                                                    {option.label}
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Tools Dropdown */}
-                            {/* <div className="relative left-2" ref={toolsDropdownRef}>
+                        {/* Tools Dropdown */}
+                        {/* <div className="relative left-2" ref={toolsDropdownRef}>
                                 <button
                                     onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
                                     className="relative py-2 text-md text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-normal dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
@@ -337,7 +339,7 @@ function Header() {
                                     </div>
                                 )}
                             </div> */}
-                            {/* {toolNavLink.map((link) => (
+                        {/* {toolNavLink.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
@@ -347,96 +349,96 @@ function Header() {
                                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                         ))} */}
-                        </nav>
+                    </nav>
 
-                        {/* Desktop Actions */}
-                        <div className="hidden lg:flex items-center space-x-4">
-                            {/* <div className="w-px h-7 bg-gray-300"></div> */}
-                            {isAuthenticated ? (
-                                <div className="relative" ref={dropdownRef}>
-                                    <button
-                                        onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                                        className="flex items-center space-x-3 px-4 py-2 hover:cursor-pointer text-white"
-                                    >
-                                        <div className="flex items-center space-x-2 ">
-                                            {user?.profilePicture ? (
-                                                <Image
-                                                    src={user.profilePicture}
-                                                    alt="Profile"
-                                                    width={32}
-                                                    height={32}
-                                                    className="w-6 h-6 rounded-full object-cover"
-                                                    loader={({ src }) => src}
-                                                />
-                                            ) : (
-                                                <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center">
-                                                    <span className="text-white text-md">
-                                                        {getUserInitials()}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            <span className="text-md text-black dark:text-white">
-                                                {getUserDisplayName()}
-                                            </span>
-                                        </div>
-                                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-gray ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
-                                    </button>
-
-                                    {/* User Dropdown Menu */}
-                                    {isUserDropdownOpen && (
-                                        <div className="absolute right-0 w-48 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[#262829] py-2 z-50">
-                                            <div className="py-1">
-                                                <Link
-                                                    href="/account"
-                                                    className="flex items-center px-4 py-2 text-md transition-colors"
-                                                    onClick={() => setIsUserDropdownOpen(false)}
-                                                >
-                                                    <User className="h-5 w-5 mr-2" />
-                                                    My Account
-                                                </Link>
-
-                                                <button
-                                                    onClick={handleLogout}
-                                                    className="flex items-center w-full px-4 py-2 text-md text-orange-600 hover:cursor-pointer"
-                                                >
-                                                    <LogOut className="h-5 w-5 mr-2" />
-                                                    Log out
-                                                </button>
+                    {/* Desktop Actions */}
+                    <div className="hidden lg:flex items-center space-x-4">
+                        {/* <div className="w-px h-7 bg-gray-300"></div> */}
+                        {isAuthenticated ? (
+                            <div className="relative" ref={dropdownRef}>
+                                <button
+                                    onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                                    className="flex items-center space-x-3 px-4 py-2 hover:cursor-pointer text-white"
+                                >
+                                    <div className="flex items-center space-x-2 ">
+                                        {user?.profilePicture ? (
+                                            <Image
+                                                src={user.profilePicture}
+                                                alt="Profile"
+                                                width={32}
+                                                height={32}
+                                                className="w-6 h-6 rounded-full object-cover"
+                                                loader={({ src }) => src}
+                                            />
+                                        ) : (
+                                            <div className="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center">
+                                                <span className="text-white text-md">
+                                                    {getUserInitials()}
+                                                </span>
                                             </div>
+                                        )}
+                                        <span className="text-md text-black dark:text-white">
+                                            {getUserDisplayName()}
+                                        </span>
+                                    </div>
+                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-gray ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {/* User Dropdown Menu */}
+                                {isUserDropdownOpen && (
+                                    <div className="absolute right-0 w-48 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[#262829] py-2 z-50">
+                                        <div className="py-1">
+                                            <Link
+                                                href="/account"
+                                                className="flex items-center px-4 py-2 text-md transition-colors"
+                                                onClick={() => setIsUserDropdownOpen(false)}
+                                            >
+                                                <User className="h-5 w-5 mr-2" />
+                                                My Account
+                                            </Link>
+
+                                            <button
+                                                onClick={handleLogout}
+                                                className="flex items-center w-full px-4 py-2 text-md text-orange-600 hover:cursor-pointer"
+                                            >
+                                                <LogOut className="h-5 w-5 mr-2" />
+                                                Log out
+                                            </button>
                                         </div>
-                                    )}
-                                </div>
-                            ) : (
-                                <div className="flex items-center space-x-3">
-                                    <Button
-                                        variant="secondary"
-                                        className="rounded-4xl px-6 dark:bg-[var(--dark-theme-color)] dark:text-white border-1 border-[#E3E4E5] dark:border-none"
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex items-center space-x-3">
+                                <Button
+                                    variant="secondary"
+                                    className="rounded-4xl px-6 dark:bg-[var(--dark-theme-color)] dark:text-white border-1 border-[#E3E4E5] dark:border-none"
+                                >
+                                    <Link
+                                        href="/login"
+                                    // className="desktop-login-link hover:scale-102 transition-colors text-md"
                                     >
-                                        <Link
-                                            href="/login"
-                                        // className="desktop-login-link hover:scale-102 transition-colors text-md"
-                                        >
-                                            Login
-                                        </Link>
-                                    </Button>
-                                    <Button 
-                                        className="rounded-4xl bg-[#E64A30] hover:bg-[#E64A30]/90 px-8 text-white hover:border-[#E3E4E5] dark:border-none dark:hover:bg-[var(--dark-theme-color)]">
-                                        <Link
-                                            href="/subscribe"
-                                        >
-                                            Subscribe
-                                        </Link>
-                                    </Button>
-                                  
-                                </div>
-                                 
-                            )}
-                            <ThemeToggle />
-                        </div>
-                        
+                                        Login
+                                    </Link>
+                                </Button>
+                                <Button
+                                    className="rounded-4xl bg-[#E64A30] hover:bg-[#E64A30]/90 px-8 text-white hover:border-[#E3E4E5] dark:border-none dark:hover:bg-[var(--dark-theme-color)]">
+                                    <Link
+                                        href="/subscribe"
+                                    >
+                                        Subscribe
+                                    </Link>
+                                </Button>
+
+                            </div>
+
+                        )}
+                        <ThemeToggle />
                     </div>
 
-                   
+                </div>
+
+
                 {/* <div className="hero-bg h-screen max-w-7xl mx-auto" /> */}
 
 
