@@ -182,6 +182,8 @@ export default function SubscriptionComponent() {
                           "Betting Insight from Charlie Dillon",
                           "Access to Prospect and Fantasy Tools",
                           "Full Access to All Our Premium Articles",
+                          "Secure Payment By Stripe - No Hidden Fees",
+
 
                         ]
                         : [
@@ -192,6 +194,8 @@ export default function SubscriptionComponent() {
                           "Betting Insight from Charlie Dillon",
                           "Access to Prospect and Fantasy Tools",
                           "Full Access to All Our Premium Articles",
+                          "Secure Payment By Stripe - No Hidden Fees",
+
 
                         ]
                       ).map((text, i) => (
@@ -265,7 +269,7 @@ export default function SubscriptionComponent() {
                   <div className="mt-8 text-left border-t border-gray-200 pt-5">
                     <h4 className="font-semibold text-gray-800 mb-3 text-base leading-snug dark:text-white">
                       Up to $50 deposit match
-        
+
                       <span className="text-[var(--color-orange)] text-sm"> Use code “32BW”</span>
                     </h4>
                     <ul className="space-y-3 text-gray-600 text-sm">
@@ -277,6 +281,8 @@ export default function SubscriptionComponent() {
                         "Betting Insight from Charlie Dillon",
                         "Access to Prospect and Fantasy Tools",
                         "Full Access to All Our Premium Articles",
+                        "Secure Payment By Stripe - No Hidden Fees",
+
 
                       ].map((text, i) => (
                         <li key={i} className="flex items-start gap-2 leading-snug dark:text-[#C7C8CB]">
@@ -377,6 +383,8 @@ export default function SubscriptionComponent() {
                     "Betting Insight from Charlie Dillon",
                     "Access to Prospect and Fantasy Tools",
                     "Full Access to All Our Premium Articles",
+                    "Secure Payment By Stripe - No Hidden Fees",
+
 
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
@@ -442,6 +450,8 @@ export default function SubscriptionComponent() {
                     "Betting Insight from Charlie Dillon",
                     "Access to Prospect and Fantasy Tools",
                     "Full Access to All Our Premium Articles",
+                    "Secure Payment By Stripe - No Hidden Fees",
+
 
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
@@ -516,6 +526,8 @@ export default function SubscriptionComponent() {
                     "Betting Insight from Charlie Dillon",
                     "Access to Prospect and Fantasy Tools",
                     "Full Access to All Our Premium Articles",
+                    "Secure Payment By Stripe - No Hidden Fees",
+
 
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
