@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-
-const BETTING_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4004/api/betting'
+import { API_CONFIG, buildApiUrl } from '../config/api'
 
 export interface BetPlayer {
   id: number
@@ -83,7 +82,7 @@ interface BetFilters {
 export const bettingApi = createApi({
   reducerPath: 'bettingApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: BETTING_API_BASE_URL,
+   baseUrl: buildApiUrl(API_CONFIG.ENDPOINTS.BETTING),
   }),
   tagTypes: ['Bet'],
   endpoints: (builder) => ({
