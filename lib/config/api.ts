@@ -17,7 +17,7 @@ export const API_CONFIG = {
     SUBSCRIPTION: '/api/subscription', 
     TEAMS: '/api/teams',
     TOOLS: '/api/tools',
-    BETTING: 'api/betting',
+    BETTING: '/api/betting',
     STRIPE: {
       SUBSCRIPTION_OPTIONS: '/api/stripe/subscription-options',
       CREATE_CHECKOUT_SESSION: '/api/stripe/create-checkout-session',
