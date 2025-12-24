@@ -118,7 +118,7 @@ function Header() {
         { href: "/podcasts", label: "Podcast" },
         { href: "/players", label: "Players" },
         { href: "/prospects", label: "Prospects" },
-        // { href: "/betting", label: "Betting" },
+        { href: "/betting", label: "Betting" },
 
     ];
 

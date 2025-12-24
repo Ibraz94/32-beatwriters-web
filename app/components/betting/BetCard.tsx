@@ -1,120 +1,175 @@
 'use client'
 
 import { Bet } from '@/lib/services/bettingApi'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
+import { Check, Clock, X } from 'lucide-react'
 
 interface BetCardProps {
   bet: Bet
 }
 
 export default function BetCard({ bet }: BetCardProps) {
-  const getResultBadge = () => {
-    if (bet.result === 'WIN') {
-      return <span className="text-green-600 dark:text-green-400 font-semibold">✅ WIN</span>
-    }
-    if (bet.result === 'LOSS') {
-      return <span className="text-red-600 dark:text-red-400 font-semibold">❌ LOSS</span>
-    }
-    return <span className="text-yellow-600 dark:text-yellow-400 font-semibold">⏳ Pending</span>
-  }
-
   const formatDate = (date?: Date) => {
     if (!date) return null
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
     })
   }
 
   return (
-    <Card
+    <div
       className={cn(
-        'hover:shadow-lg transition-shadow',
-        bet.isFastDraft && 'border-orange-500 dark:border-orange-400 border-2'
+        'flex flex-row items-start gap-3 md:gap-4 border-b dark:border-gray-700 pb-4 rounded-t-lg p-2 relative',
+        bet.isFastDraft && 'bg-none'
       )}
     >
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            {bet.isBestBet && (
-              <span className="text-orange-500 dark:text-orange-400 font-bold">🔥</span>
-            )}
-            <span className="font-semibold text-sm">{bet.betType || 'Single'}</span>
-            {bet.isFastDraft && (
-              <span className="text-xs bg-orange-500 text-white px-2 py-1 rounded-full">
-                ⚡ FastDraft
-              </span>
-            )}
-          </div>
-          <div>{getResultBadge()}</div>
+      {/* WIN/LOSS Badge (Top Right) */}
+      {bet.result && (
+        <div className="absolute top-2 right-2">
+          {bet.result === 'WIN' ? (
+            <div className="bg-green-700 text-white p-1 rounded-md">
+              <Check className="w-4 h-4 md:w-5 md:h-5" strokeWidth={3}/>
+            </div>
+          ) : (
+            <div className="bg-red-700 text-white p-1 rounded-md">
+              <X className="w-4 h-4 md:w-5 md:h-5"  strokeWidth={3}/>
+            </div>
+          )}
         </div>
-      </CardHeader>
+      )}
 
-      <CardContent className="space-y-4">
-        {bet.player && (
-          <div className="flex items-center gap-3">
-            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-800">
-              <Image
-                src={bet.player.headshotPic || '/default-player.jpg'}
-                alt={bet.player.name}
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-base">{bet.player.name}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {bet.player.position} - {bet.player.team}
-              </p>
-            </div>
-            {bet.player.teamDetails?.logo && (
-              <div className="relative w-8 h-8">
-                <Image
-                  src={bet.player.teamDetails.logo}
-                  alt={bet.player.teamDetails.name}
-                  fill
-                  className="object-contain"
-                  sizes="32px"
-                />
+      {/* Odds and Wager Badges - Stack vertically on mobile, horizontal on desktop */}
+      <div className="absolute top-2 right-12 md:right-28 flex flex-col md:flex-row gap-1 md:gap-2 items-end md:items-center">
+        {bet.odds && (
+          <span className="bg-[#E64A30] text-white px-2 py-0.5 md:px-3 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-semibold whitespace-nowrap">
+            <span className='font-normal'>ODDS:</span> {bet.odds}
+          </span>
+        )}
+        {bet.totalWager && (
+          <span className="bg-[#E64A30] text-white px-2 py-0.5 md:px-3 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-semibold whitespace-nowrap">
+            <span className='font-normal'>WAGER:</span> ${bet.totalWager}
+          </span>
+        )}
+      </div>
+
+
+
+
+      {/* Player Image (Left Side) */}
+      {bet.player && (
+        <div className="flex-shrink-0">
+          <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl overflow-hidden">
+            <Image
+              src={bet.player.headshotPic || '/default-player.jpg'}
+              alt={bet.player.name}
+              fill
+              className="object-cover"
+              loader={({ src }) => src}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Player Details */}
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            {/* Team Logo & Player Name & All Bet Details */}
+            {bet.player && (
+              <div>
+                {/* First Line: Team Logo, Player Name, Best Bet */}
+                <div className="flex items-center gap-2 mb-1 md:mb-0">
+                  {/* Team Logo */}
+                  {bet.player.teamDetails?.logo && (
+                    <div className="relative w-6 h-6 md:w-8 md:h-8 flex-shrink-0">
+                      <Image
+                        src={bet.player.teamDetails.logo}
+                        alt={bet.player.teamDetails.name}
+                        fill
+                        className="object-contain"
+                        loader={({ src }) => src}
+                      />
+                    </div>
+                  )}
+
+                  {/* Player Name */}
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+                    {bet.player.name}
+                  </h2>
+
+                  {/* Best Bet Indicator - Always reserve space */}
+                  <span className="text-[#E64A30] font-bold text-lg md:text-xl flex-shrink-0 w-6 md:w-7 inline-block text-center">
+                    {bet.isBestBet ? '🔥' : ''}
+                  </span>
+
+                  {/* Bet Details - Desktop inline */}
+                  <div className="hidden md:flex md:flex-wrap md:items-center md:gap-x-2 text-xs md:text-sm">
+                    {/* Line */}
+                    {bet.line && (
+                      <>
+                        <span className="font-semibold text-2xl text-foreground">{bet.line}</span>
+                      </>
+                    )}
+
+                    {/* Category */}
+                    {bet.category && (
+                      <>
+                        <span className="font-semibold text-2xl text-foreground">{bet.category}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Second Line: Bet Details - Mobile only */}
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:hidden text-muted-foreground mt-1">
+                  {/* Line */}
+                  {bet.line && (
+                    <>
+                      <span className="font-semibold text-foreground">{bet.line}</span>
+                    </>
+                  )}
+
+                  {/* Category */}
+                  {bet.category && (
+                    <>
+                      <span className="font-semibold text-foreground">{bet.category}</span>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </div>
-        )}
-
-        <div className="space-y-2">
-          {bet.category && (
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {bet.category}
-            </div>
-          )}
-          {bet.line && (
-            <div className="text-base font-semibold">{bet.line}</div>
-          )}
-          {(bet.odds || bet.totalWager) && (
-            <div className="flex gap-4 text-sm text-gray-600 dark:text-gray-400">
-              {bet.odds && <span>Odds: {bet.odds}</span>}
-              {bet.totalWager && <span>Wager: ${bet.totalWager}</span>}
-            </div>
-          )}
         </div>
 
+        {/* Analysis */}
         {bet.analysis && (
-          <div className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
-            <p>{bet.analysis}</p>
+          <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
+            <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
+            <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
+              {bet.analysis}
+            </p>
           </div>
         )}
 
-        <div className="flex gap-3 text-xs text-gray-500 dark:text-gray-400 pt-2 border-t">
-          {bet.week && <span>{bet.week}</span>}
-          {bet.date && <span>{formatDate(bet.date)}</span>}
+        {/* Footer - Week and Date */}
+        <div className="mt-3 flex items-center gap-3 text-xs md:text-sm text-muted-foreground">
+          {/* {bet.week && (
+            <>
+              <span className="font-semibold">{bet.week}</span>
+              <span>•</span>
+            </>
+          )} */}
+          {bet.date && (
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3 md:w-4 md:h-4" />
+              <span>{formatDate(bet.date)}</span>
+            </div>
+          )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

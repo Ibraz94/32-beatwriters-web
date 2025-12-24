@@ -564,7 +564,7 @@ left-[-12px] right-[-12px]
 
                     {/* Filters in One Line */}
                     <div className={`mb-6 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
-                        <div className="flex flex-col lg:flex-row items-center justify-center gap-3 w-full">
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-center gap-3 w-full">
 
                             {/* Search Bar */}
                             <div className="hidden md:flex w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
@@ -586,7 +586,7 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Date Filter */}
-                            <div className="flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829]">
+                            <div className="w-full lg:w-auto flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829]">
                                 <Popover open={open} onOpenChange={setOpen}>
                                     <PopoverTrigger asChild className="flex-1">
                                         <Button
@@ -637,7 +637,7 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Position Filter */}
-                            <div className="border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829]">
+                            <div className="w-full lg:w-auto border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829]">
                                 <Select
                                     value={filters.position || 'all'}
                                     onValueChange={handlePositionFilterChange}
@@ -660,12 +660,12 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Team Filter */}
-                            <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors">
+                            <div className="w-full lg:w-auto flex items-center border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors">
                                 <Select
                                     value={filters.team || 'all'}
                                     onValueChange={handleTeamFilterChange}
                                 >
-                                    <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
+                                    <SelectTrigger className="filter-select h-10 w-full lg:w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
                                         <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                         <SelectValue placeholder="All Teams" />
                                         {/* <ChevronDown className="ml-auto h-4 w-4 text-gray-500" /> */}
@@ -684,7 +684,7 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Rookie Checkbox */}
-                            <div className="border border-[#C7C8CB] rounded-full flex items-center gap-2 px-8 py-4 dark:bg-[#262829]">
+                            <div className="w-full lg:w-auto border border-[#C7C8CB] rounded-full flex items-center justify-center gap-2 px-8 py-4 dark:bg-[#262829]">
                                 <input
                                     type="checkbox"
                                     id="rookie-filter"

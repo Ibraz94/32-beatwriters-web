@@ -613,7 +613,7 @@ export default function NuggetsPage() {
 
                     {/* Filters in One Line */}
                     <div className={`mb-6 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
-                        <div className="flex flex-col lg:flex-row items-center justify-center gap-3 w-full">
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-center gap-3 w-full">
 
                             {/* Search Bar */}
                             <div className="hidden md:flex w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
@@ -635,12 +635,12 @@ export default function NuggetsPage() {
                             </div>
 
                             {/* Date Filter */}
-                            <div className="flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829]">
+                            <div className="flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829] w-full lg:w-auto">
                                 <Popover open={open} onOpenChange={setOpen}>
                                     <PopoverTrigger asChild className="flex-1">
                                         <Button
                                             variant="outline"
-                                            className="filter-button justify-between text-left font-normal h-10 !border-none !border-0 shadow-none flex items-center gap-2 !bg-transparent"
+                                            className="filter-button justify-between text-left font-normal h-10 !border-none !border-0 shadow-none flex items-center gap-2 !bg-transparent w-full"
                                         >
                                             <Image
                                                 src={calendarIcon}
@@ -692,12 +692,12 @@ export default function NuggetsPage() {
                             </div>
 
                             {/* Position Filter */}
-                            <div className="border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829]">
+                            <div className="border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829] w-full lg:w-auto">
                                 <Select
                                     value={filters.position || "all"}
                                     onValueChange={handlePositionFilterChange}
                                 >
-                                    <SelectTrigger className="!border-none !border-0 flex items-center gap-2">
+                                    <SelectTrigger className="!border-none !border-0 flex items-center gap-2 w-full">
                                         <ListCheck className='w-4 h-4' />
                                         <SelectValue placeholder="All Positions" />
                                     </SelectTrigger>
@@ -715,12 +715,12 @@ export default function NuggetsPage() {
                             </div>
 
                             {/* Team Filter */}
-                            <div className="flex  border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors">
+                            <div className="flex border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors w-full lg:w-auto">
                                 <Select
                                     value={filters.team || "all"}
                                     onValueChange={handleTeamFilterChange}
                                 >
-                                    <SelectTrigger className="filter-select w-52 !border-none !border-0 text-sm !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
+                                    <SelectTrigger className="filter-select w-full lg:w-52 !border-none !border-0 text-sm !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
                                         <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                         <SelectValue placeholder="All Teams" />
                                         {/* <ChevronDown className="ml-auto h-4 w-4 text-gray-500" /> */}
@@ -740,7 +740,7 @@ export default function NuggetsPage() {
                             </div>
 
                             {/* Rookie Checkbox */}
-                            <div className="border border-[#C7C8CB] rounded-full flex items-center gap-2 px-8 py-4 dark:bg-[#262829]">
+                            <div className="border border-[#C7C8CB] rounded-full flex items-center justify-center gap-2 px-8 py-4 dark:bg-[#262829] w-full lg:w-auto">
                                 <input
                                     type="checkbox"
                                     id="rookie-filter"
