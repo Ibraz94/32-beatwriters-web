@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const BETTING_API_BASE_URL = process.env.NEXT_PUBLIC_BETTING_API_URL || 'http://localhost:4004/api/betting'
+const BETTING_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4004/api/betting'
 
 export interface BetPlayer {
   id: number
