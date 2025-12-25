@@ -671,6 +671,14 @@ picture,
   white-space: normal !important;
 }
 
+.article-content * {
+  color: black !important;
+}
+
+.dark .article-content * {
+  color: white !important;
+}
+
 .content-preview {
   position: relative;
   overflow: hidden;

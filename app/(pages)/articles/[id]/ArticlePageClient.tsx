@@ -337,7 +337,7 @@ export default function ArticlePageClient({ id }: { id: string }) {
                     {/* Display ArticleCTA only if user is not authenticated */}
                     {!isAuthenticated && article.access === 'public' && <ArticleCTA />}
                     <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert mx-auto">
-                        <div className="columns-1 gap-8 [&>*]:break-inside-avoid">
+                        <div className="columns-1 gap-8 [&>*]:break-inside-avoid article-content">
                             {renderArticleContent()}
                         </div>
                     </div>
