@@ -8,7 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Image from 'next/image'
 
 export default function BettingPage() {
-  const [selectedWeek, setSelectedWeek] = useState('Week 15')
+  // Function to get current NFL week
+  const getCurrentNFLWeek = () => {
+    // For 2024-2025 season, manually set to current week
+    // TODO: Update this weekly or implement dynamic calculation
+    return 'Week 17'
+  }
+
+  const [selectedWeek, setSelectedWeek] = useState(getCurrentNFLWeek())
   const [showBestBets, setShowBestBets] = useState(false)
   const [showFastDraft, setShowFastDraft] = useState(false)
   const [resultFilter, setResultFilter] = useState('all')

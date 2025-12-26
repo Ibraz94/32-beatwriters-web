@@ -50,7 +50,7 @@ export default function BetCard({ bet }: BetCardProps) {
         )}
         {bet.totalWager && (
           <span className="bg-[#E64A30] text-white px-2 py-0.5 md:px-3 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-sm font-semibold whitespace-nowrap">
-            <span className='font-normal'>WAGER:</span> ${bet.totalWager}
+            <span className='font-normal'>WAGER:</span> {bet.totalWager}
           </span>
         )}
       </div>
