@@ -33,7 +33,13 @@ export interface Bet {
   result?: 'WIN' | 'LOSS' | null
   createdAt: Date
   updatedAt: Date
-  player?: BetPlayer
+  player?: BetPlayer  // Keep for backward compatibility
+  betPlayers?: Array<{
+    playerId: number
+    category?: string
+    line?: string
+    player: BetPlayer
+  }>
 }
 
 export interface BetsResponse {

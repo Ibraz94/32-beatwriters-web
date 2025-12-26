@@ -10,6 +10,11 @@ interface BetCardProps {
 }
 
 export default function BetCard({ bet }: BetCardProps) {
+  // Extract betPlayers with their individual line and category
+  const betPlayersData = bet.betPlayers && bet.betPlayers.length > 0
+    ? bet.betPlayers
+    : bet.player ? [{ playerId: bet.player.id, player: bet.player, line: bet.line, category: bet.category }] : []
+
   const formatDate = (date?: Date) => {
     if (!date) return null
     return new Date(date).toLocaleDateString('en-US', {
@@ -22,7 +27,7 @@ export default function BetCard({ bet }: BetCardProps) {
   return (
     <div
       className={cn(
-        'flex flex-row items-start gap-3 md:gap-4 border-b dark:border-gray-700 pb-4 rounded-t-lg p-2 relative',
+        'flex flex-col gap-3 border-b dark:border-gray-700 pb-4 rounded-t-lg p-2 relative',
         bet.isFastDraft && 'bg-none'
       )}
     >
@@ -55,120 +60,89 @@ export default function BetCard({ bet }: BetCardProps) {
         )}
       </div>
 
+      {/* Each Player Row - Image, Team Logo, Name, Line, Category on one line */}
+      {betPlayersData.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {betPlayersData.map((betPlayer) => (
+            <div key={betPlayer.player.id} className="flex items-center gap-2 md:gap-3">
+              {/* Player Image */}
+              <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl overflow-hidden flex-shrink-0">
+                <Image
+                  src={betPlayer.player.headshotPic || '/default-player.jpg'}
+                  alt={betPlayer.player.name}
+                  fill
+                  className="object-cover"
+                  loader={({ src }) => src}
+                />
+              </div>
 
+              {/* Team Logo - Always reserve space */}
+              <div className="relative w-6 h-6 md:w-8 md:h-8 flex-shrink-0">
+                {betPlayer.player.teamDetails?.logo ? (
+                  <Image
+                    src={betPlayer.player.teamDetails.logo}
+                    alt={betPlayer.player.teamDetails.name}
+                    fill
+                    className="object-contain"
+                    loader={({ src }) => src}
+                  />
+                ) : (
+                  <div className="w-full h-full" />
+                )}
+              </div>
 
-
-      {/* Player Image (Left Side) */}
-      {bet.player && (
-        <div className="flex-shrink-0">
-          <div className="relative w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl overflow-hidden">
-            <Image
-              src={bet.player.headshotPic || '/default-player.jpg'}
-              alt={bet.player.name}
-              fill
-              className="object-cover"
-              loader={({ src }) => src}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Player Details */}
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            {/* Team Logo & Player Name & All Bet Details */}
-            {bet.player && (
-              <div>
-                {/* First Line: Team Logo, Player Name, Best Bet */}
-                <div className="flex items-center gap-2 mb-1 md:mb-0">
-                  {/* Team Logo */}
-                  {bet.player.teamDetails?.logo && (
-                    <div className="relative w-6 h-6 md:w-8 md:h-8 flex-shrink-0">
-                      <Image
-                        src={bet.player.teamDetails.logo}
-                        alt={bet.player.teamDetails.name}
-                        fill
-                        className="object-contain"
-                        loader={({ src }) => src}
-                      />
-                    </div>
+              {/* Player Name, Line, Category - Each player's individual values */}
+              <div className="flex flex-col md:flex-row md:flex-wrap md:items-center gap-x-2 flex-1 min-w-0">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+                  {betPlayer.player.name}
+                </h2>
+                {/* Line and Category - Below name on mobile, inline on desktop */}
+                <div className="flex flex-wrap items-center gap-x-2">
+                  {/* Line - Individual player's line */}
+                  {betPlayer.line && (
+                    <span className="text-base md:text-2xl md:font-semibold text-foreground">{betPlayer.line}</span>
                   )}
-
-                  {/* Player Name */}
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
-                    {bet.player.name}
-                  </h2>
-
-                  {/* Best Bet Indicator - Always reserve space */}
-                  <span className="text-[#E64A30] font-bold text-lg md:text-xl flex-shrink-0 w-6 md:w-7 inline-block text-center">
-                    {bet.isBestBet ? '🔥' : ''}
-                  </span>
-
-                  {/* Bet Details - Desktop inline */}
-                  <div className="hidden md:flex md:flex-wrap md:items-center md:gap-x-2 text-xs md:text-sm">
-                    {/* Line */}
-                    {bet.line && (
-                      <>
-                        <span className="font-semibold text-2xl text-foreground">{bet.line}</span>
-                      </>
-                    )}
-
-                    {/* Category */}
-                    {bet.category && (
-                      <>
-                        <span className="font-semibold text-2xl text-foreground">{bet.category}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Second Line: Bet Details - Mobile only */}
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:hidden text-muted-foreground mt-1">
-                  {/* Line */}
-                  {bet.line && (
-                    <>
-                      <span className="font-semibold text-foreground">{bet.line}</span>
-                    </>
-                  )}
-
-                  {/* Category */}
-                  {bet.category && (
-                    <>
-                      <span className="font-semibold text-foreground">{bet.category}</span>
-                    </>
+                  {/* Category - Individual player's category */}
+                  {betPlayer.category && (
+                    <span className="text-base md:text-2xl md:font-semibold text-foreground">{betPlayer.category}</span>
                   )}
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
+      )}
 
-        {/* Analysis */}
-        {bet.analysis && (
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
-            <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
-              {bet.analysis}
-            </p>
+      {/* Best Bet Indicator - Below all players */}
+      {bet.isBestBet && (
+        <div className="flex items-center gap-2">
+          <span className="text-[#E64A30] font-bold text-lg md:text-3xl ml-3">🔥</span>
+        </div>
+      )}
+
+      {/* Analysis */}
+      {bet.analysis && (
+        <div className="p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
+          <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
+          <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
+            {bet.analysis}
+          </p>
+        </div>
+      )}
+
+      {/* Footer - Week and Date */}
+      <div className="flex items-center gap-3 text-xs md:text-sm">
+        {bet.week && (
+          <span className="bg-[#E64A30] text-white px-2 py-0.5 md:px-3 md:py-1 rounded-lg md:rounded-xl text-[10px] md:text-sm font-semibold whitespace-nowrap">
+            <span className='font-normal'></span> {bet.week}
+          </span>
+        )}
+        {bet.date && (
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Clock className="w-3 h-3 md:w-4 md:h-4" />
+            <span>{formatDate(bet.date)}</span>
           </div>
         )}
-
-        {/* Footer - Week and Date */}
-        <div className="mt-3 flex items-center gap-3 text-xs md:text-sm text-muted-foreground">
-          {/* {bet.week && (
-            <>
-              <span className="font-semibold">{bet.week}</span>
-              <span>•</span>
-            </>
-          )} */}
-          {bet.date && (
-            <div className="flex items-center gap-1">
-              <Clock className="w-3 h-3 md:w-4 md:h-4" />
-              <span>{formatDate(bet.date)}</span>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   )
