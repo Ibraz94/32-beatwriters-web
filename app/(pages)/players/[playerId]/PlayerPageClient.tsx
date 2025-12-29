@@ -1900,7 +1900,7 @@ export default function PlayerPageClient({ id }: any) {
                         )}
 
                         {/* Tabs Section */}
-                        <div className="rounded border border-white/20 shadow-xl overflow-hidden">
+                        <div className="rounded border border-white/20 shadow-xl overflow-hidden mt-12">
                             {/* Tab Navigation */}
                             <div className="border-b border-white/20">
                                 <nav className="flex space-x-0 p-2 border border-[#C7C8CB] rounded-full bg-white/5">
