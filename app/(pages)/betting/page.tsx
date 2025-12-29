@@ -20,6 +20,7 @@ export default function BettingPage() {
   const [resultFilter, setResultFilter] = useState('all')
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [playerSearch, setPlayerSearch] = useState('')
+  const [displayLimit, setDisplayLimit] = useState(10)
 
   const { data, isLoading, error } = useGetBetsByWeekQuery({
     week: selectedWeek,
@@ -83,6 +84,18 @@ export default function BettingPage() {
 
     return filtered
   }, [data, showBestBets, showFastDraft, resultFilter, playerSearch])
+
+  // Reset display limit when filters change
+  useMemo(() => {
+    setDisplayLimit(10)
+  }, [selectedWeek, showBestBets, showFastDraft, resultFilter, playerSearch])
+
+  const displayedBets = filteredBets.slice(0, displayLimit)
+  const hasMoreBets = filteredBets.length > displayLimit
+
+  const handleLoadMore = () => {
+    setDisplayLimit(prev => prev + 10)
+  }
 
   return (
     <div className="container mx-auto px-3 py-7">
@@ -252,8 +265,9 @@ export default function BettingPage() {
                   </p>
                 </div>
               ) : (
-                <div className="space-y-8">
-                  {filteredBets.map((bet) => {
+                <>
+                  <div className="space-y-8">
+                    {displayedBets.map((bet) => {
                     const isFastDraftCategory = bet.betType?.includes('FastDraft')
 
                     return (
@@ -316,7 +330,20 @@ export default function BettingPage() {
                       </div>
                     )
                   })}
-                </div>
+                  </div>
+
+                  {/* Load More Button */}
+                  {hasMoreBets && (
+                    <div className="flex justify-center mt-8">
+                      <button
+                        onClick={handleLoadMore}
+                        className="px-8 py-3 bg-[#E64A30] text-white rounded-full font-semibold hover:bg-[#E64A30]/90 transition-colors"
+                      >
+                        Load More ({filteredBets.length - displayLimit} remaining)
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
