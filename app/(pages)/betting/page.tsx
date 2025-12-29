@@ -35,9 +35,19 @@ export default function BettingPage() {
 
     // Player search filter
     if (playerSearch) {
-      filtered = filtered.filter((b) =>
-        b.player?.name.toLowerCase().includes(playerSearch.toLowerCase())
-      )
+      filtered = filtered.filter((b) => {
+        // Check main player field (backward compatibility)
+        if (b.player?.name.toLowerCase().includes(playerSearch.toLowerCase())) {
+          return true
+        }
+        // Check betPlayers array
+        if (b.betPlayers && b.betPlayers.length > 0) {
+          return b.betPlayers.some(bp => 
+            bp.player.name.toLowerCase().includes(playerSearch.toLowerCase())
+          )
+        }
+        return false
+      })
     }
 
     if (showBestBets) {
