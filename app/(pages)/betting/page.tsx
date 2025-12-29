@@ -339,7 +339,7 @@ export default function BettingPage() {
                         onClick={handleLoadMore}
                         className="px-8 py-3 bg-[#E64A30] text-white rounded-full font-semibold hover:bg-[#E64A30]/90 transition-colors"
                       >
-                        Load More ({filteredBets.length - displayLimit} remaining)
+                        Load More
                       </button>
                     </div>
                   )}
