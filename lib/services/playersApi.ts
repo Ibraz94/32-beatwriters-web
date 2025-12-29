@@ -19,6 +19,7 @@ export interface Player {
   ppi: number
   rookie: boolean
   isFollowed?: boolean
+  fantasyOutlook?: string
   createdAt: string
   updatedAt: string
 }
@@ -122,6 +123,7 @@ export interface PlayerProfilerCore {
   'Popularity Index': number
   ADP: string
   'ADP Year': number
+  'Fantasy Outlook'?: string
 }
 
 export interface WorkoutMetrics {

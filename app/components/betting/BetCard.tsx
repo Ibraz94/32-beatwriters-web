@@ -113,13 +113,6 @@ export default function BetCard({ bet }: BetCardProps) {
         </div>
       )}
 
-      {/* Best Bet Indicator - Below all players */}
-      {bet.isBestBet && (
-        <div className="flex items-center gap-2">
-          <span className="text-[#E64A30] font-bold text-lg md:text-3xl ml-3">🔥</span>
-        </div>
-      )}
-
       {/* Analysis */}
       {bet.analysis && (
         <div className="p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">

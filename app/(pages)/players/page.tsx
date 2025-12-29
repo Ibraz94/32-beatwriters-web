@@ -83,7 +83,7 @@ function PlayerCard({ player, currentPage, teamsData, isFollowing, onToggleFollo
                         </div>
                     </div>
                     <button
-                        className={`w-full text-xs border bg-[#E64A30] text-white text-center px-5 py-2 rounded-full transition-colors hover:cursor-pointer flex items-center justify-center gap-1 ${isFollowing ? 'bg-[#E64A30] hover:bg-gray-500' : 'hover:bg-gray-500 dark:border-none'
+                        className={`w-full text-xs border bg-[#E64A30] text-white text-center px-5 py-2 rounded-full transition-colors hover:cursor-pointer flex items-center justify-center gap-1 ${isFollowing ? 'bg-[#E64A30] hover:bg-[#E64A30]/80' : 'hover:bg-[#E64A30]/80 dark:border-none'
                             }`}
                         onClick={e => {
                             e.preventDefault(); // Prevent Link navigation

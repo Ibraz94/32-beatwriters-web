@@ -256,6 +256,8 @@ export default function BettingPage() {
                     const isFastDraftCategory = category.includes('FastDraft')
                     // Get FastDraft info from first bet in category
                     const firstBet = categoryBets[0]
+                    // Check if any bet in this category is a best bet
+                    const hasBestBet = categoryBets.some(bet => bet.isBestBet)
 
                     return (
                       <div key={category} className="space-y-4">
@@ -268,9 +270,14 @@ export default function BettingPage() {
                                 {/* Logo and Info */}
                                 <div className="flex-1 min-w-0">
                                   {firstBet.betType && (
-                                    <p className="text-lg md:text-2xl font-bold text-[#E64A30] dark:text-[#E64A30] mt-4">
-                                      {firstBet.betType}
-                                    </p>
+                                    <div className="flex items-center -gap-2">
+                                      <p className="text-lg md:text-2xl font-bold text-[#E64A30] dark:text-[#E64A30] mt-4">
+                                        {firstBet.betType}
+                                      </p>
+                                      {hasBestBet && (
+                                        <span className="text-[#E64A30] font-bold text-lg md:text-3xl mt-4">🔥</span>
+                                      )}
+                                    </div>
                                   )}
                                   {/* <Image
                                     src="/fast-draft-plan.svg"
@@ -306,9 +313,14 @@ export default function BettingPage() {
                             </div>
                           ) : (
                             /* Regular Category Header - Just text */
-                            <h2 className="text-2xl font-bold text-[#E64A30] dark:text-[#E64A30]">
-                              {category}
-                            </h2>
+                            <div className="flex items-center gap-2">
+                              <h2 className="text-2xl font-bold text-[#E64A30] dark:text-[#E64A30]">
+                                {category}
+                              </h2>
+                              {hasBestBet && (
+                                <span className="text-[#E64A30] font-bold text-lg md:text-3xl">🔥</span>
+                              )}
+                            </div>
                           )}
                         </div>
 

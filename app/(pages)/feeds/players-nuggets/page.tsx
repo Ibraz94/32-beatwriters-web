@@ -491,7 +491,7 @@ export default function PlayersNuggetsPage() {
             <div className="container mx-auto px-4 py-8">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold mb-4 dark:text-[#D2D6E2]">My Players Nuggets</h1>
-                    <p className="text-xl text-red-600 dark:text-red-500 mb-4">Failed to load nuggets</p>
+                    <p className="text-xl text-[#E64A30] dark:text-[#E64A30] mb-4">Failed to load nuggets</p>
                     <p className="text-gray-600 dark:text-gray-400">Please try again later.</p>
                 </div>
             </div>
@@ -555,7 +555,7 @@ left-[-12px] right-[-12px]
                             <span className="text-sm font-medium">Filters</span>
 
                             {(filters.position || filters.team || selectedDate || filters.rookie || searchTerm) && (
-                                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                                <span className="absolute -top-2 -right-2 bg-[#E64A30] text-white text-xs px-2 py-1 rounded-full">
                                     {[filters.position, filters.team, selectedDate, filters.rookie, searchTerm].filter(Boolean).length}
                                 </span>
                             )}
@@ -727,7 +727,7 @@ left-[-12px] right-[-12px]
                                 {!hasActiveFilters && (
                                     <Link
                                         href="/players"
-                                        className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
+                                        className="bg-[#E64A30] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#E64A30]/80 transition-colors"
                                     >
                                         Browse Players
                                     </Link>
@@ -821,7 +821,7 @@ left-[-12px] right-[-12px]
                                                 {/* Fantasy Insight Section */}
                                                 {nugget.fantasyInsight && (
                                                     <div className="px-4 mt-2 dark:text-[#D2D6E2]">
-                                                        <h1 className="font-semibold mt-0 text-red-800">Fantasy Insight:</h1>
+                                                        <h1 className="font-semibold mt-0 text-[#E64A30]">Fantasy Insight:</h1>
                                                         {fantasyInsight(nugget.fantasyInsight)}
                                                     </div>
                                                 )}
@@ -840,7 +840,7 @@ left-[-12px] right-[-12px]
                                                                 }
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="text-left hover:text-red-800 text-sm"
+                                                                className="text-left hover:text-[#E64A30] text-sm"
                                                             >
                                                                 {nugget.sourceName}
                                                             </Link>

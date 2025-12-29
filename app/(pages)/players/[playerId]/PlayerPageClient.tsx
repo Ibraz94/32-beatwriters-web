@@ -301,12 +301,12 @@ export default function PlayerPageClient({ id }: any) {
                             <Link href={{
                                 pathname: '/login',
                                 query: { redirect: pathname }
-                            }} className="text-red-600 hover:text-red-800 font-semibold">Login</Link>
+                            }} className="text-[#E64A30] hover:text-[#E64A30]/80 font-semibold">Login</Link>
                         </p>
                     )}
                     <Link
                         href="/subscribe"
-                        className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold"
+                        className="bg-[#E64A30] hover:bg-[#E64A30]/90 text-white px-6 py-3 rounded-full font-semibold"
                     >
                         Subscribe
                     </Link>
@@ -350,13 +350,13 @@ export default function PlayerPageClient({ id }: any) {
                                     pathname: '/login',
                                     query: { redirect: pathname }  // Pass the current path as a query parameter
                                 }}
-                                className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-900 transition-colors"
+                                className="bg-[#E64A30] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#E64A30]/80 transition-colors"
                             >
                                 Sign In
                             </Link>
                             <Link
                                 href={backToPlayersUrl}
-                                className="text-red-800 border border-red-800 px-6 py-3 rounded-lg font-semibold hover:bg-red-800 hover:text-white transition-colors"
+                                className="text-[#E64A30] border border-[#E64A30] px-6 py-3 rounded-lg font-semibold hover:bg-[#E64A30]/80 hover:text-white transition-colors"
                             >
                                 Back to Players
                             </Link>
@@ -373,7 +373,7 @@ export default function PlayerPageClient({ id }: any) {
                     <p className="text-gray-600 mb-8">The player you're looking for doesn't exist or has been moved.</p>
                     <Link
                         href={backToPlayersUrl}
-                        className="text-red-800 px-6 py-3 rounded-lg font-semibold hover:bg-white transition-colors"
+                        className="text-[#E64A30]/80 px-6 py-3 rounded-lg font-semibold hover:bg-white transition-colors"
                     >
                         Back to Players
                     </Link>
@@ -1248,7 +1248,7 @@ export default function PlayerPageClient({ id }: any) {
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-2">
                                                             <Link href={`/players/${nugget.player.id}`}>
-                                                                <h1 className="text-xl font-bold hover:text-red-800 transition-colors">
+                                                                <h1 className="text-xl font-bold hover:text-[#E64A30] transition-colors">
                                                                     {nugget.player.name}
                                                                 </h1>
                                                             </Link>
@@ -1281,7 +1281,7 @@ export default function PlayerPageClient({ id }: any) {
                                                 {/* Fantasy Insight */}
                                                 {nugget.fantasyInsight && (
                                                     <div className="px-4 mt-2 dark:text-[#D2D6E2]">
-                                                        <h1 className="font-semibold mt-0 text-red-800">Fantasy Insight:</h1>
+                                                        <h1 className="font-semibold mt-0 text-[#E64A30]">Fantasy Insight:</h1>
                                                         {renderFantasyInsight(nugget.fantasyInsight)}
                                                     </div>
                                                 )}
@@ -1301,7 +1301,7 @@ export default function PlayerPageClient({ id }: any) {
                                                                 }
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="text-left hover:text-red-800 text-sm truncate"
+                                                                className="text-left hover:text-[#E64A30] text-sm truncate"
                                                             >
                                                                 {nugget.sourceName}
                                                             </Link>
@@ -1516,7 +1516,7 @@ export default function PlayerPageClient({ id }: any) {
                                 <select
                                     value={selectedYear}
                                     onChange={handleYearChange}
-                                    className="px-4 py-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    className="px-4 py-2 select border bg-card rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E64A30]"
                                 >
                                     {/* Sort the years in descending order */}
                                     {availableYearsDynamic.sort((a, b) => Number(b) - Number(a)).map((year) => (
@@ -1666,17 +1666,23 @@ export default function PlayerPageClient({ id }: any) {
 
                         {/* Team & Position Info */}
                         <div className="flex items-center gap-3 flex-wrap mb-4">
-                            <div className="bg-[#E3E4E5] dark:bg-[#2C2C2C] rounded-full p-2 flex items-center justify-center">
-                                <Image
-                                    src={getTeamLogoUrl(playerTeam?.logo) || '/default-player.jpg'}
-                                    alt="Team Logo"
-                                    width={27}
-                                    height={21}
-                                    loader={({ src }) => src}
-                                />
-                            </div>
+                            {playerTeam?.logo ? (
+                                <div className="bg-[#E3E4E5] dark:bg-[#2C2C2C] rounded-full p-2 flex items-center justify-center">
+                                    <Image
+                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                        alt="Team Logo"
+                                        width={27}
+                                        height={21}
+                                        loader={({ src }) => src}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="bg-[#E3E4E5] dark:bg-[#2C2C2C] rounded-full px-3 py-1 flex items-center justify-center">
+                                    <span className="text-[#3A3D48] dark:text-gray-300 text-sm font-semibold">Free Agent</span>
+                                </div>
+                            )}
                             <p className="text-[#3A3D48] dark:text-gray-300 text-xl">
-                                {teamName || 'N/A'} {player?.Core['ADP Year']} &nbsp; {player?.Core?.Position}
+                                {teamName || ''} {player?.Core['ADP Year']} &nbsp; {player?.Core?.Position}
                             </p>
                         </div>
 
@@ -1684,8 +1690,8 @@ export default function PlayerPageClient({ id }: any) {
                         <div className="mb-5">
                             <button
                                 className={`text-white text-md px-10 py-1 rounded-full transition-colors hover:cursor-pointer ${isFollowing
-                                    ? 'bg-red-800 border border-red-800'
-                                    : 'bg-[#E64A30] hover:bg-red-800 border border-[#E64A30]'
+                                    ? 'bg-[#E64A30] border border-[#E64A30]'
+                                    : 'bg-[#E64A30] hover:bg-[#E64A30]/80 border border-[#E64A30]'
                                     }`}
                                 onClick={(e) => {
                                     e.preventDefault();
@@ -1803,17 +1809,23 @@ export default function PlayerPageClient({ id }: any) {
 
                         {/* Team & Position */}
                         <div className="flex items-center gap-3 flex-wrap mb-4">
-                            <div className="bg-[#E3E4E5] rounded-full p-2 flex items-center justify-center">
-                                <Image
-                                    src={getTeamLogoUrl(playerTeam?.logo) || '/default-player.jpg'}
-                                    alt="Team Logo"
-                                    width={27}
-                                    height={21}
-                                    loader={({ src }) => src}
-                                />
-                            </div>
+                            {playerTeam?.logo ? (
+                                <div className="bg-[#E3E4E5] dark:bg-[#2C2C2C] rounded-full p-2 flex items-center justify-center">
+                                    <Image
+                                        src={getTeamLogoUrl(playerTeam.logo) || ''}
+                                        alt="Team Logo"
+                                        width={27}
+                                        height={21}
+                                        loader={({ src }) => src}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="bg-[#E3E4E5] dark:bg-[#2C2C2C] rounded-full px-3 py-1 flex items-center justify-center">
+                                    <span className="text-[#3A3D48] dark:text-gray-300 text-sm font-semibold">Free Agent</span>
+                                </div>
+                            )}
                             <p className="text-[#3A3D48] text-lg md:text-xl dark:text-[#C7C8CB]">
-                                {teamName || 'N/A'} {player?.Core['ADP Year']} &nbsp; {player?.Core?.Position}
+                                {teamName || ''} {player?.Core['ADP Year']} &nbsp; {player?.Core?.Position}
                             </p>
                         </div>
 
@@ -1821,8 +1833,8 @@ export default function PlayerPageClient({ id }: any) {
                         <div className="mb-5">
                             <button
                                 className={`text-white text-md px-10 py-1 rounded-full transition-colors hover:cursor-pointer ${isFollowing
-                                    ? 'bg-red-800 border border-red-800'
-                                    : 'bg-[#E64A30] hover:bg-red-800 border border-[#E64A30]'
+                                    ? 'bg-[#E64A30] border border-[#E64A30]'
+                                    : 'bg-[#E64A30] hover:bg-[#E64A30]/80 border border-[#E64A30]'
                                     }`}
                                 onClick={(e) => {
                                     e.preventDefault()
@@ -1867,10 +1879,26 @@ export default function PlayerPageClient({ id }: any) {
             </div>
 
             {/* Main Content */}
-            <div className="container mx-auto px-4 pb-16 pt-16">
+            <div className="container mx-auto px-4 pb-16">
                 <div className="grid lg:grid-cols-1 gap-8">
                     {/* Player Details and Tabs */}
                     <div className="lg:col-span-2 space-y-8">
+                        {/* Fantasy Outlook Section */}
+                        {(basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook']) && (
+                            <div className="rounded-3xl border border-[#C7C8CB] dark:border-gray-700 overflow-hidden">
+                                <div className="bg-[#E64A30] px-6 py-2">
+                                    <h2 className="text-2xl text-white flex items-center gap-2">
+                                        Fantasy Outlook
+                                    </h2>
+                                </div>
+                                <div className="p-6">
+                                    <p className="text-base leading-relaxed whitespace-pre-line">
+                                        {basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook']}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Tabs Section */}
                         <div className="rounded border border-white/20 shadow-xl overflow-hidden">
                             {/* Tab Navigation */}
