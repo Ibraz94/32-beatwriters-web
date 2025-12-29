@@ -491,7 +491,7 @@ export default function PlayersNuggetsPage() {
             <div className="container mx-auto px-4 py-8">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold mb-4 dark:text-[#D2D6E2]">My Players Nuggets</h1>
-                    <p className="text-xl text-red-600 dark:text-red-500 mb-4">Failed to load nuggets</p>
+                    <p className="text-xl text-[#E64A30] dark:text-[#E64A30] mb-4">Failed to load nuggets</p>
                     <p className="text-gray-600 dark:text-gray-400">Please try again later.</p>
                 </div>
             </div>
@@ -555,7 +555,7 @@ left-[-12px] right-[-12px]
                             <span className="text-sm font-medium">Filters</span>
 
                             {(filters.position || filters.team || selectedDate || filters.rookie || searchTerm) && (
-                                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                                <span className="absolute -top-2 -right-2 bg-[#E64A30] text-white text-xs px-2 py-1 rounded-full">
                                     {[filters.position, filters.team, selectedDate, filters.rookie, searchTerm].filter(Boolean).length}
                                 </span>
                             )}
@@ -564,7 +564,7 @@ left-[-12px] right-[-12px]
 
                     {/* Filters in One Line */}
                     <div className={`mb-6 ${showMobileFilters ? 'block' : 'hidden'} lg:block`}>
-                        <div className="flex flex-col lg:flex-row items-center justify-center gap-3 w-full">
+                        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-center gap-3 w-full">
 
                             {/* Search Bar */}
                             <div className="hidden md:flex w-full md:w-[550px] border border-[#C7C8CB] rounded-full px-3 py-1.5 dark:bg-[#262829]">
@@ -586,7 +586,7 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Date Filter */}
-                            <div className="flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829]">
+                            <div className="w-full lg:w-auto flex gap-2 items-center border border-[#C7C8CB] rounded-full px-3 py-1.5 bg-white dark:!bg-[#262829]">
                                 <Popover open={open} onOpenChange={setOpen}>
                                     <PopoverTrigger asChild className="flex-1">
                                         <Button
@@ -637,7 +637,7 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Position Filter */}
-                            <div className="border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829]">
+                            <div className="w-full lg:w-auto border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:bg-[#262829]">
                                 <Select
                                     value={filters.position || 'all'}
                                     onValueChange={handlePositionFilterChange}
@@ -660,12 +660,12 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Team Filter */}
-                            <div className="flex items-center border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors">
+                            <div className="w-full lg:w-auto flex items-center border border-[#C7C8CB] rounded-full px-3 py-[2px] bg-white dark:!bg-[#262829] transition-colors">
                                 <Select
                                     value={filters.team || 'all'}
                                     onValueChange={handleTeamFilterChange}
                                 >
-                                    <SelectTrigger className="filter-select h-10 w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
+                                    <SelectTrigger className="filter-select h-10 w-full lg:w-52 !border-none !border-0 text-sm flex items-center gap-2 !bg-transparent shadow-none focus:!ring-0 focus:outline-none">
                                         <UsersRound className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                                         <SelectValue placeholder="All Teams" />
                                         {/* <ChevronDown className="ml-auto h-4 w-4 text-gray-500" /> */}
@@ -684,7 +684,7 @@ left-[-12px] right-[-12px]
                             </div>
 
                             {/* Rookie Checkbox */}
-                            <div className="border border-[#C7C8CB] rounded-full flex items-center gap-2 px-8 py-4 dark:bg-[#262829]">
+                            <div className="w-full lg:w-auto border border-[#C7C8CB] rounded-full flex items-center justify-center gap-2 px-8 py-4 dark:bg-[#262829]">
                                 <input
                                     type="checkbox"
                                     id="rookie-filter"
@@ -727,7 +727,7 @@ left-[-12px] right-[-12px]
                                 {!hasActiveFilters && (
                                     <Link
                                         href="/players"
-                                        className="bg-red-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
+                                        className="bg-[#E64A30] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#E64A30]/80 transition-colors"
                                     >
                                         Browse Players
                                     </Link>
@@ -821,7 +821,7 @@ left-[-12px] right-[-12px]
                                                 {/* Fantasy Insight Section */}
                                                 {nugget.fantasyInsight && (
                                                     <div className="px-4 mt-2 dark:text-[#D2D6E2]">
-                                                        <h1 className="font-semibold mt-0 text-red-800">Fantasy Insight:</h1>
+                                                        <h1 className="font-semibold mt-0 text-[#E64A30]">Fantasy Insight:</h1>
                                                         {fantasyInsight(nugget.fantasyInsight)}
                                                     </div>
                                                 )}
@@ -840,7 +840,7 @@ left-[-12px] right-[-12px]
                                                                 }
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
-                                                                className="text-left hover:text-red-800 text-sm"
+                                                                className="text-left hover:text-[#E64A30] text-sm"
                                                             >
                                                                 {nugget.sourceName}
                                                             </Link>

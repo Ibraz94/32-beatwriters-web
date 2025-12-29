@@ -30,6 +30,7 @@ const MainNav = () => {
         { href: "/articles", label: "ARTICLES" },
         { href: "/podcasts", label: "PODCAST" },
         { href: "/players", label: "PLAYERS" },
+        // { href: "/betting", label: "BETTING" },
     ];
 
     const feedOptions = [

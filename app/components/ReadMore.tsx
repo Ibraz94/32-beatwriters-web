@@ -58,7 +58,7 @@ const ContentWithPlayerMentions = ({ content }: { content: string }) => {
               href={`/players/${part.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-red-800 hover:underline font-bold "
+              className="text-[#E64A30] hover:underline font-bold "
             >
               {part.name}
             </a>
@@ -97,7 +97,7 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
             <ContentWithPlayerMentions content={endText} />
           </span>
           <span
-            className=' text-(--color-orange) underline ml-2 cursor-pointer hover:text-red-800'
+            className=' text-(--color-orange) underline ml-2 cursor-pointer hover:text-[#E64A30]'
             role="button"
             tabIndex={0}
             aria-expanded={isExpanded}

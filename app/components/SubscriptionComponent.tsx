@@ -43,6 +43,12 @@ export default function SubscriptionComponent() {
     router.push('/subscribe')
   }
 
+
+  const handleSubscribeFastDraft = (priceId: string) => {
+    window.open('https://fastdraft.app/?ref=32BW', '_blank', 'noopener,noreferrer')
+  }
+
+
   if (!subscriptionOptions) {
     return (
       <div className="container mx-auto max-w-full px-4 sm:px-6 lg:px-8 py-16">
@@ -55,6 +61,7 @@ export default function SubscriptionComponent() {
 
   const monthlyPlan = subscriptionOptions.data.find(plan => plan.recurring.interval === 'month')
   const annualPlan = subscriptionOptions.data.find(plan => plan.recurring.interval === 'year')
+  const fastDraftPlan = subscriptionOptions.data.find(plan => plan.recurring.interval === 'month' && plan.recurring.interval_count === 1)
   const currentPlan = selectedPlan === 'monthly' ? monthlyPlan : selectedPlan === 'yearly' ? annualPlan : null
 
   return (
@@ -115,7 +122,7 @@ export default function SubscriptionComponent() {
                 </div>
                 {/* Background image */}
                 <div className="absolute top-0 right-0 pointer-events-none opacity-30">
-                  <Image src={selectedPlan === "monthly" ? `/monthly-plan-bg.png` : `/onetime-plan-bg.png`} alt="Plan background" width={300} height={300} loader={({ src }) => src}/>
+                  <Image src={selectedPlan === "monthly" ? `/monthly-plan-bg.png` : `/onetime-plan-bg.png`} alt="Plan background" width={300} height={300} loader={({ src }) => src} />
                 </div>
 
                 {/* Header */}
@@ -170,20 +177,26 @@ export default function SubscriptionComponent() {
                         ? [
                           "Locked in Offseason Coverage From January to September",
                           "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
-                          "In Season Fantasy Analysis from Zareh Kantzabedian",
+                          "Fantasy Analysis from Zareh Kantzabedian",
                           "Full Prospect Coverage from TJ Wengert",
+                          "Betting Insight from Charlie Dillon",
                           "Access to Prospect and Fantasy Tools",
                           "Full Access to All Our Premium Articles",
                           "Secure Payment By Stripe - No Hidden Fees",
+
+
                         ]
                         : [
                           "Locked in Offseason Coverage From January to September",
                           "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
-                          "In Season Fantasy Analysis from Zareh Kantzabedian",
+                          "Fantasy Analysis from Zareh Kantzabedian",
                           "Full Prospect Coverage from TJ Wengert",
+                          "Betting Insight from Charlie Dillon",
                           "Access to Prospect and Fantasy Tools",
                           "Full Access to All Our Premium Articles",
                           "Secure Payment By Stripe - No Hidden Fees",
+
+
                         ]
                       ).map((text, i) => (
                         <li key={i} className="flex items-start gap-2 leading-snug">
@@ -215,7 +228,7 @@ export default function SubscriptionComponent() {
                 </div>
                 {/* Background image */}
                 <div className="absolute top-0 right-0 pointer-events-none opacity-30">
-                  <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src}/>
+                  <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src} />
                 </div>
 
                 {/* Header */}
@@ -246,27 +259,36 @@ export default function SubscriptionComponent() {
                     <p className="text-gray-500 mb-6 text-sm dark:text-[#C7C8CB]">First month free with sign up</p>
                   </div>
 
-                  <button
-                    onClick={() => handleSubscribe(currentPlan!.id)}
-                    className="w-full text-lg py-3 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md dark:text-[#C7C8CB] dark:border-[#72757C]"
+                  <a
+                    onClick={() => handleSubscribeFastDraft(fastDraftPlan!.id)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full text-lg py-3 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md dark:text-[#C7C8CB] dark:border-[#72757]"
                   >
                     Join with FastDraft
-                  </button>
+                  </a>
 
                   <div className="mt-8 text-left border-t border-gray-200 pt-5">
                     <h4 className="font-semibold text-gray-800 mb-3 text-base leading-snug dark:text-white">
                       Up to $50 deposit match
-                      <br />
-                      <span className="text-[var(--color-orange)] text-sm">Use code “32BW”</span>
+
+                      <span className="text-[var(--color-orange)] text-sm"> Use code “32BW”</span>
                     </h4>
                     <ul className="space-y-3 text-gray-600 text-sm">
                       {[
-                        "Access to selected Premium articles",
-                        "Ability to search insights & updates on News Feed",
-                        "Secure payment by Stripe – No hidden fees",
+                        "Locked in Offseason Coverage From January to September",
+                        "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
+                        "Fantasy Analysis from Zareh Kantzabedian",
+                        "Full Prospect Coverage from TJ Wengert",
+                        "Betting Insight from Charlie Dillon",
+                        "Access to Prospect and Fantasy Tools",
+                        "Full Access to All Our Premium Articles",
+                        "Secure Payment By Stripe - No Hidden Fees",
+
+
                       ].map((text, i) => (
                         <li key={i} className="flex items-start gap-2 leading-snug dark:text-[#C7C8CB]">
-                          <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" className="mt-1" loader={({ src }) => src}/>
+                          <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" className="mt-1" loader={({ src }) => src} />
                           <span>{text}</span>
                         </li>
                       ))}
@@ -323,7 +345,7 @@ export default function SubscriptionComponent() {
                 </div>
 
                 <div className="flex justify-center items-center mb-8">
-                  <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} loader={({ src }) => src}/>
+                  <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} loader={({ src }) => src} />
                   <div className="text-left">
                     <h3 className="text-base font-semibold leading-tight dark:text-[#D2D6E2]">32BeatWriters</h3>
                     <p className="text-sm text-gray-500">NFL Insider Network</p>
@@ -346,7 +368,7 @@ export default function SubscriptionComponent() {
               {/* Button */}
               <button
                 onClick={() => handleSubscribe(currentPlan!.id)}
-                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none"
+                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none hover:cursor-pointer"
               >
                 Join Monthly
               </button>
@@ -358,14 +380,17 @@ export default function SubscriptionComponent() {
                   {[
                     "Locked in Offseason Coverage From January to September",
                     "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
-                    "In Season Fantasy Analysis from Zareh Kantzabedian",
+                    "Fantasy Analysis from Zareh Kantzabedian",
                     "Full Prospect Coverage from TJ Wengert",
+                    "Betting Insight from Charlie Dillon",
                     "Access to Prospect and Fantasy Tools",
                     "Full Access to All Our Premium Articles",
                     "Secure Payment By Stripe - No Hidden Fees",
+
+
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
-                      <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" loader={({ src }) => src}/>
+                      <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" loader={({ src }) => src} />
                       <span>{text}</span>
                     </li>
                   ))}
@@ -384,7 +409,7 @@ export default function SubscriptionComponent() {
             </div>
             {/* Background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
-              <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src}/>
+              <Image src="/onetime-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src} />
             </div>
 
             {/* Header */}
@@ -393,7 +418,7 @@ export default function SubscriptionComponent() {
                 First Month Free
               </div>
               <div className="flex items-center">
-                <Image src="/fast-draft-plan.svg" alt="Logo" height={150} width={150} className="object-contain" loader={({ src }) => src}/>
+                <Image src="/fast-draft-plan.svg" alt="Logo" height={150} width={150} className="object-contain" loader={({ src }) => src} />
               </div>
             </div>
 
@@ -407,12 +432,14 @@ export default function SubscriptionComponent() {
                 </div>
                 <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">First month is free with sign up then $9.99 a month after</p>
               </div>
-              <button
-                onClick={() => handleSubscribe(currentPlan!.id)}
-                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none"
+              <a
+                onClick={() => handleSubscribeFastDraft(fastDraftPlan!.id)}
+                rel="noopener noreferrer"
+                target="_blank"
+                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none hover:cursor-pointer"
               >
                 Join with FastDraft
-              </button>
+              </a>
 
               <div className="mt-10 text-left border-t border-gray-200 pt-6 dark:border-t-[#72757C]">
                 <h4 className="font-semibold text-gray-800 mb-4 text-xl text-nowrap dark:text-white">
@@ -420,13 +447,20 @@ export default function SubscriptionComponent() {
                 </h4>
                 <ul className="space-y-3 text-gray-600 text-sm">
                   {[
-                    "Access to selected Premium articles",
-                    "Ability to search insights & updates on News Feed",
-                    "Secure payment by Stripe – No hidden fees",
+                    "Locked in Offseason Coverage From January to September",
+                    "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
+                    "Fantasy Analysis from Zareh Kantzabedian",
+                    "Full Prospect Coverage from TJ Wengert",
+                    "Betting Insight from Charlie Dillon",
+                    "Access to Prospect and Fantasy Tools",
+                    "Full Access to All Our Premium Articles",
+                    "Secure Payment By Stripe - No Hidden Fees",
+
+
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
-                      <div className="bg-[#FFE6E2] p-2 rounded-full flex items-center justify-center shrink-0 dark:bg-transparent">
-                        <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" loader={({ src }) => src}/>
+                      <div className="p-2 rounded-full flex items-center justify-center shrink-0 dark:bg-transparent">
+                        <Image src="/tick-mark.svg" width={14} height={14} alt="Tick" loader={({ src }) => src} />
                       </div>
                       <span>{text}</span>
                     </li>
@@ -449,7 +483,7 @@ export default function SubscriptionComponent() {
             </div>
             {/* Background image */}
             <div className="absolute top-0 right-0 pointer-events-none opacity-30">
-              <Image src="/yearly-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src}/>
+              <Image src="/yearly-plan-bg.png" alt="Plan background" width={300} height={300} loader={({ src }) => src} />
             </div>
 
             {/* Inner content */}
@@ -459,7 +493,7 @@ export default function SubscriptionComponent() {
                   Yearly
                 </div>
                 <div className="flex justify-center items-center mb-8">
-                  <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} loader={({ src }) => src}/>
+                  <Image src="/32bw_logo_black.svg" alt="Logo" className="mr-2" height={40} width={40} loader={({ src }) => src} />
                   <div className="text-left">
                     <h3 className="text-base font-semibold leading-tight dark:text-[#D2D6E2]">32BeatWriters</h3>
                     <p className="text-sm text-gray-500">NFL Insider Network</p>
@@ -480,7 +514,7 @@ export default function SubscriptionComponent() {
 
               <button
                 onClick={() => handleSubscribe(currentPlan!.id)}
-                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none"
+                className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none hover:cursor-pointer"
               >
                 Join Yearly
               </button>
@@ -491,14 +525,17 @@ export default function SubscriptionComponent() {
                   {[
                     "Locked in Offseason Coverage From January to September",
                     "Player and Team Summaries – The Best, Complete, Customizable Feed in the Industry",
-                    "In Season Fantasy Analysis from Zareh Kantzabedian",
+                    "Fantasy Analysis from Zareh Kantzabedian",
                     "Full Prospect Coverage from TJ Wengert",
+                    "Betting Insight from Charlie Dillon",
                     "Access to Prospect and Fantasy Tools",
                     "Full Access to All Our Premium Articles",
                     "Secure Payment By Stripe - No Hidden Fees",
+
+
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 text-base dark:text-[#C7C8CB]">
-                      <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" loader={({ src }) => src}/>
+                      <Image src="/tick-mark.svg" width={16} height={16} alt="Tick" loader={({ src }) => src} />
                       <span>{text}</span>
                     </li>
                   ))}

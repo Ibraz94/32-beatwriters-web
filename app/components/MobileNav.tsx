@@ -39,6 +39,10 @@ const MobileNav = () => {
       path: "/players"
     },
     {
+      name: 'Betting',
+      path: "/betting"
+    },
+    {
       name: 'Feed',
       path: "/nuggets"
     }
