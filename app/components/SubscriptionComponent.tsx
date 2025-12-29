@@ -45,7 +45,7 @@ export default function SubscriptionComponent() {
 
 
   const handleSubscribeFastDraft = (priceId: string) => {
-    router.push('https://fastdraft.app/?ref=32BW')
+    window.open('https://fastdraft.app/?ref=32BW', '_blank', 'noopener,noreferrer')
   }
 
 
@@ -259,12 +259,14 @@ export default function SubscriptionComponent() {
                     <p className="text-gray-500 mb-6 text-sm dark:text-[#C7C8CB]">First month free with sign up</p>
                   </div>
 
-                  <button
+                  <a
                     onClick={() => handleSubscribeFastDraft(fastDraftPlan!.id)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-full text-lg py-3 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md dark:text-[#C7C8CB] dark:border-[#72757]"
                   >
                     Join with FastDraft
-                  </button>
+                  </a>
 
                   <div className="mt-8 text-left border-t border-gray-200 pt-5">
                     <h4 className="font-semibold text-gray-800 mb-3 text-base leading-snug dark:text-white">
@@ -430,12 +432,14 @@ export default function SubscriptionComponent() {
                 </div>
                 <p className="text-gray-500 mb-8 dark:text-[#C7C8CB]">First month is free with sign up then $9.99 a month after</p>
               </div>
-              <button
+              <a
                 onClick={() => handleSubscribeFastDraft(fastDraftPlan!.id)}
+                rel="noopener noreferrer"
+                target="_blank"
                 className="w-full text-xl py-4 rounded-full border transition-all duration-200 shadow-sm hover:shadow-md hover:bg-[var(--color-orange)] hover:text-white dark:text-[#D2D6E2] dark:hover:text-white dark:border-1 dark:border-[#72757C] dark:hover:border-none hover:cursor-pointer"
               >
                 Join with FastDraft
-              </button>
+              </a>
 
               <div className="mt-10 text-left border-t border-gray-200 pt-6 dark:border-t-[#72757C]">
                 <h4 className="font-semibold text-gray-800 mb-4 text-xl text-nowrap dark:text-white">
