@@ -5,7 +5,6 @@ import { useGetBetsByWeekQuery } from '@/lib/services/bettingApi'
 import BetCard from '@/app/components/betting/BetCard'
 import { Loader2, Filter, Search, Flame, Zap, ExternalLink } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import Image from 'next/image'
 
 export default function BettingPage() {
   // Function to get current NFL week
@@ -26,9 +25,9 @@ export default function BettingPage() {
     week: selectedWeek,
   })
 
-  const { filteredBets, betsByCategory } = useMemo(() => {
+  const filteredBets = useMemo(() => {
     if (!data?.data?.bets) {
-      return { filteredBets: [], betsByCategory: {} }
+      return []
     }
 
     const bets = data.data.bets
@@ -57,27 +56,23 @@ export default function BettingPage() {
       }
     }
 
-    // Group bets by category
-    const grouped: Record<string, typeof filtered> = {}
-    filtered.forEach((bet) => {
-      const category = bet.betType || 'Single'
-      if (!grouped[category]) {
-        grouped[category] = []
+    // Sort: pinned bets first, then by date (most recent first)
+    filtered.sort((a, b) => {
+      // Pinned bets come first
+      if (a.isPinned && !b.isPinned) return -1
+      if (!a.isPinned && b.isPinned) return 1
+      
+      // Then sort by updatedAt (most recently updated pinned bet first)
+      if (a.isPinned && b.isPinned) {
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       }
-      grouped[category].push(bet)
+      
+      // For non-pinned, sort by date
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     })
 
-    return { filteredBets: filtered, betsByCategory: grouped }
+    return filtered
   }, [data, showBestBets, showFastDraft, resultFilter, playerSearch])
-
-  // Define category order - FastDraft categories first
-  const categoryOrder = [
-    'FastDraft Pick Six Frenzy',
-    'FastDraft SuperSlam',
-    'Single',
-    'Parlay',
-    'Degen Parlay'
-  ]
 
   return (
     <div className="container mx-auto px-3 py-7">
@@ -236,7 +231,7 @@ export default function BettingPage() {
           <div className="flex gap-4 lg:gap-6 flex-col lg:flex-row min-w-0 mx-auto">
             {/* Main Content Column */}
             <div className="flex-1">
-              {/* All Bets Grouped by Category */}
+              {/* All Bets */}
               {filteredBets.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-xl text-gray-600 dark:text-gray-400 mb-4">
@@ -248,91 +243,66 @@ export default function BettingPage() {
                 </div>
               ) : (
                 <div className="space-y-8">
-                  {categoryOrder.map((category) => {
-                    const categoryBets = betsByCategory[category]
-                    if (!categoryBets || categoryBets.length === 0) return null
-
-                    // Check if this is a FastDraft category
-                    const isFastDraftCategory = category.includes('FastDraft')
-                    // Get FastDraft info from first bet in category
-                    const firstBet = categoryBets[0]
-                    // Check if any bet in this category is a best bet
-                    const hasBestBet = categoryBets.some(bet => bet.isBestBet)
+                  {filteredBets.map((bet) => {
+                    const isFastDraftCategory = bet.betType?.includes('FastDraft')
 
                     return (
-                      <div key={category} className="space-y-4">
-                        {/* Category Header */}
-                        <div className="border-b-2 border-[#E64A30]">
-                          {isFastDraftCategory && firstBet ? (
-                            /* FastDraft Header - Logo and Button */
-                            <div className="bg-[#d14429]/10 rounded-t-2xl p-2 md:p-2">
-                              <div className="flex flex-row items-center justify-between gap-2 md:gap-4">
-                                {/* Logo and Info */}
-                                <div className="flex-1 min-w-0">
-                                  {firstBet.betType && (
-                                    <div className="flex items-center -gap-2">
+                      <div key={bet.id} className="space-y-4">
+                        {/* Bet Type Header - Show for every bet */}
+                        {bet.betType && (
+                          <div className="border-b-2 border-[#E64A30]">
+                            {isFastDraftCategory ? (
+                              /* FastDraft Header - Logo and Button */
+                              <div className="bg-[#d14429]/10 rounded-t-2xl p-2 md:p-2">
+                                <div className="flex flex-row items-center justify-between gap-2 md:gap-4">
+                                  {/* Logo and Info */}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
                                       <p className="text-lg md:text-2xl font-bold text-[#E64A30] dark:text-[#E64A30] mt-4">
-                                        {firstBet.betType}
+                                        {bet.betType}
                                       </p>
-                                      {hasBestBet && (
+                                      {bet.isBestBet && (
                                         <span className="text-[#E64A30] font-bold text-lg md:text-3xl mt-4">🔥</span>
                                       )}
                                     </div>
+                                  </div>
+
+                                  {/* Sign Up Button */}
+                                  {bet.signupLink && (
+                                    <a
+                                      href={bet.signupLink}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex-shrink-0 inline-flex items-center justify-center gap-1 md:gap-2 text-white bg-[#E64A30]/60 px-3 py-2 md:px-6 md:py-3 rounded-full font-semibold hover:bg-[#E64A30]/90 transition-colors text-xs md:text-base whitespace-nowrap"
+                                    >
+                                      <span className="hidden md:inline">Sign Up for FastDraft</span>
+                                      <span className="md:hidden">Sign Up</span>
+                                      <ExternalLink className="h-3 w-3 md:h-4 md:w-4" />
+                                    </a>
                                   )}
-                                  {/* <Image
-                                    src="/fast-draft-plan.svg"
-                                    alt="FastDraft Logo"
-                                    width={150}
-                                    height={150}
-                                    className="inline-block md:w-[250px] md:h-[50px] mb-1"
-                                    loader={({ src }) => src}
-                                  /> */}
                                 </div>
-
-                                {/* Sign Up Button */}
-                                {firstBet.signupLink && (
-                                  <a
-                                    href={firstBet.signupLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex-shrink-0 inline-flex items-center justify-center gap-1 md:gap-2 text-white bg-[#E64A30]/60 px-3 py-2 md:px-6 md:py-3 rounded-full font-semibold hover:bg-[#E64A30]/90 transition-colors text-xs md:text-base whitespace-nowrap"
-                                  >
-                                    <span className="hidden md:inline">Sign Up for FastDraft</span>
-                                    <span className="md:hidden">Sign Up</span>
-                                    <ExternalLink className="h-3 w-3 md:h-4 md:w-4" />
-                                  </a>
+                                {bet.depositInfo && (
+                                  <p className="text-[10px] md:text-sm leading-tight text-end mt-1">
+                                    {bet.depositInfo}
+                                  </p>
                                 )}
-
-
                               </div>
-                              {firstBet.depositInfo && (
-                                <p className="text-[10px] md:text-sm leading-tight text-end mt-1">
-                                  {firstBet.depositInfo}
-                                </p>
-                              )}
-                            </div>
-                          ) : (
-                            /* Regular Category Header - Just text */
-                            <div className="flex items-center gap-2">
-                              <h2 className="text-2xl font-bold text-[#E64A30] dark:text-[#E64A30]">
-                                {category}
-                              </h2>
-                              {hasBestBet && (
-                                <span className="text-[#E64A30] font-bold text-lg md:text-3xl">🔥</span>
-                              )}
-                            </div>
-                          )}
-                        </div>
+                            ) : (
+                              /* Regular Bet Type Header - Just text */
+                              <div className="flex items-center gap-2">
+                                <h2 className="text-2xl font-bold text-[#E64A30] dark:text-[#E64A30]">
+                                  {bet.betType}
+                                </h2>
+                                {bet.isBestBet && (
+                                  <span className="text-[#E64A30] font-bold text-lg md:text-3xl">🔥</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
 
-                        {/* Bets in this category */}
-                        <div className="space-y-4">
-                          {categoryBets.map((bet) => (
-                            <BetCard
-                              key={bet.id}
-                              bet={bet}
-                            />
-                          ))}
-                        </div>
+                        {/* Bet Card */}
+                        <BetCard bet={bet} />
                       </div>
                     )
                   })}
