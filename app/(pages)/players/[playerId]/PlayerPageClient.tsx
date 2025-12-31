@@ -1892,9 +1892,14 @@ export default function PlayerPageClient({ id }: any) {
                                     </h2>
                                 </div>
                                 <div className="p-6">
-                                    <p className="text-base leading-relaxed whitespace-pre-line">
-                                        {basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook']}
-                                    </p>
+                                    <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert">
+                                        <div 
+                                            className="text-base leading-relaxed"
+                                            dangerouslySetInnerHTML={{ 
+                                                __html: basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook'] || '' 
+                                            }} 
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         )}
