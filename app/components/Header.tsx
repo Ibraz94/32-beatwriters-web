@@ -16,11 +16,13 @@ function Header() {
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [isFeedDropdownOpen, setIsFeedDropdownOpen] = useState(false);
     const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
+    const [isInsightDropdownOpen, setIsInsightDropdownOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const { user, isAuthenticated, logout } = useAuth();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const feedDropdownRef = useRef<HTMLDivElement>(null);
     const toolsDropdownRef = useRef<HTMLDivElement>(null);
+    const insightDropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
     // Prevent hydration mismatch by only applying theme after mounting
@@ -41,6 +43,9 @@ function Header() {
             }
             if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(event.target as Node)) {
                 setIsToolsDropdownOpen(false);
+            }
+            if (isInsightDropdownOpen && !event.target) {
+                setIsInsightDropdownOpen(false);
             }
         };
 
@@ -114,8 +119,8 @@ function Header() {
 
     const navLinks = [
         { href: "/", label: "Home" },
-        { href: "/articles", label: "Articles" },
-        { href: "/podcasts", label: "Podcast" },
+        // { href: "/articles", label: "Articles" },
+        // { href: "/podcasts", label: "Podcast" },
         { href: "/players", label: "Players" },
         { href: "/prospects", label: "Prospects" },
         { href: "/betting", label: "Betting" },
@@ -136,6 +141,12 @@ function Header() {
     // const toolNavLink = [
     //     { href: "/tools", label: "TOOLS" },
     // ];
+
+    const insightOptions = [
+        { href: "/articles", label: "Articles" },
+        { href: "/podcasts", label: "Podcast" },
+    ];
+
 
     return (
         <header className="z-50 w-full transition-colors duration-300 container mx-auto">
@@ -282,6 +293,36 @@ function Header() {
                             </Link>
                         ))}
 
+                        {/* Insight Dropdown */}
+                        <div className="relative left-1.5" ref={insightDropdownRef}>
+                            <button
+                                onClick={() => setIsInsightDropdownOpen(!isInsightDropdownOpen)}
+                                className="relative py-2 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
+                            >
+                                <span>Insight</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isInsightDropdownOpen ? 'rotate-180' : ''}`} />
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
+                            </button>
+
+                            {/* Insight Dropdown Menu */}
+                            {isInsightDropdownOpen && (
+                                <div className="absolute top-full left-0 w-48 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[var(--dark-theme-color)] py-2 z-50">
+                                    <div className="py-1">
+                                        {insightOptions.map((option) => (
+                                            <Link
+                                                key={option.href}
+                                                href={option.href}
+                                                className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black dark:text-white "
+                                                onClick={() => setIsInsightDropdownOpen(false)}
+                                            >
+                                                {option.label}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                         {/* Feed Dropdown */}
                         <div className="relative left-1.5" ref={feedDropdownRef}>
                             <button
@@ -311,6 +352,7 @@ function Header() {
                                 </div>
                             )}
                         </div>
+
 
                         {/* Tools Dropdown */}
                         {/* <div className="relative left-2" ref={toolsDropdownRef}>
@@ -463,6 +505,37 @@ function Header() {
                                     {link.label}
                                 </Link>
                             ))}
+
+                              {/* Mobile Insight Dropdown */}
+                            <div className="space-y-1">
+                                <button
+                                    onClick={() => setIsInsightDropdownOpen(!isInsightDropdownOpen)}
+                                    className="mobile-menu-nav-link w-full px-4 py-3 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 flex items-center justify-center space-x-2"
+                                    style={{
+                                        animationDelay: isMobileMenuOpen ? `${(navLinks.length) * 50}ms` : '0ms'
+                                    }}
+                                >
+                                    <span>Insight</span>
+                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isInsightDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                {/* Mobile Insight Dropdown Options */}
+                                <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isInsightDropdownOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    {insightOptions.map((option, index) => (
+                                        <Link
+                                            key={option.href}
+                                            href={option.href}
+                                            className="mobile-menu-nav-link block px-8 py-2 rounded-lg font-medium transition-all duration-200 text-center transform hover:scale-105 text-sm"
+                                            onClick={handleMobileNavigation}
+                                            style={{
+                                                animationDelay: isMobileMenuOpen && isInsightDropdownOpen ? `${(navLinks.length + index + 1) * 50}ms` : '0ms'
+                                            }}
+                                        >
+                                            {option.label}
+                                        </Link>
+                                    ))}
+                                </div>
+                            </div>
 
                             {/* Mobile Feed Dropdown */}
                             <div className="space-y-1">
