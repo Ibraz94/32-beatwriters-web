@@ -9,9 +9,51 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 export default function BettingPage() {
   // Function to get current NFL week
   const getCurrentNFLWeek = () => {
-    // For 2024-2025 season, manually set to current week
-    // TODO: Update this weekly or implement dynamic calculation
-    return 'Week 17'
+    // Get current date in user's timezone
+    const now = new Date()
+    const month = now.getMonth() + 1 // 1-12
+    const day = now.getDate()
+    
+    // 2024-2025 NFL Season
+    // Week 1: Sept 5, 2024
+    // Week 18: Jan 5-11, 2025
+    
+    // January 2025 - determine week based on day
+    if (month === 1 && day <= 11) {
+      return 'Week 18'
+    }
+    
+    // Wild Card: Jan 12-19
+    if (month === 1 && day >= 12 && day <= 19) {
+      return 'Wild Card'
+    }
+    
+    // Divisional: Jan 20-26
+    if (month === 1 && day >= 20 && day <= 26) {
+      return 'Divisional'
+    }
+    
+    // Conference: Jan 27 - Feb 2
+    if ((month === 1 && day >= 27) || (month === 2 && day <= 2)) {
+      return 'Conference'
+    }
+    
+    // Super Bowl: Feb 3-9
+    if (month === 2 && day >= 3 && day <= 9) {
+      return 'Super Bowl'
+    }
+    
+    // September through December - calculate week
+    if (month >= 9) {
+      const seasonStart = new Date(now.getFullYear(), 8, 5) // Sept 5
+      const diffTime = now.getTime() - seasonStart.getTime()
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+      const weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 18)
+      return `Week ${weekNumber}`
+    }
+    
+    // Off-season (Feb 10 - Aug)
+    return 'Week 1'
   }
 
   const [selectedWeek, setSelectedWeek] = useState(getCurrentNFLWeek())
@@ -158,7 +200,7 @@ export default function BettingPage() {
                     <SelectValue placeholder="Select week" />
                   </SelectTrigger>
                   <SelectContent className="border-none bg-white dark:bg-[#262829]">
-                    {['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16', 'Week 17', 'Week 18'].map((week) => (
+                    {['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16', 'Week 17', 'Week 18', 'Wild Card', 'Divisional', 'Conference', 'Super Bowl'].map((week) => (
                       <SelectItem key={week} value={week}>
                         {week}
                       </SelectItem>
