@@ -12,92 +12,46 @@ import Link from 'next/link'
 export default function BettingPage() {
   const pathname = usePathname()
   const { isAuthenticated, isLoading: authLoading, user } = useAuth()
-  // Function to get current NFL week (weeks start on Wednesday)
+  // Function to get current NFL week
   const getCurrentNFLWeek = () => {
     // Get current date in user's timezone
     const now = new Date()
-    const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, ..., 3 = Wednesday
+    const month = now.getMonth() + 1 // 1-12
+    const day = now.getDate()
     
-    // Adjust date to the start of the current NFL week (Wednesday)
-    // If today is Sunday (0), Monday (1), or Tuesday (2), we're still in the previous week
-    let adjustedDate = new Date(now)
-    if (dayOfWeek < 3) {
-      // Go back to the previous Wednesday
-      adjustedDate.setDate(now.getDate() - (dayOfWeek + 4))
-    } else {
-      // Go back to this week's Wednesday
-      adjustedDate.setDate(now.getDate() - (dayOfWeek - 3))
+    // 2024-2025 NFL Season
+    // Week 1: Sept 5, 2024
+    // Week 18: Jan 5-11, 2025
+    
+    // January 2025 - determine week based on day
+    if (month === 1 && day <= 11) {
+      return 'Week 18'
     }
     
-    const month = adjustedDate.getMonth() + 1 // 1-12
-    const day = adjustedDate.getDate()
-    const year = adjustedDate.getFullYear()
-    
-    // 2025-2026 NFL Season
-    // Week 1 starts: Wednesday, Sept 3, 2025
-    // Week 18 starts: Wednesday, Dec 31, 2025
-    
-    // January 2026 - determine week based on adjusted date
-    if (year === 2026 && month === 1) {
-      if (day >= 1 && day < 7) {
-        return 'Week 18'
-      }
-      if (day >= 7 && day < 14) {
-        return 'Wild Card'
-      }
-      if (day >= 14 && day < 21) {
-        return 'Divisional'
-      }
-      if (day >= 21 && day < 28) {
-        return 'Conference'
-      }
-      if (day >= 28) {
-        return 'Super Bowl'
-      }
+    // Wild Card: Jan 12-19
+    if (month === 1 && day >= 12 && day <= 19) {
+      return 'Wild Card'
     }
     
-    // February 2026 - Super Bowl week
-    if (year === 2026 && month === 2 && day < 10) {
+    // Divisional: Jan 20-26
+    if (month === 1 && day >= 20 && day <= 26) {
+      return 'Divisional'
+    }
+    
+    // Conference: Jan 27 - Feb 2
+    if ((month === 1 && day >= 27) || (month === 2 && day <= 2)) {
+      return 'Conference'
+    }
+    
+    // Super Bowl: Feb 3-9
+    if (month === 2 && day >= 3 && day <= 9) {
       return 'Super Bowl'
     }
     
-    // January 2025 - previous season playoffs
-    if (year === 2025 && month === 1) {
-      if (day >= 1 && day < 8) {
-        return 'Week 18'
-      }
-      if (day >= 8 && day < 15) {
-        return 'Wild Card'
-      }
-      if (day >= 15 && day < 22) {
-        return 'Divisional'
-      }
-      if (day >= 22 && day < 29) {
-        return 'Conference'
-      }
-      if (day >= 29) {
-        return 'Super Bowl'
-      }
-    }
-    
-    // February 2025 - Super Bowl week
-    if (year === 2025 && month === 2 && day < 10) {
-      return 'Super Bowl'
-    }
-    
-    // September through December 2025 - calculate week for current season
-    if (year === 2025 && month >= 9) {
-      const seasonStart = new Date(2025, 8, 3) // Wednesday, Sept 3, 2025
-      const diffTime = adjustedDate.getTime() - seasonStart.getTime()
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-      const weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 18)
-      return `Week ${weekNumber}`
-    }
-    
-    // September through December 2024 - calculate week for previous season
-    if (year === 2024 && month >= 9) {
-      const seasonStart = new Date(2024, 8, 4) // Wednesday, Sept 4, 2024
-      const diffTime = adjustedDate.getTime() - seasonStart.getTime()
+    // September through December - calculate week
+    if (month >= 9) {
+      const seasonStart = new Date(now.getFullYear(), 8, 5) // Sept 5
+      const diffTime = now.getTime() - seasonStart.getTime()
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
       const weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 18)
       return `Week ${weekNumber}`
