@@ -297,7 +297,7 @@ function Header() {
                         <div className="relative left-1.5" ref={insightDropdownRef}>
                             <button
                                 onClick={() => setIsInsightDropdownOpen(!isInsightDropdownOpen)}
-                                className="relative py-2 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
+                                className="relative py-2 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white hover:cursor-pointer"
                             >
                                 <span>Insight</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isInsightDropdownOpen ? 'rotate-180' : ''}`} />
@@ -327,7 +327,7 @@ function Header() {
                         <div className="relative left-1.5" ref={feedDropdownRef}>
                             <button
                                 onClick={() => setIsFeedDropdownOpen(!isFeedDropdownOpen)}
-                                className="relative py-2 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
+                                className="relative py-2 text-md font-oswald text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white hover:cursor-pointer"
                             >
                                 <span>Feeds</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isFeedDropdownOpen ? 'rotate-180' : ''}`} />
