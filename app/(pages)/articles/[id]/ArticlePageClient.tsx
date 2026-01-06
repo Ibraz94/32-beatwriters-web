@@ -251,7 +251,7 @@ export default function ArticlePageClient({ id }: { id: string }) {
 
                 return (
                     <div
-                        className="columns-1 md:columns-2 gap-8 [&>*]:break-inside-avoid"
+                        className="gap-8 [&>*]:break-inside-avoid"
                     >
                         {paragraphs}
                     </div>
@@ -281,7 +281,7 @@ export default function ArticlePageClient({ id }: { id: string }) {
                     alt={article.title || 'Article image'}
                     width={1000}
                     height={500}
-                    className="mb-12 shadow-lg w-full lg:h-[500px] rounded-2xl h-[200px]"
+                    className="mb-12 shadow-lg w-full lg:h-[600px] rounded-2xl h-[200px]"
                     loader={({ src }) => src}
                     // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     onError={(e) => {
