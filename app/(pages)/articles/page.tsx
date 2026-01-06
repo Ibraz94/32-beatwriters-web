@@ -299,7 +299,7 @@ left-[-12px] right-[-12px]
                     <div className="relative p-4 h-[250px] overflow-hidden">
                       <h2 className="text-lg font-semibold mb-2 line-clamp-1 text-[#3A3D48] dark:text-[#C7C8CB]">{article.title}</h2>
 
-                      <div className="text-sm line-clamp-3 overflow-hidden relative z-10  text-[#72757C] dark:text-white">
+                      <div className="text-sm line-clamp-3 overflow-hidden relative z-10 article-content">
                         <div dangerouslySetInnerHTML={{ __html: article.content }} />
                       </div>
 

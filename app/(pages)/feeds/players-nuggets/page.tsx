@@ -814,7 +814,7 @@ left-[-12px] right-[-12px]
                                                 </div>
 
                                                 {/* Content Section */}
-                                                <div className="mt-3 ml-4 dark:text-[#D2D6E2] articles-card">
+                                                <div className="mt-3 ml-4 dark:text-[#D2D6E2]">
                                                     <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
 

@@ -216,7 +216,7 @@ const ContentWithPlayerMentionsAndTruncation = ({
               href={`/players/${part.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#E64A30] hover:underline font-bold "
+              className="text-[#E64A30] hover:underline font-bold"
             >
               {part.name}
             </a>
@@ -243,7 +243,7 @@ const ContentWithPlayerMentions = ({ content }: { content: string }) => {
               href={`/players/${part.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#E64A30] hover:underline font-bold "
+              className="text-[#E64A30] hover:underline font-bold"
             >
               {part.name}
             </a>
