@@ -5,8 +5,13 @@ import { useGetBetsByWeekQuery } from '@/lib/services/bettingApi'
 import BetCard from '@/app/components/betting/BetCard'
 import { Loader2, Filter, Search, Flame, Zap, ExternalLink } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 export default function BettingPage() {
+  const pathname = usePathname()
+  const { isAuthenticated, isLoading: authLoading, user } = useAuth()
   // Function to get current NFL week
   const getCurrentNFLWeek = () => {
     // Get current date in user's timezone
@@ -137,6 +142,38 @@ export default function BettingPage() {
 
   const handleLoadMore = () => {
     setDisplayLimit(prev => prev + 10)
+  }
+
+  // Show authentication required message if not authenticated or has insufficient membership
+  if (!authLoading && (!isAuthenticated || (user?.memberships && user.memberships.id !== undefined && user.memberships.id < 2))) {
+    return (
+      <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
+          <p className="text-gray-600 mb-8">
+            {!isAuthenticated
+              ? "Please login to your account to view betting picks. Don't have a subscription? Please subscribe to access premium content."
+              : "Please upgrade to a premium subscription to view betting picks."
+            }
+          </p>
+
+          {!isAuthenticated && (
+            <p className="text-gray-600 mb-8">
+              <Link href={{
+                pathname: '/login',
+                query: { redirect: pathname }
+              }} className="text-[#E64A30] hover:text-[#E64A30]/90 font-semibold">Login</Link>
+            </p>
+          )}
+          <Link
+            href="/subscribe"
+            className="bg-[#E64A30] text-white px-6 py-3 rounded-full font-semibold"
+          >
+            Subscribe
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
