@@ -44,7 +44,7 @@ function Header() {
             if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(event.target as Node)) {
                 setIsToolsDropdownOpen(false);
             }
-            if (isInsightDropdownOpen && !event.target) {
+            if (insightDropdownRef.current && !insightDropdownRef.current.contains(event.target as Node)) {
                 setIsInsightDropdownOpen(false);
             }
         };
