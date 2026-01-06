@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Link from 'next/link'
 
 interface ReadMoreProps {
   id: string
@@ -9,74 +8,125 @@ interface ReadMoreProps {
   rel?: string
 }
 
-// Function to parse player mentions and convert them to links
-const parsePlayerMentions = (content: string) => {
-  // Regular expression to match @[Player Name](playerId) pattern
-  const mentionRegex = /@\[([^\]]+)\]\((\d+)\)/g;
-
-  // Split content into parts (text and mentions)
-  const parts: (string | { name: string; id: string })[] = [];
-  let lastIndex = 0;
-  let match;
-
-  while ((match = mentionRegex.exec(content)) !== null) {
-    // Add text before the mention
-    if (match.index > lastIndex) {
-      parts.push(content.slice(lastIndex, match.index));
-    }
-
-    // Add the mention as an object
-    parts.push({
-      name: match[1],
-      id: match[2]
-    });
-
-    lastIndex = match.index + match[0].length;
-  }
-
-  // Add remaining text after the last mention
-  if (lastIndex < content.length) {
-    parts.push(content.slice(lastIndex));
-  }
-
-  return parts;
-};
-
-// Component to render content with player mentions as links
-const ContentWithPlayerMentions = ({ content }: { content: string }) => {
-  const parts = parsePlayerMentions(content);
-
-  return (
-    <>
-      {parts.map((part, index) => {
-        if (typeof part === 'string') {
-          return <span key={index}>{part}</span>;
-        } else {
-          return (
-            <a
-              key={index}
-              href={`/players/${part.id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#E64A30] hover:underline font-bold "
-            >
-              {part.name}
-            </a>
-
-          );
-        }
-      })}
-    </>
-  );
-};
-
 export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const itCanOverflow = text.length > amountOfCharacters
-  const beginText = itCanOverflow
-    ? text.slice(0, amountOfCharacters)
-    : text
-  const endText = text.slice(amountOfCharacters)
+  
+  // Replace player mention spans with clickable links while preserving all HTML
+  const processedContent = text.replace(
+    /<span\s+[^>]*?data-player-id="(\d+)"[^>]*?>(.*?)<\/span>/gi,
+    (match, playerId, playerName) => {
+      const cleanName = playerName.replace(/@/g, '').replace(/<[^>]*>/g, '').trim();
+      return `<a href="/players/${playerId}" target="_blank" rel="noopener noreferrer" class="text-[#E64A30] hover:underline font-bold">${cleanName}</a>`;
+    }
+  );
+  
+  // Get text content length (without HTML tags) to determine if we need "Read more"
+  const tempDiv = typeof document !== 'undefined' ? document.createElement('div') : null;
+  if (tempDiv) tempDiv.innerHTML = processedContent;
+  const textLength = tempDiv?.textContent?.length || processedContent.length;
+  const itCanOverflow = textLength > amountOfCharacters
+
+  // Truncate HTML while preserving structure
+  const truncateHtml = (html: string, maxChars: number): string => {
+    if (typeof document === 'undefined') return html;
+    
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    
+    let charCount = 0;
+    let shouldTruncate = false;
+    
+    const processNode = (node: Node): Node | null => {
+      if (shouldTruncate) return null;
+      
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent || '';
+        if (charCount + text.length > maxChars) {
+          const remaining = maxChars - charCount;
+          const truncatedText = text.substring(0, remaining);
+          shouldTruncate = true;
+          return document.createTextNode(truncatedText);
+        }
+        charCount += text.length;
+        return node.cloneNode(false);
+      }
+      
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const element = node as Element;
+        const clone = element.cloneNode(false) as Element;
+        
+        for (let i = 0; i < element.childNodes.length; i++) {
+          const processed = processNode(element.childNodes[i]);
+          if (processed) {
+            clone.appendChild(processed);
+          }
+          if (shouldTruncate) break;
+        }
+        
+        return clone;
+      }
+      
+      return node.cloneNode(false);
+    };
+    
+    const result = document.createElement('div');
+    for (let i = 0; i < div.childNodes.length; i++) {
+      const processed = processNode(div.childNodes[i]);
+      if (processed) {
+        result.appendChild(processed);
+      }
+      if (shouldTruncate) break;
+    }
+    
+    return result.innerHTML;
+  };
+
+  const displayContent = isExpanded || !itCanOverflow 
+    ? processedContent 
+    : truncateHtml(processedContent, amountOfCharacters);
+
+  // Add "Read more" button inside the HTML at the end
+  const addReadMoreButton = (html: string, buttonHtml: string): string => {
+    if (typeof document === 'undefined') return html + buttonHtml;
+    
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    
+    // Find the last text node or element to append the button
+    const findLastTextContainer = (node: Node): Node | null => {
+      if (node.childNodes.length === 0) {
+        return node.nodeType === Node.TEXT_NODE ? node.parentNode : node;
+      }
+      
+      // Traverse to the last child recursively
+      for (let i = node.childNodes.length - 1; i >= 0; i--) {
+        const child = node.childNodes[i];
+        if (child.nodeType === Node.ELEMENT_NODE || child.nodeType === Node.TEXT_NODE) {
+          const result = findLastTextContainer(child);
+          if (result) return result;
+        }
+      }
+      
+      return node;
+    };
+    
+    const lastContainer = findLastTextContainer(div);
+    if (lastContainer) {
+      const buttonSpan = document.createElement('span');
+      buttonSpan.innerHTML = buttonHtml;
+      lastContainer.appendChild(buttonSpan.firstChild!);
+    }
+    
+    return div.innerHTML;
+  };
+
+  const buttonHtml = itCanOverflow 
+    ? `<span class="text-[#E64A30] underline ml-2 cursor-pointer hover:text-[#E64A30]/80 whitespace-nowrap" role="button" tabindex="0" data-read-more="true">${isExpanded ? 'Read less' : 'Read more'}</span>`
+    : '';
+
+  const finalContent = itCanOverflow 
+    ? addReadMoreButton(displayContent, buttonHtml)
+    : displayContent;
 
   const handleKeyboard = (e: any) => {
     if (e.code === 'Space' || e.code === 'Enter') {
@@ -84,31 +134,16 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
     }
   }
 
+  const handleClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.getAttribute('data-read-more') === 'true') {
+      setIsExpanded(!isExpanded);
+    }
+  };
+
   return (
-    <p id={id}>
-      <ContentWithPlayerMentions content={beginText} />
-      {itCanOverflow && (
-        <>
-          {!isExpanded && <span>... </span>}
-          <span
-            className={`${!isExpanded && 'hidden'}`}
-            aria-hidden={!isExpanded}
-          >
-            <ContentWithPlayerMentions content={endText} />
-          </span>
-          <span
-            className=' text-(--color-orange) underline ml-2 cursor-pointer hover:text-[#E64A30]'
-            role="button"
-            tabIndex={0}
-            aria-expanded={isExpanded}
-            aria-controls={id}
-            onKeyDown={handleKeyboard}
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? 'Read less' : 'Read more'}
-          </span>
-        </>
-      )}
-    </p>
+    <span id={id} onClick={handleClick} onKeyDown={handleKeyboard}>
+      <span dangerouslySetInnerHTML={{ __html: finalContent }} />
+    </span>
   )
 }

@@ -5,13 +5,106 @@ import { useGetBetsByWeekQuery } from '@/lib/services/bettingApi'
 import BetCard from '@/app/components/betting/BetCard'
 import { Loader2, Filter, Search, Flame, Zap, ExternalLink } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 export default function BettingPage() {
-  // Function to get current NFL week
+  const pathname = usePathname()
+  const { isAuthenticated, isLoading: authLoading, user } = useAuth()
+  // Function to get current NFL week (weeks start on Wednesday)
   const getCurrentNFLWeek = () => {
-    // For 2024-2025 season, manually set to current week
-    // TODO: Update this weekly or implement dynamic calculation
-    return 'Week 17'
+    // Get current date in user's timezone
+    const now = new Date()
+    const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, ..., 3 = Wednesday
+    
+    // Adjust date to the start of the current NFL week (Wednesday)
+    // If today is Sunday (0), Monday (1), or Tuesday (2), we're still in the previous week
+    let adjustedDate = new Date(now)
+    if (dayOfWeek < 3) {
+      // Go back to the previous Wednesday
+      adjustedDate.setDate(now.getDate() - (dayOfWeek + 4))
+    } else {
+      // Go back to this week's Wednesday
+      adjustedDate.setDate(now.getDate() - (dayOfWeek - 3))
+    }
+    
+    const month = adjustedDate.getMonth() + 1 // 1-12
+    const day = adjustedDate.getDate()
+    const year = adjustedDate.getFullYear()
+    
+    // 2025-2026 NFL Season
+    // Week 1 starts: Wednesday, Sept 3, 2025
+    // Week 18 starts: Wednesday, Dec 31, 2025
+    
+    // January 2026 - determine week based on adjusted date
+    if (year === 2026 && month === 1) {
+      if (day >= 1 && day < 7) {
+        return 'Week 18'
+      }
+      if (day >= 7 && day < 14) {
+        return 'Wild Card'
+      }
+      if (day >= 14 && day < 21) {
+        return 'Divisional'
+      }
+      if (day >= 21 && day < 28) {
+        return 'Conference'
+      }
+      if (day >= 28) {
+        return 'Super Bowl'
+      }
+    }
+    
+    // February 2026 - Super Bowl week
+    if (year === 2026 && month === 2 && day < 10) {
+      return 'Super Bowl'
+    }
+    
+    // January 2025 - previous season playoffs
+    if (year === 2025 && month === 1) {
+      if (day >= 1 && day < 8) {
+        return 'Week 18'
+      }
+      if (day >= 8 && day < 15) {
+        return 'Wild Card'
+      }
+      if (day >= 15 && day < 22) {
+        return 'Divisional'
+      }
+      if (day >= 22 && day < 29) {
+        return 'Conference'
+      }
+      if (day >= 29) {
+        return 'Super Bowl'
+      }
+    }
+    
+    // February 2025 - Super Bowl week
+    if (year === 2025 && month === 2 && day < 10) {
+      return 'Super Bowl'
+    }
+    
+    // September through December 2025 - calculate week for current season
+    if (year === 2025 && month >= 9) {
+      const seasonStart = new Date(2025, 8, 3) // Wednesday, Sept 3, 2025
+      const diffTime = adjustedDate.getTime() - seasonStart.getTime()
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+      const weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 18)
+      return `Week ${weekNumber}`
+    }
+    
+    // September through December 2024 - calculate week for previous season
+    if (year === 2024 && month >= 9) {
+      const seasonStart = new Date(2024, 8, 4) // Wednesday, Sept 4, 2024
+      const diffTime = adjustedDate.getTime() - seasonStart.getTime()
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+      const weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 18)
+      return `Week ${weekNumber}`
+    }
+    
+    // Off-season (Feb 10 - Aug)
+    return 'Week 1'
   }
 
   const [selectedWeek, setSelectedWeek] = useState(getCurrentNFLWeek())
@@ -97,6 +190,38 @@ export default function BettingPage() {
     setDisplayLimit(prev => prev + 10)
   }
 
+  // Show authentication required message if not authenticated or has insufficient membership
+  if (!authLoading && (!isAuthenticated || (user?.memberships && user.memberships.id !== undefined && user.memberships.id < 2))) {
+    return (
+      <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
+          <p className="text-gray-600 mb-8">
+            {!isAuthenticated
+              ? "Please login to your account to view betting picks. Don't have a subscription? Please subscribe to access premium content."
+              : "Please upgrade to a premium subscription to view betting picks."
+            }
+          </p>
+
+          {!isAuthenticated && (
+            <p className="text-gray-600 mb-8">
+              <Link href={{
+                pathname: '/login',
+                query: { redirect: pathname }
+              }} className="text-[#E64A30] hover:text-[#E64A30]/90 font-semibold">Login</Link>
+            </p>
+          )}
+          <Link
+            href="/subscribe"
+            className="bg-[#E64A30] text-white px-6 py-3 rounded-full font-semibold"
+          >
+            Subscribe
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="container mx-auto px-3 py-7">
       <div className="relative">
@@ -158,7 +283,7 @@ export default function BettingPage() {
                     <SelectValue placeholder="Select week" />
                   </SelectTrigger>
                   <SelectContent className="border-none bg-white dark:bg-[#262829]">
-                    {['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16', 'Week 17', 'Week 18'].map((week) => (
+                    {['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13', 'Week 14', 'Week 15', 'Week 16', 'Week 17', 'Week 18', 'Wild Card', 'Divisional', 'Conference', 'Super Bowl'].map((week) => (
                       <SelectItem key={week} value={week}>
                         {week}
                       </SelectItem>

@@ -408,9 +408,10 @@ function ProspectsContent() {
                                 {prospect.analysis && (
                                     <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
-                                        <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
-                                            {prospect.analysis}
-                                        </p>
+                                        <div 
+                                            className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+                                            dangerouslySetInnerHTML={{ __html: prospect.analysis }}
+                                        />
                                     </div>
                                 )}
 
@@ -418,9 +419,10 @@ function ProspectsContent() {
                                 {prospect.writeUp && (
                                     <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Fantasy Outlook</h3>
-                                        <p className="text-sm dark:text-[#D2D6E2] leading-relaxed">
-                                            {prospect.writeUp}
-                                        </p>
+                                        <div 
+                                            className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+                                            dangerouslySetInnerHTML={{ __html: prospect.writeUp }}
+                                        />
                                     </div>
                                 )}
                             </div>

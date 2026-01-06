@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cabin, Oswald, PT_Sans } from "next/font/google";
+import { Cabin, Oswald, PT_Sans, Open_Sans, Inter, Roboto, Lato, Montserrat, Poppins, Manrope } from "next/font/google";
 import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -30,6 +30,48 @@ const product_sans = PT_Sans({
   variable: "--font-product-sans",
   subsets: ["latin"],
   weight: ["400", "700"],
+});
+
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700", "900"],
+});
+
+const lato = Lato({
+  variable: "--font-lato",
+  subsets: ["latin"],
+  weight: ["300", "400", "700", "900"],
+});
+
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -83,7 +125,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${product_sans.variable} antialiased bg-white text-black dark:bg-[#18122B] dark:text-white`}
+        className={`${product_sans.variable} ${openSans.variable} ${inter.variable} ${roboto.variable} ${lato.variable} ${montserrat.variable} ${poppins.variable} ${manrope.variable} antialiased bg-white text-black dark:bg-[#18122B] dark:text-white`}
       >
         <ErrorBoundary>
           <ReduxProvider>
