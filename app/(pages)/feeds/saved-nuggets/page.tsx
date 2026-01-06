@@ -820,7 +820,7 @@ left-[-12px] right-[-12px]
                                                     {/* Fantasy Insight Section */}
                                                     {nugget.fantasyInsight && (
                                                         <div className="px-4 mt-2 dark:text-[#D2D6E2]">
-                                                            <h1 className="font-semibold mt-0 text-red-800">Fantasy Insight:</h1>
+                                                            <h1 className="font-semibold mt-0 text-[#E64A30]">Fantasy Insight:</h1>
                                                             {fantasyInsight(nugget.fantasyInsight)}
                                                         </div>
                                                     )}
