@@ -807,3 +807,47 @@ picture,
   background: rgba(255, 255, 255, 0.6); /* Optional: soft white overlay for readability */
   z-index: 0;
 }
+
+/* Article content list styles - ensure bullet points and numbered lists render properly */
+.article-content ul,
+.prose ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin: 1rem 0 !important;
+}
+
+.article-content ol,
+.prose ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin: 1rem 0 !important;
+}
+
+.article-content li,
+.prose li {
+  display: list-item !important;
+  margin: 0.5rem 0 !important;
+  line-height: 1.6 !important;
+}
+
+.article-content ul ul,
+.prose ul ul {
+  list-style-type: circle !important;
+  margin: 0.25rem 0 !important;
+}
+
+.article-content ul ul ul,
+.prose ul ul ul {
+  list-style-type: square !important;
+}
+
+/* Override any inline styles from rich text editor */
+.article-content ul[style],
+.article-content ol[style],
+.article-content li[style],
+.prose ul[style],
+.prose ol[style],
+.prose li[style] {
+  list-style: inherit !important;
+  display: list-item !important;
+}
