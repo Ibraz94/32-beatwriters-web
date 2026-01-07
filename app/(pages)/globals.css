@@ -814,6 +814,7 @@ picture,
   list-style-type: disc !important;
   padding-left: 1.5rem !important;
   margin: 1rem 0 !important;
+  display: block !important; /* Ensure ul is not treated as list-item */
 }
 
 .article-content ol,
@@ -821,6 +822,7 @@ picture,
   list-style-type: decimal !important;
   padding-left: 1.5rem !important;
   margin: 1rem 0 !important;
+  display: block !important; /* Ensure ol is not treated as list-item */
 }
 
 .article-content li,
@@ -849,5 +851,46 @@ picture,
 .prose ol[style],
 .prose li[style] {
   list-style: inherit !important;
-  display: list-item !important;
 }
+
+/* Force ul and ol to never display as list-item */
+.article-content ul[style*="display"],
+.prose ul[style*="display"],
+.article-content ol[style*="display"],
+.prose ol[style*="display"] {
+  display: block !important;
+}
+
+/* Prevent double bullets by ensuring no nested list styling on first level */
+.article-content > ul > li::marker,
+.prose > ul > li::marker,
+.article-content ul:first-child > li::marker,
+.prose ul:first-child > li::marker {
+  content: '• ' !important;
+}
+
+/* Remove any potential duplicate markers from paragraph wrapping */
+.article-content p > ul,
+.prose p > ul,
+.article-content div > ul,
+.prose div > ul {
+  list-style-type: disc !important;
+  display: block !important;
+}
+
+/* Ensure li elements don't have before pseudo-elements creating extra bullets */
+.article-content li::before,
+.prose li::before {
+  content: none !important;
+}
+
+/* Ensure ul/ol elements don't have markers */
+.article-content ul::marker,
+.prose ul::marker,
+.article-content ol::marker,
+.prose ol::marker {
+  content: none !important;
+  display: none !important;
+}
+
+

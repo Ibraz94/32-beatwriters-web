@@ -409,7 +409,7 @@ function ProspectsContent() {
                                     <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
                                         <div 
-                                            className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+                                            className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2"
                                             dangerouslySetInnerHTML={{ __html: prospect.analysis }}
                                         />
                                     </div>
@@ -420,7 +420,7 @@ function ProspectsContent() {
                                     <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Fantasy Outlook</h3>
                                         <div 
-                                            className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none"
+                                            className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2"
                                             dangerouslySetInnerHTML={{ __html: prospect.writeUp }}
                                         />
                                     </div>
