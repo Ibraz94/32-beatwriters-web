@@ -411,7 +411,10 @@ export default function BettingPage() {
                                         {bet.betType}
                                       </p>
                                       {bet.isBestBet && (
-                                        <span className="text-[#E64A30] font-bold text-lg md:text-3xl mt-4">🔥</span>
+                                        <span className="text-[#E64A30] font-bold text-lg md:text-3xl mt-4 cursor-default" title="Best Bet">🔥</span>
+                                      )}
+                                      {bet.isLongshotBet && (
+                                        <span className="text-[#E64A30] font-bold text-lg md:text-3xl mt-4 -ml-2 cursor-default" title="Longshot Bet">🚀</span>
                                       )}
                                     </div>
                                   </div>
@@ -443,7 +446,10 @@ export default function BettingPage() {
                                   {bet.betType}
                                 </h2>
                                 {bet.isBestBet && (
-                                  <span className="text-[#E64A30] font-bold text-lg md:text-3xl">🔥</span>
+                                  <span className="text-[#E64A30] font-bold text-lg md:text-3xl cursor-help" title="Best Bet">🔥</span>
+                                )}
+                                {bet.isLongshotBet && (
+                                  <span className="text-[#E64A30] font-bold text-lg md:text-3xl cursor-help" title="Longshot Bet">🚀</span>
                                 )}
                               </div>
                             )}

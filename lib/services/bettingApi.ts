@@ -24,6 +24,7 @@ export interface Bet {
   totalWager?: string
   analysis?: string
   isBestBet: boolean
+  isLongshotBet: boolean
   isFastDraft: boolean
   isPinned: boolean
   signupLink?: string
