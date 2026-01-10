@@ -16,40 +16,36 @@ export default function BettingPage() {
   const getCurrentNFLWeek = () => {
     // Get current date in user's timezone
     const now = new Date()
-    const month = now.getMonth() + 1 // 1-12
-    const day = now.getDate()
     
-    // 2024-2025 NFL Season
-    // Week 1: Sept 5, 2024
-    // Week 18: Jan 5-11, 2025
+    // 2025-2026 NFL Season Playoff Schedule (weeks change on Wednesdays at 12:00 AM)
+    // Wild Card: Jan 8-14, 2026 (changes to Divisional on Wed Jan 15 at 12:00 AM)
+    // Divisional: Jan 15-21, 2026 (changes to Conference on Wed Jan 22 at 12:00 AM)
+    // Conference: Jan 22-28, 2026 (changes to Super Bowl on Wed Jan 29 at 12:00 AM)
+    // Super Bowl: Jan 29 - Feb 9, 2026
     
-    // January 2025 - determine week based on day
-    if (month === 1 && day <= 11) {
-      return 'Week 18'
-    }
+    const wildCardStart = new Date('2026-01-08T00:00:00')
+    const divisionalStart = new Date('2026-01-15T00:00:00')
+    const conferenceStart = new Date('2026-01-22T00:00:00')
+    const superBowlStart = new Date('2026-01-29T00:00:00')
+    const superBowlEnd = new Date('2026-02-09T23:59:59')
     
-    // Wild Card: Jan 12-19
-    if (month === 1 && day >= 12 && day <= 19) {
+    // Check playoff weeks
+    if (now >= wildCardStart && now < divisionalStart) {
       return 'Wild Card'
     }
-    
-    // Divisional: Jan 20-26
-    if (month === 1 && day >= 20 && day <= 26) {
+    if (now >= divisionalStart && now < conferenceStart) {
       return 'Divisional'
     }
-    
-    // Conference: Jan 27 - Feb 2
-    if ((month === 1 && day >= 27) || (month === 2 && day <= 2)) {
+    if (now >= conferenceStart && now < superBowlStart) {
       return 'Conference'
     }
-    
-    // Super Bowl: Feb 3-9
-    if (month === 2 && day >= 3 && day <= 9) {
+    if (now >= superBowlStart && now <= superBowlEnd) {
       return 'Super Bowl'
     }
     
-    // September through December - calculate week
-    if (month >= 9) {
+    // Regular season (September through early January)
+    const month = now.getMonth() + 1 // 1-12
+    if (month >= 9 || (month === 1 && now < wildCardStart)) {
       const seasonStart = new Date(now.getFullYear(), 8, 5) // Sept 5
       const diffTime = now.getTime() - seasonStart.getTime()
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
