@@ -45,7 +45,15 @@ const MobileNav = () => {
     {
       name: 'Feed',
       path: "/nuggets"
-    }
+    },
+    {
+      name: 'Rankings',
+      path: "/rankings"
+    },
+    // {
+    //   name: 'Rookie Rankings',
+    //   path: "/tools/rookie-rankings"
+    // }
   ];
 
   return (

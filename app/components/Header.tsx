@@ -6,12 +6,13 @@ import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from '@/lib/hooks/useAuth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import SearchBar from "@/components/ui/search";
 import { Button } from "@/components/ui/button";
 
 function Header() {
     const { theme } = useTheme();
+    const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [isFeedDropdownOpen, setIsFeedDropdownOpen] = useState(false);
@@ -136,6 +137,7 @@ function Header() {
 
     const toolOptions = [
         { href: "/rankings", label: "Player Prop Rankings" },
+        { href: "/tools/rookie-rankings", label: "Rookie Rankings" },
     ];
 
     // const toolNavLink = [
@@ -353,34 +355,33 @@ function Header() {
                             )}
                         </div>
 
-
                         {/* Tools Dropdown */}
                         {/* <div className="relative left-2" ref={toolsDropdownRef}>
-                                <button
-                                    onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-                                    className="relative py-2 text-md text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-normal dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white"
-                                >
-                                    <span>Tools</span>
-                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
-                                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
-                                </button>
-                                {isToolsDropdownOpen && (
-                                    <div className="absolute top-full left-0 w-56 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[var(--dark-theme-color)] py-2 z-50">
-                                        <div className="py-1">
-                                            {toolOptions.map((option) => (
-                                                <Link
-                                                    key={option.href}
-                                                    href={option.href}
-                                                    className="flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black dark:text-white font-normal "
-                                                    onClick={() => setIsToolsDropdownOpen(false)}
-                                                >
-                                                    {option.label}
-                                                </Link>
-                                            ))}
-                                        </div>
+                            <button
+                                onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
+                                className={`relative py-2 text-md text-(--color-gray) flex items-center space-x-1 border-1 border-[#E3E4E5] rounded-4xl px-6 focus:text-(--color-orange) hover:text-(--color-orange) font-normal dark:bg-[var(--dark-theme-color)] dark:border-none dark:text-white hover:cursor-pointer font-oswald ${pathname?.startsWith('/tools') || pathname === '/rankings' ? 'text-(--color-orange)' : ''}`}
+                            >
+                                <span>Tools</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
+                            </button>
+                            {isToolsDropdownOpen && (
+                                <div className="absolute top-full left-0 w-56 rounded-sm shadow-lg border border-white/20 bg-white dark:bg-[var(--dark-theme-color)] py-2 z-50">
+                                    <div className="py-1">
+                                        {toolOptions.map((option) => (
+                                            <Link
+                                                key={option.href}
+                                                href={option.href}
+                                                className={`flex items-center px-4 py-2 text-md transition-colors hover:text-(--color-orange) text-black dark:text-white font-normal ${pathname === option.href ? 'text-(--color-orange) font-semibold' : ''}`}
+                                                onClick={() => setIsToolsDropdownOpen(false)}
+                                            >
+                                                {option.label}
+                                            </Link>
+                                        ))}
                                     </div>
-                                )}
-                            </div> */}
+                                </div>
+                            )}
+                        </div> */}
                         {/* {toolNavLink.map((link) => (
                             <Link
                                 key={link.href}
