@@ -8,7 +8,7 @@ import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import PlayerActionsMenu from './PlayerActionsMenu'
 import NoteModal from './NoteModal'
 import TierSelectionModal from './TierSelectionModal'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, GripVertical } from 'lucide-react'
 
 interface SortablePlayerCardProps {
   player: RookiePlayer
@@ -40,6 +40,7 @@ export default function SortablePlayerCard({
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -57,7 +58,6 @@ export default function SortablePlayerCard({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: isDragging ? 'none' : transition,
-    touchAction: 'none',
   }
 
   return (
@@ -66,77 +66,160 @@ export default function SortablePlayerCard({
         ref={setNodeRef}
         style={style}
         {...attributes}
-        {...listeners}
-        className={`bg-white dark:bg-[#262829] rounded-xl border-2 border-gray-200 dark:border-gray-700 cursor-grab active:cursor-grabbing transition-opacity ${
+        className={`bg-white dark:bg-[#262829] rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-opacity ${
           isDragging ? 'opacity-50 z-50 scale-105' : isSaving ? 'opacity-40' : ''
         }`}
       >
-        <div className="min-h-12 px-2 sm:px-4 py-2 flex items-center gap-3 sm:gap-3">
-          {/* Rank and Drag Handle */}
-          <div className="text-lg sm:text-xl font-bold text-[#E64A30] flex-shrink-0 w-6 sm:w-auto ml-1.5 lg:ml-0">
-            {player.rank}
-          </div>
+        <div className="min-h-12 px-2 sm:px-4 py-2 flex items-center gap-2 sm:gap-3">
+          {/* Mobile Drag Handle - Only visible on mobile */}
+          <button
+            ref={setActivatorNodeRef}
+            {...listeners}
+            className="md:hidden text-gray-400 hover:text-[#E64A30] transition-colors cursor-grab active:cursor-grabbing flex-shrink-0 touch-none"
+            aria-label="Drag to reorder"
+          >
+            <GripVertical size={20} />
+          </button>
 
-          {/* Player Image */}
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0">
-            {player.headshotPic && (
-              <img
-                src={player.headshotPic}
-                alt={player.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none'
-                }}
-              />
-            )}
-          </div>
+          {/* Desktop Drag Area - Entire card draggable on desktop */}
+          <div 
+            {...(typeof window !== 'undefined' && window.innerWidth >= 768 ? listeners : {})}
+            className="hidden md:flex items-center gap-3 flex-1 cursor-grab active:cursor-grabbing"
+          >
+            {/* Rank */}
+            <div className="text-xl font-bold text-[#E64A30] flex-shrink-0">
+              {player.rank}
+            </div>
 
-          {/* Player Info */}
-          <div className="flex items-center gap-2 sm:gap-4 md:gap-8 flex-1 min-w-0">
-            <button
-              className="font-semibold text-sm sm:text-base md:text-lg text-[#1D212D] dark:text-white hover:text-[#E64A30] transition-colors cursor-pointer truncate"
-              onClick={(e) => {
-                e.stopPropagation()
-                router.push(`/players/${player.id}`)
-              }}
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              {player.name}
-            </button>
-            <span className="font-semibold text-sm sm:text-base md:text-lg text-gray-600 dark:text-white flex-shrink-0">{player.position}</span>
-            {player.team ? (
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                {teamLogoUrl && (
-                  <Image
-                    src={teamLogoUrl}
-                    alt={player.team}
-                    width={32}
-                    height={32}
-                    className="object-contain w-6 h-6 sm:w-8 sm:h-8"
-                    loader={({ src }) => src}
-                  />
-                )}
-              </div>
-            ) : (
-              <span className="text-xs sm:text-sm text-gray-400 flex-shrink-0">N/A</span>
-            )}
-          </div>
+            {/* Player Image */}
+            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0">
+              {player.headshotPic && (
+                <img
+                  src={player.headshotPic}
+                  alt={player.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none'
+                  }}
+                />
+              )}
+            </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {hasExpandableContent && (
+            {/* Player Info */}
+            <div className="flex items-center gap-4 md:gap-8 flex-1 min-w-0">
               <button
-                className="text-gray-600 dark:text-gray-400 hover:text-[#E64A30] transition-colors p-1 cursor-pointer"
+                className="font-semibold text-base md:text-lg text-[#1D212D] dark:text-white hover:text-[#E64A30] transition-colors cursor-pointer truncate"
                 onClick={(e) => {
                   e.stopPropagation()
-                  setShowDetails(!showDetails)
+                  router.push(`/players/${player.id}`)
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
               >
-                {showDetails ? <ChevronUp size={18} className="sm:w-5 sm:h-5" /> : <ChevronDown size={18} className="sm:w-5 sm:h-5" />}
+                {player.name}
               </button>
-            )}
-            <div onPointerDown={(e) => e.stopPropagation()}>
+              <span className="font-semibold text-base md:text-lg text-gray-600 dark:text-white flex-shrink-0">{player.position}</span>
+              {player.team ? (
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  {teamLogoUrl && (
+                    <Image
+                      src={teamLogoUrl}
+                      alt={player.team}
+                      width={32}
+                      height={32}
+                      className="object-contain w-8 h-8"
+                      loader={({ src }) => src}
+                    />
+                  )}
+                </div>
+              ) : (
+                <span className="text-sm text-gray-400 flex-shrink-0">N/A</span>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {hasExpandableContent && (
+                <button
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#E64A30] transition-colors p-1 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowDetails(!showDetails)
+                  }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  {showDetails ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+              )}
+              <div onPointerDown={(e) => e.stopPropagation()}>
+                <PlayerActionsMenu
+                  onAddNote={() => setIsNoteModalOpen(true)}
+                  onAddTier={() => setIsTierModalOpen(true)}
+                  hasNote={!!note}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Content - Separate from drag area */}
+          <div className="md:hidden flex items-center gap-2 flex-1 min-w-0">
+            {/* Rank */}
+            <div className="text-lg font-bold text-[#E64A30] flex-shrink-0 w-6">
+              {player.rank}
+            </div>
+
+            {/* Player Image */}
+            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0">
+              {player.headshotPic && (
+                <img
+                  src={player.headshotPic}
+                  alt={player.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none'
+                  }}
+                />
+              )}
+            </div>
+
+            {/* Player Info */}
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <button
+                className="font-semibold text-sm text-[#1D212D] dark:text-white hover:text-[#E64A30] transition-colors cursor-pointer truncate"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  router.push(`/players/${player.id}`)
+                }}
+              >
+                {player.name}
+              </button>
+              <span className="font-semibold text-sm text-gray-600 dark:text-white flex-shrink-0">{player.position}</span>
+              {player.team && teamLogoUrl && (
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <Image
+                    src={teamLogoUrl}
+                    alt={player.team}
+                    width={24}
+                    height={24}
+                    className="object-contain w-6 h-6"
+                    loader={({ src }) => src}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {hasExpandableContent && (
+                <button
+                  className="text-gray-600 dark:text-gray-400 hover:text-[#E64A30] transition-colors p-1 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowDetails(!showDetails)
+                  }}
+                >
+                  {showDetails ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                </button>
+              )}
               <PlayerActionsMenu
                 onAddNote={() => setIsNoteModalOpen(true)}
                 onAddTier={() => setIsTierModalOpen(true)}
