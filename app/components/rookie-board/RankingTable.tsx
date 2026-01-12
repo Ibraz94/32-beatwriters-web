@@ -11,6 +11,7 @@ interface RankingTableProps {
     activeItem: RookiePlayer | TierHeadingType | null
     activeType: 'player' | 'tier' | null
   }
+  savingPlayerIds?: Set<number>
   onSaveNote: (playerId: number, content: string) => Promise<void>
   onDeleteNote?: (playerId: number) => Promise<void>
   onCreateTier: (name: string, position: number) => Promise<void>
@@ -23,6 +24,7 @@ export default function RankingTable({
   players, 
   tiers, 
   dragState,
+  savingPlayerIds = new Set(),
   onSaveNote,
   onDeleteNote,
   onCreateTier,
@@ -63,6 +65,7 @@ export default function RankingTable({
           player={player}
           note={player.note}  // Note is now embedded in player object
           tiers={tiers}
+          isSaving={savingPlayerIds.has(player.id)}
           onSaveNote={onSaveNote}
           onDeleteNote={onDeleteNote}
           onCreateTier={onCreateTier}

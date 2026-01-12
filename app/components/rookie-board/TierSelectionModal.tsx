@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { X, Plus } from 'lucide-react'
 import { RookiePlayer, TierHeading } from '@/lib/services/rookieBoardApi'
 

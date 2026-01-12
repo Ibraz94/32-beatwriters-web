@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { RookiePlayer } from '@/lib/services/rookieBoardApi'
 
@@ -41,16 +41,21 @@ export default function NoteModal({
   }, [isOpen])
 
   const handleSave = async () => {
+    if (!noteContent.trim()) {
+      setError('Note cannot be empty')
+      return
+    }
+
     setIsSaving(true)
     setError(null)
 
     try {
       await onSave(player.id, noteContent)
+      // Success - close modal
       onClose()
     } catch (err) {
       console.error('Failed to save note:', err)
-      setError('Failed to save note. Please try again.')
-    } finally {
+      // Error already shown by parent via toast, just reset loading state
       setIsSaving(false)
     }
   }
@@ -63,11 +68,11 @@ export default function NoteModal({
 
     try {
       await onDelete(player.id)
+      // Success - close modal
       onClose()
     } catch (err) {
       console.error('Failed to delete note:', err)
-      setError('Failed to delete note. Please try again.')
-    } finally {
+      // Error already shown by parent via toast, just reset loading state
       setIsDeleting(false)
     }
   }

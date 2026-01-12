@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { GripVertical } from 'lucide-react'
 import { RookiePlayer, TierHeading } from '@/lib/services/rookieBoardApi'
 import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import PlayerActionsMenu from './PlayerActionsMenu'
 import NoteModal from './NoteModal'
 import TierSelectionModal from './TierSelectionModal'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 interface SortablePlayerCardProps {
   player: RookiePlayer
   note?: string
   tiers: TierHeading[]
+  isSaving?: boolean
   onSaveNote: (playerId: number, content: string) => Promise<void>
   onDeleteNote?: (playerId: number) => Promise<void>
   onCreateTier: (name: string, position: number) => Promise<void>
@@ -24,6 +25,7 @@ export default function SortablePlayerCard({
   player,
   note,
   tiers,
+  isSaving = false,
   onSaveNote,
   onDeleteNote,
   onCreateTier,
@@ -49,9 +51,13 @@ export default function SortablePlayerCard({
   )
   const teamLogoUrl = playerTeam ? getTeamLogoUrl(playerTeam.logo) : undefined
 
+  // Check if there's any expandable content
+  const hasExpandableContent = !!(player.analysisSection || player.fantasyOutlook || note)
+
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: isDragging ? 'none' : transition,
+    touchAction: 'none',
   }
 
   return (
@@ -61,81 +67,64 @@ export default function SortablePlayerCard({
         style={style}
         {...attributes}
         {...listeners}
-        className={`bg-white dark:bg-[#262829] rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50 z-50' : ''
-          }`}
+        className={`bg-white dark:bg-[#262829] rounded-xl border-2 border-gray-200 dark:border-gray-700 cursor-grab active:cursor-grabbing transition-opacity ${
+          isDragging ? 'opacity-50 z-50 scale-105' : isSaving ? 'opacity-40' : ''
+        }`}
       >
-        <div className="p-4">
-          <div className="flex items-start gap-3">
-            {/* Rank and Drag Handle */}
-            <div className="flex flex-col items-center gap-1 flex-shrink-0">
-              <div className="text-lg font-bold text-[#E64A30] mt-4">
-                {player.rank}
-              </div>
-            </div>
+        <div className="min-h-12 px-2 sm:px-4 py-2 flex items-center gap-3 sm:gap-3">
+          {/* Rank and Drag Handle */}
+          <div className="text-lg sm:text-xl font-bold text-[#E64A30] flex-shrink-0 w-6 sm:w-auto ml-1.5 lg:ml-0">
+            {player.rank}
+          </div>
 
-            {/* Player Image */}
-            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0">
-              {player.headshotPic && (
-                <img
-                  src={player.headshotPic}
-                  alt={player.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-              )}
-            </div>
+          {/* Player Image */}
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0">
+            {player.headshotPic && (
+              <img
+                src={player.headshotPic}
+                alt={player.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none'
+                }}
+              />
+            )}
+          </div>
 
-            {/* Player Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <button
-                  className="font-semibold text-lg text-[#1D212D] dark:text-white hover:text-[#E64A30] transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    router.push(`/players/${player.playerId}`)
-                  }}
-                  onPointerDown={(e) => e.stopPropagation()}
-                >
-                  {player.name}
-                </button>
-                <span className="text-gray-400">•</span>
-                <span className="font-medium text-sm text-gray-600 dark:text-gray-400">{player.position}</span>
-                {player.team ? (
-                  <>
-                    <span className="text-gray-400">•</span>
-                    <div className="flex items-center gap-1.5">
-                      {teamLogoUrl && (
-                        <Image
-                          src={teamLogoUrl}
-                          alt={player.team}
-                          width={16}
-                          height={16}
-                          className="object-contain"
-                          loader={({ src }) => src}
-                        />
-                      )}
-                      <span className="text-sm text-gray-600 dark:text-gray-400">{player.team}</span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-gray-400">•</span>
-                    <span className="text-sm text-gray-400">N/A</span>
-                  </>
-                )}
-                {player.adp && (
-                  <>
-                    <span className="text-gray-400">•</span>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">ADP: {player.adp.toFixed(1)}</span>
-                  </>
+          {/* Player Info */}
+          <div className="flex items-center gap-2 sm:gap-4 md:gap-8 flex-1 min-w-0">
+            <button
+              className="font-semibold text-sm sm:text-base md:text-lg text-[#1D212D] dark:text-white hover:text-[#E64A30] transition-colors cursor-pointer truncate"
+              onClick={(e) => {
+                e.stopPropagation()
+                router.push(`/players/${player.id}`)
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              {player.name}
+            </button>
+            <span className="font-semibold text-sm sm:text-base md:text-lg text-gray-600 dark:text-white flex-shrink-0">{player.position}</span>
+            {player.team ? (
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                {teamLogoUrl && (
+                  <Image
+                    src={teamLogoUrl}
+                    alt={player.team}
+                    width={32}
+                    height={32}
+                    className="object-contain w-6 h-6 sm:w-8 sm:h-8"
+                    loader={({ src }) => src}
+                  />
                 )}
               </div>
-            </div>
+            ) : (
+              <span className="text-xs sm:text-sm text-gray-400 flex-shrink-0">N/A</span>
+            )}
+          </div>
 
-            {/* Actions */}
-            <div className="flex items-start gap-2 flex-shrink-0">
+          {/* Actions */}
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            {hasExpandableContent && (
               <button
                 className="text-gray-600 dark:text-gray-400 hover:text-[#E64A30] transition-colors p-1 cursor-pointer"
                 onClick={(e) => {
@@ -144,55 +133,56 @@ export default function SortablePlayerCard({
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
               >
-                {showDetails ? '▲' : '▼'}
+                {showDetails ? <ChevronUp size={18} className="sm:w-5 sm:h-5" /> : <ChevronDown size={18} className="sm:w-5 sm:h-5" />}
               </button>
-              <div onPointerDown={(e) => e.stopPropagation()}>
-                <PlayerActionsMenu
-                  onAddNote={() => setIsNoteModalOpen(true)}
-                  onAddTier={() => setIsTierModalOpen(true)}
-                />
-              </div>
+            )}
+            <div onPointerDown={(e) => e.stopPropagation()}>
+              <PlayerActionsMenu
+                onAddNote={() => setIsNoteModalOpen(true)}
+                onAddTier={() => setIsTierModalOpen(true)}
+                hasNote={!!note}
+              />
             </div>
           </div>
-
-          {/* Expandable Details */}
-          {showDetails && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
-              {player.analysisSection && (
-                <div>
-                  <h4 className="font-semibold text-[#1D212D] dark:text-white mb-1 text-sm">
-                    Analysis
-                  </h4>
-                  <p className="text-xs text-gray-700 dark:text-gray-300">
-                    {player.analysisSection}
-                  </p>
-                </div>
-              )}
-
-              {player.fantasyOutlook && (
-                <div className='p-3 bg-gray-50 dark:bg-gray-900/20 rounded-lg border border-gray-200 dark:border-yellow-800'>
-                  <h4 className="font-semibold text-[#1D212D] dark:text-white mb-1 text-sm">
-                    Fantasy Outlook
-                  </h4>
-                  <div
-                    className="text-xs text-gray-700 dark:text-gray-300"
-                    dangerouslySetInnerHTML={{ __html: player.fantasyOutlook }}
-                  />
-                </div>
-              )}
-              {note && (
-                <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                  <h4 className="font-semibold text-[#1D212D] dark:text-white mb-1 flex items-center gap-1 text-sm">
-                    Your Note
-                  </h4>
-                  <p className="text-xs text-gray-700 dark:text-gray-300">
-                    {note}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
         </div>
+
+        {/* Expandable Details */}
+        {showDetails && (
+          <div className="px-2 sm:px-4 pb-3 sm:pb-4 pt-2 border-t border-gray-200 dark:border-gray-700 space-y-2 sm:space-y-3">
+            {player.analysisSection && (
+              <div>
+                <h4 className="font-semibold text-[#1D212D] dark:text-white mb-1 text-xs sm:text-sm">
+                  Analysis
+                </h4>
+                <p className="text-xs text-gray-700 dark:text-gray-300">
+                  {player.analysisSection}
+                </p>
+              </div>
+            )}
+
+            {player.fantasyOutlook && (
+              <div className='p-2 sm:p-3 bg-gray-50 dark:bg-gray-900/20 rounded-lg border border-gray-200 dark:border-yellow-800'>
+                <h4 className="font-semibold text-[#1D212D] dark:text-white mb-1 text-xs sm:text-sm">
+                  Fantasy Outlook
+                </h4>
+                <div
+                  className="text-xs text-gray-700 dark:text-gray-300"
+                  dangerouslySetInnerHTML={{ __html: player.fantasyOutlook }}
+                />
+              </div>
+            )}
+            {note && (
+              <div className="p-2 sm:p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <h4 className="font-semibold text-[#1D212D] dark:text-white mb-1 flex items-center gap-1 text-xs sm:text-sm">
+                  Your Note
+                </h4>
+                <p className="text-xs text-gray-700 dark:text-gray-300">
+                  {note}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <NoteModal

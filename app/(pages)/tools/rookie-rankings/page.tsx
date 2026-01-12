@@ -1,7 +1,8 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { useToast } from '@/app/components/Toast'
@@ -29,12 +30,8 @@ import {
   selectError,
   setSaving,
 } from '@/lib/features/rookieBoardSlice'
-import {
-  setTiers,
-} from '@/lib/features/tierManagementSlice'
 import { Loader2 } from 'lucide-react'
 import RankingTable from '@/app/components/rookie-board/RankingTable'
-import { RankingTableSkeleton } from '@/app/components/rookie-board/SkeletonLoader'
 import { 
   DndContext, 
   closestCenter, 
@@ -53,16 +50,13 @@ import {
 
 function RookieRankingBoardContent() {
   const router = useRouter()
+  const pathname = usePathname()
   const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const dispatch = useAppDispatch()
   const { showToast } = useToast()
 
-  // Authentication guard - redirect to login if not authenticated
-  useEffect(() => {
-    if (!isAuthLoading && !isAuthenticated) {
-      router.push('/login')
-    }
-  }, [isAuthenticated, isAuthLoading, router])
+  // Track which player IDs are currently saving
+  const [savingPlayerIds, setSavingPlayerIds] = useState<Set<number>>(new Set())
   
   // Redux state selectors
   const rankings = useAppSelector(selectRankings)
@@ -92,6 +86,15 @@ function RookieRankingBoardContent() {
 
   // Helper function to transform and sort API response
   const transformAndSortResponse = useCallback((data: any) => {
+    // Safety check for data structure
+    if (!data || !data.rankings || !Array.isArray(data.rankings)) {
+      console.error('Invalid data structure:', data)
+      return {
+        rankings: [],
+        tiers: data?.tiers || []
+      }
+    }
+    
     const notesMap = (data as any).notes || {}
     const rankingsWithNotes = data.rankings.slice(0, 36).map((player: RookiePlayer) => ({
       ...player,
@@ -103,7 +106,7 @@ function RookieRankingBoardContent() {
     
     return {
       rankings: sortedRankings,
-      tiers: data.tiers
+      tiers: data.tiers || []
     }
   }, [])
 
@@ -112,7 +115,6 @@ function RookieRankingBoardContent() {
     if (rankingsData?.data) {
       const transformed = transformAndSortResponse(rankingsData.data)
       dispatch(setRankingsData(transformed))
-      dispatch(setTiers(transformed.tiers))
     }
   }, [rankingsData, dispatch, transformAndSortResponse])
 
@@ -133,6 +135,9 @@ function RookieRankingBoardContent() {
     async (playerId: number, newRank: number) => {
       if (!user?.id) return
 
+      // Store the IDs of both affected players before any operations
+      let targetPlayerId: number | null = null
+      
       // Optimistically swap players locally for instant feedback
       const currentRankings = [...rankings]
       const draggedPlayerIndex = currentRankings.findIndex(p => p.id === playerId)
@@ -142,6 +147,9 @@ function RookieRankingBoardContent() {
         // Swap the two players
         const draggedPlayer = { ...currentRankings[draggedPlayerIndex] }
         const targetPlayer = { ...currentRankings[targetPlayerIndex] }
+        
+        // Store target player ID for cleanup
+        targetPlayerId = targetPlayer.id
         
         const tempRank = draggedPlayer.rank
         draggedPlayer.rank = targetPlayer.rank
@@ -153,11 +161,12 @@ function RookieRankingBoardContent() {
         // Sort by rank and update state immediately
         const sortedRankings = currentRankings.sort((a, b) => a.rank - b.rank)
         dispatch(setRankingsData({ rankings: sortedRankings, tiers }))
+        
+        // Mark both players as saving
+        setSavingPlayerIds(prev => new Set(prev).add(draggedPlayer.id).add(targetPlayer.id))
       }
 
       try {
-        dispatch(setSaving(true))
-        
         const result = await reorderUserRanking({
           userId: user.id,
           playerId,
@@ -168,14 +177,11 @@ function RookieRankingBoardContent() {
         if (result?.data) {
           const transformed = transformAndSortResponse(result.data)
           dispatch(setRankingsData(transformed))
-          dispatch(setTiers(transformed.tiers))
         }
         
-        dispatch(setSaving(false))
         showToast('Ranking saved successfully', 'success', 2000)
       } catch (err: any) {
         console.error('Failed to save ranking:', err)
-        dispatch(setSaving(false))
         
         // Revert to original state on error
         const transformed = transformAndSortResponse(rankingsData?.data || { rankings: [], tiers: [] })
@@ -191,6 +197,16 @@ function RookieRankingBoardContent() {
         } else {
           showToast('Failed to save ranking. Please try again.', 'error', 3000)
         }
+      } finally {
+        // Clear saving state for both players
+        setSavingPlayerIds(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(playerId)
+          if (targetPlayerId) {
+            newSet.delete(targetPlayerId)
+          }
+          return newSet
+        })
       }
     },
     [user?.id, dispatch, reorderUserRanking, transformAndSortResponse, showToast, rankings, tiers, rankingsData]
@@ -214,7 +230,6 @@ function RookieRankingBoardContent() {
         if (result?.data) {
           const transformed = transformAndSortResponse(result.data)
           dispatch(setRankingsData(transformed))
-          dispatch(setTiers(transformed.tiers))
         }
         
         dispatch(setSaving(false))
@@ -250,20 +265,26 @@ function RookieRankingBoardContent() {
           content,
         }).unwrap()
         
+        showToast('Note saved successfully', 'success', 3000)
+        
         // Update local state with the full response including updated tiers
-        if (result?.data) {
-          const transformed = transformAndSortResponse(result.data)
-          dispatch(setRankingsData(transformed))
-          dispatch(setTiers(transformed.tiers))
-        } else {
-          // Fallback to just updating the note if no full response
+        try {
+          if (result?.data && result.data.rankings && Array.isArray(result.data.rankings) && result.data.rankings.length > 0) {
+            // Only update if we have valid rankings data
+            const transformed = transformAndSortResponse(result.data)
+            dispatch(setRankingsData(transformed))
+          } else {
+            // Fallback to just updating the note locally if no full response
+            dispatch(updateNote({ playerId, content }))
+          }
+        } catch (updateErr) {
+          console.error('Failed to update local state:', updateErr)
+          // Fallback to just updating the note locally
           dispatch(updateNote({ playerId, content }))
         }
-        
-        showToast('Note saved successfully', 'success', 3000)
       } catch (err) {
         console.error('Failed to save note:', err)
-        throw err // Re-throw to let the modal handle the error
+        showToast('Failed to save note. Please try again.', 'error', 3000)
       }
     },
     [user?.id, saveNote, dispatch, showToast, transformAndSortResponse]
@@ -280,20 +301,26 @@ function RookieRankingBoardContent() {
           playerId,
         }).unwrap()
         
+        showToast('Note deleted successfully', 'success', 3000)
+        
         // Update local state with the full response including updated tiers
-        if (result?.data) {
-          const transformed = transformAndSortResponse(result.data)
-          dispatch(setRankingsData(transformed))
-          dispatch(setTiers(transformed.tiers))
-        } else {
-          // Fallback to just removing the note if no full response
+        try {
+          if (result?.data && result.data.rankings && Array.isArray(result.data.rankings) && result.data.rankings.length > 0) {
+            // Only update if we have valid rankings data
+            const transformed = transformAndSortResponse(result.data)
+            dispatch(setRankingsData(transformed))
+          } else {
+            // Fallback to just removing the note locally if no full response
+            dispatch(updateNote({ playerId, content: '' }))
+          }
+        } catch (updateErr) {
+          console.error('Failed to update local state:', updateErr)
+          // Fallback to just removing the note locally
           dispatch(updateNote({ playerId, content: '' }))
         }
-        
-        showToast('Note deleted successfully', 'success', 3000)
       } catch (err) {
         console.error('Failed to delete note:', err)
-        throw err // Re-throw to let the modal handle the error
+        showToast('Failed to delete note. Please try again.', 'error', 3000)
       }
     },
     [user?.id, deleteNote, dispatch, showToast, transformAndSortResponse]
@@ -313,13 +340,24 @@ function RookieRankingBoardContent() {
           position,
         }).unwrap()
         
-        // Update with full response from API
-        if (result?.data) {
-          const transformed = transformAndSortResponse(result.data)
-          dispatch(setRankingsData(transformed))
-          dispatch(setTiers(transformed.tiers))
+        console.log('Create tier result:', result)
+        
+        showToast('Tier created successfully', 'success', 2000)
+        
+        // Optimistically add the new tier to local state
+        // The API returns {success, message, data: {tier object}}
+        const tierData = (result as any)?.data || result
+        
+        if (tierData && typeof tierData === 'object' && 'id' in tierData && 'name' in tierData && 'position' in tierData) {
+          const newTier = tierData as TierHeading
           
-          showToast('Tier created successfully', 'success', 2000)
+          dispatch(setRankingsData({
+            rankings: rankings,
+            tiers: [...tiers, newTier].sort((a, b) => a.position - b.position)
+          }))
+        } else {
+          console.error('API did not return tier with ID:', result)
+          showToast('Tier created but may not appear correctly. Please refresh.', 'warning', 3000)
         }
         
         dispatch(setSaving(false))
@@ -327,13 +365,12 @@ function RookieRankingBoardContent() {
         console.error('Failed to create tier:', err)
         dispatch(setSaving(false))
         showToast('Failed to create tier. Please try again.', 'error', 3000)
-        throw err // Re-throw to let the modal handle the error
       }
     },
     [user?.id, createTier, dispatch, showToast, transformAndSortResponse]
   )
 
-  // Tier assignment handler
+  // Tier assignment handler - creates a copy of the tier at the player's position
   const handleAssignToTier = useCallback(
     async (playerId: number, tierId: string) => {
       if (!user?.id) return
@@ -341,28 +378,56 @@ function RookieRankingBoardContent() {
       try {
         dispatch(setSaving(true))
         
-        const result = await updateTier({
+        // Find the player and tier
+        const player = rankings.find(p => p.id === playerId)
+        const tier = tiers.find(t => t.id === tierId)
+        
+        if (!player) {
+          throw new Error('Player not found')
+        }
+        if (!tier) {
+          throw new Error('Tier not found')
+        }
+        
+        // Create a new tier with the same name at the player's position
+        // Use player.rank - 0.5 to position the tier between the previous player and this one
+        const newTierPosition = player.rank > 1 ? player.rank - 0.5 : player.rank
+        
+        console.log('Creating tier copy', tier.name, 'at position', newTierPosition, 'for player', playerId, 'at rank', player.rank)
+        
+        const result = await createTier({
           userId: user.id,
-          tierId,
-          position: playerId,
+          name: tier.name,
+          position: newTierPosition,
         }).unwrap()
         
-        // Update with full response from API
-        if (result?.data) {
-          const transformed = transformAndSortResponse(result.data)
-          dispatch(setRankingsData(transformed))
-          dispatch(setTiers(transformed.tiers))
+        showToast('Tier added successfully', 'success', 2000)
+        
+        // Optimistically add the new tier to local state
+        // The API returns {success, message, data: {tier object}}
+        const tierData = (result as any)?.data || result
+        
+        if (tierData && typeof tierData === 'object' && 'id' in tierData && 'name' in tierData && 'position' in tierData) {
+          const newTier = tierData as TierHeading
+          
+          dispatch(setRankingsData({
+            rankings: rankings,
+            tiers: [...tiers, newTier].sort((a, b) => a.position - b.position)
+          }))
+        } else {
+          console.error('API did not return tier with ID:', result)
+          showToast('Tier added but may not appear correctly. Please refresh.', 'warning', 3000)
         }
         
         dispatch(setSaving(false))
-        showToast('Player assigned to tier successfully', 'success', 2000)
-      } catch (err) {
-        console.error('Failed to assign player to tier:', err)
+      } catch (err: any) {
+        console.error('Failed to add tier to player:', err)
+        console.error('Error details:', JSON.stringify(err, null, 2))
         dispatch(setSaving(false))
-        showToast('Failed to assign player to tier. Please try again.', 'error', 3000)
+        showToast('Failed to add tier. Please try again.', 'error', 3000)
       }
     },
-    [user?.id, updateTier, dispatch, transformAndSortResponse, showToast]
+    [user?.id, createTier, dispatch, transformAndSortResponse, showToast, tiers, rankings]
   )
 
   // Tier rename handler
@@ -373,18 +438,21 @@ function RookieRankingBoardContent() {
       try {
         dispatch(setSaving(true))
         
-        const result = await updateTier({
+        await updateTier({
           userId: user.id,
           tierId,
           name: newName,
         }).unwrap()
         
-        // Update with full response from API
-        if (result?.data) {
-          const transformed = transformAndSortResponse(result.data)
-          dispatch(setRankingsData(transformed))
-          dispatch(setTiers(transformed.tiers))
-        }
+        // Optimistically update the tier name in local state
+        const updatedTiers = tiers.map(t => 
+          t.id === tierId ? { ...t, name: newName } : t
+        )
+        
+        dispatch(setRankingsData({
+          rankings: rankings,
+          tiers: updatedTiers
+        }))
         
         dispatch(setSaving(false))
         showToast('Tier renamed successfully', 'success', 2000)
@@ -392,10 +460,10 @@ function RookieRankingBoardContent() {
         console.error('Failed to rename tier:', err)
         dispatch(setSaving(false))
         showToast('Failed to rename tier. Please try again.', 'error', 3000)
-        throw err // Re-throw to let the component handle the error
+        throw err
       }
     },
-    [user?.id, updateTier, dispatch, showToast, transformAndSortResponse]
+    [user?.id, updateTier, dispatch, showToast, tiers, rankings]
   )
 
   // Tier delete handler
@@ -404,30 +472,29 @@ function RookieRankingBoardContent() {
       if (!user?.id) return
 
       try {
-        dispatch(setSaving(true))
-        
-        const result = await deleteTier({
+        await deleteTier({
           userId: user.id,
           tierId,
         }).unwrap()
         
-        // Update with full response from API
-        if (result?.data) {
-          const transformed = transformAndSortResponse(result.data)
-          dispatch(setRankingsData(transformed))
-          dispatch(setTiers(transformed.tiers))
-        }
+        showToast('Tier deleted successfully', 'success', 2000)
+        
+        // Optimistically remove the tier from local state
+        const updatedTiers = tiers.filter(t => t.id !== tierId)
+        
+        dispatch(setRankingsData({
+          rankings: rankings,
+          tiers: updatedTiers
+        }))
         
         dispatch(setSaving(false))
-        showToast('Tier deleted successfully', 'success', 2000)
       } catch (err) {
         console.error('Failed to delete tier:', err)
         dispatch(setSaving(false))
         showToast('Failed to delete tier. Please try again.', 'error', 3000)
-        throw err // Re-throw to let the component handle the error
       }
     },
-    [user?.id, deleteTier, dispatch, showToast, transformAndSortResponse]
+    [user?.id, deleteTier, dispatch, showToast, tiers, rankings]
   )
 
   // Initialize drag-and-drop with dnd-kit
@@ -447,7 +514,7 @@ function RookieRankingBoardContent() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 0,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -455,11 +522,8 @@ function RookieRankingBoardContent() {
     })
   )
 
-  // Create sortable IDs for all items (players and tiers)
-  const allIds = [
-    ...sortedRankings.map((p) => `player-${p.id}`),
-    ...tiers.map((t) => `tier-${t.id}`),
-  ]
+  // Create sortable IDs for players only (tiers are not draggable)
+  const allIds = sortedRankings.map((p) => `player-${p.id}`)
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event
@@ -473,16 +537,6 @@ function RookieRankingBoardContent() {
           activeId,
           activeItem: player,
           activeType: 'player',
-        })
-      }
-    } else if (activeId.startsWith('tier-')) {
-      const tierId = activeId.replace('tier-', '')
-      const tier = tiers.find((t) => t.id === tierId)
-      if (tier) {
-        setDragState({
-          activeId,
-          activeItem: tier,
-          activeType: 'tier',
         })
       }
     }
@@ -504,7 +558,7 @@ function RookieRankingBoardContent() {
     const activeId = active.id as string
     const overId = over.id as string
 
-    // Handle player reordering
+    // Handle player reordering only
     if (activeId.startsWith('player-') && overId.startsWith('player-')) {
       const activePlayerId = parseInt(activeId.replace('player-', ''))
       const overPlayerId = parseInt(overId.replace('player-', ''))
@@ -514,19 +568,6 @@ function RookieRankingBoardContent() {
 
       if (activePlayer && overPlayer && activePlayer.rank !== overPlayer.rank) {
         await handlePlayerReorder(activePlayerId, overPlayer.rank)
-      }
-    }
-
-    // Handle tier reordering
-    if (activeId.startsWith('tier-') && overId.startsWith('tier-')) {
-      const activeTierId = activeId.replace('tier-', '')
-      const overTierId = overId.replace('tier-', '')
-
-      const activeTier = tiers.find((t) => t.id === activeTierId)
-      const overTier = tiers.find((t) => t.id === overTierId)
-
-      if (activeTier && overTier && activeTier.position !== overTier.position) {
-        await handleTierMove(activeTierId, overTier.position)
       }
     }
   }
@@ -551,15 +592,42 @@ function RookieRankingBoardContent() {
     )
   }
 
-  // Don't render content if not authenticated (will redirect)
-  if (!isAuthenticated) {
-    return null
+  // Show paywall if not authenticated or has insufficient membership
+  if (!isAuthenticated || (user?.memberships && user.memberships.id !== undefined && user.memberships.id < 2)) {
+    return (
+      <div className="container mx-auto h-screen px-4 py-8 flex flex-col items-center justify-center">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-3xl font-bold mb-4">Premium Access Required</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">
+            {!isAuthenticated
+              ? "Please login to your account to access the Rookie Ranking Board. Don't have a subscription? Please subscribe to access premium content."
+              : "Please upgrade to a premium subscription to access the Rookie Ranking Board."
+            }
+          </p>
+
+          {!isAuthenticated && (
+            <p className="text-gray-600 dark:text-gray-400 mb-8">
+              <Link href={{
+                pathname: '/login',
+                query: { redirect: pathname }
+              }} className="text-[#E64A30] hover:text-[#E64A30]/90 font-semibold">Login</Link>
+            </p>
+          )}
+          <Link
+            href="/subscribe"
+            className="bg-[#E64A30] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#E64A30]/90 transition-colors"
+          >
+            Subscribe
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   // Loading state
   if (isLoadingState || isLoadingQuery) {
     return (
-      <section className="container mx-auto px-4 py-8 max-w-5xl">
+      <section className="container mx-auto px-4 py-8 max-w-lg">
         <div className="text-center mb-8">
           <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">
             Rookie Ranking Board
@@ -569,8 +637,8 @@ function RookieRankingBoardContent() {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-[#262829] rounded-xl shadow-lg overflow-hidden">
-          <RankingTableSkeleton />
+        <div className="bg-white dark:bg-[#262829] rounded-xl shadow-lg overflow-hidden min-h-screen flex items-center justify-center">
+          <Loader2 className="w-12 h-12 animate-spin text-[#E64A30]" />
         </div>
       </section>
     )
@@ -579,7 +647,7 @@ function RookieRankingBoardContent() {
   // Error state
   if (errorState || queryError) {
     return (
-      <section className="container mx-auto max-w-2xl px-4 py-8">
+      <section className="container mx-auto max-w-sm px-4 py-8">
         <div className="text-center">
           <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">
             Rookie Ranking Board
@@ -606,38 +674,15 @@ function RookieRankingBoardContent() {
   return (
     <div>
       {/* Header Section */}
-      <section className="container mx-auto px-3 py-8">
+      <section className="container mx-auto max-w-xl px-2 sm:px-3 py-4 sm:py-8">
         <div className="relative">
-          <div
-            className="hidden md:flex absolute left-[-12px] right-[-12px] h-[300%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
-            style={{
-              transform: "scaleY(-1)",
-              zIndex: -50,
-              top: '-100px'
-            }}
-          ></div>
-          <div className="text-center mb-8">
-            <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">
+          <div className="text-center mb-4 sm:mb-8">
+            <h1 className="text-2xl leading-7 mb-2 sm:text-2xl sm:leading-8 sm:mb-4 md:text-5xl md:leading-14">
               Rookie Ranking Board
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 dark:text-[#C7C8CB]">
+            <p className="text-sm sm:text-base md:text-xl text-gray-600 dark:text-[#C7C8CB] px-2">
               Organize rookies ranking board by dragging and dropping players.
             </p>
-            
-            {/* Saving indicator */}
-            {isSaving && (
-              <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Saving...</span>
-              </div>
-            )}
-            
-            {/* Error message */}
-            {saveError && (
-              <div className="mt-4 text-sm text-red-600 dark:text-red-400">
-                {saveError}
-              </div>
-            )}
           </div>
         </div>
 
@@ -649,11 +694,12 @@ function RookieRankingBoardContent() {
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={allIds} strategy={verticalListSortingStrategy}>
-            <div className="bg-white dark:bg-[#262829] rounded-xl shadow-lg overflow-hidden mx-auto max-w-3xl">
+            <div className="bg-white dark:bg-[#262829] rounded-lg sm:rounded-xl shadow-lg overflow-hidden mx-auto max-w-3xl">
               <RankingTable 
                 players={sortedRankings}
                 tiers={tiers}
                 dragState={dragState}
+                savingPlayerIds={savingPlayerIds}
                 onSaveNote={handleSaveNote}
                 onDeleteNote={handleDeleteNote}
                 onCreateTier={handleCreateTier}
@@ -670,23 +716,6 @@ function RookieRankingBoardContent() {
 }
 
 export default function RookieRankingBoard() {
-  return (
-    <Suspense fallback={
-      <section className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl leading-8 mb-4 md:text-5xl md:leading-14">
-            Rookie Ranking Board
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-[#C7C8CB]">
-            Loading...
-          </p>
-        </div>
-        <div className="flex justify-center items-center min-h-[400px]">
-          <Loader2 className="w-12 h-12 animate-spin text-[#E64A30]" />
-        </div>
-      </section>
-    }>
-      <RookieRankingBoardContent />
-    </Suspense>
-  )
+  return <RookieRankingBoardContent />
 }
+

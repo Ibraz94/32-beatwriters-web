@@ -12,11 +12,13 @@ import {
 interface PlayerActionsMenuProps {
   onAddNote: () => void
   onAddTier: () => void
+  hasNote?: boolean
 }
 
 export default function PlayerActionsMenu({
   onAddNote,
   onAddTier,
+  hasNote = false,
 }: PlayerActionsMenuProps) {
   return (
     <DropdownMenu>
@@ -37,7 +39,7 @@ export default function PlayerActionsMenu({
           className="cursor-pointer"
         >
           <StickyNote className="mr-2 h-4 w-4" />
-          <span>Add Note</span>
+          <span>{hasNote ? 'Edit Note' : 'Add Note'}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={(e) => {

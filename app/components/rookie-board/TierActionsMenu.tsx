@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import { MoreVertical, Edit, Trash2 } from 'lucide-react'
 import {
   DropdownMenu,

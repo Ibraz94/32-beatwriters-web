@@ -86,7 +86,7 @@ export const rookieBoardApi = createApi({
         method: 'PUT',
         body: { playerId, newRank },
       }),
-      invalidatesTags: ['RookieBoard'],
+      // Don't invalidate - we manually update state with response
     }),
 
     // Move tier heading
@@ -99,7 +99,7 @@ export const rookieBoardApi = createApi({
         method: 'PUT',
         body: { newPosition },
       }),
-      invalidatesTags: ['RookieBoard'],
+      // Don't invalidate - we manually update state with response
     }),
 
     // Save or update note
@@ -112,7 +112,7 @@ export const rookieBoardApi = createApi({
         method: 'PUT',
         body: { content },
       }),
-      invalidatesTags: ['RookieBoard'],
+      // Don't invalidate - we manually update state with response
     }),
 
     // Delete note
@@ -124,7 +124,7 @@ export const rookieBoardApi = createApi({
         url: `/user/${userId}/notes/${playerId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['RookieBoard'],
+      // Don't invalidate - we manually update state with response
     }),
 
     // Create tier heading
@@ -137,7 +137,7 @@ export const rookieBoardApi = createApi({
         method: 'POST',
         body: { name, position },
       }),
-      invalidatesTags: ['RookieBoard'],
+      // Don't invalidate - we manually update state with response
     }),
 
     // Update tier heading
@@ -150,7 +150,7 @@ export const rookieBoardApi = createApi({
         method: 'PUT',
         body: { name, position },
       }),
-      invalidatesTags: ['RookieBoard'],
+      // Don't invalidate - we manually update state with response
     }),
 
     // Delete tier heading
@@ -162,7 +162,7 @@ export const rookieBoardApi = createApi({
         url: `/user/${userId}/tiers/${tierId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['RookieBoard'],
+      // Don't invalidate - we manually update state with response
     }),
   }),
 })
