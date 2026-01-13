@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useGetBetsByWeekQuery } from '@/lib/services/bettingApi'
 import BetCard from '@/app/components/betting/BetCard'
 import { Loader2, Filter, Search, Flame, Zap, ExternalLink } from 'lucide-react'
@@ -12,6 +12,7 @@ import Link from 'next/link'
 export default function BettingPage() {
   const pathname = usePathname()
   const { isAuthenticated, isLoading: authLoading, user } = useAuth()
+
   // Function to get current NFL week (weeks start on Wednesday)
   const getCurrentNFLWeek = () => {
     // Get current date in user's timezone
@@ -107,13 +108,22 @@ export default function BettingPage() {
     return 'Week 1'
   }
 
-  const [selectedWeek, setSelectedWeek] = useState(getCurrentNFLWeek())
+  const [selectedWeek, setSelectedWeek] = useState(() => {
+    // Only calculate on client to avoid timezone mismatch
+    if (typeof window === 'undefined') return 'Week 1'
+    return getCurrentNFLWeek()
+  })
   const [showBestBets, setShowBestBets] = useState(false)
   const [showFastDraft, setShowFastDraft] = useState(false)
   const [resultFilter, setResultFilter] = useState('all')
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [playerSearch, setPlayerSearch] = useState('')
   const [displayLimit, setDisplayLimit] = useState(10)
+
+  // Update selected week on client mount to avoid server/client timezone mismatch
+  useEffect(() => {
+    setSelectedWeek(getCurrentNFLWeek())
+  }, [])
 
   const { data, isLoading, error } = useGetBetsByWeekQuery({
     week: selectedWeek,
