@@ -316,9 +316,10 @@ function ProspectsContent() {
             {!error && !loading && normalized.length > 0 && (
                 <div className="space-y-4">
                     {filteredData.map((prospect, index) => (
-                        <div
+                        <Link
+                            href={`/prospects/${prospect.id}`}
                             key={`${prospect.id}-${index}`}
-                            className="flex flex-row items-start gap-3 md:gap-4 border-b pb-4 border-[var(--color-gray)] hover:bg-accent/5 transition-colors rounded-lg p-2"
+                            className="flex flex-row items-start gap-3 md:gap-4 border-b pb-4 border-[var(--color-gray)] hover:bg-accent/5 transition-colors rounded-lg p-2 cursor-pointer"
                         >
                             {/* Rank Number */}
                             <div className="flex-shrink-0 relative">
@@ -426,7 +427,7 @@ function ProspectsContent() {
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             )}
