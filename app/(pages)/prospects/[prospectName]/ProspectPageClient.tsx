@@ -357,7 +357,7 @@ export default function ProspectPageClient({ name }: { name: string }) {
                                         <ReadMore 
                                             id={`analysis-${prospect.id}`}
                                             text={prospect.analysis}
-                                            amountOfWords={400}
+                                            amountOfCharacters={400}
                                         />
                                     </div>
                                 </div>
@@ -377,7 +377,7 @@ export default function ProspectPageClient({ name }: { name: string }) {
                                         <ReadMore 
                                             id={`writeup-${prospect.id}`}
                                             text={prospect.writeUp}
-                                            amountOfWords={400}
+                                            amountOfCharacters={400}
                                         />
                                     </div>
                                 </div>

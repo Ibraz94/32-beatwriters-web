@@ -95,7 +95,7 @@ function ProspectsContent() {
         // Apply search filter
         if (debouncedSearchTerm) {
             const searchLower = debouncedSearchTerm.toLowerCase()
-            filtered = filtered.filter(prospect => 
+            filtered = filtered.filter(prospect =>
                 (prospect.name?.toLowerCase() || '').includes(searchLower) ||
                 (prospect.school?.toLowerCase() || '').includes(searchLower) ||
                 (prospect.position?.toLowerCase() || '').includes(searchLower)
@@ -345,7 +345,7 @@ function ProspectsContent() {
                                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                                     <div className="flex-1 min-w-0">
                                         {/* School Logo & Player Name - Only this section is clickable */}
-                                        <Link 
+                                        <Link
                                             href={`/prospects/${encodeURIComponent(prospect.name.toLowerCase().replace(/\s+/g, '-'))}`}
                                             className="flex items-center gap-2 md:gap-3 mb-1 hover:opacity-80 transition-opacity w-fit"
                                         >
@@ -414,10 +414,10 @@ function ProspectsContent() {
                                     <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
                                         <div className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
-                                            <ReadMore 
+                                            <ReadMore
                                                 id={`analysis-${prospect.id}`}
                                                 text={prospect.analysis}
-                                                amountOfWords={200}
+                                                amountOfCharacters={400}
                                             />
                                         </div>
                                     </div>
@@ -428,10 +428,10 @@ function ProspectsContent() {
                                     <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Fantasy Outlook</h3>
                                         <div className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
-                                            <ReadMore 
+                                            <ReadMore
                                                 id={`writeup-${prospect.id}`}
                                                 text={prospect.writeUp}
-                                                amountOfWords={200}
+                                                amountOfCharacters={400}
                                             />
                                         </div>
                                     </div>
