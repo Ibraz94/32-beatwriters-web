@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { ArrowUp, ArrowDown } from 'lucide-react'
 import { buildApiUrl } from '@/lib/config/api'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { ReadMore } from '@/app/components/ReadMore'
 
 interface ProspectData {
     id: string
@@ -342,10 +343,13 @@ export default function ProspectPageClient({ id }: { id: string }) {
                                     </h2>
                                 </div>
                                 <div className="p-6">
-                                    <div
-                                        className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2"
-                                        dangerouslySetInnerHTML={{ __html: prospect.analysis }}
-                                    />
+                                    <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
+                                        <ReadMore 
+                                            id={`analysis-${prospect.id}`}
+                                            text={prospect.analysis}
+                                            amountOfWords={200}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -359,10 +363,13 @@ export default function ProspectPageClient({ id }: { id: string }) {
                                     </h2>
                                 </div>
                                 <div className="p-6">
-                                    <div
-                                        className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2"
-                                        dangerouslySetInnerHTML={{ __html: prospect.writeUp }}
-                                    />
+                                    <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
+                                        <ReadMore 
+                                            id={`writeup-${prospect.id}`}
+                                            text={prospect.writeUp}
+                                            amountOfWords={200}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         )}
