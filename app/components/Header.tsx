@@ -136,7 +136,7 @@ function Header() {
     ];
 
     const toolOptions = [
-        // { href: "/rankings", label: "Player Prop Rankings" },
+        { href: "/rankings", label: "Player Prop Rankings" },
         { href: "/tools/rookie-rankings", label: "Rookie Rankings" },
     ];
 
