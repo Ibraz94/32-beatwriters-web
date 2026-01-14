@@ -4,11 +4,12 @@ interface ReadMoreProps {
   id: string
   text: string
   amountOfCharacters?: number
+  amountOfWords?: number
   target?: string
   rel?: string
 }
 
-export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps) => {
+export const ReadMore = ({ id, text, amountOfCharacters = 2000, amountOfWords }: ReadMoreProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
   // Replace player mention spans with clickable links while preserving all HTML
@@ -23,17 +24,24 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
   // Get text content length (without HTML tags) to determine if we need "Read more"
   const tempDiv = typeof document !== 'undefined' ? document.createElement('div') : null;
   if (tempDiv) tempDiv.innerHTML = processedContent;
-  const textLength = tempDiv?.textContent?.length || processedContent.length;
-  const itCanOverflow = textLength > amountOfCharacters
+  const textContent = tempDiv?.textContent || processedContent;
+  const textLength = textContent.length;
+  
+  // Count words if amountOfWords is specified
+  const wordCount = amountOfWords ? textContent.trim().split(/\s+/).length : 0;
+  const itCanOverflow = amountOfWords 
+    ? wordCount > amountOfWords 
+    : textLength > amountOfCharacters;
 
-  // Truncate HTML while preserving structure
-  const truncateHtml = (html: string, maxChars: number): string => {
+  // Truncate HTML while preserving structure (by words or characters)
+  const truncateHtml = (html: string, maxChars: number, maxWords?: number): string => {
     if (typeof document === 'undefined') return html;
     
     const div = document.createElement('div');
     div.innerHTML = html;
     
     let charCount = 0;
+    let wordCount = 0;
     let shouldTruncate = false;
     
     const processNode = (node: Node): Node | null => {
@@ -41,14 +49,39 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
       
       if (node.nodeType === Node.TEXT_NODE) {
         const text = node.textContent || '';
-        if (charCount + text.length > maxChars) {
-          const remaining = maxChars - charCount;
-          const truncatedText = text.substring(0, remaining);
-          shouldTruncate = true;
-          return document.createTextNode(truncatedText);
+        
+        if (maxWords) {
+          // Word-based truncation
+          const words = text.split(/(\s+)/); // Split but keep whitespace
+          let result = '';
+          
+          for (const word of words) {
+            if (/\s/.test(word)) {
+              // It's whitespace, add it
+              result += word;
+            } else {
+              // It's a word
+              if (wordCount >= maxWords) {
+                shouldTruncate = true;
+                break;
+              }
+              result += word;
+              wordCount++;
+            }
+          }
+          
+          return document.createTextNode(result);
+        } else {
+          // Character-based truncation
+          if (charCount + text.length > maxChars) {
+            const remaining = maxChars - charCount;
+            const truncatedText = text.substring(0, remaining);
+            shouldTruncate = true;
+            return document.createTextNode(truncatedText);
+          }
+          charCount += text.length;
+          return node.cloneNode(false);
         }
-        charCount += text.length;
-        return node.cloneNode(false);
       }
       
       if (node.nodeType === Node.ELEMENT_NODE) {
@@ -83,7 +116,7 @@ export const ReadMore = ({ id, text, amountOfCharacters = 2000 }: ReadMoreProps)
 
   const displayContent = isExpanded || !itCanOverflow 
     ? processedContent 
-    : truncateHtml(processedContent, amountOfCharacters);
+    : truncateHtml(processedContent, amountOfCharacters, amountOfWords);
 
   // Add "Read more" button inside the HTML at the end
   const addReadMoreButton = (html: string, buttonHtml: string): string => {
