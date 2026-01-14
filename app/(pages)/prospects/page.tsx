@@ -346,7 +346,7 @@ function ProspectsContent() {
                                     <div className="flex-1 min-w-0">
                                         {/* School Logo & Player Name - Only this section is clickable */}
                                         <Link 
-                                            href={`/prospects/${prospect.id}`}
+                                            href={`/prospects/${encodeURIComponent(prospect.name.toLowerCase().replace(/\s+/g, '-'))}`}
                                             className="flex items-center gap-2 md:gap-3 mb-1 hover:opacity-80 transition-opacity w-fit"
                                         >
                                             {/* School Logo */}

@@ -31,11 +31,9 @@ interface ProspectData {
     updatedAt: string
 }
 
-export default function ProspectPageClient({ id }: { id: string }) {
+export default function ProspectPageClient({ name }: { name: string }) {
     const pathname = usePathname()
     const searchParams = useSearchParams()
-
-    const prospectId = id as string
 
     // State
     const [prospect, setProspect] = useState<ProspectData | null>(null)
@@ -49,16 +47,28 @@ export default function ProspectPageClient({ id }: { id: string }) {
     // Add authentication check
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
 
-    // Fetch prospect data
+    // Fetch prospect data by name
     useEffect(() => {
         const fetchProspect = async () => {
             setLoading(true)
             setError('')
             try {
-                const res = await fetch(buildApiUrl(`/api/nfl-prospects/${prospectId}`), { cache: 'no-store' })
-                if (!res.ok) throw new Error('Failed to load prospect')
+                // Fetch all prospects and find by name (case-insensitive)
+                const res = await fetch(buildApiUrl(`/api/nfl-prospects`), { cache: 'no-store' })
+                if (!res.ok) throw new Error('Failed to load prospects')
                 const json = await res.json()
-                setProspect(json?.data || null)
+                const prospects = json?.data?.prospects || []
+                
+                // Find prospect by name (case-insensitive match)
+                const foundProspect = prospects.find((p: ProspectData) => 
+                    p.name.toLowerCase() === name.toLowerCase()
+                )
+                
+                if (!foundProspect) {
+                    throw new Error('Prospect not found')
+                }
+                
+                setProspect(foundProspect)
             } catch (e: any) {
                 setError(e?.message || 'Failed to load prospect')
             } finally {
@@ -66,7 +76,7 @@ export default function ProspectPageClient({ id }: { id: string }) {
             }
         }
         fetchProspect()
-    }, [prospectId])
+    }, [name])
 
     // Show authentication required message if not authenticated or has insufficient membership
     if (!authLoading && (!isAuthenticated || (user?.memberships && user.memberships.id !== undefined && user.memberships.id < 2))) {
@@ -347,7 +357,7 @@ export default function ProspectPageClient({ id }: { id: string }) {
                                         <ReadMore 
                                             id={`analysis-${prospect.id}`}
                                             text={prospect.analysis}
-                                            amountOfWords={200}
+                                            amountOfWords={400}
                                         />
                                     </div>
                                 </div>
@@ -367,7 +377,7 @@ export default function ProspectPageClient({ id }: { id: string }) {
                                         <ReadMore 
                                             id={`writeup-${prospect.id}`}
                                             text={prospect.writeUp}
-                                            amountOfWords={200}
+                                            amountOfWords={400}
                                         />
                                     </div>
                                 </div>
