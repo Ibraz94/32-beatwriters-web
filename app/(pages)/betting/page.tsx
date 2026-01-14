@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useGetBetsByWeekQuery } from '@/lib/services/bettingApi'
 import BetCard from '@/app/components/betting/BetCard'
 import { Loader2, Filter, Search, Flame, Zap, ExternalLink } from 'lucide-react'
@@ -18,15 +18,15 @@ export default function BettingPage() {
     const now = new Date()
     
     // 2025-2026 NFL Season Playoff Schedule (weeks change on Wednesdays at 12:00 AM)
-    // Wild Card: Jan 8-14, 2026 (changes to Divisional on Wed Jan 15 at 12:00 AM)
-    // Divisional: Jan 15-21, 2026 (changes to Conference on Wed Jan 22 at 12:00 AM)
-    // Conference: Jan 22-28, 2026 (changes to Super Bowl on Wed Jan 29 at 12:00 AM)
-    // Super Bowl: Jan 29 - Feb 9, 2026
+    // Wild Card: Jan 7-13, 2026 (changes to Divisional on Wed Jan 14 at 12:00 AM)
+    // Divisional: Jan 14-20, 2026 (changes to Conference on Wed Jan 21 at 12:00 AM)
+    // Conference: Jan 21-27, 2026 (changes to Super Bowl on Wed Jan 28 at 12:00 AM)
+    // Super Bowl: Jan 28 - Feb 9, 2026
     
-    const wildCardStart = new Date('2026-01-08T00:00:00')
-    const divisionalStart = new Date('2026-01-15T00:00:00')
-    const conferenceStart = new Date('2026-01-22T00:00:00')
-    const superBowlStart = new Date('2026-01-29T00:00:00')
+    const wildCardStart = new Date('2026-01-07T00:00:00')
+    const divisionalStart = new Date('2026-01-14T00:00:00')
+    const conferenceStart = new Date('2026-01-21T00:00:00')
+    const superBowlStart = new Date('2026-01-28T00:00:00')
     const superBowlEnd = new Date('2026-02-09T23:59:59')
     
     // Check playoff weeks
@@ -57,13 +57,22 @@ export default function BettingPage() {
     return 'Week 1'
   }
 
-  const [selectedWeek, setSelectedWeek] = useState(getCurrentNFLWeek())
+  const [selectedWeek, setSelectedWeek] = useState(() => {
+    // Initialize with a default to avoid hydration mismatch
+    if (typeof window === 'undefined') return 'Wild Card'
+    return getCurrentNFLWeek()
+  })
   const [showBestBets, setShowBestBets] = useState(false)
   const [showFastDraft, setShowFastDraft] = useState(false)
   const [resultFilter, setResultFilter] = useState('all')
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [playerSearch, setPlayerSearch] = useState('')
   const [displayLimit, setDisplayLimit] = useState(10)
+
+  // Update selected week on client mount to use client's timezone
+  useEffect(() => {
+    setSelectedWeek(getCurrentNFLWeek())
+  }, [])
 
   const { data, isLoading, error } = useGetBetsByWeekQuery({
     week: selectedWeek,
