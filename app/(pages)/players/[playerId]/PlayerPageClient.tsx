@@ -1896,7 +1896,7 @@ export default function PlayerPageClient({ id }: any) {
                                         <ReadMore 
                                             id={`fantasy-outlook-${playerId}`}
                                             text={basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook'] || ''}
-                                            amountOfWords={400}
+                                            amountOfCharacters={400}
                                         />
                                     </div>
                                 </div>
