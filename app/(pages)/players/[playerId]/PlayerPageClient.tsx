@@ -1274,13 +1274,13 @@ export default function PlayerPageClient({ id }: any) {
                                                 </div>
 
                                                 {/* Content */}
-                                                <div className="mt-3 ml-4 dark:text-[#D2D6E2]">
+                                                <div className="mt-3 ml-4 dark:text-[#D2D6E2] prose prose-sm max-w-none dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
                                                     <ReadMore id={nugget.id.toString()} text={nugget.content} amountOfCharacters={400} />
                                                 </div>
 
                                                 {/* Fantasy Insight */}
                                                 {nugget.fantasyInsight && (
-                                                    <div className="px-4 mt-2 dark:text-[#D2D6E2]">
+                                                    <div className="px-4 mt-2 dark:text-[#D2D6E2] prose prose-sm max-w-none dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
                                                         <h1 className="font-semibold mt-0 text-[#E64A30]">Fantasy Insight:</h1>
                                                         {renderFantasyInsight(nugget.fantasyInsight)}
                                                     </div>
@@ -1892,12 +1892,11 @@ export default function PlayerPageClient({ id }: any) {
                                     </h2>
                                 </div>
                                 <div className="p-6">
-                                    <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert">
-                                        <div 
-                                            className="text-base leading-relaxed"
-                                            dangerouslySetInnerHTML={{ 
-                                                __html: basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook'] || '' 
-                                            }} 
+                                    <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
+                                        <ReadMore 
+                                            id={`fantasy-outlook-${playerId}`}
+                                            text={basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook'] || ''}
+                                            amountOfCharacters={400}
                                         />
                                     </div>
                                 </div>

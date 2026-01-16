@@ -241,20 +241,11 @@ export default function ArticlePageClient({ id }: { id: string }) {
 
             // If user has access, return full content
             if (contentToRender) {
-                // Split content into paragraphs to allow column layout
-                const paragraphs = contentToRender
-                    .split(/<\/p>/i)
-                    .filter(Boolean)
-                    .map((p, index) => (
-                        <div key={index} dangerouslySetInnerHTML={{ __html: p + "</p>" }} />
-                    ));
-
                 return (
                     <div
                         className="gap-8 [&>*]:break-inside-avoid"
-                    >
-                        {paragraphs}
-                    </div>
+                        dangerouslySetInnerHTML={{ __html: contentToRender }}
+                    />
                 );
             }
         } catch (error) {
@@ -336,8 +327,8 @@ export default function ArticlePageClient({ id }: { id: string }) {
 
                     {/* Display ArticleCTA only if user is not authenticated */}
                     {!isAuthenticated && article.access === 'public' && <ArticleCTA />}
-                    <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert mx-auto">
-                        <div className="columns-1 gap-8 [&>*]:break-inside-avoid article-content">
+                    <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert mx-auto prose-ul:list-disc prose-ul:pl-6 prose-ul:my-4 prose-li:my-2">
+                        <div className="columns-1 gap-8 [&>*]:break-inside-avoid article-content [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-4 [&_li]:my-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-4">
                             {renderArticleContent()}
                         </div>
                     </div>

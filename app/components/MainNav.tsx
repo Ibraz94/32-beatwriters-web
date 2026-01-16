@@ -4,6 +4,7 @@ import React, { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from "next/image";
 import { useAuth } from '@/lib/hooks/useAuth';
+import { usePathname } from 'next/navigation';
 
 import { ThemeToggle } from './ThemeToggle';
 import { useTheme } from 'next-themes';
@@ -12,6 +13,7 @@ import { useRouter } from 'next/navigation';
 
 const MainNav = () => {
     const { theme } = useTheme();
+    const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
     const [isFeedDropdownOpen, setIsFeedDropdownOpen] = useState(false);
@@ -42,6 +44,7 @@ const MainNav = () => {
 
     const toolOptions = [
         { href: "/rankings", label: "Rankings" },
+        { href: "/tools/rookie-rankings", label: "Rookie Rankings" },
     ];
 
     const handleLogout = async () => {
@@ -176,33 +179,33 @@ const MainNav = () => {
                         )}
                     </div>
 
-                    {/* Tools Dropdown */}
-                    <div className="relative left-2" ref={toolsDropdownRef}>
-                        <button
-                            onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
-                            className="relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white flex items-center space-x-1"
-                        >
-                            <span>TOOLS</span>
-                            <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
-                            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
-                        </button>
-                        {/* {isToolsDropdownOpen && (
-                            <div className="absolute top-full left-0 w-56 rounded-sm shadow-lg border border-white/20 bg-background/90 py-2 z-50">
-                                <div className="py-1">
-                                    {toolOptions.map((option) => (
-                                        <Link
-                                            key={option.href}
-                                            href={option.href}
-                                            className="flex items-center px-4 py-2 text-md transition-colors hover:text-red-800"
-                                            onClick={() => setIsToolsDropdownOpen(false)}
-                                        >
-                                            {option.label}
-                                        </Link>
-                                    ))}
+                        {/* Tools Dropdown */}
+                        {/* <div className="relative left-2" ref={toolsDropdownRef}>
+                            <button
+                                onClick={() => setIsToolsDropdownOpen(!isToolsDropdownOpen)}
+                                className={`relative hover:text-red-800 transition-colors duration-200 py-2 group text-md font-oswald text-white flex items-center space-x-1 ${pathname?.startsWith('/tools') || pathname === '/rankings' ? 'text-red-800' : ''}`}
+                            >
+                                <span>TOOLS</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isToolsDropdownOpen ? 'rotate-180' : ''}`} />
+                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-300 transition-all duration-300 group-hover:w-full"></span>
+                            </button>
+                            {isToolsDropdownOpen && (
+                                <div className="absolute top-full left-0 w-56 rounded-sm shadow-lg border border-white/20 bg-background/90 py-2 z-50">
+                                    <div className="py-1">
+                                        {toolOptions.map((option) => (
+                                            <Link
+                                                key={option.href}
+                                                href={option.href}
+                                                className={`flex items-center px-4 py-2 text-md transition-colors hover:text-red-800 ${pathname === option.href ? 'text-red-800 font-semibold' : ''}`}
+                                                onClick={() => setIsToolsDropdownOpen(false)}
+                                            >
+                                                {option.label}
+                                            </Link>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        )} */}
-                    </div>
+                            )}
+                        </div> */}
                     {/* {toolNavLink.map((link) => (
                             <Link
                                 key={link.href}

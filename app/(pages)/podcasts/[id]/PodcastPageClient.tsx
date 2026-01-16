@@ -205,7 +205,7 @@ export default function PodcastPageClient({ id }: PodcastPageClientProps) {
                     </div>
                 </div>
 
-                <div className="leading-relaxed whitespace-pre-line mb-4 mt-6 text-[#72757C] md:text-[#C7C8CB] lg:text-black dark:lg:text-[#C7C8CB]">
+                <div className="leading-relaxed whitespace-pre-line mb-4 mt-6 text-[#72757C] md:text-[#C7C8CB] lg:text-black dark:lg:text-[#C7C8CB] prose prose-sm max-w-none dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
                     {renderRichTextContent(podcast.description)}
                 </div>
                 {/* <div className="flex items-center justify-center lg:justify-start gap-4 text-sm mb-4">

@@ -182,6 +182,7 @@ export default function SubscriptionComponent() {
                           "Betting Insight from Charlie Dillon",
                           "Access to Prospect and Fantasy Tools",
                           "Full Access to All Our Premium Articles",
+                          "Access to Our Subscriber Only Discord Server",
                           "Secure Payment By Stripe - No Hidden Fees",
 
 
@@ -194,6 +195,7 @@ export default function SubscriptionComponent() {
                           "Betting Insight from Charlie Dillon",
                           "Access to Prospect and Fantasy Tools",
                           "Full Access to All Our Premium Articles",
+                          "Access to Our Subscriber Only Discord Server",
                           "Secure Payment By Stripe - No Hidden Fees",
 
 
@@ -283,6 +285,7 @@ export default function SubscriptionComponent() {
                         "Betting Insight from Charlie Dillon",
                         "Access to Prospect and Fantasy Tools",
                         "Full Access to All Our Premium Articles",
+                        "Access to Our Subscriber Only Discord Server",
                         "Secure Payment By Stripe - No Hidden Fees",
 
 
@@ -385,6 +388,7 @@ export default function SubscriptionComponent() {
                     "Betting Insight from Charlie Dillon",
                     "Access to Prospect and Fantasy Tools",
                     "Full Access to All Our Premium Articles",
+                    "Access to Our Subscriber Only Discord Server",
                     "Secure Payment By Stripe - No Hidden Fees",
 
 
@@ -454,6 +458,7 @@ export default function SubscriptionComponent() {
                     "Betting Insight from Charlie Dillon",
                     "Access to Prospect and Fantasy Tools",
                     "Full Access to All Our Premium Articles",
+                    "Access to Our Subscriber Only Discord Server",
                     "Secure Payment By Stripe - No Hidden Fees",
 
 
@@ -530,6 +535,7 @@ export default function SubscriptionComponent() {
                     "Betting Insight from Charlie Dillon",
                     "Access to Prospect and Fantasy Tools",
                     "Full Access to All Our Premium Articles",
+                    "Access to Our Subscriber Only Discord Server",
                     "Secure Payment By Stripe - No Hidden Fees",
 
 

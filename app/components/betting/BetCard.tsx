@@ -117,7 +117,7 @@ export default function BetCard({ bet }: BetCardProps) {
       {bet.analysis && (
         <div className="p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
-          <div className="text-sm dark:text-[#D2D6E2] leading-relaxed"
+          <div className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm max-w-none dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2"
             dangerouslySetInnerHTML={{ __html: bet.analysis }}
           />
         </div>

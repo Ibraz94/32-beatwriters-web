@@ -12,11 +12,16 @@ import { beatWritersApi } from './services/beatWritersApi'
 import { discordApi } from './services/discordApi'
 import { bettingApi } from './services/bettingApi'
 import authSlice from './features/authSlice'
+import rookieBoardSlice from './features/rookieBoardSlice'
+import tierManagementSlice from './features/tierManagementSlice'
 import { playerProfilerApi } from './services/playersApi'
+import { rookieBoardApi } from './services/rookieBoardApi'
 
 export const store = configureStore({
   reducer: {
     auth: authSlice,
+    rookieBoard: rookieBoardSlice,
+    tierManagement: tierManagementSlice,
     [authApi.reducerPath]: authApi.reducer,
     [playersApi.reducerPath]: playersApi.reducer,
     [teamsApi.reducerPath]: teamsApi.reducer,
@@ -30,6 +35,7 @@ export const store = configureStore({
     [discordApi.reducerPath]: discordApi.reducer,
     [bettingApi.reducerPath]: bettingApi.reducer,
     [playerProfilerApi.reducerPath]: playerProfilerApi.reducer,
+    [rookieBoardApi.reducerPath]: rookieBoardApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -49,7 +55,8 @@ export const store = configureStore({
       beatWritersApi.middleware,
       discordApi.middleware,
       bettingApi.middleware,
-      playerProfilerApi.middleware
+      playerProfilerApi.middleware,
+      rookieBoardApi.middleware
     ),
   devTools: process.env.NODE_ENV !== 'production',
 })

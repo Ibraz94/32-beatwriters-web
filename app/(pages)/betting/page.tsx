@@ -12,7 +12,8 @@ import Link from 'next/link'
 export default function BettingPage() {
   const pathname = usePathname()
   const { isAuthenticated, isLoading: authLoading, user } = useAuth()
-  // Function to get current NFL week
+
+  // Function to get current NFL week (weeks start on Wednesday)
   const getCurrentNFLWeek = () => {
     // Get current date in user's timezone
     const now = new Date()
@@ -58,8 +59,8 @@ export default function BettingPage() {
   }
 
   const [selectedWeek, setSelectedWeek] = useState(() => {
-    // Initialize with a default to avoid hydration mismatch
-    if (typeof window === 'undefined') return 'Wild Card'
+    // Only calculate on client to avoid timezone mismatch
+    if (typeof window === 'undefined') return 'Week 1'
     return getCurrentNFLWeek()
   })
   const [showBestBets, setShowBestBets] = useState(false)
@@ -69,7 +70,7 @@ export default function BettingPage() {
   const [playerSearch, setPlayerSearch] = useState('')
   const [displayLimit, setDisplayLimit] = useState(10)
 
-  // Update selected week on client mount to use client's timezone
+  // Update selected week on client mount to avoid server/client timezone mismatch
   useEffect(() => {
     setSelectedWeek(getCurrentNFLWeek())
   }, [])
@@ -370,7 +371,10 @@ export default function BettingPage() {
                                         {bet.betType}
                                       </p>
                                       {bet.isBestBet && (
-                                        <span className="text-[#E64A30] font-bold text-lg md:text-3xl mt-4">🔥</span>
+                                        <span className="text-[#E64A30] font-bold text-lg md:text-3xl mt-4 cursor-default" title="Best Bet">🔥</span>
+                                      )}
+                                      {bet.isLongshotBet && (
+                                        <span className="text-[#E64A30] font-bold text-lg md:text-3xl mt-4 -ml-2 cursor-default" title="Longshot Bet">🚀</span>
                                       )}
                                     </div>
                                   </div>
@@ -402,7 +406,10 @@ export default function BettingPage() {
                                   {bet.betType}
                                 </h2>
                                 {bet.isBestBet && (
-                                  <span className="text-[#E64A30] font-bold text-lg md:text-3xl">🔥</span>
+                                  <span className="text-[#E64A30] font-bold text-lg md:text-3xl cursor-help" title="Best Bet">🔥</span>
+                                )}
+                                {bet.isLongshotBet && (
+                                  <span className="text-[#E64A30] font-bold text-lg md:text-3xl cursor-help" title="Longshot Bet">🚀</span>
                                 )}
                               </div>
                             )}
