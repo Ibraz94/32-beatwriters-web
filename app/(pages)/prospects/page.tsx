@@ -365,7 +365,7 @@ function ProspectsContent() {
                                         </div>
 
                                         {/* Stars - Not clickable */}
-                                        {prospect.stars && (
+                                        {/* {prospect.stars && (
                                             <div className="flex items-center flex-shrink-0 ml-2 mb-1">
                                                 <div className="flex items-center gap-0.5 md:gap-1">
                                                     {[...Array(prospect.stars)].map((_, i) => (
@@ -373,7 +373,7 @@ function ProspectsContent() {
                                                     ))}
                                                 </div>
                                             </div>
-                                        )}
+                                        )} */}
 
                                         {/* School, Position, Position Group, Eligibility */}
                                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm text-muted-foreground mb-2 mt-1 md:mt-3">
