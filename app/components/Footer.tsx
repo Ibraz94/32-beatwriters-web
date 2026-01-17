@@ -206,7 +206,7 @@ export default function Footer() {
                     <div className="px-4 py-6 border-t border-[#CFD1D4]">
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                             <div className="text-sm md:text-base text-[var(--color-gray)] dark:text-[#C7C8CB]">
-                                <span className="hidden md:inline-block">Copyright </span>© 2025 32BeatWriters. All rights reserved.
+                                <span className="hidden md:inline-block">Copyright </span>© 2026 32BeatWriters. All rights reserved.
                             </div>
 
                             <div className="flex items-center gap-6">

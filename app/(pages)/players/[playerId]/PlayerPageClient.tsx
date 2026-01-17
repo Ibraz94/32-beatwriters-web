@@ -45,7 +45,7 @@ export default function PlayerPageClient({ id }: any) {
     const { showToast } = useToast();
 
     // Year selection state for nuggets filtering
-    const [selectedYearForNuggets, setSelectedYearForNuggets] = useState('2025')
+    const [selectedYearForNuggets, setSelectedYearForNuggets] = useState('2026')
 
     const queryParams = useMemo(() => {
         const params: any = {

@@ -12,8 +12,16 @@ interface ReadMoreProps {
 export const ReadMore = ({ id, text, amountOfCharacters = 2000, amountOfWords }: ReadMoreProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
-  // Replace player mention spans with clickable links while preserving all HTML
-  const processedContent = text.replace(
+  // First, replace markdown-style player mentions: @[Player Name](playerId)
+  let processedContent = text.replace(
+    /@\[([^\]]+)\]\((\d+)\)/g,
+    (match, playerName, playerId) => {
+      return `<a href="/players/${playerId}" target="_blank" rel="noopener noreferrer" class="text-[#E64A30] hover:underline font-bold">${playerName}</a>`;
+    }
+  );
+  
+  // Then, replace HTML span player mentions with clickable links
+  processedContent = processedContent.replace(
     /<span\s+[^>]*?data-player-id="(\d+)"[^>]*?>(.*?)<\/span>/gi,
     (match, playerId, playerName) => {
       const cleanName = playerName.replace(/@/g, '').replace(/<[^>]*>/g, '').trim();
