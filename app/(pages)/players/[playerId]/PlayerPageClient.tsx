@@ -1893,11 +1893,10 @@ export default function PlayerPageClient({ id }: any) {
                                 </div>
                                 <div className="p-6">
                                     <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
-                                        <div 
-                                            className="text-base leading-relaxed"
-                                            dangerouslySetInnerHTML={{ 
-                                                __html: basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook'] || '' 
-                                            }} 
+                                        <ReadMore 
+                                            id={`fantasy-outlook-${playerId}`}
+                                            text={basicPlayer?.fantasyOutlook || player?.Core?.['Fantasy Outlook'] || ''}
+                                            amountOfCharacters={400}
                                         />
                                     </div>
                                 </div>

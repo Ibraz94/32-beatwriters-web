@@ -15,6 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { ReadMore } from '@/app/components/ReadMore'
 
 interface ProspectRow {
     id: string
@@ -94,7 +95,7 @@ function ProspectsContent() {
         // Apply search filter
         if (debouncedSearchTerm) {
             const searchLower = debouncedSearchTerm.toLowerCase()
-            filtered = filtered.filter(prospect => 
+            filtered = filtered.filter(prospect =>
                 (prospect.name?.toLowerCase() || '').includes(searchLower) ||
                 (prospect.school?.toLowerCase() || '').includes(searchLower) ||
                 (prospect.position?.toLowerCase() || '').includes(searchLower)
@@ -247,7 +248,7 @@ function ProspectsContent() {
                                     <SelectContent className="border-none bg-white dark:bg-[#262829]">
                                         <SelectGroup>
                                             <SelectItem value="all">All Positions</SelectItem>
-                                            {['QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'OT', 'IOL', 'S', 'CB', 'K', 'P', 'LS'].map((pos) => (
+                                            {['QB', 'RB', 'WR', 'TE', 'EDGE', 'DL', 'LB', 'DB', 'OT', 'OL', 'C', 'S', 'DE', 'DT','CB', 'K', 'P', 'LS', 'KR', 'PR'].map((pos) => (
                                                 <SelectItem key={pos} value={pos}>
                                                     {pos}
                                                 </SelectItem>
@@ -316,10 +317,9 @@ function ProspectsContent() {
             {!error && !loading && normalized.length > 0 && (
                 <div className="space-y-4">
                     {filteredData.map((prospect, index) => (
-                        <Link
-                            href={`/prospects/${prospect.id}`}
+                        <div
                             key={`${prospect.id}-${index}`}
-                            className="flex flex-row items-start gap-3 md:gap-4 border-b pb-4 border-[var(--color-gray)] hover:bg-accent/5 transition-colors rounded-lg p-2 cursor-pointer"
+                            className="flex flex-row items-start gap-3 md:gap-4 border-b pb-4 border-[var(--color-gray)] rounded-lg p-2"
                         >
                             {/* Rank Number */}
                             <div className="flex-shrink-0 relative">
@@ -344,8 +344,11 @@ function ProspectsContent() {
                             <div className="flex-1 min-w-0">
                                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                                     <div className="flex-1 min-w-0">
-                                        {/* School Logo & Player Name */}
-                                        <div className="flex items-center gap-2 md:gap-3 mb-1">
+                                        {/* School Logo & Player Name - Only this section is clickable */}
+                                        <Link
+                                            href={`/prospects/${encodeURIComponent(prospect.name.toLowerCase().replace(/\s+/g, '-'))}`}
+                                            className="flex items-center gap-2 md:gap-3 mb-1 hover:opacity-80 transition-opacity w-fit"
+                                        >
                                             {/* School Logo */}
                                             {prospect.logo && (
                                                 <div className="relative w-8 h-8 md:w-12 md:h-12 flex-shrink-0">
@@ -358,18 +361,19 @@ function ProspectsContent() {
                                                     />
                                                 </div>
                                             )}
-                                            <h2 className="text-lg sm:text-2xl md:text-3xl font-bold truncate">{prospect.name}</h2>
-                                            {prospect.stars && (
-                                                <div className="flex items-center flex-shrink-0">
-                                                    <span className="mx-1">•</span>
-                                                    <div className="flex items-center gap-0.5 md:gap-1">
-                                                        {[...Array(prospect.stars)].map((_, i) => (
-                                                            <span key={i} className="text-yellow-500 text-xs md:text-base">★</span>
-                                                        ))}
-                                                    </div>
+                                            <h2 className="text-lg sm:text-2xl md:text-3xl font-bold truncate hover:text-[#E64A30] transition-colors">{prospect.name}</h2>
+                                        </Link>
+
+                                        {/* Stars - Not clickable */}
+                                        {prospect.stars && (
+                                            <div className="flex items-center flex-shrink-0 ml-2 mb-1">
+                                                <div className="flex items-center gap-0.5 md:gap-1">
+                                                    {[...Array(prospect.stars)].map((_, i) => (
+                                                        <span key={i} className="text-yellow-500 text-xs md:text-base">★</span>
+                                                    ))}
                                                 </div>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
 
                                         {/* School, Position, Position Group, Eligibility */}
                                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs md:text-sm text-muted-foreground mb-2 mt-1 md:mt-3">
@@ -409,10 +413,13 @@ function ProspectsContent() {
                                 {prospect.analysis && (
                                     <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Analysis</h3>
-                                        <div 
-                                            className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2"
-                                            dangerouslySetInnerHTML={{ __html: prospect.analysis }}
-                                        />
+                                        <div className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
+                                            <ReadMore
+                                                id={`analysis-${prospect.id}`}
+                                                text={prospect.analysis}
+                                                amountOfCharacters={400}
+                                            />
+                                        </div>
                                     </div>
                                 )}
 
@@ -420,14 +427,17 @@ function ProspectsContent() {
                                 {prospect.writeUp && (
                                     <div className="mt-4 p-4 bg-gray-50 dark:bg-[#262829] rounded-lg border border-gray-200 dark:border-gray-700">
                                         <h3 className="text-sm font-semibold mb-2 text-[#E64A30]">Fantasy Outlook</h3>
-                                        <div 
-                                            className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2"
-                                            dangerouslySetInnerHTML={{ __html: prospect.writeUp }}
-                                        />
+                                        <div className="text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
+                                            <ReadMore
+                                                id={`writeup-${prospect.id}`}
+                                                text={prospect.writeUp}
+                                                amountOfCharacters={400}
+                                            />
+                                        </div>
                                     </div>
                                 )}
                             </div>
-                        </Link>
+                        </div>
                     ))}
                 </div>
             )}

@@ -79,7 +79,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
       </div>
     }>
-      <ArticlePageClient id={id} />
+      <ArticlePageClient id={id}/>
     </Suspense>
   )
 }

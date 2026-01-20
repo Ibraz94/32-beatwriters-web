@@ -4,22 +4,23 @@ import ProspectPageClient from './ProspectPageClient'
 import { buildApiUrl } from '@/lib/config/api'
 
 // Generate metadata for the prospect page
-export async function generateMetadata({ params }: { params: Promise<{ prospectId: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ prospectName: string }> }): Promise<Metadata> {
   try {
-    const { prospectId } = await params
+    const { prospectName } = await params
+    const decodedName = decodeURIComponent(prospectName).replace(/-/g, ' ')
 
-    // Fetch prospect data
-    const response = await fetch(`${buildApiUrl('/api/nfl-prospects')}/${prospectId}`)
+    // Fetch prospect data by name
+    const response = await fetch(`${buildApiUrl('/api/nfl-prospects')}?name=${encodeURIComponent(decodedName)}`)
     const prospectData = await response.json()
 
-    if (!prospectData || !prospectData.data) {
+    if (!prospectData || !prospectData.data || !prospectData.data.prospects || prospectData.data.prospects.length === 0) {
       return {
         title: 'Prospect Not Found',
         description: 'The requested prospect could not be found.'
       }
     }
 
-    const prospect = prospectData.data
+    const prospect = prospectData.data.prospects[0]
 
     return {
       title: `${prospect.name} - NFL Prospect Profile`,
@@ -53,7 +54,8 @@ export async function generateMetadata({ params }: { params: Promise<{ prospectI
   }
 }
 
-export default async function ProspectPage({ params }: { params: Promise<{ prospectId: string }> }) {
-  const { prospectId } = await params
-  return <ProspectPageClient id={prospectId} />
+export default async function ProspectPage({ params }: { params: Promise<{ prospectName: string }> }) {
+  const { prospectName } = await params
+  const decodedName = decodeURIComponent(prospectName).replace(/-/g, ' ')
+  return <ProspectPageClient name={decodedName} />
 }

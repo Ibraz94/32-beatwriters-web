@@ -44,17 +44,17 @@ function RankingsContent() {
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
-  // Check if today is Tuesday or Wednesday
-  const isTuesdayOrWednesday = useMemo(() => {
+  // Check if today is Tuesday (data uploads on Wednesday, so only block on Tuesday)
+  const isTuesday = useMemo(() => {
     const today = new Date()
     const dayOfWeek = today.getDay() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    return dayOfWeek === 2 || dayOfWeek === 3 // Tuesday = 2, Wednesday = 3, Thursday = 4, Friday = 5
+    return dayOfWeek === 2 // Tuesday = 2
   }, [])
 
   // Check if we should show "Data Coming Soon"
   const shouldShowDataComingSoon = useMemo(() => {
-    return isTuesdayOrWednesday && week !== undefined && currentWeek !== undefined && week === currentWeek
-  }, [isTuesdayOrWednesday, week, currentWeek])
+    return isTuesday && week !== undefined && currentWeek !== undefined && week === currentWeek
+  }, [isTuesday, week, currentWeek])
 
   // Load weeks and set current week
   useEffect(() => {

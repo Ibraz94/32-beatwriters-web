@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useGetBetsByWeekQuery } from '@/lib/services/bettingApi'
 import BetCard from '@/app/components/betting/BetCard'
 import { Loader2, Filter, Search, Flame, Zap, ExternalLink } from 'lucide-react'
@@ -12,92 +12,43 @@ import Link from 'next/link'
 export default function BettingPage() {
   const pathname = usePathname()
   const { isAuthenticated, isLoading: authLoading, user } = useAuth()
+
   // Function to get current NFL week (weeks start on Wednesday)
   const getCurrentNFLWeek = () => {
     // Get current date in user's timezone
     const now = new Date()
-    const dayOfWeek = now.getDay() // 0 = Sunday, 1 = Monday, ..., 3 = Wednesday
     
-    // Adjust date to the start of the current NFL week (Wednesday)
-    // If today is Sunday (0), Monday (1), or Tuesday (2), we're still in the previous week
-    let adjustedDate = new Date(now)
-    if (dayOfWeek < 3) {
-      // Go back to the previous Wednesday
-      adjustedDate.setDate(now.getDate() - (dayOfWeek + 4))
-    } else {
-      // Go back to this week's Wednesday
-      adjustedDate.setDate(now.getDate() - (dayOfWeek - 3))
+    // 2025-2026 NFL Season Playoff Schedule (weeks change on Wednesdays at 12:00 AM)
+    // Wild Card: Jan 7-13, 2026 (changes to Divisional on Wed Jan 14 at 12:00 AM)
+    // Divisional: Jan 14-20, 2026 (changes to Conference on Wed Jan 21 at 12:00 AM)
+    // Conference: Jan 21-27, 2026 (changes to Super Bowl on Wed Jan 28 at 12:00 AM)
+    // Super Bowl: Jan 28 - Feb 9, 2026
+    
+    const wildCardStart = new Date('2026-01-07T00:00:00')
+    const divisionalStart = new Date('2026-01-14T00:00:00')
+    const conferenceStart = new Date('2026-01-21T00:00:00')
+    const superBowlStart = new Date('2026-01-28T00:00:00')
+    const superBowlEnd = new Date('2026-02-09T23:59:59')
+    
+    // Check playoff weeks
+    if (now >= wildCardStart && now < divisionalStart) {
+      return 'Wild Card'
     }
-    
-    const month = adjustedDate.getMonth() + 1 // 1-12
-    const day = adjustedDate.getDate()
-    const year = adjustedDate.getFullYear()
-    
-    // 2025-2026 NFL Season
-    // Week 1 starts: Wednesday, Sept 3, 2025
-    // Week 18 starts: Wednesday, Dec 31, 2025
-    
-    // January 2026 - determine week based on adjusted date
-    if (year === 2026 && month === 1) {
-      if (day >= 1 && day < 7) {
-        return 'Week 18'
-      }
-      if (day >= 7 && day < 14) {
-        return 'Wild Card'
-      }
-      if (day >= 14 && day < 21) {
-        return 'Divisional'
-      }
-      if (day >= 21 && day < 28) {
-        return 'Conference'
-      }
-      if (day >= 28) {
-        return 'Super Bowl'
-      }
+    if (now >= divisionalStart && now < conferenceStart) {
+      return 'Divisional'
     }
-    
-    // February 2026 - Super Bowl week
-    if (year === 2026 && month === 2 && day < 10) {
+    if (now >= conferenceStart && now < superBowlStart) {
+      return 'Conference'
+    }
+    if (now >= superBowlStart && now <= superBowlEnd) {
       return 'Super Bowl'
     }
     
-    // January 2025 - previous season playoffs
-    if (year === 2025 && month === 1) {
-      if (day >= 1 && day < 8) {
-        return 'Week 18'
-      }
-      if (day >= 8 && day < 15) {
-        return 'Wild Card'
-      }
-      if (day >= 15 && day < 22) {
-        return 'Divisional'
-      }
-      if (day >= 22 && day < 29) {
-        return 'Conference'
-      }
-      if (day >= 29) {
-        return 'Super Bowl'
-      }
-    }
-    
-    // February 2025 - Super Bowl week
-    if (year === 2025 && month === 2 && day < 10) {
-      return 'Super Bowl'
-    }
-    
-    // September through December 2025 - calculate week for current season
-    if (year === 2025 && month >= 9) {
-      const seasonStart = new Date(2025, 8, 3) // Wednesday, Sept 3, 2025
-      const diffTime = adjustedDate.getTime() - seasonStart.getTime()
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-      const weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 18)
-      return `Week ${weekNumber}`
-    }
-    
-    // September through December 2024 - calculate week for previous season
-    if (year === 2024 && month >= 9) {
-      const seasonStart = new Date(2024, 8, 4) // Wednesday, Sept 4, 2024
-      const diffTime = adjustedDate.getTime() - seasonStart.getTime()
+    // Regular season (September through early January)
+    const month = now.getMonth() + 1 // 1-12
+    if (month >= 9 || (month === 1 && now < wildCardStart)) {
+      const seasonStart = new Date(now.getFullYear(), 8, 5) // Sept 5
+      const diffTime = now.getTime() - seasonStart.getTime()
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
       const weekNumber = Math.min(Math.floor(diffDays / 7) + 1, 18)
       return `Week ${weekNumber}`
@@ -107,13 +58,22 @@ export default function BettingPage() {
     return 'Week 1'
   }
 
-  const [selectedWeek, setSelectedWeek] = useState(getCurrentNFLWeek())
+  const [selectedWeek, setSelectedWeek] = useState(() => {
+    // Only calculate on client to avoid timezone mismatch
+    if (typeof window === 'undefined') return 'Week 1'
+    return getCurrentNFLWeek()
+  })
   const [showBestBets, setShowBestBets] = useState(false)
   const [showFastDraft, setShowFastDraft] = useState(false)
   const [resultFilter, setResultFilter] = useState('all')
   const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [playerSearch, setPlayerSearch] = useState('')
   const [displayLimit, setDisplayLimit] = useState(10)
+
+  // Update selected week on client mount to avoid server/client timezone mismatch
+  useEffect(() => {
+    setSelectedWeek(getCurrentNFLWeek())
+  }, [])
 
   const { data, isLoading, error } = useGetBetsByWeekQuery({
     week: selectedWeek,
