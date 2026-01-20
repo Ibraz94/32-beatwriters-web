@@ -27,10 +27,15 @@ interface Column {
 }
 
 function RankingsContent() {
+  interface WeekOption {
+    week: number;
+    label: string;
+  }
+
   const [data, setData] = useState<RankingRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
-  const [weeks, setWeeks] = useState<number[]>([])
+  const [weeks, setWeeks] = useState<WeekOption[]>([])
   const [week, setWeek] = useState<number | undefined>(undefined)
   const [currentWeek, setCurrentWeek] = useState<number | undefined>(undefined)
   const [format, setFormat] = useState<'standard' | 'halfPPR' | 'ppr'>('ppr')
@@ -58,7 +63,10 @@ function RankingsContent() {
         const weeksRes = await fetch(buildApiUrl('/api/rankings/weeks'), { cache: 'no-store' })
         const weeksJson = await weeksRes.json()
         const currentWeekValue: number | undefined = weeksJson?.data?.currentWeek
-        const weeksArr: number[] = weeksJson?.data?.weeks || []
+        // Backend now returns weeks as array of { week: number, label: string }
+        const weeksArr: WeekOption[] = Array.isArray(weeksJson?.data?.weeks) 
+          ? weeksJson.data.weeks 
+          : []
         setWeeks(weeksArr)
         setCurrentWeek(currentWeekValue)
         if (currentWeekValue) setWeek(currentWeekValue)
@@ -283,7 +291,7 @@ function RankingsContent() {
             >
               <option value="" disabled>Week</option>
               {weeks.map((w) => (
-                <option key={w} value={w}>Week {w}</option>
+                <option key={w.week} value={w.week}>{w.label}</option>
               ))}
             </select>
           </div>
@@ -329,7 +337,7 @@ function RankingsContent() {
               >
                 <option value="" disabled>Select week</option>
                 {weeks.map((w) => (
-                  <option key={w} value={w}>Week {w}</option>
+                  <option key={w.week} value={w.week}>{w.label}</option>
                 ))}
               </select>
 
