@@ -53,15 +53,17 @@ export default function PlayerPageClient({ id }: any) {
     const queryParams = useMemo(() => {
         const params: any = {
             ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
-            playerId: parseInt(playerId),
+            // Note: Removed playerId filter to get all nuggets for client-side filtering
+            // This is a temporary workaround until backend supports multiple player associations
             sortBy: 'createdAt' as const,
-            sortOrder: 'desc' as const
+            sortOrder: 'desc' as const,
+            limit: 100  // Fetch more nuggets for client-side filtering
         }
         if (selectedYearForNuggets) {
             params.year = selectedYearForNuggets
         }
         return params
-    }, [debouncedSearchTerm, playerId, selectedYearForNuggets])
+    }, [debouncedSearchTerm, selectedYearForNuggets])
 
     // Main query for nuggets - with all filters
     const {
@@ -88,20 +90,54 @@ export default function PlayerPageClient({ id }: any) {
     useEffect(() => {
         if (nuggetsData?.data?.nuggets) {
             const newNuggets = nuggetsData.data.nuggets
+            
+            // Helper function to extract mentioned player IDs from HTML content
+            const extractMentionedPlayerIds = (htmlContent: string): number[] => {
+                const playerIds: number[] = []
+                const regex = /data-player-id="(\d+)"/g
+                let match
+                while ((match = regex.exec(htmlContent)) !== null) {
+                    playerIds.push(parseInt(match[1]))
+                }
+                return playerIds
+            }
+            
+            // Filter nuggets to include those that mention the current player
+            const filteredNuggets = newNuggets.filter(nugget => {
+                // Include if this is the primary player
+                if (nugget.player?.id === parseInt(playerId)) {
+                    return true
+                }
+                
+                // Include if the current player is mentioned in the content
+                const mentionedPlayerIds = extractMentionedPlayerIds(nugget.content || '')
+                return mentionedPlayerIds.includes(parseInt(playerId))
+            })
+            
+            // Debug: Log nuggets to verify filtering
+            // console.log('📰 Nuggets fetched for player:', playerId)
+            // console.log('📰 Total nuggets from API:', newNuggets.length)
+            // console.log('📰 Filtered nuggets (including mentions):', filteredNuggets.length)
+            // console.log('📰 Sample nugget player IDs:', filteredNuggets.slice(0, 3).map(n => ({ 
+            //     nuggetId: n.id, 
+            //     primaryPlayerId: n.player?.id, 
+            //     playerName: n.player?.name,
+            //     mentionedIds: extractMentionedPlayerIds(n.content || '')
+            // })))
 
             if (currentPage === 1) {
                 // First page - replace all nuggets
-                setAllNuggets(newNuggets)
+                setAllNuggets(filteredNuggets)
             } else {
                 // Additional pages - append to existing nuggets
-                setAllNuggets(prev => [...prev, ...newNuggets])
+                setAllNuggets(prev => [...prev, ...filteredNuggets])
             }
 
             // Check if there are more nuggets to load
-            setHasMoreNuggets(newNuggets.length === ITEMS_PER_PAGE)
+            setHasMoreNuggets(filteredNuggets.length === ITEMS_PER_PAGE)
             setIsLoadingMore(false)
         }
-    }, [nuggetsData, currentPage])
+    }, [nuggetsData, currentPage, playerId])
 
 
 
