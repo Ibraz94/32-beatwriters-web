@@ -137,7 +137,7 @@ function Header() {
 
     const toolOptions = [
         { href: "/rankings", label: "Player Prop Rankings" },
-        { href: "/tools/rookie-rankings", label: "Rookie Rankings" },
+        // { href: "/tools/rookie-rankings", label: "Rookie Rankings" },
     ];
 
     // const toolNavLink = [
