@@ -345,8 +345,8 @@ function ProspectsContent() {
                                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                                     <div className="flex-1 min-w-0">
                                         {/* School Logo & Player Name - Only this section is clickable */}
-                                        <div
-                                            // href={`/prospects/${encodeURIComponent(prospect.name.toLowerCase().replace(/\s+/g, '-'))}`}
+                                        <Link
+                                            href={`/prospects/${encodeURIComponent(prospect.name.toLowerCase().replace(/\s+/g, '-'))}`}
                                             className="flex items-center gap-2 md:gap-3 mb-1 hover:opacity-80 transition-opacity w-fit"
                                         >
                                             {/* School Logo */}
@@ -362,7 +362,7 @@ function ProspectsContent() {
                                                 </div>
                                             )}
                                             <h2 className="text-lg sm:text-2xl md:text-3xl font-bold truncate hover:text-[#E64A30] transition-colors">{prospect.name}</h2>
-                                        </div>
+                                        </Link>
 
                                         {/* Stars - Not clickable */}
                                         {/* {prospect.stars && (

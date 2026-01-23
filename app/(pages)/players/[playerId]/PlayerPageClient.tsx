@@ -43,6 +43,9 @@ export default function PlayerPageClient({ id }: any) {
     const [followPlayer] = useFollowPlayerMutation();
     const [unfollowPlayer] = useUnfollowPlayerMutation();
     const { showToast } = useToast();
+    const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false)
+    const [isPerformanceYearDropdownOpen, setIsPerformanceYearDropdownOpen] = useState(false)
+    const [isGameLogYearDropdownOpen, setIsGameLogYearDropdownOpen] = useState(false)
 
     // Year selection state for nuggets filtering
     const [selectedYearForNuggets, setSelectedYearForNuggets] = useState('2026')
@@ -50,15 +53,17 @@ export default function PlayerPageClient({ id }: any) {
     const queryParams = useMemo(() => {
         const params: any = {
             ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
-            playerId: parseInt(playerId),
+            // Note: Removed playerId filter to get all nuggets for client-side filtering
+            // This is a temporary workaround until backend supports multiple player associations
             sortBy: 'createdAt' as const,
-            sortOrder: 'desc' as const
+            sortOrder: 'desc' as const,
+            limit: 100  // Fetch more nuggets for client-side filtering
         }
         if (selectedYearForNuggets) {
             params.year = selectedYearForNuggets
         }
         return params
-    }, [debouncedSearchTerm, playerId, selectedYearForNuggets])
+    }, [debouncedSearchTerm, selectedYearForNuggets])
 
     // Main query for nuggets - with all filters
     const {
@@ -85,20 +90,54 @@ export default function PlayerPageClient({ id }: any) {
     useEffect(() => {
         if (nuggetsData?.data?.nuggets) {
             const newNuggets = nuggetsData.data.nuggets
+            
+            // Helper function to extract mentioned player IDs from HTML content
+            const extractMentionedPlayerIds = (htmlContent: string): number[] => {
+                const playerIds: number[] = []
+                const regex = /data-player-id="(\d+)"/g
+                let match
+                while ((match = regex.exec(htmlContent)) !== null) {
+                    playerIds.push(parseInt(match[1]))
+                }
+                return playerIds
+            }
+            
+            // Filter nuggets to include those that mention the current player
+            const filteredNuggets = newNuggets.filter(nugget => {
+                // Include if this is the primary player
+                if (nugget.player?.id === parseInt(playerId)) {
+                    return true
+                }
+                
+                // Include if the current player is mentioned in the content
+                const mentionedPlayerIds = extractMentionedPlayerIds(nugget.content || '')
+                return mentionedPlayerIds.includes(parseInt(playerId))
+            })
+            
+            // Debug: Log nuggets to verify filtering
+            // console.log('📰 Nuggets fetched for player:', playerId)
+            // console.log('📰 Total nuggets from API:', newNuggets.length)
+            // console.log('📰 Filtered nuggets (including mentions):', filteredNuggets.length)
+            // console.log('📰 Sample nugget player IDs:', filteredNuggets.slice(0, 3).map(n => ({ 
+            //     nuggetId: n.id, 
+            //     primaryPlayerId: n.player?.id, 
+            //     playerName: n.player?.name,
+            //     mentionedIds: extractMentionedPlayerIds(n.content || '')
+            // })))
 
             if (currentPage === 1) {
                 // First page - replace all nuggets
-                setAllNuggets(newNuggets)
+                setAllNuggets(filteredNuggets)
             } else {
                 // Additional pages - append to existing nuggets
-                setAllNuggets(prev => [...prev, ...newNuggets])
+                setAllNuggets(prev => [...prev, ...filteredNuggets])
             }
 
             // Check if there are more nuggets to load
-            setHasMoreNuggets(newNuggets.length === ITEMS_PER_PAGE)
+            setHasMoreNuggets(filteredNuggets.length === ITEMS_PER_PAGE)
             setIsLoadingMore(false)
         }
-    }, [nuggetsData, currentPage])
+    }, [nuggetsData, currentPage, playerId])
 
 
 
@@ -690,21 +729,52 @@ export default function PlayerPageClient({ id }: any) {
                                         </div>
                                     )}
 
-                                    <div className="flex items-center gap-3 bg-[#E64A30] text-white px-4 py-2 rounded-full text-sm relative">
-                                        <label htmlFor="year-select" className="font-semibold">Season:</label>
-                                        <select
-                                            id="year-select"
-                                            value={selectedYear}
-                                            onChange={(e) => setSelectedYear(e.target.value)}
-                                            className="appearance-none bg-transparent text-white text-sm font-medium focus:outline-none pr-6"
+                                    {/* Custom Year Dropdown for Performance */}
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setIsPerformanceYearDropdownOpen(!isPerformanceYearDropdownOpen)}
+                                            className="flex items-center gap-2 bg-[#E64A30] hover:bg-[#E64A30]/90 text-white px-5 py-3 rounded-full text-sm font-semibold transition-colors min-w-[140px] justify-between hover:cursor-pointer"
                                         >
-                                            {availableYears.map(year => (
-                                                <option key={year} value={year} className="text-black">
-                                                    {year}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <ChevronDown size={16} className="absolute right-3 pointer-events-none text-white" />
+                                            <span>Season: {selectedYear}</span>
+                                            <ChevronDown 
+                                                size={16} 
+                                                className={`transition-transform duration-200 ${isPerformanceYearDropdownOpen ? 'rotate-180' : ''}`}
+                                            />
+                                        </button>
+                                        
+                                        {/* Dropdown Menu */}
+                                        {isPerformanceYearDropdownOpen && (
+                                            <>
+                                                {/* Backdrop to close dropdown */}
+                                                <div 
+                                                    className="fixed inset-0 z-10" 
+                                                    onClick={() => setIsPerformanceYearDropdownOpen(false)}
+                                                />
+                                                
+                                                {/* Dropdown Options */}
+                                                <div className="absolute right-0 mt-2 w-full min-w-[140px] bg-white dark:bg-[#262829] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-20 max-h-60 overflow-y-auto">
+                                                    {availableYears.map((year) => (
+                                                        <button
+                                                            key={year}
+                                                            onClick={() => {
+                                                                setSelectedYear(year)
+                                                                setIsPerformanceYearDropdownOpen(false)
+                                                            }}
+                                                            className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors ${
+                                                                selectedYear === year
+                                                                    ? 'bg-[#FFE6E2] dark:bg-[#3A3D48] text-[#E64A30] dark:text-[#E64A30]'
+                                                                    : 'text-[#1D212D] dark:text-[#C7C8CB] hover:bg-[#F6BCB2] dark:hover:bg-[#3A3D48]'
+                                                            }`}
+                                                        >
+                                                            {year}
+                                                            {selectedYear === year && (
+                                                                <span className="ml-2">✓</span>
+                                                            )}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -1163,55 +1233,87 @@ export default function PlayerPageClient({ id }: any) {
 
                 return (
                     <div className="space-y-6">
-                        {/* Search Bar */}
-                        {/* <div className="relative w-full mb-6 flex">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                            <input
-                                type="text"
-                                placeholder="Search news for this player"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="filter-input w-full pl-10 pr-4 py-3 rounded shadow-sm"
-                            />
-
-                            <select
-                                id="year-select"
-                                value={selectedYearForNuggets}
-                                onChange={(e) => setSelectedYearForNuggets(e.target.value)}
-                                className="px-4 py-2 mx-2 select border bg-card rounded text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
-                            >
-                                {availableYear.map(year => (
-                                    <option key={year} value={year}>{year}</option>
-                                ))}
-                            </select>
-                        </div> */}
-                        <div className='flex justify-center'>
-                            <SearchBar
-                                placeholder="Search any news that suits you"
-                                size="md"
-                                width="w-full"
-                                buttonLabel="Search here"
-                                onButtonClick={() => alert("Button clicked!")}
-                                onChange={(val) => console.log(val)}
-                                className="flex justify-center items-center"
-                            />
+                        {/* Search Bar with Year Dropdown */}
+                        <div className="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                            <div className='flex-1 w-full'>
+                                <SearchBar
+                                    placeholder="Search any news that suits you"
+                                    size="md"
+                                    width="w-full"
+                                    buttonLabel="Search here"
+                                    onButtonClick={() => alert("Button clicked!")}
+                                    onChange={(val) => console.log(val)}
+                                    className="flex justify-center items-center"
+                                />
+                            </div>
+                            
+                            {/* Custom Year Dropdown */}
+                            <div className="relative -mt-8">
+                                <button
+                                    onClick={() => setIsYearDropdownOpen(!isYearDropdownOpen)}
+                                    className="flex items-center gap-2 bg-[#E64A30] hover:bg-[#E64A30]/90 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-colors min-w-[130px] justify-between hover:cursor-pointer"
+                                >
+                                    <span>Year: {selectedYearForNuggets}</span>
+                                    <ChevronDown 
+                                        size={16} 
+                                        className={`transition-transform duration-200 ${isYearDropdownOpen ? 'rotate-180' : ''}`}
+                                    />
+                                </button>
+                                
+                                {/* Dropdown Menu */}
+                                {isYearDropdownOpen && (
+                                    <>
+                                        {/* Backdrop to close dropdown */}
+                                        <div 
+                                            className="fixed inset-0 z-10" 
+                                            onClick={() => setIsYearDropdownOpen(false)}
+                                        />
+                                        
+                                        {/* Dropdown Options */}
+                                        <div className="absolute right-0 mt-2 w-full min-w-[130px] bg-white dark:bg-[#262829] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-20">
+                                            {['2026', '2025'].map((year) => (
+                                                <button
+                                                    key={year}
+                                                    onClick={() => {
+                                                        setSelectedYearForNuggets(year)
+                                                        setIsYearDropdownOpen(false)
+                                                    }}
+                                                    className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors ${
+                                                        selectedYearForNuggets === year
+                                                            ? 'bg-[#FFE6E2] dark:bg-[#3A3D48] text-[#E64A30] dark:text-[#E64A30]'
+                                                            : 'text-[#1D212D] dark:text-[#C7C8CB] hover:bg-[#F6BCB2] dark:hover:bg-[#3A3D48]'
+                                                    }`}
+                                                >
+                                                    {year}
+                                                    {selectedYearForNuggets === year && (
+                                                        <span className="ml-2">✓</span>
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
                         </div>
-                        {isLoadingNuggets ? (
+                        
+                        {/* Loading State */}
+                        {/* Loading State */}
+                        {(isLoadingNuggets || isFetchingNuggets) ? (
                             <div className="space-y-6">
                                 {[...Array(3)].map((_, i) => (
-                                    <div key={i} className="rounded border shadow-lg overflow-hidden animate-pulse h-screen">
-                                        <div>
+                                    <div key={i} className="rounded border shadow-lg overflow-hidden animate-pulse">
+                                        <div className="p-6">
                                             <div className="flex gap-4 mb-4">
-                                                <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+                                                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
                                                 <div className="flex-1">
-                                                    <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                                                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                                                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                                                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <div className="h-4 bg-gray-200 rounded"></div>
-                                                <div className="h-4 bg-gray-200 rounded"></div>
-                                                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                                                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                                                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                                                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -1512,19 +1614,53 @@ export default function PlayerPageClient({ id }: any) {
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                                 <h2 className="text-3xl font-black mb-4 sm:mb-0">Game Logs</h2>
 
-                                {/* Dropdown for Year Selection */}
-                                <select
-                                    value={selectedYear}
-                                    onChange={handleYearChange}
-                                    className="px-4 py-2 select border bg-card rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E64A30]"
-                                >
-                                    {/* Sort the years in descending order */}
-                                    {availableYearsDynamic.sort((a, b) => Number(b) - Number(a)).map((year) => (
-                                        <option key={year} value={year}>
-                                            {year}
-                                        </option>
-                                    ))}
-                                </select>
+                                {/* Custom Year Dropdown for Game Log */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setIsGameLogYearDropdownOpen(!isGameLogYearDropdownOpen)}
+                                        className="flex items-center gap-2 bg-[#E64A30] hover:bg-[#E64A30]/90 text-white px-5 py-3 rounded-full text-sm font-semibold transition-colors min-w-[130px] justify-between hover:cursor-pointer"
+                                    >
+                                        <span>Year: {selectedYear}</span>
+                                        <ChevronDown 
+                                            size={16} 
+                                            className={`transition-transform duration-200 ${isGameLogYearDropdownOpen ? 'rotate-180' : ''}`}
+                                        />
+                                    </button>
+                                    
+                                    {/* Dropdown Menu */}
+                                    {isGameLogYearDropdownOpen && (
+                                        <>
+                                            {/* Backdrop to close dropdown */}
+                                            <div 
+                                                className="fixed inset-0 z-10" 
+                                                onClick={() => setIsGameLogYearDropdownOpen(false)}
+                                            />
+                                            
+                                            {/* Dropdown Options */}
+                                            <div className="absolute right-0 mt-2 w-full min-w-[130px] bg-white dark:bg-[#262829] rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-20 max-h-60 overflow-y-auto">
+                                                {availableYearsDynamic.sort((a, b) => Number(b) - Number(a)).map((year) => (
+                                                    <button
+                                                        key={year}
+                                                        onClick={() => {
+                                                            setSelectedYear(year)
+                                                            setIsGameLogYearDropdownOpen(false)
+                                                        }}
+                                                        className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors ${
+                                                            selectedYear === year
+                                                                ? 'bg-[#FFE6E2] dark:bg-[#3A3D48] text-[#E64A30] dark:text-[#E64A30]'
+                                                                : 'text-[#1D212D] dark:text-[#C7C8CB] hover:bg-[#F6BCB2] dark:hover:bg-[#3A3D48]'
+                                                        }`}
+                                                    >
+                                                        {year}
+                                                        {selectedYear === year && (
+                                                            <span className="ml-2">✓</span>
+                                                        )}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Game Log Table */}
