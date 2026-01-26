@@ -8,6 +8,7 @@ import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 import PlayerActionsMenu from './PlayerActionsMenu'
 import NoteModal from './NoteModal'
 import TierSelectionModal from './TierSelectionModal'
+import { ReadMore } from '@/app/components/ReadMore'
 import { ChevronDown, ChevronUp, GripVertical } from 'lucide-react'
 
 interface SortablePlayerCardProps {
@@ -66,9 +67,8 @@ export default function SortablePlayerCard({
         ref={setNodeRef}
         style={style}
         {...attributes}
-        className={`bg-white dark:bg-[#262829] rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-opacity ${
-          isDragging ? 'opacity-50 z-50 scale-105' : isSaving ? 'opacity-40' : ''
-        }`}
+        className={`bg-white dark:bg-[#262829] rounded-xl border-2 border-gray-200 dark:border-gray-700 transition-opacity ${isDragging ? 'opacity-50 z-50 scale-105' : isSaving ? 'opacity-40' : ''
+          }`}
       >
         <div className="min-h-12 px-2 sm:px-4 py-2 flex items-center gap-2 sm:gap-3">
           {/* Mobile Drag Handle - Only visible on mobile */}
@@ -82,7 +82,7 @@ export default function SortablePlayerCard({
           </button>
 
           {/* Desktop Drag Area - Entire card draggable on desktop */}
-          <div 
+          <div
             {...(typeof window !== 'undefined' && window.innerWidth >= 768 ? listeners : {})}
             className="hidden md:flex items-center gap-3 flex-1 cursor-grab active:cursor-grabbing"
           >
@@ -244,24 +244,31 @@ export default function SortablePlayerCard({
             )}
 
             {player.fantasyOutlook && (
-              <div className='p-2 sm:p-3 bg-gray-50 dark:bg-gray-900/20 rounded-lg border border-gray-200 dark:border-yellow-800'>
-                <h4 className="font-semibold text-[#1D212D] dark:text-white mb-1 text-xs sm:text-sm">
+              <div>
+                <h4 className="font-semibold text-xs sm:text-sm text-[#E64A30]">
                   Fantasy Outlook
                 </h4>
-                <div
-                  className="text-xs text-gray-700 dark:text-gray-300"
-                  dangerouslySetInnerHTML={{ __html: player.fantasyOutlook }}
-                />
+                <div className="text-xs sm:text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
+                  <ReadMore
+                    id={`fantasy-outlook-${player.id}`}
+                    text={player.fantasyOutlook}
+                    amountOfWords={30}
+                  />
+                </div>
               </div>
             )}
             {note && (
-              <div className="p-2 sm:p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                <h4 className="font-semibold text-[#1D212D] dark:text-white mb-1 flex items-center gap-1 text-xs sm:text-sm">
-                  Your Note
+              <div>
+                <h4 className="font-semibold text-xs sm:text-sm text-[#E64A30]">
+                  My Notes
                 </h4>
-                <p className="text-xs text-gray-700 dark:text-gray-300">
-                  {note}
-                </p>
+                <div className="text-xs sm:text-sm dark:text-[#D2D6E2] leading-relaxed prose prose-sm dark:prose-invert max-w-none [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
+                  <ReadMore
+                    id={`note-${player.id}`}
+                    text={note}
+                    amountOfWords={30}
+                  />
+                </div>
               </div>
             )}
           </div>
