@@ -8,6 +8,8 @@ import { ArrowUp, ArrowDown } from 'lucide-react'
 import { buildApiUrl } from '@/lib/config/api'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ReadMore } from '@/app/components/ReadMore'
+import { ProspectStats } from '@/lib/types/prospectStats'
+import { getStatLabel, formatStatValue } from '@/lib/utils/prospectStatsFormatter'
 
 interface ProspectData {
     id: string
@@ -29,6 +31,11 @@ interface ProspectData {
     status: string
     createdAt: string
     updatedAt: string
+    age?: string
+    conference?: string
+    draftCapital?: string
+    rasScore?: string
+    stats: ProspectStats | null
 }
 
 export default function ProspectPageClient({ name }: { name: string }) {
@@ -58,16 +65,16 @@ export default function ProspectPageClient({ name }: { name: string }) {
                 if (!res.ok) throw new Error('Failed to load prospects')
                 const json = await res.json()
                 const prospects = json?.data?.prospects || []
-                
+
                 // Find prospect by name (case-insensitive match)
-                const foundProspect = prospects.find((p: ProspectData) => 
+                const foundProspect = prospects.find((p: ProspectData) =>
                     p.name.toLowerCase() === name.toLowerCase()
                 )
-                
+
                 if (!foundProspect) {
                     throw new Error('Prospect not found')
                 }
-                
+
                 setProspect(foundProspect)
             } catch (e: any) {
                 setError(e?.message || 'Failed to load prospect')
@@ -225,18 +232,22 @@ export default function ProspectPageClient({ name }: { name: string }) {
                         </div>
                         {/* Stats Section */}
                         <div className="border-t border-[#C7C8CB] dark:border-gray-700 pt-4">
-                            <div className="grid grid-cols-3 gap-3 w-fit">
+                            <div className="grid grid-cols-3 gap-3 w-full">
                                 {[
                                     `Position: ${prospect.position}`,
                                     `Position Group: ${prospect.positionGroup || '-'}`,
                                     `Eligibility: ${prospect.eligibility || '-'}`,
-                                    `School: ${prospect.school || ''}`,
-                                    `Weight: ${prospect.weight || ''}`
+                                    `School: ${prospect.school || '-'}`,
+                                    `Weight: ${prospect.weight || '-'}`,
+                                    `Age: ${prospect.age || '-'}`,
+                                    `Conference: ${prospect.conference || '-'}`,
+                                    `Draft Capital: ${prospect.draftCapital || '-'}`,
+                                    `RAS: ${prospect.rasScore ? parseFloat(prospect.rasScore).toFixed(2) : '-'}`
 
                                 ].map((text, i) => (
                                     <div
                                         key={i}
-                                        className="bg-[#E3E4E5] dark:bg-gray-800 rounded-full px-4 py-1.5 text-sm text-[#1D212D] dark:text-gray-300 text-center flex items-center justify-center min-w-[180px] h-8"
+                                        className="bg-[#E3E4E5] dark:bg-gray-800 rounded-full px-3 py-1.5 text-xs sm:text-sm text-[#1D212D] dark:text-gray-300 text-center flex items-center justify-center h-8 whitespace-nowrap overflow-hidden text-ellipsis"
                                     >
                                         {text}
                                     </div>
@@ -317,20 +328,24 @@ export default function ProspectPageClient({ name }: { name: string }) {
                         </div>
                         {/* Stats Section */}
                         <div className="border-t border-[#C7C8CB] pt-4 dark:border-none">
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 w-fit">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 w-full">
                                 {[
                                     `Position: ${prospect.position}`,
                                     `Position Group: ${prospect.positionGroup || '-'}`,
                                     `Eligibility: ${prospect.eligibility || '-'}`,
-                                    `School: ${prospect.school || ''}`,
-                                    `Weight: ${prospect.weight || ''}`
+                                    `School: ${prospect.school || '-'}`,
+                                    `Weight: ${prospect.weight || '-'}`,
+                                    `Age: ${prospect.age || '-'}`,
+                                    `Conference: ${prospect.conference || '-'}`,
+                                    `Draft Capital: ${prospect.draftCapital || '-'}`,
+                                    `RAS: ${prospect.rasScore ? parseFloat(prospect.rasScore).toFixed(2) : '-'}`
 
                                 ].map((text, i) => (
                                     <div
                                         key={i}
-                                        className="bg-[#E3E4E5] dark:bg-gray-800 rounded-full px-4 py-1.5 text-sm text-[#1D212D] dark:text-gray-300 text-center flex items-center justify-center min-w-[180px] h-8"
+                                        className="bg-[#E3E4E5] dark:bg-gray-800 rounded-full px-3 py-2 md:px-4 md:py-1.5 text-[10px] sm:text-xs md:text-sm text-[#1D212D] dark:text-gray-300 text-center flex items-center justify-center min-h-[32px] md:h-8"
                                     >
-                                        {text}
+                                        <span className="truncate">{text}</span>
                                     </div>
                                 ))}
                             </div>
@@ -340,10 +355,10 @@ export default function ProspectPageClient({ name }: { name: string }) {
             </div>
 
             {/* Main Content */}
-            <div className="container mx-auto px-4 pb-16">
+            <div className="container mx-auto px-4 pb-1">
                 <div className="grid lg:grid-cols-1 gap-8">
                     {/* Prospect Details */}
-                    <div className="lg:col-span-2 space-y-8">
+                    <div className="lg:col-span-2 space-y-4">
                         {/* Analysis Section */}
                         {prospect.analysis && (
                             <div className="rounded-3xl border border-[#C7C8CB] dark:border-gray-700 overflow-hidden">
@@ -354,7 +369,7 @@ export default function ProspectPageClient({ name }: { name: string }) {
                                 </div>
                                 <div className="p-6">
                                     <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
-                                        <ReadMore 
+                                        <ReadMore
                                             id={`analysis-${prospect.id}`}
                                             text={prospect.analysis}
                                             amountOfCharacters={400}
@@ -374,7 +389,7 @@ export default function ProspectPageClient({ name }: { name: string }) {
                                 </div>
                                 <div className="p-6">
                                     <div className="prose max-w-none prose-sm sm:prose-base md:prose-lg dark:prose-invert [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2">
-                                        <ReadMore 
+                                        <ReadMore
                                             id={`writeup-${prospect.id}`}
                                             text={prospect.writeUp}
                                             amountOfCharacters={400}
@@ -386,6 +401,30 @@ export default function ProspectPageClient({ name }: { name: string }) {
                     </div>
                 </div>
             </div>
+            {/* Statistics Section */}
+            {prospect.stats && (
+                <div className="container mx-auto px-4 pb-8 pt-2">
+                    <div className="rounded-3xl border border-[#C7C8CB] dark:border-gray-700 overflow-hidden">
+                        <div className="bg-[#E64A30] px-6 py-2">
+                            <h2 className="text-2xl text-white flex items-center gap-2">
+                                Statistics
+                            </h2>
+                        </div>
+                        <div className="p-6">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
+                                {Object.entries(prospect.stats).map(([key, value]) => (
+                                    <div
+                                        key={key}
+                                        className="w-full bg-[#E3E4E5] dark:bg-gray-800 rounded-full px-3 py-2 md:px-4 md:py-1.5 text-[10px] sm:text-xs md:text-sm text-[#1D212D] dark:text-gray-300 text-center flex items-center justify-center min-h-[32px] md:h-8"
+                                    >
+                                        <span className="truncate">{getStatLabel(key)}: {formatStatValue(key, value)}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
