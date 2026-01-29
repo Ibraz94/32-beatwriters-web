@@ -105,10 +105,10 @@ function PremiumSignupForm() {
   }
 
   // Specific plan IDs to display
-  const allowedPlanIds = ['plan_SP4eIOlEaiqOH0', 'price_1SVegMAToc8YZruP2we5ooFx']
+  const allowedPlanIds = ['price_1RltPxAToc8YZruP4TJLGvPR', 'price_1RZZFRAToc8YZruPw5uzOh1n']
   
   // Monthly plan ID (first one in the array)
-  const monthlyPlanId = 'plan_SP4eIOlEaiqOH0'
+  const monthlyPlanId = 'price_1RZZFRAToc8YZruPw5uzOh1n'
 
   useEffect(() => {
     const fetchSubscriptionOptions = async () => {
@@ -1034,7 +1034,7 @@ function PremiumSignupForm() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-[#E64A30] text-white hover:scale-101 py-3 px-4 rounded-full font-medium transition-colors disabled:opacity-50"
+                    className="w-full bg-[#E64A30] text-white hover:scale-101 py-3 px-4 rounded-full font-medium transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {isLoading ? 'Processing...' : 'Subscribe Now'}
                   </button>

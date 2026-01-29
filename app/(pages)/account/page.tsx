@@ -305,8 +305,13 @@ function AccountContent() {
 
     // Cancel subscription
     const handleCancelSubscription = async () => {
+        console.log('=== Cancel Subscription Started ===')
+        console.log('Token:', token ? 'Present' : 'Missing')
+        console.log('API URL:', buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CANCEL_SUBSCRIPTION))
+        
         setCancellingSubscription(true)
         try {
+            console.log('Making cancel subscription request...')
             const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.STRIPE.CANCEL_SUBSCRIPTION), {
                 method: 'POST',
                 headers: {
@@ -315,19 +320,35 @@ function AccountContent() {
                 }
             })
 
+            console.log('Response status:', response.status)
+            console.log('Response ok:', response.ok)
+
             if (response.ok) {
+                const successData = await response.json()
+                console.log('Cancel subscription success:', successData)
+                
                 setSuccessMessage('Subscription cancelled successfully. You will retain access until the end of your billing period.')
                 setShowCancelConfirm(false)
                 fetchSubscription() // Refresh subscription data
                 setTimeout(() => setSuccessMessage(''), 5000)
             } else {
                 const errorData = await response.json()
+                console.error('Cancel subscription error response:', errorData)
+                console.error('Error status:', response.status)
+                
                 setErrors({ subscription: errorData.message || 'Failed to cancel subscription' })
             }
         } catch (error) {
+            console.error('Cancel subscription exception:', error)
+            console.error('Error details:', {
+                message: error instanceof Error ? error.message : 'Unknown error',
+                stack: error instanceof Error ? error.stack : undefined
+            })
+            
             setErrors({ subscription: 'Failed to cancel subscription' })
         } finally {
             setCancellingSubscription(false)
+            console.log('=== Cancel Subscription Completed ===')
         }
     }
 
