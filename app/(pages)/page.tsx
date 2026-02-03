@@ -9,6 +9,7 @@ import SubscriptionComponent from "../components/SubscriptionComponent";
 import DeliveredToComponent from "../components/DeliveredToComponent";
 import TrustedByPartners from "../components/TrustedByComponent";
 import Hero from "../components/Hero";
+import DiscordCTA from "../components/DiscordCTA";
 
 
 
@@ -21,6 +22,7 @@ export default function Home() {
       <LatestNuggets />
       <TrustedByPartners />
       <NewArticles />
+      <DiscordCTA />
       <PodcastsComponent />
       <SubscriptionComponent />
     </div>
