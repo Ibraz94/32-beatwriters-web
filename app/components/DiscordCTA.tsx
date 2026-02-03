@@ -38,7 +38,7 @@ const DiscordCTA = () => {
   }
 
   return (
-    <section className="container mx-auto px-4 py-8 md:py-12">
+    <section className="container mx-auto px-4 py-8 md:py-12 mt-6">
       <div className="bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] rounded-2xl overflow-hidden relative">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5 dark:opacity-10">
