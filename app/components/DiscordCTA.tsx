@@ -23,7 +23,7 @@ const DiscordCTA = () => {
       router.push('/subscribe')
     } else {
       // Logged in and subscribed - navigate to profile page
-      router.push('/profile')
+      router.push('/account')
     }
   }
 
