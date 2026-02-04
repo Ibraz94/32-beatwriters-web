@@ -4,12 +4,13 @@ import { useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { ArrowUp, ArrowDown } from 'lucide-react'
+import { ArrowUp, ArrowDown, BarChart3, Users } from 'lucide-react'
 import { buildApiUrl } from '@/lib/config/api'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ReadMore } from '@/app/components/ReadMore'
 import { ProspectStats } from '@/lib/types/prospectStats'
 import { getStatLabel, formatStatValue } from '@/lib/utils/prospectStatsFormatter'
+import { useGetTeamsQuery, getTeamLogoUrl } from '@/lib/services/teamsApi'
 
 interface ProspectData {
     id: string
@@ -36,6 +37,7 @@ interface ProspectData {
     draftCapital?: string
     rasScore?: string
     stats: ProspectStats | null
+    bestFits?: string[]
 }
 
 export default function ProspectPageClient({ name }: { name: string }) {
@@ -46,6 +48,7 @@ export default function ProspectPageClient({ name }: { name: string }) {
     const [prospect, setProspect] = useState<ProspectData | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string>('')
+    const [activeTab, setActiveTab] = useState('performance-metrics')
 
     // Get the page number user came from (for back navigation)
     const fromPage = searchParams?.get('page')
@@ -53,6 +56,9 @@ export default function ProspectPageClient({ name }: { name: string }) {
 
     // Add authentication check
     const { isAuthenticated, isLoading: authLoading, user } = useAuth()
+
+    // Fetch teams data
+    const { data: teamsData } = useGetTeamsQuery()
 
     // Fetch prospect data by name
     useEffect(() => {
@@ -154,6 +160,89 @@ export default function ProspectPageClient({ name }: { name: string }) {
 
     // Get prospect image URL - use logo as main image for now
     const prospectImage = prospect.logo || '/default-player.jpg'
+
+    // Filter teams based on bestFits IDs
+    const bestFitTeams = prospect.bestFits && teamsData?.teams
+        ? teamsData.teams.filter(team => prospect.bestFits?.includes(team.id))
+        : []
+
+    // Tab configuration
+    const tabs = [
+        { id: 'performance-metrics', label: 'Performance Metrics', icon: BarChart3 },
+        { id: 'best-fits', label: 'Best Fits', icon: Users },
+    ]
+
+    // Render tab content
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case 'performance-metrics':
+                return prospect.stats ? (
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {Object.entries(prospect.stats).map(([key, value]) => (
+                                <div
+                                    key={key}
+                                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#F1F1F1] dark:bg-gray-800 transition-colors"
+                                >
+                                    <span className="text-2xl md:text-3xl font-bold text-[#E64A30]">
+                                        {formatStatValue(key, value)}
+                                    </span>
+                                    <span className="text-xs md:text-sm font-semibold text-[#1D212D] dark:text-white text-center">
+                                        {getStatLabel(key)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="text-center py-12">
+                        <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-xl font-bold text-gray-600 mb-2">No Statistics Available</h3>
+                        <p className="text-gray-500">Statistics are not available for this prospect.</p>
+                    </div>
+                )
+
+            case 'best-fits':
+                return bestFitTeams.length > 0 ? (
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            {bestFitTeams.map((team) => (
+                                <div
+                                    key={team.id}
+                                    className="flex flex-col items-center gap-3 p-4 rounded-xl bg-[#F1F1F1] dark:bg-gray-800 transition-colors group"
+                                >
+                                    <div className="relative w-16 h-16 md:w-20 md:h-20">
+                                        <Image
+                                            src={getTeamLogoUrl(team.logo) || '/default-player.jpg'}
+                                            alt={team.name}
+                                            fill
+                                            className="object-contain group-hover:scale-101 transition-transform"
+                                            loader={({ src }) => src}
+                                            onError={(e) => {
+                                                const target = e.target as HTMLImageElement
+                                                target.src = '/default-player.jpg'
+                                            }}
+                                        />
+                                    </div>
+                                    <span className="text-xs md:text-sm font-semibold text-[#1D212D] dark:text-white text-center">
+                                        {team.name}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="text-center py-12">
+                        <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-xl font-bold text-gray-600 mb-2">No Best Fits Available</h3>
+                        <p className="text-gray-500">Best fit teams are not available for this prospect.</p>
+                    </div>
+                )
+
+            default:
+                return null
+        }
+    }
 
     return (
         <div>
@@ -401,26 +490,38 @@ export default function ProspectPageClient({ name }: { name: string }) {
                     </div>
                 </div>
             </div>
-            {/* Statistics Section */}
-            {prospect.stats && (
-                <div className="container mx-auto px-4 pb-8 pt-2">
-                    <div className="rounded-3xl border border-[#C7C8CB] dark:border-gray-700 overflow-hidden">
-                        <div className="bg-[#E64A30] px-6 py-2">
-                            <h2 className="text-2xl text-white flex items-center gap-2">
-                                Statistics
-                            </h2>
+
+            {/* Tabs Section */}
+            {(prospect.stats || bestFitTeams.length > 0) && (
+                <div className="container mx-auto px-4 pb-8 pt-4">
+                    <div className="rounded-4xl border border-gray-300 dark:border-gray-700 overflow-hidden">
+                        {/* Tab Navigation */}
+                        <div className="border-b border-white/20">
+                            <nav className="flex space-x-0 p-2 border border-[#C7C8CB] dark:border-gray-700 rounded-full bg-white/5">
+                                {tabs.map((tab) => {
+                                    const IconComponent = tab.icon
+                                    const isActive = activeTab === tab.id
+                                    return (
+                                        <button
+                                            key={tab.id}
+                                            onClick={() => setActiveTab(tab.id)}
+                                            className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 text-xl transition-all rounded-full 
+                                            ${isActive
+                                                    ? 'bg-[#E64A30] text-white'
+                                                    : 'text-[#72757C] hover:bg-[#E3E4E5] hover:text-[#1D212D]'
+                                                }`}
+                                        >
+                                            <IconComponent className="w-4 h-4" />
+                                            <span className="hidden sm:inline">{tab.label}</span>
+                                        </button>
+                                    )
+                                })}
+                            </nav>
                         </div>
-                        <div className="p-6">
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-                                {Object.entries(prospect.stats).map(([key, value]) => (
-                                    <div
-                                        key={key}
-                                        className="w-full bg-[#E3E4E5] dark:bg-gray-800 rounded-full px-3 py-2 md:px-4 md:py-1.5 text-[10px] sm:text-xs md:text-sm text-[#1D212D] dark:text-gray-300 text-center flex items-center justify-center min-h-[32px] md:h-8"
-                                    >
-                                        <span className="truncate">{getStatLabel(key)}: {formatStatValue(key, value)}</span>
-                                    </div>
-                                ))}
-                            </div>
+
+                        {/* Tab Content */}
+                        <div className="p-4">
+                            {renderTabContent()}
                         </div>
                     </div>
                 </div>

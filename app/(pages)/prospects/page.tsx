@@ -386,7 +386,7 @@ function ProspectsContent() {
                                                     <span className="font-semibold text-foreground">{prospect.positionGroup}</span>
                                                 </>
                                             )}
-                                            <span>•</span>
+                                            {/* <span>•</span> */}
                                             <span className="font-semibold text-foreground">
                                                 {prospect.eligibility && prospect.eligibility.trim() !== '' ? prospect.eligibility : ''}
                                             </span>

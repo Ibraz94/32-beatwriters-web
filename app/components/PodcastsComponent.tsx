@@ -46,7 +46,7 @@ export default function PodcastsComponent() {
     };
 
     return (
-        <section className="px-4 py-8 md:py-12 lg:py-16 mt-8 md:mt-12 container mx-auto ">
+        <section className="px-4 py-8 md:py-12 lg:py-16 container mx-auto ">
             <div className="bg-[var(--gray-background-color)] dark:bg-[#1A1A1A] px-4 py-6 rounded-3xl">
                 {/* Header */}
                 <div className="text-center mb-8 md:mb-12">
