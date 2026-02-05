@@ -845,17 +845,16 @@ function AccountContent() {
                                                         : subscription.status?.charAt(0).toUpperCase() + subscription.status?.slice(1)}
                                                 </span>
                                             </div>
-
                                         </div>
 
                                         <div>
                                             <div className="flex items-center gap-2 mb-2">
                                                 <CreditCard className="h-5 w-5 text-muted-foreground" />
-                                                <label className="block text-sm font-medium mb-2">
+                                                <label className="text-sm font-medium">
                                                     Amount
                                                 </label>
                                             </div>
-                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                            <div className="flex items-center p-3 border border-input rounded-lg bg-background/20">
                                                 <span className="text-foreground">
                                                     ${subscription.amount ? (subscription.amount / 100).toFixed(2) : '0.00'} / {subscription.interval || 'month'}
                                                 </span>
@@ -865,11 +864,11 @@ function AccountContent() {
                                         <div>
                                             <div className="flex items-center gap-2 mb-2">
                                                 <Calendar className="h-5 w-5 text-muted-foreground" />
-                                                <label className="block text-sm font-medium mb-2">
+                                                <label className="text-sm font-medium">
                                                     {subscription.isCancelled ? 'Access Until' : 'Next Billing Date'}
                                                 </label>
                                             </div>
-                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
+                                            <div className="flex items-center justify-between p-3 border border-input rounded-lg bg-background/20">
                                                 <span className="text-foreground">
                                                     {subscription.nextBillingDate
                                                         ? new Date(subscription.nextBillingDate * 1000).toLocaleDateString()
@@ -887,12 +886,12 @@ function AccountContent() {
                                         <div>
                                             <div className="flex items-center gap-2 mb-2">
                                                 <Shield className="h-5 w-5 text-muted-foreground" />
-                                                <label className="block text-sm font-medium mb-2">
+                                                <label className="text-sm font-medium">
                                                     Subscription ID
                                                 </label>
                                             </div>
-                                            <div className="flex items-center space-x-3 p-3 border border-input rounded-lg bg-background/20">
-                                                <span className="text-foreground text-sm font-mono">
+                                            <div className="flex items-center justify-between p-3 border border-input rounded-lg bg-background/20">
+                                                <span className="text-foreground">
                                                     {subscription.subscriptionId ? subscription.subscriptionId.slice(-8) : 'N/A'}
                                                 </span>
                                             </div>

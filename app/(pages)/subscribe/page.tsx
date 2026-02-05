@@ -5,6 +5,15 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { API_CONFIG, buildApiUrl } from '../../../lib/config/api'
 import GoogleOAuthButton from '@/app/components/GoogleOAuthButton'
 import Image from 'next/image'
+import { Eye, EyeOff } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface SubscriptionOption {
   id: string
@@ -47,6 +56,8 @@ function PremiumSignupForm() {
   } | null>(null)
   const [selectedPriceId, setSelectedPriceId] = useState<string>('')
   const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'general' | 'email' | 'username', string>>>({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const router = useRouter()
 
   // Promo code state variables
@@ -744,7 +755,7 @@ function PremiumSignupForm() {
                         variant="signup"
                         onSuccess={handleGoogleAuthSuccess}
                         onError={handleGoogleAuthError}
-                        className="w-full rounded-full dark:bg-[#262829]"
+                        className="w-full rounded-full dark:bg-[#262829] dark:text-white hover:cursor-pointer"
                         disabled={googleAuthLoading}
                       />
                     </div>
@@ -936,7 +947,7 @@ function PremiumSignupForm() {
                           name="zipCode"
                           value={formData.zipCode}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.zipCode ? 'border-destructive' : 'border-input'
+                          className={`w-full px-4 py-2.5 border rounded-full dark:bg-[#262829] ${errors.zipCode ? 'border-destructive' : 'border-input'
                             }`}
                           required
                         />
@@ -948,17 +959,26 @@ function PremiumSignupForm() {
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Country *
                         </label>
-                        <select
-                          name="country"
+                        <Select
                           value={formData.country}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-2 border border-input rounded-full dark:bg-[#262829]"
-                          required
+                          onValueChange={(value) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              country: value
+                            }))
+                          }}
                         >
-                          <option value="US">United States</option>
-                          <option value="CA">Canada</option>
-                          <option value="GB">United Kingdom</option>
-                        </select>
+                          <SelectTrigger className="w-full px-4 border border-input rounded-full dark:bg-[#262829] hover:cursor-pointer">
+                            <SelectValue placeholder="Select a country" />
+                          </SelectTrigger>
+                          <SelectContent className="border-none bg-white dark:bg-[#262829] text-black dark:text-white rounded-xl shadow-md">
+                            <SelectGroup>
+                              <SelectItem value="US">United States</SelectItem>
+                              <SelectItem value="CA">Canada</SelectItem>
+                              <SelectItem value="GB">United Kingdom</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </div>
@@ -991,15 +1011,28 @@ function PremiumSignupForm() {
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Password *
                         </label>
-                        <input
-                          type="password"
-                          name="password"
-                          value={formData.password}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.password ? 'border-destructive' : 'border-input'
-                            }`}
-                          required
-                        />
+                        <div className="relative">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            className={`w-full px-4 pr-10 py-2 border rounded-full dark:bg-[#262829] ${errors.password ? 'border-destructive' : 'border-input'
+                              }`}
+                            required
+                          />
+                          <button
+                            type="button"
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center hover:cursor-pointer"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <Eye className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+                            ) : (
+                              <EyeOff className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+                            )}
+                          </button>
+                        </div>
                         {errors.password && (
                           <p className="mt-1 text-sm text-destructive">{errors.password}</p>
                         )}
@@ -1008,15 +1041,28 @@ function PremiumSignupForm() {
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Confirm Password *
                         </label>
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          value={formData.confirmPassword}
-                          onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-full dark:bg-[#262829] ${errors.confirmPassword ? 'border-destructive' : 'border-input'
-                            }`}
-                          required
-                        />
+                        <div className="relative">
+                          <input
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
+                            className={`w-full px-4 pr-10 py-2 border rounded-full dark:bg-[#262829] ${errors.confirmPassword ? 'border-destructive' : 'border-input'
+                              }`}
+                            required
+                          />
+                          <button
+                            type="button"
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center hover:cursor-pointer"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          >
+                            {showConfirmPassword ? (
+                              <Eye className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+                            ) : (
+                              <EyeOff className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+                            )}
+                          </button>
+                        </div>
                         {errors.confirmPassword && (
                           <p className="mt-1 text-sm text-destructive">{errors.confirmPassword}</p>
                         )}
