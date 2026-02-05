@@ -875,11 +875,11 @@ function AccountContent() {
                                                         : 'N/A'
                                                     }
                                                 </span>
-                                                {subscription.isCancelled && (
+                                                {/* {subscription.isCancelled && (
                                                     <span className="text-xs text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 px-2 py-1 rounded">
                                                         Cancelled
                                                     </span>
-                                                )}
+                                                )} */}
                                             </div>
                                         </div>
 
@@ -960,13 +960,24 @@ function AccountContent() {
                                     <p className="text-muted-foreground mb-4">
                                         You don't have an active subscription. Subscribe to access premium features.
                                     </p>
-                                    <a
-                                        href="/subscribe"
-                                        className="inline-flex items-center px-4 py-2 bg-[#E64A30] text-white rounded-full hover:bg-[#E64A30]/80 transition-colors"
+                                    <button
+                                        onClick={() => {
+                                            // Store user data in sessionStorage to pre-fill subscribe form
+                                            if (user) {
+                                                sessionStorage.setItem('prefillData', JSON.stringify({
+                                                    email: user.email,
+                                                    firstName: user.firstName || '',
+                                                    lastName: user.lastName || '',
+                                                    username: user.username || ''
+                                                }))
+                                            }
+                                            router.push('/subscribe')
+                                        }}
+                                        className="inline-flex items-center px-4 py-2 bg-[#E64A30] text-white rounded-full hover:bg-[#E64A30]/80 transition-colors hover:cursor-pointer"
                                     >
                                         <CreditCard className="h-4 w-4 mr-2" />
                                         Subscribe Now
-                                    </a>
+                                    </button>
                                 </div>
                             )}
                         </div>

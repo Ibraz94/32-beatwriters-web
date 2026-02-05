@@ -159,7 +159,7 @@ export default function ProspectPageClient({ name }: { name: string }) {
     }
 
     // Get prospect image URL - use logo as main image for now
-    const prospectImage = prospect.logo || '/default-player.jpg'
+    const prospectImage = prospect.logo || '/32bw_logo_white.png'
 
     // Filter teams based on bestFits IDs
     const bestFitTeams = prospect.bestFits && teamsData?.teams
@@ -213,14 +213,14 @@ export default function ProspectPageClient({ name }: { name: string }) {
                                 >
                                     <div className="relative w-16 h-16 md:w-20 md:h-20">
                                         <Image
-                                            src={getTeamLogoUrl(team.logo) || '/default-player.jpg'}
+                                            src={getTeamLogoUrl(team.logo) || '/32bw_logo_white.png'}
                                             alt={team.name}
                                             fill
                                             className="object-contain group-hover:scale-101 transition-transform"
                                             loader={({ src }) => src}
                                             onError={(e) => {
                                                 const target = e.target as HTMLImageElement
-                                                target.src = '/default-player.jpg'
+                                                target.src = '/32bw_logo_white.png'
                                             }}
                                         />
                                     </div>
@@ -288,7 +288,7 @@ export default function ProspectPageClient({ name }: { name: string }) {
                                 loader={({ src }) => src}
                                 onError={(e) => {
                                     const target = e.target as HTMLImageElement
-                                    target.src = '/default-player.jpg'
+                                    target.src = '/32bw_logo_white.png'
                                 }}
                             />
                         </div>
@@ -385,7 +385,7 @@ export default function ProspectPageClient({ name }: { name: string }) {
                                 loader={({ src }) => src}
                                 onError={(e) => {
                                     const target = e.target as HTMLImageElement
-                                    target.src = '/default-player.jpg'
+                                    target.src = '/32bw_logo_white.png'
                                 }}
                             />
                         </div>

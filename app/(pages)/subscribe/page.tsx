@@ -87,6 +87,27 @@ function PremiumSignupForm() {
     confirmPassword: ''
   })
 
+  // Load pre-filled data from sessionStorage if available
+  useEffect(() => {
+    const prefillData = sessionStorage.getItem('prefillData')
+    if (prefillData) {
+      try {
+        const data = JSON.parse(prefillData)
+        setFormData(prev => ({
+          ...prev,
+          email: data.email || prev.email,
+          firstName: data.firstName || prev.firstName,
+          lastName: data.lastName || prev.lastName,
+          username: data.username || prev.username
+        }))
+        // Clear the data after using it
+        sessionStorage.removeItem('prefillData')
+      } catch (error) {
+        console.error('Error parsing prefill data:', error)
+      }
+    }
+  }, [])
+
   // Google OAuth state
   const [useGoogleAuth, setUseGoogleAuth] = useState(false)
   const [googleUser, setGoogleUser] = useState<any>(null)
