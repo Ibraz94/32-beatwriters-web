@@ -42,7 +42,7 @@ export default function RegistrationSuccess() {
         )}
         <button
           onClick={() => router.push('/')}
-          className="mt-4 bg-red-800 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
+          className="mt-4 bg-[#E64A30] text-white py-2 px-4 rounded-lg hover:bg-[#E64A30]/80 transition-colors"
         >
           Return to Home
         </button>

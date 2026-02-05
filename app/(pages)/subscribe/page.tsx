@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Check } from 'lucide-react'
 import { API_CONFIG, buildApiUrl } from '../../../lib/config/api'
 import GoogleOAuthButton from '@/app/components/GoogleOAuthButton'
 import Image from 'next/image'
@@ -720,7 +719,7 @@ function PremiumSignupForm() {
                         type="button"
                         onClick={() => handlePromoCodeValidation()}
                         disabled={promoLoading}
-                        className=" bg-[#E64A30] w-full text-white hover:scale-101 py-3 px-4 rounded-full font-medium transition-colors disabled:opacity-50"
+                        className=" bg-[#E64A30] w-full text-white hover:bg-[#E64A30]/90 py-3 px-4 rounded-full font-medium transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         {promoLoading ? 'Validating...' : 'Validate Promo Code'}
                       </button>
@@ -750,9 +749,6 @@ function PremiumSignupForm() {
                       />
                     </div>
                     <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-border" />
-                      </div>
                       <div className="relative flex justify-center text-sm">
                         <span className="px-2 bg-background dark:bg-[#262829] text-muted-foreground">
                           Or fill out the form below

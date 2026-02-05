@@ -73,7 +73,7 @@ export default function PaymentSuccess() {
           <p className="text-gray-600 mb-6">Your account may already be updated. Please log in again to continue.</p>
           <button
             onClick={() => router.push('/login')}
-            className="mt-4 bg-red-800 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
+            className="mt-4 bg-[#E64A30] text-white py-2 px-4 rounded-lg hover:bg-[#E64A30]/80 transition-colors"
           >
             Go to Login
           </button>
@@ -105,7 +105,7 @@ export default function PaymentSuccess() {
         )}
         <button
           onClick={() => router.push('/login')}
-          className="mt-4 bg-red-800 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors"
+          className="mt-4 bg-[#E64A30] text-white py-2 px-4 rounded-full hover:bg-[#E64A30]/80 transition-colors hover:cursor-pointer"
         >
           Go to Login
         </button>

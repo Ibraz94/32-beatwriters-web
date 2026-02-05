@@ -49,7 +49,6 @@ const DiscordButton = () => {
                     <Image src="/discord-icon.svg" alt="Discord" width={20} height={20} loader={({ src }) => src}/>
                     Connected
                 </button>
-                <span className="text-xs text-black sm:inline">{discordStatus.discordUsername}</span>
             </div>
         );
     }

@@ -397,14 +397,7 @@ function AccountContent() {
             <div className="max-w-4xl mx-auto mt-8">
                 <div className='relative'>
                     <div
-                        className="
-      hidden md:flex absolute 
- left-1/2 -translate-x-1/2 
-      w-screen h-[400%] 
-      bg-cover bg-center bg-no-repeat 
-      bg-[url('/background-image2.png')] 
-      opacity-10 dark:opacity-5
-    "
+                        className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-screen h-[400%] bg-cover bg-center bg-no-repeat bg-[url('/background-image2.png')] opacity-10 dark:opacity-5"
                         style={{
                             transform: "scaleY(-1)", // keeps it upside down
                             zIndex: -50,
@@ -418,7 +411,7 @@ function AccountContent() {
                             {mounted ? (
                                 <Image src={theme === "dark" ? "/32bw_logo_white.png" : "/logo-small.webp"} alt="logo" width={80} height={80} loader={({ src }) => src} />
                             ) : (
-                                <Image src="/logo-small.webp" alt="logo" width={80} height={80} />
+                                <Image src="/logo-small.webp" alt="logo" width={80} height={80} loader={({ src }) => src} />
                             )}
                         </div>
                         <h1 className="text-3xl font-bold text-foreground">Account Settings</h1>
@@ -458,7 +451,7 @@ function AccountContent() {
                                         <button
                                             key={id}
                                             onClick={() => setActiveTab(id)}
-                                            className={`flex items-center justify-center gap-0.5 px-1.5 md:px-2 py-2 rounded-full font-medium text-xs md:text-sm transition-colors ${bgColor} ${textColor} whitespace-nowrap`}
+                                            className={`flex items-center justify-center gap-0.5 px-1.5 md:px-2 py-2 rounded-full font-medium text-xs md:text-sm transition-colors hover:cursor-pointer ${bgColor} ${textColor} whitespace-nowrap`}
                                         >
                                             <Icon className={`h-3 w-3 md:h-4 md:w-4 ${isActive ? 'text-white' : 'text-[#72757C]'}`} />
                                             <span>{label}</span>
@@ -642,7 +635,7 @@ function AccountContent() {
                                 <div>
                                     <div className="flex items-center gap-2 mb-2">
                                         <svg
-                                            className="h-5 w-5 text-[#1D212D]"
+                                            className="h-5 w-5 text-[#1D212D] dark:text-white"
                                             fill="currentColor"
                                             viewBox="0 0 24 24"
                                             xmlns="http://www.w3.org/2000/svg"
@@ -848,7 +841,7 @@ function AccountContent() {
                                                         }`}
                                                 >
                                                     {subscription.isCancelled
-                                                        ? 'Active (Cancelled)'
+                                                        ? 'Cancelled'
                                                         : subscription.status?.charAt(0).toUpperCase() + subscription.status?.slice(1)}
                                                 </span>
                                             </div>
@@ -922,7 +915,7 @@ function AccountContent() {
                                                     {!showCancelConfirm ? (
                                                         <button
                                                             onClick={() => setShowCancelConfirm(true)}
-                                                            className="mt-4 px-6 py-2 bg-[#E64A30] text-white rounded-full hover:bg-red-700 transition-colors"
+                                                            className="mt-4 px-6 py-2 bg-[#E64A30] text-white rounded-full hover:bg-[#E64A30]/90 cursor-pointer transition-colors"
                                                         >
                                                             Cancel Subscription
                                                         </button>
@@ -935,11 +928,11 @@ function AccountContent() {
                                                                 <button
                                                                     onClick={handleCancelSubscription}
                                                                     disabled={cancellingSubscription}
-                                                                    className="px-6 py-2 bg-[#E64A30] text-white rounded-full hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                    className="px-6 py-2 bg-[#E64A30] text-white rounded-full hover:bg-[#E64A30]/90 transition-colors hover:cursor-pointer"
                                                                 >
                                                                     {cancellingSubscription ? (
-                                                                        <div className="flex items-center">
-                                                                            <div className="animate-spin -ml-1 mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                                                                        <div className="flex items-center ">
+                                                                            <div className="animate-spin -ml-1 mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full "></div>
                                                                             Cancelling...
                                                                         </div>
                                                                     ) : (
@@ -948,7 +941,7 @@ function AccountContent() {
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setShowCancelConfirm(false)}
-                                                                    className="px-6 py-2 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 transition-colors"
+                                                                    className="px-6 py-2 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 transition-colors hover:cursor-pointer"
                                                                 >
                                                                     Keep Subscription
                                                                 </button>
@@ -970,7 +963,7 @@ function AccountContent() {
                                     </p>
                                     <a
                                         href="/subscribe"
-                                        className="inline-flex items-center px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                        className="inline-flex items-center px-4 py-2 bg-[#E64A30] text-white rounded-full hover:bg-[#E64A30]/80 transition-colors"
                                     >
                                         <CreditCard className="h-4 w-4 mr-2" />
                                         Subscribe Now
